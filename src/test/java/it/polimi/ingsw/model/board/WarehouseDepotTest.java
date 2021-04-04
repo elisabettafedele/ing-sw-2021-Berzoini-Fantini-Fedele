@@ -23,11 +23,11 @@ public class WarehouseDepotTest {
         depot.addResources(2);
         assertEquals(depot.getResourceType(), Resource.COIN);
         assertEquals(depot.getResourceQuantity(), 2);
-        assertFalse(depot.isFree());
+        assertFalse(depot.isEmpty());
         depot.removeResources(2);
         assertEquals(depot.getResourceQuantity(), 0);
         assertEquals(depot.getResourceType(), Resource.ANY);
-        assertTrue(depot.isFree());
+        assertTrue(depot.isEmpty());
     }
 
     @Test (expected = InvalidArgumentException.class)
