@@ -1,6 +1,8 @@
-package it.polimi.ingsw.model;
+package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
+import it.polimi.ingsw.model.cards.Production;
+import it.polimi.ingsw.model.cards.Value;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

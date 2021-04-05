@@ -1,14 +1,11 @@
 package it.polimi.ingsw;
 
 import it.polimi.ingsw.enumerations.EffectType;
-import it.polimi.ingsw.enumerations.Marble;
-import it.polimi.ingsw.enumerations.ValueType;
 import it.polimi.ingsw.exceptions.DifferentEffectTypeException;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
-import it.polimi.ingsw.model.Depot;
-import it.polimi.ingsw.model.Effect;
-import it.polimi.ingsw.model.Production;
-import it.polimi.ingsw.model.Value;
+import it.polimi.ingsw.model.cards.Effect;
+import it.polimi.ingsw.model.cards.Production;
+import it.polimi.ingsw.model.cards.Value;
 
 import java.util.ArrayList;
 import java.util.HashMap;

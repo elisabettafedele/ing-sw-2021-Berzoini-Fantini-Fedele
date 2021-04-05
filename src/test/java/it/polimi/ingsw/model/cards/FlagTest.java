@@ -1,8 +1,9 @@
-package it.polimi.ingsw.model;
+package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.enumerations.FlagColor;
 import it.polimi.ingsw.enumerations.Level;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
+import it.polimi.ingsw.model.cards.Flag;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

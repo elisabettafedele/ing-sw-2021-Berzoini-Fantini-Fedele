@@ -1,10 +1,10 @@
-package it.polimi.ingsw.model.board;
+package it.polimi.ingsw.model.depot;
 import it.polimi.ingsw.exceptions.InsufficientQuantityException;
 import it.polimi.ingsw.exceptions.InsufficientSpaceException;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.exceptions.InvalidDepotException;
-import it.polimi.ingsw.model.Depot;
+
 /**
  * This class represents a single Warehouse Depot. It has a limited capacity, reported in maxResourceQuantity
  */
@@ -69,5 +69,9 @@ public class WarehouseDepot extends Depot {
         if (quantity > available)
             throw new InsufficientSpaceException(quantity, available);
         super.addResources(quantity);
+    }
+
+    public String toString(int depotNumber){
+        return "Depot " + Integer.toString(depotNumber) + ": resource=" + this.getResourceType() + ", quantity=" + this.getResourceQuantity();
     }
 }

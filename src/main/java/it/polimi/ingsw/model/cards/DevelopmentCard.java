@@ -1,4 +1,4 @@
-package it.polimi.ingsw.model;
+package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.enumerations.Resource;
@@ -6,7 +6,7 @@ import it.polimi.ingsw.enumerations.Resource;
 /**
  * A development card that can be used to produce resources and faith points
  */
-public class DevelopmentCard extends Card{
+public class DevelopmentCard extends Card {
 
     private Flag flag;
     private Production production;

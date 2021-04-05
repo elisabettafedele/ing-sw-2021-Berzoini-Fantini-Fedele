@@ -1,12 +1,10 @@
-package it.polimi.ingsw.model.board;
+package it.polimi.ingsw.model.depot;
 
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.exceptions.InsufficientQuantityException;
 import it.polimi.ingsw.exceptions.InsufficientSpaceException;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.InvalidDepotException;
-import it.polimi.ingsw.model.Depot;
-import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -24,6 +22,7 @@ public class WarehouseDepotTest {
         assertEquals(depot.getResourceType(), Resource.COIN);
         assertEquals(depot.getResourceQuantity(), 2);
         assertFalse(depot.isEmpty());
+        assertEquals(depot.toString(1), "Depot 1: resource=COIN, quantity=2");
         depot.removeResources(2);
         assertEquals(depot.getResourceQuantity(), 0);
         assertEquals(depot.getResourceType(), Resource.ANY);

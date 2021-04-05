@@ -1,7 +1,10 @@
-package it.polimi.ingsw.model;
+package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
+import it.polimi.ingsw.model.cards.DevelopmentCard;
+import it.polimi.ingsw.model.cards.Flag;
+import it.polimi.ingsw.model.cards.LeaderCard;
 
 import java.util.List;
 import java.util.Map;

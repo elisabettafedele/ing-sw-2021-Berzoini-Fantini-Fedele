@@ -1,9 +1,11 @@
-package it.polimi.ingsw.model;
+package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.enumerations.Marble;
-import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.exceptions.InactiveCardException;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
+import it.polimi.ingsw.model.cards.Effect;
+import it.polimi.ingsw.model.cards.LeaderCard;
+import it.polimi.ingsw.model.cards.Value;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

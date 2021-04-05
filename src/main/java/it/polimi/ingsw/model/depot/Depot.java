@@ -1,4 +1,4 @@
-package it.polimi.ingsw.model;
+package it.polimi.ingsw.model.depot;
 
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.exceptions.InsufficientQuantityException;
@@ -70,6 +70,10 @@ public class Depot {
             throw new InsufficientQuantityException(quantity, this.getResourceQuantity());
         }
         this.resourceQuantity -= quantity;
+    }
+
+    public String toString(){
+        return "Depot: resource=" + this.getResourceType() + ", quantity=" + Integer.toString(this.getResourceQuantity());
     }
 
 }
