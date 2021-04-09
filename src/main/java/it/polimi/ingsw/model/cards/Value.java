@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
+import it.polimi.ingsw.exceptions.ValueNotPresentException;
 import it.polimi.ingsw.model.cards.DevelopmentCard;
 import it.polimi.ingsw.model.cards.Flag;
 import it.polimi.ingsw.model.cards.LeaderCard;
@@ -119,15 +120,36 @@ public class Value {
         this.resourceValue = null;
     }
 
-    public List<Flag> getFlagValue() {
+    /**
+     * Get the {@link Flag} part of {@link Card}'s cost
+     * @return the cost in terms of {@link Flag}
+     */
+    public List<Flag> getFlagValue() throws ValueNotPresentException {
+        if(flagValue == null){
+            throw new ValueNotPresentException("flags");
+        }
         return flagValue;
     }
 
-    public Map<Resource, Integer> getResourceValue() {
+    /**
+     * Get the {@link Resource} part of {@link Card}'s cost
+     * @return the cost in terms of {@link Resource}
+     */
+    public Map<Resource, Integer> getResourceValue() throws ValueNotPresentException {
+        if(resourceValue == null){
+            throw new ValueNotPresentException("resources");
+        }
         return resourceValue;
     }
 
-    public int getFaithValue() {
+    /**
+     * Get the {@link Resource} part of {@link Card}'s cost
+     * @return the cost in terms of {@link Resource}
+     */
+    public int getFaithValue() throws ValueNotPresentException {
+        if(faithValue == 0){
+            throw new ValueNotPresentException("faith points");
+        }
         return faithValue;
     }
 }

@@ -22,12 +22,11 @@ public class DevelopmentCardTest {
     int victoryPoints, ID;
     @Before
     public void setUp() throws Exception {
-        ID = 12345;
         victoryPoints = 3;
         flag = new Flag(FlagColor.PURPLE, Level.ONE);
         production = new Production(new Value(5), new Value( 5));
         cost = new Value(14);
-        developmentCard = new DevelopmentCard(victoryPoints, ID, cost, flag, production);
+        developmentCard = new DevelopmentCard(victoryPoints, cost, flag, production);
     }
 
     @After
@@ -40,10 +39,6 @@ public class DevelopmentCardTest {
         assertEquals(victoryPoints, developmentCard.getVictoryPoints());
     }
 
-    @Test
-    public void getID() {
-        assertEquals(ID, developmentCard.getID());
-    }
 
     @Test
     public void getCost() {
@@ -67,35 +62,35 @@ public class DevelopmentCardTest {
 
     @Test
     public void use_returnTrue() throws InvalidArgumentException {
-        DevelopmentCard developmentCard1 = new DevelopmentCard(victoryPoints, ID, cost, flag, production);
+        DevelopmentCard developmentCard1 = new DevelopmentCard(victoryPoints, cost, flag, production);
         assertEquals(true, developmentCard1.use());
     }
 
     @Test
     public void use_returnFalse() throws InvalidArgumentException {
-        DevelopmentCard developmentCard1 = new DevelopmentCard(victoryPoints, ID, cost, flag, production);
+        DevelopmentCard developmentCard1 = new DevelopmentCard(victoryPoints, cost, flag, production);
         developmentCard1.use();
         assertEquals(false, developmentCard1.use());
     }
 
     @Test (expected = InvalidArgumentException.class)
     public void Card_constructor_InvalidArgumentException_CostNull() throws InvalidArgumentException {
-        DevelopmentCard developmentCard1 = new DevelopmentCard(victoryPoints, ID, null, flag, production);
+        DevelopmentCard developmentCard1 = new DevelopmentCard(victoryPoints, null, flag, production);
     }
 
     @Test (expected = InvalidArgumentException.class)
     public void Card_constructor_InvalidArgumentException_NegativeVictoryPoints() throws InvalidArgumentException {
-        DevelopmentCard developmentCard1 = new DevelopmentCard(-1, ID, cost, flag, production);
+        DevelopmentCard developmentCard1 = new DevelopmentCard(-1, cost, flag, production);
     }
 
     @Test (expected = InvalidArgumentException.class)
     public void DevelopmentCard_constructor_InvalidArgumentException_FlagNull() throws InvalidArgumentException {
-        DevelopmentCard developmentCard1 = new DevelopmentCard(victoryPoints, ID, cost, null, production);
+        DevelopmentCard developmentCard1 = new DevelopmentCard(victoryPoints, cost, null, production);
     }
 
     @Test (expected = InvalidArgumentException.class)
     public void DevelopmentCard_constructor_InvalidArgumentException_ProductionNull() throws InvalidArgumentException {
-        DevelopmentCard developmentCard1 = new DevelopmentCard(victoryPoints, ID, cost, flag, null);
+        DevelopmentCard developmentCard1 = new DevelopmentCard(victoryPoints, cost, flag, null);
     }
 
 }

@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
+import it.polimi.ingsw.exceptions.ValueNotPresentException;
 import it.polimi.ingsw.model.cards.Flag;
 import it.polimi.ingsw.model.cards.Value;
 import org.junit.After;
@@ -36,16 +37,16 @@ public class ValueTest {
     }
 
     @Test
-    public void getFlagValue_returnCorrectFlagValue() {
+    public void getFlagValue_returnCorrectFlagValue() throws ValueNotPresentException {
         assertEquals(flagValue, value.getFlagValue());
     }
 
     @Test
-    public void getResourceValue_returnsCorrectResourceValue() {
+    public void getResourceValue_returnsCorrectResourceValue() throws ValueNotPresentException {
         assertEquals(resourceValue, value.getResourceValue());
     }
     @Test
-    public void getFaithValue_returnsCorrectFaithValue() {
+    public void getFaithValue_returnsCorrectFaithValue() throws ValueNotPresentException {
         assertEquals(faithValue, value.getFaithValue());
     }
 
@@ -98,12 +99,6 @@ public class ValueTest {
         Value invalidValue = new Value(inv, -5);
     }
 
-    @Test
-    public void Value_constructor_InvalidArgumentException_2argsNotNull() throws InvalidArgumentException {
-        Map<Resource, Integer> r = new HashMap<>();
-        Value value1 = new Value(r, 5);
-        assertNull(value1.getFlagValue());
-    }
 
     @Test (expected = InvalidArgumentException.class)
     public void Value_constructor_InvalidArgumentException_2argsFlagNull() throws InvalidArgumentException {
@@ -139,9 +134,32 @@ public class ValueTest {
     }
 
     @Test
-    public void Value_constructor_InvalidArgumentException_2argsFaithFlagNotNull() throws InvalidArgumentException {
+    public void Value_constructor_2argsFaithFlagNotNull() throws InvalidArgumentException {
         List<Flag> inv = new ArrayList<>();
         Value invalidValue = new Value(inv, 5);
+    }
+
+    @Test (expected = ValueNotPresentException.class)
+    public void Value_constructor_ValueNotPresentException_flagValueNull() throws InvalidArgumentException, ValueNotPresentException {
+        Map<Resource, Integer> r = new HashMap<>();
+        Value value1 = new Value(r, 5);
+        value1.getFlagValue();
+    }
+
+    @Test (expected = ValueNotPresentException.class)
+    public void Value_constructor_ValueNotPresentException_resourceValueNull() throws InvalidArgumentException, ValueNotPresentException {
+        List<Flag> inv = new ArrayList<>();
+        Map<Resource, Integer> r = new HashMap<>();
+        Value value1 = new Value(inv, 5);
+        value1.getResourceValue();
+    }
+
+    @Test (expected = ValueNotPresentException.class)
+    public void Value_constructor_ValueNotPresentException_faithValueNull() throws InvalidArgumentException, ValueNotPresentException {
+        List<Flag> inv = new ArrayList<>();
+        Map<Resource, Integer> r = new HashMap<>();
+        Value value1 = new Value(inv, r);
+        value1.getFaithValue();
     }
 
 

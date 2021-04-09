@@ -27,10 +27,18 @@ public class Flag {
         this.flagLevel = flagLevel;
     }
 
+    /**
+     * Get the flag color/type
+     * @return the flag color/type
+     */
     public FlagColor getFlagColor() {
         return flagColor;
     }
 
+    /**
+     * Get the flag level
+     * @return the flag level
+     */
     public Level getFlagLevel() {
         return flagLevel;
     }

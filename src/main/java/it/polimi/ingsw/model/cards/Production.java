@@ -4,6 +4,7 @@ import it.polimi.ingsw.exceptions.InvalidArgumentException;
 
 import java.util.ArrayList;
 import java.util.List;
+import it.polimi.ingsw.model.player.PersonalBoard;
 
 /**
  * The class represents the production power of {@link DevelopmentCard}, {@link LeaderCard} that has this effect and

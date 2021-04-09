@@ -8,36 +8,52 @@ import it.polimi.ingsw.exceptions.InvalidArgumentException;
 public abstract class Card {
 
     private int victoryPoints;
-    private int ID;
     private Value cost;
     private boolean used;
 
-    public Card(int victoryPoints, int ID, Value cost) throws InvalidArgumentException {
+    /**
+     * Constructs a Card made of
+     * @param victoryPoints the number of Victory points obtained at the end of the game
+     * @param cost the cost of the card represented with the {@link Value} class
+     * @throws InvalidArgumentException if victory points are negative or cost is null
+     */
+    public Card(int victoryPoints, Value cost) throws InvalidArgumentException {
         if (victoryPoints < 0 || cost == null){
             throw new InvalidArgumentException();
         }
         this.victoryPoints = victoryPoints;
-        this.ID = ID;
         this.cost = cost;
         this.used = false;
     }
 
+    /**
+     * Get the victory points of the card
+     * @return the victory points of the card
+     */
     public int getVictoryPoints() {
         return victoryPoints;
     }
 
-    public int getID() {
-        return ID;
-    }
-
+    /**
+     * Get the cost ({@link Value}) of the card to be purchased/activate
+     * @return the cost ({@link Value}) of the card to be purchased/activate
+     */
     public Value getCost() {
         return cost;
     }
 
+    /**
+     * Check if the card has already been used in the current turn
+     * @return true if the card has already been used in the current turn
+     */
     public boolean alreadyUsed() {
         return used;
     }
 
+    /**
+     * Use the card in the turn (execute effect)
+     * @return true if the usage of the card was possible
+     */
     public boolean use(){
         if(this.used == false){
             this.used = true;
@@ -45,5 +61,12 @@ public abstract class Card {
         }else {
             return false;
         }
+    }
+
+    /**
+     * Reset the used variable of the card, to be used at the end of each turn
+     */
+    public void resetUsed(){
+        this.used = false;
     }
 }

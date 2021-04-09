@@ -5,6 +5,8 @@ import it.polimi.ingsw.enumerations.Marble;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.exceptions.DifferentEffectTypeException;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
+import it.polimi.ingsw.model.game.Market;
+import it.polimi.ingsw.model.game.DevelopmentCardGrid;
 
 /**
  * The class can represents all the possible special ability of {@link LeaderCard}
@@ -20,7 +22,7 @@ public class Effect {
     /**
      * Constructs a discount effect
      * @param discountEffect the {@link Resource} to be subtracted from the {@link DevelopmentCard} cost when buying from the {@link DevelopmentCardGrid}.
-     * @throws InvalidArgumentException
+     * @throws InvalidArgumentException if discountEffect is null
      */
     public Effect(Resource discountEffect) throws InvalidArgumentException {
         if(discountEffect == null){
@@ -34,8 +36,8 @@ public class Effect {
     }
     /**
      * Constructs a white marble conversion effect
-     * @param whiteMarbleEffect the {@link Marble} color to be converted to when picking a white {@link Marble} from the {@link Market}
-     * @throws InvalidArgumentException
+     * @param whiteMarbleEffect the {@link Marble} color to be converted to when picking a white {@link Marble} from the {@link Market}.
+     * @throws InvalidArgumentException if whiteMarble effect is null, WHITE or RED
      */
     public Effect(Marble whiteMarbleEffect) throws InvalidArgumentException {
         if(whiteMarbleEffect == null || whiteMarbleEffect == Marble.WHITE || whiteMarbleEffect == Marble.RED){
@@ -51,7 +53,7 @@ public class Effect {
     /**
      * Constructs an extra depot effect
      * @param extraDepotEffect the extra storage capability of some {@link LeaderCard}
-     * @throws InvalidArgumentException
+     * @throws InvalidArgumentException if extraDepotEffect is null
      */
     public Effect(ExtraDepot extraDepotEffect) throws InvalidArgumentException {
         if(extraDepotEffect == null){
@@ -66,7 +68,7 @@ public class Effect {
     /**
      * Constructs a production effect
      * @param productionEffect the {@link Production} power of some {@link LeaderCard}
-     * @throws InvalidArgumentException
+     * @throws InvalidArgumentException if productionEffect is null
      */
     public Effect(Production productionEffect) throws InvalidArgumentException {
         if(productionEffect == null){
@@ -79,7 +81,11 @@ public class Effect {
         this.productionEffect = productionEffect;
     }
 
-
+    /**
+     * Get the {@link Resource} to be subtracted from the {@link DevelopmentCard} cost when buying from the {@link DevelopmentCardGrid}.
+     * @return the {@link Resource} to be subtracted from the {@link DevelopmentCard} cost when buying from the {@link DevelopmentCardGrid}.
+     * @throws DifferentEffectTypeException if the {@link LeaderCard} has a different effect
+     */
     public Resource getDiscountEffect() throws DifferentEffectTypeException {
         if (this.effectType != EffectType.DISCOUNT){
             throw new DifferentEffectTypeException(this.effectType, EffectType.DISCOUNT);
@@ -87,6 +93,11 @@ public class Effect {
         return discountEffect;
     }
 
+    /**
+     * Get the {@link Marble} color to be converted to when picking a white {@link Marble} from the {@link Market}.
+     * @return the {@link Marble} color to be converted to when picking a white {@link Marble} from the {@link Market}.
+     * @throws DifferentEffectTypeException if the {@link LeaderCard} has a different effect
+     */
     public Marble getWhiteMarbleEffect() throws DifferentEffectTypeException {
         if (this.effectType != EffectType.WHITE_MARBLE){
             throw new DifferentEffectTypeException(this.effectType, EffectType.DISCOUNT);
@@ -94,6 +105,11 @@ public class Effect {
         return whiteMarbleEffect;
     }
 
+    /**
+     * Get the extra storage capability of the {@link LeaderCard}
+     * @return the extra storage capability of the {@link LeaderCard}
+     * @throws DifferentEffectTypeException if the {@link LeaderCard} has a different effect
+     */
     public ExtraDepot getExtraDepotEffect() throws DifferentEffectTypeException {
         if (this.effectType != EffectType.EXTRA_DEPOT){
             throw new DifferentEffectTypeException(this.effectType, EffectType.DISCOUNT);
@@ -101,6 +117,11 @@ public class Effect {
         return extraDepotEffect;
     }
 
+    /**
+     * Get the {@link Production} power of the {@link LeaderCard}
+     * @return the {@link Production} power of the {@link LeaderCard}
+     * @throws DifferentEffectTypeException if the {@link LeaderCard} has a different effect
+     */
     public Production getProductionEffect() throws DifferentEffectTypeException {
         if (this.effectType != EffectType.PRODUCTION){
             throw new DifferentEffectTypeException(this.effectType, EffectType.DISCOUNT);
@@ -108,6 +129,10 @@ public class Effect {
         return productionEffect;
     }
 
+    /**
+     * Get the type of the {@link Effect} of the {@link LeaderCard}
+     * @return the type of the {@link Effect} of the {@link LeaderCard}
+     */
     public EffectType getEffectType() {
         return effectType;
     }

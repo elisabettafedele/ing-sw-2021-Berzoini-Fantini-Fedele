@@ -68,15 +68,4 @@ public class Market {
         return marbles;
     }
 
-    public void printMarketTray(){
-        for(int i = 0; i < ROW; i++){
-            for(int j = 0; j < COL; j++){
-                System.out.print(marketTray[i][j]+" ");
-            }
-            System.out.println();
-        }
-        System.out.println("\n"+slideMarble);
-    }
-
-
 }

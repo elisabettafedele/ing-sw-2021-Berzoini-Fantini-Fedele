@@ -30,30 +30,39 @@ public class LeaderCardTest {
 
     @Test
     public void isActive_and_activate() throws InvalidArgumentException {
-        leaderCard = new LeaderCard(5, 1234, value, effect);
+        leaderCard = new LeaderCard(5, value, effect);
         assertTrue(!leaderCard.isActive());
         assertTrue(leaderCard.activate());
         assertTrue(leaderCard.isActive());
         assertTrue(!leaderCard.activate());
     }
 
+    @Test
+    public void activate_and_resetUsed() throws InvalidArgumentException {
+        leaderCard = new LeaderCard(5, value, effect);
+        assertTrue(leaderCard.use());
+        assertTrue(leaderCard.alreadyUsed());
+        leaderCard.resetUsed();
+        assertFalse(leaderCard.alreadyUsed());
+    }
+
 
 
     @Test (expected = InactiveCardException.class)
     public void getEffect_beforeActivation_InactiveCardException() throws InvalidArgumentException, InactiveCardException {
-        leaderCard = new LeaderCard(5, 1234, value, effect);
+        leaderCard = new LeaderCard(5, value, effect);
         assertEquals(effect, leaderCard.getEffect());
     }
 
     @Test
     public void getEffect_afterActivation_InactiveCardException() throws InvalidArgumentException, InactiveCardException {
-        leaderCard = new LeaderCard(5, 1234, value, effect);
+        leaderCard = new LeaderCard(5, value, effect);
         leaderCard.activate();
         assertEquals(effect, leaderCard.getEffect());
     }
 
     @Test (expected = InvalidArgumentException.class)
     public void LeaderCard_constructor_InvalidArgumentException() throws InvalidArgumentException {
-        leaderCard = new LeaderCard(5, 1234, value, (Effect) null);
+        leaderCard = new LeaderCard(5, value, (Effect) null);
     }
 }
