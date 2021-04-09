@@ -24,15 +24,37 @@ public class WarehouseDepot extends Depot {
     }
 
     /**
+     * Setter of ResourceQuantity
+     * @param quantity
+     * @throws InsufficientSpaceException
+     */
+
+    public void setResourceQuantity(int quantity) throws InsufficientSpaceException {
+        if (this.getMaxResourceQuantity() < quantity)
+            throw new InsufficientSpaceException(quantity, this.getMaxResourceQuantity());
+        this.resourceQuantity = quantity;
+    }
+
+    /**
+     * Setter of ResourceType
+     * @param type
+     */
+    public void setResourceType(Resource type)
+    {
+        this.resourceType = type;
+    }
+    public int spaceAvailable(){
+        return this.getMaxResourceQuantity()-this.getResourceQuantity();
+    }
+
+
+    /**
      * @return the capacity of the {@link Depot}
      */
     public int getMaxResourceQuantity() {
         return maxResourceQuantity;
     }
 
-    public void setResourceType(Resource resourceType){
-        this.resourceType = resourceType;
-    }
 
     /**
      * Method that verifies if the depot is empty
@@ -65,11 +87,21 @@ public class WarehouseDepot extends Depot {
      */
     @Override
     public void addResources(int quantity) throws InvalidArgumentException, InsufficientSpaceException, InvalidDepotException {
-        int available = this.getMaxResourceQuantity()-this.getResourceQuantity();
-        if (quantity > available)
-            throw new InsufficientSpaceException(quantity, available);
+        if (!enoughSpace(quantity))
+            throw new InsufficientSpaceException(quantity, this.spaceAvailable());
         super.addResources(quantity);
     }
+
+
+    /**
+     * Method that check that a certain number of resources can be added to the depot
+     * @param toAdd number of resources that you wish to add
+     * @return true only if the number of resources after the add do not exceed the capacity of the depot
+     */
+    public boolean enoughSpace(int toAdd){
+        return this.spaceAvailable() >= toAdd;
+    }
+
 
     public String toString(int depotNumber){
         return "Depot " + Integer.toString(depotNumber) + ": resource=" + this.getResourceType() + ", quantity=" + this.getResourceQuantity();

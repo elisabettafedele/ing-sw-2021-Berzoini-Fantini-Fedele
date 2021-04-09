@@ -27,7 +27,17 @@ public class WarehouseDepotTest {
         assertEquals(depot.getResourceQuantity(), 0);
         assertEquals(depot.getResourceType(), Resource.ANY);
         assertTrue(depot.isEmpty());
+        assertTrue(depot.enoughSpace(2));
+        assertFalse(depot.enoughSpace(4));
+        assertEquals(depot.spaceAvailable(), 3);
     }
+
+    @Test (expected = InsufficientSpaceException.class)
+    public void testInvalidSetResource() throws InvalidArgumentException, InsufficientSpaceException {
+        depot = new WarehouseDepot(3);
+        depot.setResourceQuantity(4);
+    }
+
 
     @Test (expected = InvalidArgumentException.class)
     public void testInvalidConstructor() throws InvalidArgumentException{
