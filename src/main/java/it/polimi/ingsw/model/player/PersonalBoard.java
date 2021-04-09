@@ -7,13 +7,14 @@ import it.polimi.ingsw.model.cards.LeaderCard;
 import it.polimi.ingsw.model.cards.Production;
 import it.polimi.ingsw.model.cards.Value;
 import it.polimi.ingsw.model.depot.Depot;
+import it.polimi.ingsw.model.depot.StrongboxDepot;
 import it.polimi.ingsw.model.depot.WarehouseDepot;
 
 import java.util.*;
 import java.util.function.Supplier;
 
 public class PersonalBoard {
-    private Depot[] strongbox;
+    private StrongboxDepot[] strongbox;
     private Warehouse warehouse;
     private int markerPosition;
     private Stack<DevelopmentCard>[] developmentCardSlots;
@@ -26,11 +27,11 @@ public class PersonalBoard {
             throw new InvalidArgumentException();
         }
         final int numberOfStrongboxDepots=4;
-        strongbox = new Depot[numberOfStrongboxDepots];
-        strongbox[0]= new Depot(Resource.COIN);
-        strongbox[1]= new Depot(Resource.STONE);
-        strongbox[2]= new Depot(Resource.SERVANT);
-        strongbox[3]= new Depot(Resource.SHIELD);
+        strongbox = new StrongboxDepot[numberOfStrongboxDepots];
+        strongbox[0]= new StrongboxDepot(Resource.COIN);
+        strongbox[1]= new StrongboxDepot(Resource.STONE);
+        strongbox[2]= new StrongboxDepot(Resource.SERVANT);
+        strongbox[3]= new StrongboxDepot(Resource.SHIELD);
         warehouse = new Warehouse();
         markerPosition = 0;
         developmentCardSlots = new Stack[3];
@@ -43,7 +44,7 @@ public class PersonalBoard {
         this.faithTrack = faithTrack;
     }
 
-    public Depot[] getStrongbox() {
+    public StrongboxDepot[] getStrongbox() {
         return strongbox;
     }
 

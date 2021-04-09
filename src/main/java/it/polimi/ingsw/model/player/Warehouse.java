@@ -43,10 +43,12 @@ public class Warehouse {
 
     public List<Resource> getResourceTypes(){
         List<Resource> res;
-        res = Arrays.stream(depots).filter(x->x.getResourceType()!=Resource.ANY).map(Depot::getResourceType).collect(Collectors.toList());
+        res = Arrays.stream(depots)
+                .filter(x->x.getResourceType()!=Resource.ANY)
+                .map(Depot::getResourceType)
+                .collect(Collectors.toList());
         return res;
     }
-
 
     /**
      * Method used to get the {@link Resource} quantity of a certain depot of the warehouse
@@ -87,8 +89,8 @@ public class Warehouse {
      */
 
     public void addResourcesToDepot(int row, Resource type, int quantity) throws InsufficientSpaceException, InvalidResourceTypeException, InvalidDepotException, InvalidArgumentException {
-        Resource depotType = depots[row].getResourceType();
-        if ((!depotType.equals(Resource.ANY) && !depotType.equals(type)) || this.getResourceTypes().contains(type))
+        Resource depotType = this.getResourceTypeOfDepot(row);
+        if ((!depotType.equals(Resource.ANY) && !depotType.equals(type)) || (this.getResourceTypes().contains(type) && row != getRowIndexFromResource(type)))
             throw new InvalidResourceTypeException();
         if (!depots[row].enoughSpace(quantity)) {
             throw new InsufficientSpaceException(quantity, depots[row].spaceAvailable());

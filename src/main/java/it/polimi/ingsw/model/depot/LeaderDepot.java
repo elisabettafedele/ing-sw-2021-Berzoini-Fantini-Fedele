@@ -24,11 +24,15 @@ public class LeaderDepot extends Depot {
      * @throws InsufficientSpaceException if there is not enough space to add {@param quantity} resources
      * @throws InvalidDepotException if the depot has not a specific resourceType
      */
-    @Override
     public void addResources(int quantity) throws InvalidArgumentException, InsufficientSpaceException, InvalidDepotException {
         int available = maxResourceQuantity - this.getResourceQuantity();
+
+        if (quantity < 0)
+            throw new InvalidArgumentException();
+
         if (quantity > available)
             throw new InsufficientSpaceException(quantity, available);
-        super.addResources(quantity);
+
+        this.resourceQuantity += quantity;
     }
 }

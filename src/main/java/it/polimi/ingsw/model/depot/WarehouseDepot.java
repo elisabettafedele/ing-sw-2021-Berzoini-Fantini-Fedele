@@ -85,11 +85,17 @@ public class WarehouseDepot extends Depot {
      * @throws InsufficientSpaceException if there is not enough space to add {@param quantity} resources
      * @throws InvalidDepotException if the depot has not a specific resourceType
      */
-    @Override
+
     public void addResources(int quantity) throws InvalidArgumentException, InsufficientSpaceException, InvalidDepotException {
+        if (quantity < 0){
+            throw new InvalidArgumentException();
+        }
+        if (this.resourceType.equals(Resource.ANY)) {
+            throw new InvalidDepotException();
+        }
         if (!enoughSpace(quantity))
             throw new InsufficientSpaceException(quantity, this.spaceAvailable());
-        super.addResources(quantity);
+        this.resourceQuantity += quantity;
     }
 
 

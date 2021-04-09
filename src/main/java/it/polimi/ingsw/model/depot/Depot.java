@@ -10,7 +10,7 @@ import it.polimi.ingsw.exceptions.InvalidDepotException;
  * Abstract class extended by all the possible kind of depots in the game, that are: WarehouseDepot, StrongboxDepot and LeaderDepot
  */
 
-public class Depot {
+public abstract class Depot {
     
     protected Resource resourceType;
     protected int resourceQuantity;
@@ -40,20 +40,6 @@ public class Depot {
      */
     public int getResourceQuantity() {
         return this.resourceQuantity;
-    }
-
-    /**
-     * Increments the number of {@link Resource} available in the {@link Depot}
-     * @param quantity number of {@link Resource} to add to the {@link Depot}
-     */
-    public void addResources(int quantity) throws InvalidDepotException, InvalidArgumentException, InsufficientSpaceException {
-        if (quantity < 0){
-            throw new InvalidArgumentException();
-        }
-        if (this.resourceType.equals(Resource.ANY)) {
-            throw new InvalidDepotException();
-        }
-        this.resourceQuantity += quantity;
     }
 
     /**
