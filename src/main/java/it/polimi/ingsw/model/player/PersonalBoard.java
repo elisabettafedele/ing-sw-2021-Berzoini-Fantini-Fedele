@@ -30,10 +30,10 @@ public class PersonalBoard {
 
     /**
      * @param leaderCards The list of maximum two {@link LeaderCard} to be assigned to the Personal Board
-     * @throws InvalidArgumentException leaderCards is null
+     * @throws InvalidArgumentException leaderCards is null or contains less or more than 2 Leader Cards
      */
     public PersonalBoard( ArrayList<LeaderCard> leaderCards) throws InvalidArgumentException {
-        if(leaderCards==null){
+        if(leaderCards==null||leaderCards.size()!=2){
             throw new InvalidArgumentException();
         }
         faithTrack=FaithTrack.instance();
@@ -45,6 +45,9 @@ public class PersonalBoard {
         warehouse = new Warehouse();
         markerPosition = 0;
         developmentCardSlots = new Stack[numberOfDevelopmentCardSlots];
+        for(int i=0;i<numberOfDevelopmentCardSlots;i++){
+            developmentCardSlots[i]=new Stack<>();
+        }
         this.leaderCards = leaderCards;
         HashMap input = new HashMap();
         input.put(Resource.ANY,2);
@@ -60,6 +63,14 @@ public class PersonalBoard {
      */
     public Depot[] getStrongbox() {
         return strongbox;
+    }
+
+    /**
+     *
+     * @return Returns warehouse
+     */
+    public Warehouse getWarehouse(){
+        return warehouse;
     }
 
     /**
@@ -111,9 +122,11 @@ public class PersonalBoard {
      */
     public List<LeaderCard> availableLeaderCards() {
         List<LeaderCard> tempList = new ArrayList<>();
-        tempList=getLeaderCards().stream()
-                .filter(leaderCard -> leaderCard.isActive())
-                .collect(Collectors.toList());
+        for(LeaderCard lc : getLeaderCards()){
+            if(lc.isActive()){
+                tempList.add(lc);
+            }
+        }
         return tempList;
     }
 
@@ -134,24 +147,24 @@ public class PersonalBoard {
     /**
      * @param CardToBeAdded The {@link DevelopmentCard} to be added
      * @param slotNumber the number of slot where CardToBeAdded wants to be added. Slots available are Slot 0,1 and 2.
-     * @return Returns true if the card was successfully added, false if CardToBeAdded level is wrong, it needs to be a single level higher than the one of the Card currently on the top of the Slot.
-     * @throws FullSlotException The Slot chosen already contains the maximum amount of cards (three)
      * @throws InvalidArgumentException slotNumber is negative or greater than two
+     * @throws InvalidSlotException Slot is Empty and/or CardToBeAdded level is not a single level higher than the one of the {@link DevelopmentCard} on the top of the slot
      */
-    public boolean addDevelopmentCard(DevelopmentCard CardToBeAdded, int slotNumber) throws InvalidArgumentException,FullSlotException{
+    public void addDevelopmentCard(DevelopmentCard CardToBeAdded, int slotNumber) throws InvalidArgumentException,InvalidSlotException{
         if(slotNumber<0||slotNumber>2){
             throw new InvalidArgumentException();
         }
-        if(developmentCardSlots[slotNumber].size()==3){
-            throw new FullSlotException();
-        }
-        if(CardToBeAdded.getFlag().getFlagLevel().getValue()==1+developmentCardSlots[slotNumber].peek().getFlag().getFlagLevel().getValue()){
+        if(developmentCardSlots[slotNumber].isEmpty()){
+            if(CardToBeAdded.getFlag().getFlagLevel().getValue()!=0){
+                throw new InvalidSlotException(0);
+            }
             developmentCardSlots[slotNumber].push(CardToBeAdded);
-            return true;
+            return;
         }
-        else{
-            return false;
+        if(!(CardToBeAdded.getFlag().getFlagLevel().getValue()==1+developmentCardSlots[slotNumber].peek().getFlag().getFlagLevel().getValue())){
+            throw new InvalidSlotException(developmentCardSlots[slotNumber].peek().getFlag().getFlagLevel().getValue());
         }
+        developmentCardSlots[slotNumber].push(CardToBeAdded);
     }
 
     /**
@@ -163,7 +176,7 @@ public class PersonalBoard {
 
     public HashMap<Resource,Integer> countResources() throws InactiveCardException, DifferentEffectTypeException, InvalidArgumentException {
         HashMap<Resource,Integer> availableResources=new HashMap<>();
-        int[] resources=new int[3] ;
+        int[] resources=new int[4] ;
         for(int i=0;i<numberOfStrongboxDepots;i++){
             resources[i]=0+strongbox[i].getResourceQuantity();
         }
@@ -201,7 +214,7 @@ public class PersonalBoard {
      * @param boxesToMoveQuantity The amount of boxes that {@link PersonalBoard}'s marker needs to be moved ahead.
      * @throws InvalidArgumentException boxesToMoveQuantity is negative
      */
-    public void MoveMarker(int boxesToMoveQuantity) throws InvalidArgumentException{
+    public void moveMarker(int boxesToMoveQuantity) throws InvalidArgumentException{
         if(boxesToMoveQuantity<0){
             throw new InvalidArgumentException();
         }
@@ -231,7 +244,7 @@ public class PersonalBoard {
         availableDevelopmentCards().stream()
                 .forEach(developmentCard -> listOfProductions.add(developmentCard.getProduction()));
         for(LeaderCard lc : availableLeaderCards()){
-            if(lc.getEffect().getEffectType().equals(EffectType.PRODUCTION)){
+            if(lc!=null && lc.getEffect().getEffectType().equals(EffectType.PRODUCTION)){
                 listOfProductions.add(lc.getEffect().getProductionEffect());
             }
         }
