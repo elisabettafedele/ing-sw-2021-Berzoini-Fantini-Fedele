@@ -1,0 +1,484 @@
+{
+"developmentCards":[
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-1",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-1",
+   "victoryPoints": 1,
+   "flagLevel": "ONE",
+   "flagColor": "GREEN",
+   "cost":[["resourceValue","SHIELD", 2]],
+   "productionCost":[["resourceValue","COIN", 1]],
+   "productionOutput":[["faithValue", 1]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-2",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-2",
+   "victoryPoints": 1,
+   "flagLevel": "ONE",
+   "flagColor": "PURPLE",
+   "cost":[["resourceValue","SERVANT", 2]],
+   "productionCost":[["resourceValue","STONE", 1]],
+   "productionOutput":[["faithValue", 1]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-3",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-3",
+   "victoryPoints": 1,
+   "flagLevel": "ONE",
+   "flagColor": "BLUE",
+   "cost":[["resourceValue","COIN", 2]],
+   "productionCost":[["resourceValue","SHIELD", 1]],
+   "productionOutput":[["faithValue", 1]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-4",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-4",
+   "victoryPoints": 1,
+   "flagLevel": "ONE",
+   "flagColor": "YELLOW",
+   "cost":[["resourceValue","STONE", 2]],
+   "productionCost":[["resourceValue","SERVANT", 1]],
+   "productionOutput":[["resourceValue","faithValue", 1]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-5",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-5",
+   "victoryPoints":2,
+   "flagLevel": "ONE",
+   "flagColor": "GREEN",
+   "cost":[["resourceValue","SHIELD", 1], ["resourceValue","SERVANT", 1], ["resourceValue","STONE", 1]],
+   "productionCost":[["resourceValue","STONE", 1]],
+   "productionOutput":[["resourceValue","SERVANT", 1]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-6",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-6",
+   "victoryPoints":2,
+   "flagLevel": "ONE",
+   "flagColor": "PURPLE",
+   "cost":[["resourceValue","SHIELD", 1], ["resourceValue","SERVANT", 1], ["resourceValue","COIN", 1]],
+   "productionCost":[["resourceValue","COIN", 1]],
+   "productionOutput":[["resourceValue","SHIELD", 1]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-7",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-7",
+   "victoryPoints":2,
+   "flagLevel": "ONE",
+   "flagColor": "BLUE",
+   "cost":[["resourceValue","COIN", 1], ["resourceValue","SERVANT", 1], ["resourceValue","STONE", 1]],
+   "productionCost":[["resourceValue","SERVANT", 1]],
+   "productionOutput":[["resourceValue","STONE", 1]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-8",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-8",
+   "victoryPoints":2,
+   "flagLevel": "ONE",
+   "flagColor": "YELLOW",
+   "cost":[["resourceValue","SHIELD", 1], ["resourceValue","STONE", 1], ["resourceValue","COIN", 1]],
+   "productionCost":[["resourceValue","SHIELD", 1]],
+   "productionOutput":[["resourceValue","COIN", 1]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-9",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-9",
+   "victoryPoints":3,
+   "flagLevel": "ONE",
+   "flagColor": "GREEN",
+   "cost":[["resourceValue","SHIELD", 3]],
+   "productionCost":[["resourceValue","SERVANT", 2]],
+   "productionOutput":[["resourceValue", "COIN", 1], ["resourceValue", "SHIELD", 1],["resourceValue", "STONE", 1]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-10",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-10",
+   "victoryPoints":3,
+   "flagLevel": "ONE",
+   "flagColor": "PURPLE",
+   "cost":[["resourceValue","SERVANT", 3]],
+   "productionCost":[["resourceValue","COIN", 2]],
+   "productionOutput":[["resourceValue", "SERVANT", 1], ["resourceValue", "SHIELD", 1],["resourceValue", "STONE", 1]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-11",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-11",
+   "victoryPoints":3,
+   "flagLevel": "ONE",
+   "flagColor": "BLUE",
+   "cost":[["resourceValue","COIN", 3]],
+   "productionCost":[["resourceValue","STONE", 2]],
+   "productionOutput":[["resourceValue", "COIN", 1], ["resourceValue", "SERVANT", 1],["resourceValue", "SHIELD", 1]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-12",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-12",
+   "victoryPoints":3,
+   "flagLevel": "ONE",
+   "flagColor": "YELLOW",
+   "cost":[["resourceValue","STONE", 3]],
+   "productionCost":[["resourceValue","SHIELD", 2]],
+   "productionOutput":[["resourceValue", "COIN", 1], ["resourceValue", "SERVANT", 1],["resourceValue", "STONE", 1]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-13",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-13",
+   "victoryPoints":4,
+   "flagLevel": "ONE",
+   "flagColor": "GREEN",
+   "cost":[["resourceValue","SHIELD", 2],["resourceValue","COIN", 2]],
+   "productionCost":[["resourceValue","STONE", 1],["resourceValue","SERVANT", 1]],
+   "productionOutput":[["resourceValue", "COIN", 2], ["faithValue", 1]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-14",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-14",
+   "victoryPoints":4,
+   "flagLevel": "ONE",
+   "flagColor": "PURPLE",
+   "cost":[["resourceValue","SERVANT", 2],["resourceValue","STONE", 2]],
+   "productionCost":[["resourceValue","COIN", 1],["resourceValue","SHIELD", 1]],
+   "productionOutput":[["resourceValue", "STONE", 2], ["faithValue", 1]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-15",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-15",
+   "victoryPoints":4,
+   "flagLevel": "ONE",
+   "flagColor": "BLUE",
+   "cost":[["resourceValue","COIN", 2],["resourceValue","SERVANT", 2]],
+   "productionCost":[["resourceValue","SHIELD", 1],["resourceValue","STONE", 1]],
+   "productionOutput":[["resourceValue", "SERVANT", 2], ["faithValue", 1]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-16",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-16",
+   "victoryPoints":4,
+   "flagLevel": "ONE",
+   "flagColor": "YELLOW",
+   "cost":[["resourceValue","STONE", 2],["resourceValue","SHIELD", 2]],
+   "productionCost":[["resourceValue","COIN", 1],["resourceValue","SERVANT", 1]],
+   "productionOutput":[["resourceValue", "SHIELD", 2], ["faithValue", 1]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-17",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-17",
+   "victoryPoints":5,
+   "flagLevel": "TWO",
+   "flagColor": "GREEN",
+   "cost":[["resourceValue", "SHIELD", 4]],
+   "productionCost":[["resourceValue","STONE", 1]],
+   "productionOutput":[["faithValue", 2]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-18",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-18",
+   "victoryPoints":5,
+   "flagLevel": "TWO",
+   "flagColor": "PURPLE",
+   "cost":[["resourceValue", "SERVANT", 4]],
+   "productionCost":[["resourceValue","COIN", 1]],
+   "productionOutput":[["faithValue", 2]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-19",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-19",
+   "victoryPoints":5,
+   "flagLevel": "TWO",
+   "flagColor": "BLUE",
+   "cost":[["resourceValue", "COIN", 4]],
+   "productionCost":[["resourceValue","SERVANT", 1]],
+   "productionOutput":[["faithValue", 2]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-20",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-20",
+   "victoryPoints":5,
+   "flagLevel": "TWO",
+   "flagColor": "YELLOW",
+   "cost":[["resourceValue", "STONE", 4]],
+   "productionCost":[["resourceValue","SHIELD", 1]],
+   "productionOutput":[["faithValue", 2]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-21",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-21",
+   "victoryPoints":6,
+   "flagLevel": "TWO",
+   "flagColor": "GREEN",
+   "cost":[["resourceValue","SHIELD", 3],["resourceValue","SERVANT", 2]],
+   "productionCost":[["resourceValue","SHIELD", 1],["resourceValue","SERVANT", 1]],
+   "productionOutput":[["resourceValue","STONE", 3]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-22",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-22",
+   "victoryPoints":6,
+   "flagLevel": "TWO",
+   "flagColor": "PURPLE",
+   "cost":[["resourceValue","SERVANT", 3],["resourceValue","COIN", 2]],
+   "productionCost":[["resourceValue","COIN", 1],["resourceValue","SERVANT", 1]],
+   "productionOutput":[["resourceValue","SHIELD", 3]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-23",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-23",
+   "victoryPoints":6,
+   "flagLevel": "TWO",
+   "flagColor": "BLUE",
+   "cost":[["resourceValue","COIN", 3],["resourceValue","STONE", 2]],
+   "productionCost":[["resourceValue","COIN", 1],["resourceValue","STONE", 1]],
+   "productionOutput":[["resourceValue","SERVANT", 3]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-24",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-24",
+   "victoryPoints":6,
+   "flagLevel": "TWO",
+   "flagColor": "YELLOW",
+   "cost":[["resourceValue","STONE", 3],["resourceValue","SHIELD", 2]],
+   "productionCost":[["resourceValue","STONE", 1],["resourceValue","SHIELD", 1]],
+   "productionOutput":[["resourceValue","COIN", 3]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-25",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-25",
+   "victoryPoints":7,
+   "flagLevel": "TWO",
+   "flagColor": "GREEN",
+   "cost":[["resourceValue","SHIELD", 5]],
+   "productionCost":[["resourceValue","COIN", 2]],
+   "productionOutput":[["resourceValue", "STONE", 2], ["faithValue", 2]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-26",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-26",
+   "victoryPoints":7,
+   "flagLevel": "TWO",
+   "flagColor": "PURPLE",
+   "cost":[["resourceValue","SERVANT", 5]],
+   "productionCost":[["resourceValue","STONE", 2]],
+   "productionOutput":[["resourceValue", "COIN", 2], ["faithValue", 2]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-27",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-27",
+   "victoryPoints":7,
+   "flagLevel": "TWO",
+   "flagColor": "BLUE",
+   "cost":[["resourceValue","COIN", 5]],
+   "productionCost":[["resourceValue","SERVANT", 2]],
+   "productionOutput":[["resourceValue", "SHIELD", 2], ["faithValue", 2]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-28",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-28",
+   "victoryPoints":7,
+   "flagLevel": "TWO",
+   "flagColor": "YELLOW",
+   "cost":[["resourceValue","STONE", 5]],
+   "productionCost":[["resourceValue","SHIELD", 2]],
+   "productionOutput":[["resourceValue", "SERVANT", 2], ["faithValue", 2]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-29",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-29",
+   "victoryPoints":8,
+   "flagLevel": "TWO",
+   "flagColor": "GREEN",
+   "cost":[["resourceValue","SHIELD", 3],["resourceValue","COIN", 3]],
+   "productionCost":[["resourceValue","COIN", 1]],
+   "productionOutput":[["resourceValue", "SHIELD", 2], ["faithValue", 1]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-30",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-30",
+   "victoryPoints":8,
+   "flagLevel": "TWO",
+   "flagColor": "PURPLE",
+   "cost":[["resourceValue","SERVANT", 3],["resourceValue","SHIELD", 3]],
+   "productionCost":[["resourceValue","STONE", 1]],
+   "productionOutput":[["resourceValue", "SERVANT", 2], ["faithValue", 1]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-31",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-31",
+   "victoryPoints":8,
+   "flagLevel": "TWO",
+   "flagColor": "BLUE",
+   "cost":[["resourceValue","COIN", 3],["resourceValue","STONE", 3]],
+   "productionCost":[["resourceValue","SERVANT", 1]],
+   "productionOutput":[["resourceValue", "STONE", 2], ["faithValue", 1]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-32",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-32",
+   "victoryPoints":8,
+   "flagLevel": "TWO",
+   "flagColor": "YELLOW",
+   "cost":[["resourceValue","STONE", 3],["resourceValue","SERVANT", 3]],
+   "productionCost":[["resourceValue","SHIELD", 1]],
+   "productionOutput":[["resourceValue", "COIN", 2], ["faithValue", 1]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-33",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-33",
+   "victoryPoints":9,
+   "flagLevel": "THREE",
+   "flagColor": "GREEN",
+   "cost":[["resourceValue","SHIELD", 6]],
+   "productionCost":[["resourceValue","COIN", 2]],
+   "productionOutput":[["resourceValue", "STONE", 3], ["faithValue", 2]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-34",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-34",
+   "victoryPoints":9,
+   "flagLevel": "THREE",
+   "flagColor": "PURPLE",
+   "cost":[["resourceValue","SERVANT", 6]],
+   "productionCost":[["resourceValue","STONE", 2]],
+   "productionOutput":[["resourceValue", "COIN", 3], ["faithValue", 2]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-35",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-35",
+   "victoryPoints":9,
+   "flagLevel": "THREE",
+   "flagColor": "BLUE",
+   "cost":[["resourceValue","COIN", 6]],
+   "productionCost":[["resourceValue","SERVANT", 2]],
+   "productionOutput":[["resourceValue", "SHIELD", 3], ["faithValue", 2]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-36",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-36",
+   "victoryPoints":9,
+   "flagLevel": "THREE",
+   "flagColor": "YELLOW",
+   "cost":[["resourceValue","STONE", 6]],
+   "productionCost":[["resourceValue","SHIELD", 2]],
+   "productionOutput":[["resourceValue", "SERVANT", 3], ["faithValue", 2]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-37",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-37",
+   "victoryPoints":10,
+   "flagLevel": "THREE",
+   "flagColor": "GREEN",
+   "cost":[["resourceValue","SHIELD", 5],["resourceValue","SERVANT", 2]],
+   "productionCost":[["resourceValue","COIN", 1],["resourceValue","SERVANT", 1]],
+   "productionOutput":[["resourceValue", "SHIELD", 2], ["resourceValue", "STONE", 2], ["faithValue", 1]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-38",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-38",
+   "victoryPoints":10,
+   "flagLevel": "THREE",
+   "flagColor": "PURPLE",
+   "cost":[["resourceValue","SERVANT", 5],["resourceValue","COIN", 2]],
+   "productionCost":[["resourceValue","STONE", 1],["resourceValue","SHIELD", 1]],
+   "productionOutput":[["resourceValue", "COIN", 2], ["resourceValue", "SERVANT", 2], ["faithValue", 1]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-39",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-39",
+   "victoryPoints":10,
+   "flagLevel": "THREE",
+   "flagColor": "BLUE",
+   "cost":[["resourceValue","COIN", 5],["resourceValue","STONE", 2]],
+   "productionCost":[["resourceValue","COIN", 1],["resourceValue","SHIELD", 1]],
+   "productionOutput":[["resourceValue", "SERVANT", 2], ["resourceValue", "STONE", 2], ["faithValue", 1]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-40",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-40",
+   "victoryPoints":10,
+   "flagLevel": "THREE",
+   "flagColor": "YELLOW",
+   "cost":[["resourceValue","STONE", 5],["resourceValue","SERVANT", 2]],
+   "productionCost":[["resourceValue","STONE", 1],["resourceValue","SERVANT", 1]],
+   "productionOutput":[["resourceValue", "COIN", 2], ["resourceValue", "SHIELD", 2], ["faithValue", 1]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-41",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-41",
+   "victoryPoints":11,
+   "flagLevel": "THREE",
+   "flagColor": "GREEN",
+   "cost":[["resourceValue","SHIELD", 7]],
+   "productionCost":[["resourceValue","SERVANT", 1]],
+   "productionOutput":[["resourceValue", "COIN", 1], ["faithValue", 3]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-42",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-42",
+   "victoryPoints":11,
+   "flagLevel": "THREE",
+   "flagColor": "PURPLE",
+   "cost":[["resourceValue","SERVANT", 7]],
+   "productionCost":[["resourceValue","COIN", 1]],
+   "productionOutput":[["resourceValue", "STONE", 1], ["faithValue", 3]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-43",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-43",
+   "victoryPoints":11,
+   "flagLevel": "THREE",
+   "flagColor": "BLUE",
+   "cost":[["resourceValue","COIN", 7]],
+   "productionCost":[["resourceValue","STONE", 1]],
+   "productionOutput":[["resourceValue", "SHIELD", 1], ["faithValue", 3]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-44",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-44",
+   "victoryPoints":11,
+   "flagLevel": "THREE",
+   "flagColor": "YELLOW",
+   "cost":[["resourceValue","STONE", 7]],
+   "productionCost":[["resourceValue","SHIELD", 1]],
+   "productionOutput":[["resourceValue", "SERVANT", 1], ["faithValue", 3]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-45",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-45",
+   "victoryPoints":12,
+   "flagLevel": "THREE",
+   "flagColor": "GREEN",
+   "cost":[["resourceValue","SHIELD", 4],["resourceValue","COIN", 4]],
+   "productionCost":[["resourceValue","STONE", 1]],
+   "productionOutput":[["resourceValue", "COIN", 3], ["resourceValue", "SHIELD", 1]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-46",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-46",
+   "victoryPoints":12,
+   "flagLevel": "THREE",
+   "flagColor": "PURPLE",
+   "cost":[["resourceValue","SERVANT", 4],["resourceValue","SHIELD", 4]],
+   "productionCost":[["resourceValue","COIN", 1]],
+   "productionOutput":[["resourceValue", "STONE", 3], ["resourceValue", "SERVANT", 1]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-47",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-47",
+   "victoryPoints":12,
+   "flagLevel": "THREE",
+   "flagColor": "BLUE",
+   "cost":[["resourceValue","COIN", 4],["resourceValue","STONE", 4]],
+   "productionCost":[["resourceValue","SERVANT", 1]],
+   "productionOutput":[["resourceValue", "COIN", 1], ["resourceValue", "SHIELD", 3]]
+  },
+{
+   "imageFront" : "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-48",
+   "imageBack" : "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-48",
+   "victoryPoints":12,
+   "flagLevel": "THREE",
+   "flagColor": "YELLOW",
+   "cost":[["resourceValue","SHIELD", 4],["resourceValue","COIN", 4]],
+   "productionCost":[["resourceValue","STONE", 1]],
+   "productionOutput":[["resourceValue", "STONE", 1], ["resourceValue", "SERVANT", 3]]
+  },
+ ]
+}
