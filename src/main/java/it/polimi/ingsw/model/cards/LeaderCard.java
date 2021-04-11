@@ -18,8 +18,8 @@ public class LeaderCard extends Card {
      * @param effect the {@link Effect} of the card (production, discount, white marble conversion or extra depot)
      * @throws InvalidArgumentException
      */
-    public LeaderCard(int victoryPoints, Value cost, Effect effect) throws InvalidArgumentException {
-        super(victoryPoints, cost);
+    public LeaderCard(int victoryPoints, Value cost, Effect effect, String pathImageFront, String pathImageBack) throws InvalidArgumentException {
+        super(victoryPoints, cost, pathImageFront, pathImageBack);
         if (effect == null){
             throw new InvalidArgumentException();
         }

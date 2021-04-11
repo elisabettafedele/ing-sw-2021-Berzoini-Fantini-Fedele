@@ -14,13 +14,13 @@ public class DevelopmentCard extends Card {
     /**
      *
      * @param victoryPoints the number of victory points obtained at the end of the game
-     * @param cost the number and type of {@link Resource} needed to buy the card from the {@link DevelopmentCardGrid}
+     * @param cost the number and type of {@link Resource} needed to buy the card from the Developmente Card Grid //TODO {link DevelopmentCardGrid}
      * @param flag the {@link Flag} representing type and level of the card
      * @param production the {@link Production} power associated to the card
      * @throws InvalidArgumentException
      */
-    public DevelopmentCard(int victoryPoints, Value cost, Flag flag, Production production) throws InvalidArgumentException {
-        super(victoryPoints, cost);
+    public DevelopmentCard(int victoryPoints, Value cost, Flag flag, Production production, String pathImageFront, String pathImageBack) throws InvalidArgumentException {
+        super(victoryPoints, cost, pathImageFront, pathImageBack);
         if(flag == null || production == null){
             throw new InvalidArgumentException();
         }
