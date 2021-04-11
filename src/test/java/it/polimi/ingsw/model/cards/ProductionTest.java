@@ -20,8 +20,8 @@ public class ProductionTest {
 
     @Before
     public void setUp() throws Exception {
-        productionCost = new Value(new ArrayList<>(), new HashMap<>(), 5);
-        productionOutput = new Value(new ArrayList<>(), new HashMap<>(), 5);
+        productionCost = new Value(null, null, 5);
+        productionOutput = new Value(null, null, 5);
         production = new Production(productionCost, productionOutput);
     }
 

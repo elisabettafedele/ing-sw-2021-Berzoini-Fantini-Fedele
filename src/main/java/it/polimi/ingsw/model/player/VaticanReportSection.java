@@ -30,22 +30,41 @@ public class VaticanReportSection {
         this.vaticanReportAvailable = true;
     }
 
+    /**
+     *
+     * @return Returns start
+     */
     public int getStart() {
         return start;
     }
 
+    /**
+     *
+     * @return return end
+     */
     public int getEnd() {
         return end;
     }
 
+    /**
+     *
+     * @return return Pope's favor points
+     */
     public int getPopeFavorPoints() {
         return popeFavorPoints;
     }
 
+    /**
+     *
+     * @return returns true is vatican report is available, false otherwise
+     */
     public boolean isVaticanReportAvailable() {
         return vaticanReportAvailable;
     }
 
+    /**
+     * Makes vatican report unavailable
+     */
     public void setVaticanReportUnavailable() {
         vaticanReportAvailable=false;
     }

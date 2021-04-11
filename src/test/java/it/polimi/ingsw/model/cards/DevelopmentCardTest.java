@@ -24,8 +24,8 @@ public class DevelopmentCardTest {
     public void setUp() throws Exception {
         victoryPoints = 3;
         flag = new Flag(FlagColor.PURPLE, Level.ONE);
-        production = new Production(new Value(5), new Value( 5));
-        cost = new Value(14);
+        production = new Production(new Value(null,null, 1), new Value( null,null, 1));
+        cost = new Value(null,null, 1);
         developmentCard = new DevelopmentCard(victoryPoints, cost, flag, production);
     }
 

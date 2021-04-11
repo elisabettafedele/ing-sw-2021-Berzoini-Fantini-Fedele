@@ -31,7 +31,7 @@ public class EffectTest {
         discountEffect = Resource.COIN;
         whiteMarbleEffect = Marble.PURPLE;
         extraDepotEffect = new ExtraDepot(new LeaderDepot(Resource.STONE));
-        productionEffect = new Production(new Value(new ArrayList<>(), new HashMap<>(), 5), new Value(new ArrayList<>(), new HashMap<>(), 5));
+        productionEffect = new Production(new Value(new HashMap<>(), new HashMap<>(), 5), new Value(new HashMap<>(), new HashMap<>(), 5));
     }
 
     @After

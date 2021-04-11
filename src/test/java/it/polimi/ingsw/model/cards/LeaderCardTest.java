@@ -20,7 +20,7 @@ public class LeaderCardTest {
     @Before
     public void setUp() throws Exception {
         effect = new Effect(Marble.GREY);
-        value = new Value(5);
+        value = new Value(null,null,5);
     }
 
     @After

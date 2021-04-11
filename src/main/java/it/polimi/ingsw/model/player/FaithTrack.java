@@ -2,36 +2,54 @@ package it.polimi.ingsw.model.player;
 
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The class represents the Game's FaithTrack. It includes all the attributes that FaithTrack has.
  */
 
 public class FaithTrack {
+    private static FaithTrack instance;
     private Iterator<VaticanReportSection> vaticanReportSectionIterator;
     private final int length;
-    private HashMap< Integer , Integer > trackVictoryPoints;
+    private LinkedHashMap< Integer , Integer > trackVictoryPoints;
     private VaticanReportSection currentSection;
 
     /**
      * Constructs the FaithTrack and automatically assigns to currentSection the first next element of the vaticanReportSectionIterator
-     * @param vaticanReportSectionIterator the iterator on an ArrayList of {@link VaticanReportSection}
-     * @param length the number of boxes in the {@link FaithTrack}
-     * @param trackVictoryPoints a </key,value> HashMap containing pairs of <boxNumber, victoryPoints> Integer values
      * @throws InvalidArgumentException
      */
-    public FaithTrack(Iterator<VaticanReportSection> vaticanReportSectionIterator, int length, HashMap<Integer, Integer> trackVictoryPoints) throws InvalidArgumentException{
-        if(vaticanReportSectionIterator==null||length<0||trackVictoryPoints==null){
-            throw new InvalidArgumentException();
-        }
-        this.vaticanReportSectionIterator = vaticanReportSectionIterator;
-        this.length = length;
-        this.trackVictoryPoints = trackVictoryPoints;
+    private FaithTrack() throws InvalidArgumentException {
+        length = 24;
+        List<VaticanReportSection> tempList= new ArrayList<>();
+        tempList.add(new VaticanReportSection(5,8,2));
+        tempList.add(new VaticanReportSection(12,16,3));
+        tempList.add(new VaticanReportSection(19,24,4));
+        vaticanReportSectionIterator=tempList.iterator();
         currentSection= vaticanReportSectionIterator.next();
+        trackVictoryPoints=new LinkedHashMap<>();
+        trackVictoryPoints.put(3,1);
+        trackVictoryPoints.put(6,2);
+        trackVictoryPoints.put(9,4);
+        trackVictoryPoints.put(12,6);
+        trackVictoryPoints.put(15,9);
+        trackVictoryPoints.put(18,12);
+        trackVictoryPoints.put(21,16);
+        trackVictoryPoints.put(24,20);
     }
+
+    /**
+     *
+     * @return Returns the instance of FaithTrack (singleton)
+     * @throws InvalidArgumentException
+     */
+    public static FaithTrack instance() throws InvalidArgumentException {
+        if(instance==null){
+            instance=new FaithTrack();
+        }
+        return instance;
+    }
+
 
     /**
      * Returns true if the player position on the {@link FaithTrack}, passed as parameter, is higher enough to activate the {@link VaticanReportSection}.
@@ -60,11 +78,19 @@ public class FaithTrack {
      * @param playerPosition number of  box on the {@link FaithTrack} on which the player is.
      * @return sum of all victory points a player is eligible to achieve if he's in {@link FaithTrack}'box playerPosition
      */
-    public int getVictoryPoints(int playerPosition){
-        int victoryPoints= 0;
-        victoryPoints = trackVictoryPoints.entrySet().stream()
-                .filter(hashmap -> hashmap.getKey() <= playerPosition)
-                .mapToInt(Map.Entry::getValue).sum();
+    public int getVictoryPoints(int playerPosition) {
+        int victoryPoints = 0;
+        for(Map.Entry<Integer,Integer> entry : trackVictoryPoints.entrySet()){
+            if(entry.getKey()<playerPosition){
+                victoryPoints= entry.getValue();
+            }
+            if(entry.getKey()==playerPosition){
+                return entry.getValue();
+            }
+            if(entry.getKey()>playerPosition){
+                return victoryPoints;
+            }
+        }
         return victoryPoints;
     }
 }
