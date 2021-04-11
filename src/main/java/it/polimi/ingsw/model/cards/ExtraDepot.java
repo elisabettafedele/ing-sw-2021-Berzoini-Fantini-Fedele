@@ -23,6 +23,10 @@ public class ExtraDepot{
         this.leaderDepot = leaderDepot;
     }
 
+    /**
+     * get the {@link LeaderDepot} belonging to a {@link LeaderCard}
+     * @return the {@link LeaderDepot} belonging to a {@link LeaderCard}
+     */
     public LeaderDepot getLeaderDepot() {
         return this.leaderDepot;
     }

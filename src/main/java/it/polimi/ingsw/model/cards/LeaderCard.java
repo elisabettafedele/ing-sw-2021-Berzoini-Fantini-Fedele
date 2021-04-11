@@ -14,13 +14,12 @@ public class LeaderCard extends Card {
     /**
      *
      * @param victoryPoints the number of victory points obtained at the end of the game
-     * @param ID the unique ID of the card
      * @param cost the number and type of {@link Flag} or the numebr of Faith points needed to activate the card
      * @param effect the {@link Effect} of the card (production, discount, white marble conversion or extra depot)
      * @throws InvalidArgumentException
      */
-    public LeaderCard(int victoryPoints, int ID, Value cost, Effect effect) throws InvalidArgumentException {
-        super(victoryPoints, ID, cost);
+    public LeaderCard(int victoryPoints, Value cost, Effect effect) throws InvalidArgumentException {
+        super(victoryPoints, cost);
         if (effect == null){
             throw new InvalidArgumentException();
         }
@@ -29,7 +28,7 @@ public class LeaderCard extends Card {
     }
 
     /**
-     *
+     * Check if the card is active and, thus, usable
      * @return true if the card is active and his effect can be used in this turn.
      */
     public boolean isActive() {
@@ -48,6 +47,11 @@ public class LeaderCard extends Card {
         return true;
     }
 
+    /**
+     * If the card is active return the {@link Effect}
+     * @return the {@link Effect} of the card
+     * @throws InactiveCardException if the card is inactive
+     */
     public Effect getEffect() throws InactiveCardException {
         if(!isActive()){
             throw new InactiveCardException();

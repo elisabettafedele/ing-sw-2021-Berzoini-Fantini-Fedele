@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Enumeration representing all the possible colours of the marbles availables in the Market
+ * Enumeration representing all the possible colours of the marbles available in the Market
  */
 public enum Marble {
     GREY(0), PURPLE(1), RED(2), BLUE(3), YELLOW(4), WHITE(5);

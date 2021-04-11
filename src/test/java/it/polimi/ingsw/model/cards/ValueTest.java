@@ -2,6 +2,9 @@ package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
+import it.polimi.ingsw.exceptions.ValueNotPresentException;
+import it.polimi.ingsw.model.cards.Flag;
+import it.polimi.ingsw.model.cards.Value;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,16 +35,16 @@ public class ValueTest {
     }
 
     @Test
-    public void getFlagValue_returnCorrectFlagValue() {
+    public void getFlagValue_returnCorrectFlagValue() throws ValueNotPresentException {
         assertEquals(flagValue, value.getFlagValue());
     }
 
     @Test
-    public void getResourceValue_returnsCorrectResourceValue() {
+    public void getResourceValue_returnsCorrectResourceValue() throws ValueNotPresentException {
         assertEquals(resourceValue, value.getResourceValue());
     }
     @Test
-    public void getFaithValue_returnsCorrectFaithValue() {
+    public void getFaithValue_returnsCorrectFaithValue() throws ValueNotPresentException {
         assertEquals(faithValue, value.getFaithValue());
     }
 
@@ -49,8 +52,4 @@ public class ValueTest {
     public void Value_constructor_InvalidArgumentException_NegativeFaithValue() throws InvalidArgumentException {
         Value invalidValue = new Value(null, null, -1);
     }
-
-    
-
-
 }
