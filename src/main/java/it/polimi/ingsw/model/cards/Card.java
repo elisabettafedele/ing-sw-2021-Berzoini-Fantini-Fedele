@@ -62,25 +62,19 @@ public abstract class Card {
         return pathImageBack;
     }
 
+
     /**
-     * Check if the card has already been used in the current turn
-     * @return true if the card has already been used in the current turn
+     * @return true if the card has already beeen used
      */
-    public boolean alreadyUsed() {
+    public boolean getUsed(){
         return used;
     }
 
     /**
-     * Use the card in the turn (execute effect)
-     * @return true if the usage of the card was possible
+     * Setter of use
      */
-    public boolean use(){
-        if(this.used == false){
-            this.used = true;
-            return true;
-        }else {
-            return false;
-        }
+    public void setUsed(){
+        used = true;
     }
 
     /**

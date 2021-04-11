@@ -47,15 +47,13 @@ public class LeaderCard extends Card {
         return true;
     }
 
+
     /**
-     * If the card is active return the {@link Effect}
      * @return the {@link Effect} of the card
-     * @throws InactiveCardException if the card is inactive
      */
     public Effect getEffect() throws InactiveCardException {
-        if(!isActive()){
-            throw new InactiveCardException();
-        }
         return this.effect;
     }
+
+
 }

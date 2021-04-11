@@ -5,8 +5,9 @@ import it.polimi.ingsw.enumerations.Marble;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.exceptions.DifferentEffectTypeException;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
-//import it.polimi.ingsw.model.game.DevelopmentCardGrid;
 import it.polimi.ingsw.model.game.Market;
+
+//import it.polimi.ingsw.model.game.DevelopmentCardGrid;
 
 /**
  * The class can represents all the possible special ability of {@link LeaderCard}
@@ -21,7 +22,7 @@ public class Effect {
 
     /**
      * Constructs a discount effect
-     * @param discountEffect the {@link Resource} to be subtracted from the {@link DevelopmentCard} cost when buying from the {@link DevelopmentCardGrid}.
+     * @param discountEffect the {@link Resource} to be subtracted from the {@link DevelopmentCard} cost when buying from the DevelopmentCardGrid //TODO{link DevelopmentCardGrid}.
      * @throws InvalidArgumentException if discountEffect is null
      */
     public Effect(Resource discountEffect) throws InvalidArgumentException {

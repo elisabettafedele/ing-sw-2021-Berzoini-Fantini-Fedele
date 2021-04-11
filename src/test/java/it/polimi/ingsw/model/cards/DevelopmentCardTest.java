@@ -7,7 +7,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class DevelopmentCardTest {
 
@@ -36,6 +36,16 @@ public class DevelopmentCardTest {
     }
 
     @Test
+    public void testGetPathImageFront(){
+        assertEquals(pathImageFront, developmentCard.getPathImageFront());
+    }
+
+    @Test
+    public void testGetPathImageBack(){
+        assertEquals(pathImageBack, developmentCard.getPathImageBack());
+    }
+
+    @Test
     public void getVictoryPoints() {
         assertEquals(victoryPoints, developmentCard.getVictoryPoints());
     }
@@ -44,11 +54,6 @@ public class DevelopmentCardTest {
     @Test
     public void getCost() {
         assertEquals(cost, developmentCard.getCost());
-    }
-
-    @Test
-    public void alreadyUsed() {
-        assertEquals(false, developmentCard.alreadyUsed());
     }
 
     @Test
@@ -64,14 +69,17 @@ public class DevelopmentCardTest {
     @Test
     public void use_returnTrue() throws InvalidArgumentException {
         DevelopmentCard developmentCard1 = new DevelopmentCard(victoryPoints, cost, flag, production, pathImageFront, pathImageBack);
-        assertEquals(true, developmentCard1.use());
+        developmentCard1.setUsed();
+        assertTrue(developmentCard1.getUsed());
     }
 
     @Test
     public void use_returnFalse() throws InvalidArgumentException {
         DevelopmentCard developmentCard1 = new DevelopmentCard(victoryPoints, cost, flag, production, pathImageFront, pathImageBack);
-        developmentCard1.use();
-        assertEquals(false, developmentCard1.use());
+        developmentCard1.setUsed();
+        assertEquals(false, developmentCard1.getUsed());
+        developmentCard1.resetUsed();
+        assertFalse(developmentCard.getUsed());
     }
 
     @Test (expected = InvalidArgumentException.class)
@@ -93,5 +101,6 @@ public class DevelopmentCardTest {
     public void DevelopmentCard_constructor_InvalidArgumentException_ProductionNull() throws InvalidArgumentException {
         DevelopmentCard developmentCard1 = new DevelopmentCard(victoryPoints, cost, flag, null, pathImageFront, pathImageBack);
     }
+
 
 }

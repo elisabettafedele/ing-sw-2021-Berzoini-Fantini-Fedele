@@ -1,13 +1,13 @@
 package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.enumerations.Marble;
-import it.polimi.ingsw.exceptions.InactiveCardException;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class LeaderCardTest {
 
@@ -39,27 +39,19 @@ public class LeaderCardTest {
     }
 
     @Test
-    public void activate_and_resetUsed() throws InvalidArgumentException {
+    public void testUsable() throws InvalidArgumentException {
         leaderCard = new LeaderCard(5, value, effect, pathImageFront, pathImageBack);
-        assertTrue(leaderCard.use());
-        assertTrue(leaderCard.alreadyUsed());
-        leaderCard.resetUsed();
-        assertFalse(leaderCard.alreadyUsed());
+
     }
 
-
-
-    @Test (expected = InactiveCardException.class)
-    public void getEffect_beforeActivation_InactiveCardException() throws InvalidArgumentException, InactiveCardException {
-        leaderCard = new LeaderCard(5, value, effect, pathImageFront, pathImageBack);
-        assertEquals(effect, leaderCard.getEffect());
-    }
 
     @Test
-    public void getEffect_afterActivation_InactiveCardException() throws InvalidArgumentException, InactiveCardException {
+    public void activate_and_resetUsed() throws InvalidArgumentException {
         leaderCard = new LeaderCard(5, value, effect, pathImageFront, pathImageBack);
         leaderCard.activate();
-        assertEquals(effect, leaderCard.getEffect());
+        assertTrue(leaderCard.isActive());
+        leaderCard.resetUsed();
+        assertFalse(leaderCard.getUsed());
     }
 
     @Test (expected = InvalidArgumentException.class)
