@@ -5,6 +5,7 @@ import it.polimi.ingsw.model.player.PersonalBoard;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * The class represents the production power of {@link DevelopmentCard}, {@link LeaderCard} that has this effect and
@@ -39,5 +40,18 @@ public class Production{
         effect.add(this.productionCost);
         effect.add(this.productionOutput);
         return effect;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Production that = (Production) o;
+        return productionCost.equals(that.productionCost) && productionOutput.equals(that.productionOutput);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(productionCost, productionOutput);
     }
 }

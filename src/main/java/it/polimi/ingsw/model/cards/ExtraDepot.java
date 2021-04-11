@@ -1,8 +1,9 @@
 package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
-import it.polimi.ingsw.model.cards.LeaderCard;
 import it.polimi.ingsw.model.depot.LeaderDepot;
+
+import java.util.Objects;
 
 /**
  * The class represents the extra depot available via some of the {@link LeaderCard}
@@ -29,5 +30,18 @@ public class ExtraDepot{
      */
     public LeaderDepot getLeaderDepot() {
         return this.leaderDepot;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ExtraDepot that = (ExtraDepot) o;
+        return Objects.equals(that.leaderDepot.getResourceType(), this.leaderDepot.getResourceType());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(leaderDepot);
     }
 }

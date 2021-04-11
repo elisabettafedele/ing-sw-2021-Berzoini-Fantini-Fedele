@@ -7,6 +7,8 @@ import it.polimi.ingsw.exceptions.DifferentEffectTypeException;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.model.game.Market;
 
+import java.util.Objects;
+
 //import it.polimi.ingsw.model.game.DevelopmentCardGrid;
 
 /**
@@ -138,4 +140,17 @@ public class Effect {
         return effectType;
     }
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Effect effect = (Effect) o;
+        return discountEffect == effect.discountEffect && whiteMarbleEffect == effect.whiteMarbleEffect && ((extraDepotEffect==null && effect.extraDepotEffect == null) ||Objects.equals(extraDepotEffect, effect.extraDepotEffect)) && ((productionEffect == null && effect.productionEffect == null) || Objects.equals(productionEffect, effect.productionEffect)) && effectType == effect.effectType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(discountEffect, whiteMarbleEffect, extraDepotEffect, productionEffect, effectType);
+    }
 }

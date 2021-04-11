@@ -31,11 +31,9 @@ public class LeaderCardParserTest {
         flagValue.put(new Flag(FlagColor.YELLOW, Level.ANY), 1);
         flagValue.put(new Flag(FlagColor.GREEN, Level.ANY), 1);
         Value cost = new Value(flagValue, null, 0);
-        //assertEquals(cards.get(0).getCost().getFlagValue(), cost.getFlagValue());
+        assertEquals(cards.get(0).getCost(), cost);
         Effect effect = new Effect(Resource.SERVANT);
-        assertEquals(cards.get(0).getEffect().getEffectType(), effect.getEffectType());
-        assertEquals(cards.get(0).getEffect().getDiscountEffect(), effect.getDiscountEffect());
-
+        assertEquals(cards.get(0).getEffect(), effect);
     }
 
 }

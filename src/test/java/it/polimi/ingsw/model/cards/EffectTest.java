@@ -5,16 +5,11 @@ import it.polimi.ingsw.enumerations.Marble;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.exceptions.DifferentEffectTypeException;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
-import it.polimi.ingsw.model.cards.Effect;
-import it.polimi.ingsw.model.cards.ExtraDepot;
-import it.polimi.ingsw.model.cards.Production;
-import it.polimi.ingsw.model.cards.Value;
 import it.polimi.ingsw.model.depot.LeaderDepot;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.junit.Assert.*;
@@ -132,5 +127,44 @@ public class EffectTest {
         assertEquals(EffectType.EXTRA_DEPOT, effect.getEffectType());
         effect = new Effect(discountEffect);
         assertEquals(EffectType.DISCOUNT, effect.getEffectType());
+    }
+
+    @Test
+    public void testEqualsExtraDepot() throws InvalidArgumentException {
+        Effect effect1 = new Effect(new ExtraDepot(new LeaderDepot(Resource.COIN)));
+        Effect effect2 = new Effect(new ExtraDepot(new LeaderDepot(Resource.COIN)));
+        assertEquals(effect1, effect2);
+        Effect effect3 = new Effect(new ExtraDepot(new LeaderDepot(Resource.SHIELD)));
+        assertNotEquals(effect1, effect3);
+    }
+
+    @Test
+    public void testEqualsWhiteMarble() throws InvalidArgumentException {
+        Effect effect1 = new Effect(Marble.BLUE);
+        Effect effect2 = new Effect(Marble.BLUE);
+        assertEquals(effect1, effect2);
+        Effect effect3 = new Effect(Marble.PURPLE);
+        assertNotEquals(effect1, effect3);
+    }
+
+    @Test
+    public void testEqualsDiscount() throws InvalidArgumentException {
+        Effect effect1 = new Effect(Resource.COIN);
+        Effect effect2 = new Effect(Resource.COIN);
+        assertEquals(effect1, effect2);
+        Effect effect3 = new Effect(Resource.SHIELD);
+        assertNotEquals(effect1, effect3);
+    }
+
+    @Test
+    public void testEqualsProduction() throws InvalidArgumentException {
+        Production production1 = new Production(new Value(null, null, 0), new Value(null, null, 2));
+        Effect effect1 = new Effect(production1);
+        Production production2 = new Production(new Value(null, null, 0), new Value(null, null, 2));
+        Effect effect2 = new Effect(production2);
+        assertEquals(effect1, effect2);
+        Production production3 = new Production(new Value(null, null, 1), new Value(null, null, 3));
+        Effect effect3 = new Effect(production3);
+        assertNotEquals(effect1, effect3);
     }
 }

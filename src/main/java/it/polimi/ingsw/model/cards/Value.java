@@ -3,9 +3,6 @@ package it.polimi.ingsw.model.cards;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.ValueNotPresentException;
-import it.polimi.ingsw.model.cards.DevelopmentCard;
-import it.polimi.ingsw.model.cards.Flag;
-import it.polimi.ingsw.model.cards.LeaderCard;
 
 import java.util.Map;
 import java.util.Objects;
@@ -76,7 +73,7 @@ public class Value {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Value value = (Value) o;
-        return faithValue == value.faithValue && flagValue.equals(value.flagValue) && resourceValue.equals(value.resourceValue);
+        return faithValue == value.faithValue && ((flagValue==null && value.flagValue== null) ||flagValue.equals(value.flagValue)) && ((resourceValue==null && value.resourceValue==null) || resourceValue.equals(value.resourceValue));
     }
 
     @Override
