@@ -21,10 +21,20 @@ public enum Marble {
             map.put(marble.value, marble);
         }
     }
+
+    /**
+     * Get the resource corresponding to an int
+     * @param marble the integer to be converted to a Resource
+     * @return the resource corresponding to an int
+     */
     public static Marble valueOf(int marble){
         return map.get(marble);
     }
 
+    /**
+     * Get the int value of a Resource
+     * @return the int value of a Resource
+     */
     public int getValue(){
         return value;
     }

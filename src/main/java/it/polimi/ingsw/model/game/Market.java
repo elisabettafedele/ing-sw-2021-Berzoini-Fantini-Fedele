@@ -16,7 +16,7 @@ public class Market {
 
     private static final int ROW = 3;
     private static final int COL = 4;
-    private Marble[][] marketTray;
+    private final Marble[][] marketTray;
     private Marble slideMarble;
 
     /**
@@ -36,9 +36,9 @@ public class Market {
     }
 
     /**
-     * Returns the list of {@link Marble} froma a chosen row or column of the Market Tray
+     * Returns the list of {@link Marble} from a chosen row or column of the Market Tray
      * @param insertionPosition a number from 0 to 6
-     * @return list of {@link Marble} froma a chosen row or column of the Market Tray
+     * @return list of {@link Marble} from a chosen row or column of the Market Tray
      * @throws InvalidArgumentException for wrong insertionPosition
      */
     public List<Marble> insertMarbleFromTheSlide(int insertionPosition) throws InvalidArgumentException {
@@ -56,7 +56,7 @@ public class Market {
             }
             marketTray[insertionPosition][COL-1] = slideMarble;
         }else{
-            insertionPosition = insertionPosition*(-1) + 6;
+            insertionPosition = insertionPosition*(-1) + 6; //to have the insertion position between 0 and 3
             marbles.add(marketTray[0][insertionPosition]);
             for(int i = 0; i < ROW - 1; i ++){
                 marketTray[i][insertionPosition] = marketTray[i+1][insertionPosition];

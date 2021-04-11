@@ -4,6 +4,8 @@ import it.polimi.ingsw.enumerations.FlagColor;
 import it.polimi.ingsw.enumerations.Level;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 
+import java.util.Objects;
+
 /**
  * Flag represents the {@link DevelopmentCard} flag, composed of a {@link Level} and a {@link FlagColor}.
  * The class is also utilized for {@link LeaderCard} activation cost.
@@ -41,5 +43,18 @@ public class Flag {
      */
     public Level getFlagLevel() {
         return flagLevel;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Flag flag = (Flag) o;
+        return flagColor == flag.flagColor && flagLevel == flag.flagLevel;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(flagColor, flagLevel);
     }
 }

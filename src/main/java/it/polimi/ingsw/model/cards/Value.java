@@ -8,6 +8,7 @@ import it.polimi.ingsw.model.cards.Flag;
 import it.polimi.ingsw.model.cards.LeaderCard;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * The class represents the {@link DevelopmentCard} and {@link LeaderCard} costs and the production powers
@@ -34,6 +35,11 @@ public class Value {
         this.faithValue = faithValue;
     }
 
+    /**
+     * Get the {@link Flag} part of {@link Card}'s cost
+     * @return the {@link Flag} part of {@link Card}'s cost
+     * @throws ValueNotPresentException if this value has no flags
+     */
     public Map<Flag, Integer> getFlagValue() throws ValueNotPresentException {
         if(flagValue == null){
             throw new ValueNotPresentException("flag");
@@ -44,6 +50,7 @@ public class Value {
     /**
      * Get the {@link Resource} part of {@link Card}'s cost
      * @return the cost in terms of {@link Resource}
+     * @throws ValueNotPresentException if this value has no resources
      */
     public Map<Resource, Integer> getResourceValue() throws ValueNotPresentException {
         if(resourceValue == null){
@@ -53,13 +60,27 @@ public class Value {
     }
 
     /**
-     * Get the {@link Resource} part of {@link Card}'s cost
-     * @return the cost in terms of {@link Resource}
+     * Get the Faith Value part of {@link Card}'s cost
+     * @return the cost in terms of faith points
+     * @throws ValueNotPresentException if this value has no faith points
      */
     public int getFaithValue() throws ValueNotPresentException {
         if(faithValue == 0){
             throw new ValueNotPresentException("faith points");
         }
         return faithValue;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Value value = (Value) o;
+        return faithValue == value.faithValue && flagValue.equals(value.flagValue) && resourceValue.equals(value.resourceValue);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(flagValue, resourceValue, faithValue);
     }
 }

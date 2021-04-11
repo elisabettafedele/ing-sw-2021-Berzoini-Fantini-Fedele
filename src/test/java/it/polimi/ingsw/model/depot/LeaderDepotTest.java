@@ -28,4 +28,9 @@ public class LeaderDepotTest {
         depot.addResources(3);
     }
 
+    @Test (expected = InvalidArgumentException.class)
+    public void addResources_negative_argument() throws InsufficientSpaceException, InvalidDepotException, InvalidArgumentException {
+        depot.addResources(-1);
+    }
+
 }
