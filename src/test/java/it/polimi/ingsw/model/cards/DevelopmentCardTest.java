@@ -77,7 +77,7 @@ public class DevelopmentCardTest {
     public void use_returnFalse() throws InvalidArgumentException {
         DevelopmentCard developmentCard1 = new DevelopmentCard(victoryPoints, cost, flag, production, pathImageFront, pathImageBack);
         developmentCard1.setUsed();
-        assertEquals(false, developmentCard1.getUsed());
+        assertEquals(true, developmentCard1.getUsed());
         developmentCard1.resetUsed();
         assertFalse(developmentCard.getUsed());
     }

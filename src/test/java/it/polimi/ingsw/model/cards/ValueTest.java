@@ -16,6 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ValueTest {
 
@@ -104,6 +105,38 @@ public class ValueTest {
         faithValue1 = 0;
         value1 = new Value(flagValue1, resourceValue1, faithValue1);
         value1.getFaithValue();
+
+    }
+
+    @Test
+    public void equals_and_hashcode() throws InvalidArgumentException {
+        Map<Flag, Integer> flagValue1;
+        Map<Resource, Integer> resourceValue1;
+        int faithValue1;
+        Value value1;
+
+        Map<Flag, Integer> flagValue2;
+        Map<Resource, Integer> resourceValue2;
+        int faithValue2;
+        Value value2;
+
+        flagValue1 = new LinkedHashMap<>();
+        resourceValue1 = new LinkedHashMap<>();
+        flagValue1.put(new Flag(FlagColor.PURPLE, Level.THREE), 4);
+        resourceValue1.put(Resource.COIN, 3);
+        faithValue1 = 5;
+        value1 = new Value(flagValue1, resourceValue1, faithValue1);
+
+        flagValue2 = new LinkedHashMap<>();
+        resourceValue2 = new LinkedHashMap<>();
+        flagValue2.put(new Flag(FlagColor.PURPLE, Level.THREE), 4);
+        resourceValue2.put(Resource.COIN, 3);
+        faithValue2 = 5;
+        value2 = new Value(flagValue2, resourceValue2, faithValue2);
+
+        assertEquals(value1, value2);
+        assertTrue(value1.hashCode() == value2.hashCode());
+
 
     }
 
