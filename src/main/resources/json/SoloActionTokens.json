@@ -1,0 +1,57 @@
+{
+"soloActionTokens":[
+{
+   "imageFront" : "/img/SoloActionTokens/front/cerchio1.png",
+   "imageBack" : "/img/SoloActionTokens/back/retro cerchi.png",
+   "type": "DISCARD",
+   "flagLevel": "ANY",
+   "flagColor": "BLUE",
+   "numberOfCards":2,
+  },
+{
+   "imageFront" : "/img/SoloActionTokens/front/cerchio2.png",
+   "imageBack" : "/img/SoloActionTokens/back/retro cerchi.png",
+   "type": "DISCARD",
+   "flagLevel": "ANY",
+   "flagColor": "GREEN",
+   "numberOfCards":2,
+  },
+{
+   "imageFront" : "/img/SoloActionTokens/front/cerchio3.png",
+   "imageBack" : "/img/SoloActionTokens/back/retro cerchi.png",
+   "type": "DISCARD",
+   "flagLevel": "ANY",
+   "flagColor": "PURPLE",
+   "numberOfCards":2,
+  },
+{
+   "imageFront" : "/img/SoloActionTokens/front/cerchio4.png",
+   "imageBack" : "/img/SoloActionTokens/back/retro cerchi.png",
+   "type": "DISCARD",
+   "flagLevel": "ANY",
+   "flagColor": "YELLOW",
+   "numberOfCards":2,
+  },
+{
+   "imageFront" : "/img/SoloActionTokens/front/cerchio5.png",
+   "imageBack" : "/img/SoloActionTokens/back/retro cerchi.png",
+   "type": "BLACK_CROSS_MOVE",
+   "shuffle": "false",
+   "numberOfMoves":2,
+  },
+{
+   "imageFront" : "/img/SoloActionTokens/front/cerchio6.png",
+   "imageBack" : "/img/SoloActionTokens/back/retro cerchi.png",
+   "type": "BLACK_CROSS_MOVE",
+   "shuffle": "false",
+   "numberOfMoves":2,
+  },
+{
+   "imageFront" : "/img/SoloActionTokens/front/cerchio7.png",
+   "imageBack" : "/img/SoloActionTokens/back/retro cerchi.png",
+   "type": "BLACK_CROSS_MOVE",
+   "shuffle": "true",
+   "numberOfMoves":1,
+  }
+ ]
+}
