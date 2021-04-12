@@ -2,6 +2,8 @@ package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 
+import java.util.Objects;
+
 /**
  * Abstract {@link Card} is the generic representation of all the game's cards. It includes all the attributes that every card has.
  */
@@ -82,5 +84,19 @@ public abstract class Card {
      */
     public void resetUsed(){
         this.used = false;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Card card = (Card) o;
+        return victoryPoints == card.victoryPoints && used == card.used && cost.equals(card.cost) && ((pathImageFront == null && card.pathImageFront == null) ||
+                pathImageFront.equals(card.pathImageFront)) && ((pathImageBack == null && card.pathImageBack == null) || pathImageBack.equals(card.pathImageBack));
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(victoryPoints, cost, pathImageFront, pathImageBack, used);
     }
 }

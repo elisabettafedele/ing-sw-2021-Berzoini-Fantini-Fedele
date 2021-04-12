@@ -3,6 +3,8 @@ package it.polimi.ingsw.model.cards;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.enumerations.Resource;
 
+import java.util.Objects;
+
 /**
  * A development card that can be used to produce resources and faith points
  */
@@ -42,5 +44,20 @@ public class DevelopmentCard extends Card {
      */
     public Production getProduction() {
         return production;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        DevelopmentCard that = (DevelopmentCard) o;
+        return Objects.equals(flag, that.flag) && Objects.equals(production, that.production);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(flag, production);
     }
 }

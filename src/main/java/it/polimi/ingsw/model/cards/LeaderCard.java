@@ -3,6 +3,8 @@ package it.polimi.ingsw.model.cards;
 import it.polimi.ingsw.exceptions.InactiveCardException;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 
+import java.util.Objects;
+
 /**
  * The class represents the Leader Cards of the game
  */
@@ -55,5 +57,17 @@ public class LeaderCard extends Card {
         return this.effect;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        LeaderCard that = (LeaderCard) o;
+        return active == that.active && effect.equals(that.effect);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), active, effect);
+    }
 }
