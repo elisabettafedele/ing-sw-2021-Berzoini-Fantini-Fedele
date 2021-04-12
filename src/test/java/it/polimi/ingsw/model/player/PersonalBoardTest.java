@@ -8,11 +8,10 @@ import it.polimi.ingsw.model.cards.*;
 import it.polimi.ingsw.model.depot.LeaderDepot;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.NoSuchElementException;
+import java.util.*;
+
+import static org.junit.Assert.*;
 
 
 public class PersonalBoardTest {
@@ -21,19 +20,25 @@ public class PersonalBoardTest {
     DevelopmentCard basicDevelopmentCard2;
     LeaderCard basicLeaderCard1;
     LeaderCard basicLeaderCard2;
+    LeaderCard basicLeaderCard3;
+    LeaderCard basicLeaderCard4;
     Value basicValue;
     Production basicProduction;
     @Before
     public void setUp() throws Exception {
-        HashMap hm=new HashMap();
+        Map hm=new HashMap();
         hm.put(Resource.COIN,5);
         basicValue=new Value(null,hm,0);
         basicProduction=new Production(basicValue,basicValue);
         basicLeaderCard1=new LeaderCard(3,basicValue,new Effect(basicProduction),null,null);
         basicLeaderCard2=new LeaderCard(2,basicValue,new Effect(basicProduction),null,null);
+        basicLeaderCard3=new LeaderCard(2,basicValue,new Effect(basicProduction),null,null);
+        basicLeaderCard4=new LeaderCard(2,basicValue,new Effect(basicProduction),null,null);
         ArrayList<LeaderCard> leaderCardList=new ArrayList<>();
         leaderCardList.add(basicLeaderCard1);
         leaderCardList.add(basicLeaderCard2);
+        leaderCardList.add(basicLeaderCard3);
+        leaderCardList.add(basicLeaderCard4);
         basicLeaderCard2.activate();
         personalBoard=new PersonalBoard(leaderCardList);
         basicDevelopmentCard1=new DevelopmentCard(3,basicValue,new Flag(FlagColor.BLUE, Level.ONE),basicProduction,null,null);
@@ -59,12 +64,42 @@ public class PersonalBoardTest {
     public void getFaithTrack_correctlyReturnsFaithTrack() throws InvalidArgumentException {
         assertEquals(FaithTrack.instance(),personalBoard.getFaithTrack());
     }
+
+    @Test
+    public void testGetStrongbox(){
+        assertEquals(personalBoard.getStrongbox()[0].getResourceQuantity(), 0);
+        assertEquals(personalBoard.getStrongbox()[1].getResourceQuantity(), 0);
+        assertEquals(personalBoard.getStrongbox()[2].getResourceQuantity(), 0);
+        assertEquals(personalBoard.getStrongbox()[3].getResourceQuantity(), 0);
+        assertEquals(personalBoard.getStrongbox()[0].getResourceType(), Resource.valueOf(0));
+        assertEquals(personalBoard.getStrongbox()[1].getResourceType(), Resource.valueOf(1));
+        assertEquals(personalBoard.getStrongbox()[2].getResourceType(), Resource.valueOf(2));
+        assertEquals(personalBoard.getStrongbox()[3].getResourceType(), Resource.valueOf(3));
+    }
+
+    @Test
+    public void testGetWarehouse() throws InvalidArgumentException {
+        assertEquals(personalBoard.getWarehouse().getResourceQuantityOfDepot(0), 0);
+        assertEquals(personalBoard.getWarehouse().getResourceQuantityOfDepot(1), 0);
+        assertEquals(personalBoard.getWarehouse().getResourceQuantityOfDepot(2), 0);
+        assertEquals(personalBoard.getWarehouse().getResourceTypeOfDepot(0), Resource.ANY);
+        assertEquals(personalBoard.getWarehouse().getResourceTypeOfDepot(1), Resource.ANY);
+        assertEquals(personalBoard.getWarehouse().getResourceTypeOfDepot(2), Resource.ANY);
+    }
+
+    @Test
+    public void testGetDevelopmentCards(){
+        assertEquals(personalBoard.getDevelopmentCards()[0].size(), 2);
+    }
+
 //DOUBLE TEST
     @Test
     public void getMarkerPosition_returnsCorrectMarkerPosition_AND_moveMarker_correctlyMovesMarker() throws InvalidArgumentException {
         ArrayList<LeaderCard> lcl=new ArrayList<>();
         lcl.add(basicLeaderCard1);
         lcl.add(basicLeaderCard2);
+        lcl.add(basicLeaderCard3);
+        lcl.add(basicLeaderCard4);
         PersonalBoard pb=new PersonalBoard(lcl);
         assertEquals(0,pb.getMarkerPosition());
         pb.moveMarker(5);
@@ -76,6 +111,8 @@ public class PersonalBoardTest {
         ArrayList<LeaderCard> lcl=new ArrayList<>();
         lcl.add(basicLeaderCard1);
         lcl.add(basicLeaderCard2);
+        lcl.add(basicLeaderCard3);
+        lcl.add(basicLeaderCard4);
         PersonalBoard pb=new PersonalBoard(lcl);
         assertEquals(lcl,pb.getLeaderCards());
     }
@@ -85,10 +122,12 @@ public class PersonalBoardTest {
         ArrayList<LeaderCard> lcl=new ArrayList<>();
         lcl.add(basicLeaderCard1);
         lcl.add(basicLeaderCard2);
+        lcl.add(basicLeaderCard3);
+        lcl.add(basicLeaderCard4);
         PersonalBoard pb=new PersonalBoard(lcl);
         pb.addDevelopmentCard(basicDevelopmentCard1,0);
         pb.addDevelopmentCard(basicDevelopmentCard2,0);
-        ArrayList<DevelopmentCard> dc=pb.availableDevelopmentCards();
+        List<DevelopmentCard> dc=pb.availableDevelopmentCards();
         assertTrue(dc.size()==1);
         assertEquals(dc.get(0),basicDevelopmentCard2);
     }
@@ -100,6 +139,8 @@ public class PersonalBoardTest {
         differentLeaderCard2.activate();
         lcl.add(basicLeaderCard1);
         lcl.add(differentLeaderCard2);
+        lcl.add(basicLeaderCard3);
+        lcl.add(basicLeaderCard4);
         PersonalBoard pb=new PersonalBoard(lcl);
         assertTrue(pb.availableLeaderCards().size()==1);
         assertTrue(pb.availableLeaderCards().contains(differentLeaderCard2));
@@ -110,6 +151,8 @@ public class PersonalBoardTest {
         ArrayList<LeaderCard> lcl=new ArrayList<>();
         lcl.add(basicLeaderCard1);
         lcl.add(basicLeaderCard2);
+        lcl.add(basicLeaderCard3);
+        lcl.add(basicLeaderCard4);
         PersonalBoard pb=new PersonalBoard(lcl);
         pb.removeLeaderCard(basicLeaderCard2);
         assertFalse(pb.getLeaderCards().contains(basicLeaderCard2));
@@ -120,6 +163,8 @@ public class PersonalBoardTest {
         ArrayList<LeaderCard> lcl=new ArrayList<>();
         lcl.add(basicLeaderCard1);
         lcl.add(basicLeaderCard2);
+        lcl.add(basicLeaderCard3);
+        lcl.add(basicLeaderCard4);
         PersonalBoard pb=new PersonalBoard(lcl);
         pb.removeLeaderCard(basicLeaderCard2);
         pb.removeLeaderCard(basicLeaderCard2);
@@ -130,6 +175,8 @@ public class PersonalBoardTest {
         ArrayList<LeaderCard> lcl=new ArrayList<>();
         lcl.add(basicLeaderCard1);
         lcl.add(basicLeaderCard2);
+        lcl.add(basicLeaderCard3);
+        lcl.add(basicLeaderCard4);
         PersonalBoard pb=new PersonalBoard(lcl);
         pb.addDevelopmentCard(basicDevelopmentCard1,0);
         assertTrue(pb.availableDevelopmentCards().contains(basicDevelopmentCard1));
@@ -139,6 +186,8 @@ public class PersonalBoardTest {
         ArrayList<LeaderCard> lcl=new ArrayList<>();
         lcl.add(basicLeaderCard1);
         lcl.add(basicLeaderCard2);
+        lcl.add(basicLeaderCard3);
+        lcl.add(basicLeaderCard4);
         PersonalBoard pb=new PersonalBoard(lcl);
         pb.addDevelopmentCard(basicDevelopmentCard1,3);
     }
@@ -147,6 +196,8 @@ public class PersonalBoardTest {
         ArrayList<LeaderCard> lcl=new ArrayList<>();
         lcl.add(basicLeaderCard1);
         lcl.add(basicLeaderCard2);
+        lcl.add(basicLeaderCard3);
+        lcl.add(basicLeaderCard4);
         PersonalBoard pb=new PersonalBoard(lcl);
         pb.addDevelopmentCard(basicDevelopmentCard1,0);
         pb.addDevelopmentCard(basicDevelopmentCard1,0);
@@ -156,6 +207,8 @@ public class PersonalBoardTest {
         ArrayList<LeaderCard> lcl=new ArrayList<>();
         lcl.add(basicLeaderCard1);
         lcl.add(basicLeaderCard2);
+        lcl.add(basicLeaderCard3);
+        lcl.add(basicLeaderCard4);
         PersonalBoard pb=new PersonalBoard(lcl);
         pb.addDevelopmentCard(basicDevelopmentCard2,0);
     }
@@ -166,15 +219,17 @@ public class PersonalBoardTest {
         ArrayList<LeaderCard> lcl=new ArrayList<>();
         lcl.add(basicLeaderCard1);
         lcl.add(new LeaderCard(3,basicValue,new Effect(new ExtraDepot(new LeaderDepot(Resource.COIN))),null,null));
+        lcl.add(basicLeaderCard3);
+        lcl.add(basicLeaderCard4);
         lcl.get(1).activate();
         lcl.get(1).getEffect().getExtraDepotEffect().getLeaderDepot().addResources(1);//1 COIN
         PersonalBoard pb=new PersonalBoard(lcl);
-        HashMap resourcesToBeAdded=new HashMap();
+        Map resourcesToBeAdded=new HashMap();
         resourcesToBeAdded.put(Resource.COIN,2);
         resourcesToBeAdded.put(Resource.SERVANT,5);
         pb.addResourcesToStrongbox(resourcesToBeAdded);//2 COINS AND 5 SERVANTS
         pb.getWarehouse().addResourcesToDepot(1,Resource.SHIELD,1); //1 SHIELD
-        HashMap availableResources= pb.countResources();
+        Map availableResources= pb.countResources();
         assertTrue(availableResources.get(Resource.COIN).equals(3));
         assertTrue(availableResources.get(Resource.STONE).equals(0));
         assertTrue(availableResources.get(Resource.SERVANT).equals(5));

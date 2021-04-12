@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class ValueParser {
 
-    public ValueParser(){
+    private ValueParser(){
         throw new IllegalStateException("Utility class");
     }
 

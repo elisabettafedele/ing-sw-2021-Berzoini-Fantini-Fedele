@@ -9,10 +9,8 @@ import it.polimi.ingsw.model.cards.Production;
 import it.polimi.ingsw.model.cards.Value;
 import it.polimi.ingsw.model.depot.Depot;
 import it.polimi.ingsw.model.depot.StrongboxDepot;
-import it.polimi.ingsw.model.depot.WarehouseDepot;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * The class represents the {@link Player}'s Personal Board.It includes all the attributes and that PersonalBoard has.
@@ -22,18 +20,19 @@ public class PersonalBoard {
     private Warehouse warehouse;
     private int markerPosition;
     private Stack<DevelopmentCard>[] developmentCardSlots;
-    private ArrayList<LeaderCard> leaderCards;
+    private List<LeaderCard> leaderCards;
     private Production defaultProduction;
     private FaithTrack faithTrack;
-    private final int numberOfStrongboxDepots=4;
-    private final int numberOfDevelopmentCardSlots=3;
+    private final int numberOfStrongboxDepots = 4;
+    private final int numberOfDevelopmentCardSlots = 3;
+    private final int numberOfInitialLeaderCards = 4;
 
     /**
      * @param leaderCards The list of maximum two {@link LeaderCard} to be assigned to the Personal Board
      * @throws InvalidArgumentException leaderCards is null or contains less or more than 2 Leader Cards
      */
-    public PersonalBoard( ArrayList<LeaderCard> leaderCards) throws InvalidArgumentException {
-        if(leaderCards==null||leaderCards.size()!=2){
+    public PersonalBoard( List<LeaderCard> leaderCards) throws InvalidArgumentException {
+        if(leaderCards==null||leaderCards.size()!=numberOfInitialLeaderCards){
             throw new InvalidArgumentException();
         }
         faithTrack=FaithTrack.instance();
@@ -49,9 +48,9 @@ public class PersonalBoard {
             developmentCardSlots[i]=new Stack<>();
         }
         this.leaderCards = leaderCards;
-        HashMap input = new HashMap();
+        Map input = new HashMap();
         input.put(Resource.ANY,2);
-        HashMap output = new HashMap();
+        Map output = new HashMap();
         output.put(Resource.ANY,1);
         defaultProduction = new Production(new Value(null,input,0),new Value( null,output,0));
         this.faithTrack = faithTrack;
@@ -100,15 +99,15 @@ public class PersonalBoard {
      * @return Returns all {@link LeaderCard}
      */
 
-    public ArrayList<LeaderCard> getLeaderCards() {
+    public List<LeaderCard> getLeaderCards() {
         return leaderCards;
     }
 
     /**
      * @return Returns only the {@link DevelopmentCard} on the top of the developmentCardSlots' stacks. They are the only DevelopmentCards that can be utilized.
      */
-    public ArrayList<DevelopmentCard> availableDevelopmentCards() {
-        ArrayList<DevelopmentCard> tempList = new ArrayList<>();
+    public List<DevelopmentCard> availableDevelopmentCards() {
+        List<DevelopmentCard> tempList = new ArrayList<>();
         for (int i = 0; i < numberOfDevelopmentCardSlots; i++) {
             try {
                 tempList.add(developmentCardSlots[i].peek());
@@ -174,8 +173,8 @@ public class PersonalBoard {
      * @throws InvalidArgumentException
      */
 
-    public HashMap<Resource,Integer> countResources() throws InactiveCardException, DifferentEffectTypeException, InvalidArgumentException {
-        HashMap<Resource,Integer> availableResources=new HashMap<>();
+    public Map<Resource,Integer> countResources() throws InactiveCardException, DifferentEffectTypeException, InvalidArgumentException {
+        Map<Resource,Integer> availableResources=new HashMap<>();
         int[] resources=new int[4] ;
         for(int i=0;i<numberOfStrongboxDepots;i++){
             resources[i]=0+strongbox[i].getResourceQuantity();
