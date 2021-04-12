@@ -36,8 +36,8 @@ public class DevelopmentCardParserTest {
 
         Map<Resource, Integer> cost = new LinkedHashMap<>();
         cost.put(Resource.SHIELD, 2);
-        assertEquals(card.getPathImageBack(), "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-1");
-        assertEquals(card.getPathImageFront(), "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-1");
+        assertEquals(card.getPathImageBack(), "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-1.pdf");
+        assertEquals(card.getPathImageFront(), "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-1.pdf");
         assertEquals(card.getFlag(), new Flag(FlagColor.GREEN, Level.ONE));
         assertEquals(card.getProduction(), p);
         assertEquals(card.getVictoryPoints(), 1);
