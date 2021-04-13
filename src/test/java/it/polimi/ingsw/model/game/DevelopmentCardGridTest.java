@@ -4,12 +4,16 @@ import it.polimi.ingsw.enumerations.FlagColor;
 import it.polimi.ingsw.enumerations.Level;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.model.cards.DevelopmentCard;
+import it.polimi.ingsw.model.cards.Flag;
+import it.polimi.ingsw.model.cards.Production;
+import it.polimi.ingsw.model.cards.Value;
 import it.polimi.ingsw.utility.DevelopmentCardParser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;
+import java.util.EmptyStackException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -64,5 +68,43 @@ public class DevelopmentCardGridTest {
     public void test_checkEmptyColumn_returnFalse() throws UnsupportedEncodingException, InvalidArgumentException {
         DevelopmentCardGrid grid = new DevelopmentCardGrid();
         assertFalse(grid.checkEmptyColumn());
+    }
+
+    @Test (expected = InvalidArgumentException.class)
+    public void test_removeCard_InvalidArgumentException() throws UnsupportedEncodingException, InvalidArgumentException {
+        DevelopmentCardGrid grid = new DevelopmentCardGrid();
+        List<DevelopmentCard> availableCards;
+        List<DevelopmentCard> cards;
+        for(int i = 0; i < 3; i++) {
+            availableCards = grid.getAvailableCards();
+            cards = availableCards.stream().filter(c ->
+                    c.getFlag().getFlagColor().getValue() == 0).filter(c ->
+                    c.getFlag().getFlagLevel().getValue() == 0).
+                    collect(Collectors.toList());
+            grid.removeCard(cards.get(0));
+        }
+        DevelopmentCard testCard = new DevelopmentCard(5, new Value(null,null, 5),
+                new Flag(FlagColor.GREEN, Level.ONE), new Production(new Value(null,null,3), new
+                Value(null,null,2)), "a", "b");
+        grid.removeCard(testCard);
+    }
+
+    @Test (expected = EmptyStackException.class)
+    public void test_removeCard_EmptyStackException() throws InvalidArgumentException, UnsupportedEncodingException {
+        DevelopmentCardGrid grid = new DevelopmentCardGrid();
+        List<DevelopmentCard> availableCards;
+        List<DevelopmentCard> cards;
+        for(int i = 0; i < 4; i++) {
+            availableCards = grid.getAvailableCards();
+            cards = availableCards.stream().filter(c ->
+                    c.getFlag().getFlagColor().getValue() == 0).filter(c ->
+                    c.getFlag().getFlagLevel().getValue() == 0).
+                    collect(Collectors.toList());
+            grid.removeCard(cards.get(0));
+        }
+        DevelopmentCard testCard = new DevelopmentCard(5, new Value(null,null, 5),
+                new Flag(FlagColor.GREEN, Level.ONE), new Production(new Value(null,null,3), new
+                Value(null,null,2)), "a", "b");
+        grid.removeCard(testCard);
     }
 }

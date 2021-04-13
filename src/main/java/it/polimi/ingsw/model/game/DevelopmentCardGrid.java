@@ -49,7 +49,9 @@ public class DevelopmentCardGrid {
      * Remove the bought {@link DevelopmentCard} from the grid
      * @param card the card that a {@link Player} have bought
      */
-    public void removeCard(DevelopmentCard card){
+    public void removeCard(DevelopmentCard card) throws InvalidArgumentException {
+        if(!cardGrid[card.getFlag().getFlagLevel().getValue()*(-1)+2][card.getFlag().getFlagColor().getValue()].peek().equals(card))
+            throw new InvalidArgumentException();
         this.cardGrid[card.getFlag().getFlagLevel().getValue()*(-1)+2][card.getFlag().getFlagColor().getValue()].pop();
     }
 
