@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model.cards;
 
-import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.enumerations.Resource;
+import it.polimi.ingsw.exceptions.InvalidArgumentException;
 
 import java.util.Objects;
 
@@ -16,7 +16,7 @@ public class DevelopmentCard extends Card {
     /**
      *
      * @param victoryPoints the number of victory points obtained at the end of the game
-     * @param cost the number and type of {@link Resource} needed to buy the card from the Developmente Card Grid //TODO {link DevelopmentCardGrid}
+     * @param cost the number and type of {@link Resource} needed to buy the card from the {@link it.polimi.ingsw.model.game.DevelopmentCardGrid}
      * @param flag the {@link Flag} representing type and level of the card
      * @param production the {@link Production} power associated to the card
      * @throws InvalidArgumentException

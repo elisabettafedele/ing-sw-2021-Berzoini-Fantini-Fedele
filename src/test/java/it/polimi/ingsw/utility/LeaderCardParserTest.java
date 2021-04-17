@@ -18,7 +18,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
-//TODO finish tests
+
 public class LeaderCardParserTest {
     @Test
     public void TestLeaderParser() throws JsonFileNotFoundException, InvalidArgumentException, FileNotFoundException, UnsupportedEncodingException, InactiveCardException, ValueNotPresentException, DifferentEffectTypeException {
@@ -35,5 +35,6 @@ public class LeaderCardParserTest {
         Effect effect = new Effect(Resource.SERVANT);
         assertEquals(cards.get(0).getEffect(), effect);
     }
+
 
 }

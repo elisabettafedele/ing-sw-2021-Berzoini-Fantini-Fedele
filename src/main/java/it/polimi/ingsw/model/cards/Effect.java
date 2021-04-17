@@ -24,7 +24,7 @@ public class Effect {
 
     /**
      * Constructs a discount effect
-     * @param discountEffect the {@link Resource} to be subtracted from the {@link DevelopmentCard} cost when buying from the DevelopmentCardGrid //TODO{link DevelopmentCardGrid}.
+     * @param discountEffect the {@link Resource} to be subtracted from the {@link DevelopmentCard} cost when buying from the DevelopmentCardGrid {@link it.polimi.ingsw.model.game.DevelopmentCardGrid}
      * @throws InvalidArgumentException if discountEffect is null
      */
     public Effect(Resource discountEffect) throws InvalidArgumentException {
@@ -85,8 +85,8 @@ public class Effect {
     }
 
     /**
-     * Get the {@link Resource} to be subtracted from the {@link DevelopmentCard} cost when buying from the DevelopmentCardGrid.//TODO link
-     * @return the {@link Resource} to be subtracted from the {@link DevelopmentCard} cost when buying from the DevelopmentCardGrid.//TODO link
+     * Get the {@link Resource} to be subtracted from the {@link DevelopmentCard} cost when buying from the {@link it.polimi.ingsw.model.game.DevelopmentCardGrid}
+     * @return the {@link Resource} to be subtracted from the {@link DevelopmentCard} cost when buying from {@link it.polimi.ingsw.model.game.DevelopmentCardGrid}
      * @throws DifferentEffectTypeException if the {@link LeaderCard} has a different effect
      */
     public Resource getDiscountEffect() throws DifferentEffectTypeException {

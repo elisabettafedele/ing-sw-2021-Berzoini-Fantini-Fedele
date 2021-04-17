@@ -5,13 +5,13 @@ import it.polimi.ingsw.exceptions.*;
 import it.polimi.ingsw.model.depot.Depot;
 import it.polimi.ingsw.model.depot.WarehouseDepot;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * Class that represent a Warehouse composed of three depot of capacity of 1, 2 and 3 resources, respectively
+ * The smallest depot has index 0
  */
 
 public class Warehouse {
@@ -19,7 +19,11 @@ public class Warehouse {
     private final int numberOfDepots = 3;
 
     /**
-     * Class constructor
+     * Class constructor: creates an Array of three depots where:
+     * depots[0] can contain maximum one resource
+     * depots[1] can contain maximum two resources
+     * depots[2] can contain maximum three resources
+     * and each depot contains the same {@link Resource}, that cannot be placed in two different depots
      * @throws InvalidArgumentException
      */
     public Warehouse() throws InvalidArgumentException {
@@ -41,6 +45,9 @@ public class Warehouse {
         return depots[row].getResourceType();
     }
 
+    /**
+     * @return the {@link Resource} type of resources contained in the depots
+     */
     public List<Resource> getResourceTypes(){
         List<Resource> res;
         res = Arrays.stream(depots)
@@ -120,18 +127,11 @@ public class Warehouse {
      * @throws UnswitchableDepotsException when the switch is not allowed by the capacity of the smallest {@link Depot}
      * @throws InsufficientSpaceException thrown when a depot cannot contain a certain number of {@link Resource}
      */
-    public void switchRows(int one, int other) throws UnswitchableDepotsException, InsufficientSpaceException {
+    public void switchRows(int one, int other) throws UnswitchableDepotsException, InsufficientSpaceException, InvalidArgumentException {
         Resource tmpType;
         int tmpQuantity;
-        /* codice con eccezione più generale
-        int max, min;
-        max = one > other ? one : other;
-        min = max == one ? other : one;
-        if (!switchable(one, other))
-            throw new InsufficientSpaceException(depots[max].getResourceQuantity(), depots[min].getMaxResourceQuantity());
-        */
-
-        // eccezione più specifica
+        if (one == other || one < 0 || one >= numberOfDepots || other >= numberOfDepots || other < 0)
+            throw new InvalidArgumentException("invalid row number\n");
         if (!switchable(one, other))
             throw new UnswitchableDepotsException();
         tmpType = depots[one].getResourceType();

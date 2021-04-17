@@ -5,9 +5,7 @@ import it.polimi.ingsw.exceptions.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.awt.*;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class WarehouseTest {
     Warehouse warehouse;
@@ -75,6 +73,11 @@ public class WarehouseTest {
     public void testInvalidTypeRemove() throws InvalidArgumentException, InsufficientSpaceException, InvalidResourceTypeException, InvalidDepotException, InsufficientQuantityException {
         warehouse.addResourcesToDepot(0, Resource.COIN, 1);
         warehouse.removeResourcesFromDepot(Resource.SHIELD, 2);
+    }
+
+    @Test (expected = InvalidArgumentException.class)
+    public void testInvalidArgumentSwitchRows() throws InvalidArgumentException, UnswitchableDepotsException, InsufficientSpaceException {
+        warehouse.switchRows(-1, 2);
     }
 
 }
