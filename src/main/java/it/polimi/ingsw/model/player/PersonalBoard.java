@@ -3,14 +3,12 @@ package it.polimi.ingsw.model.player;
 import it.polimi.ingsw.enumerations.EffectType;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.exceptions.*;
-import it.polimi.ingsw.model.cards.DevelopmentCard;
-import it.polimi.ingsw.model.cards.LeaderCard;
-import it.polimi.ingsw.model.cards.Production;
-import it.polimi.ingsw.model.cards.Value;
+import it.polimi.ingsw.model.cards.*;
 import it.polimi.ingsw.model.depot.Depot;
 import it.polimi.ingsw.model.depot.StrongboxDepot;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * The class represents the {@link Player}'s Personal Board.It includes all the attributes and that PersonalBoard has.
@@ -184,7 +182,7 @@ public class PersonalBoard {
                 resources[lc.getEffect().getExtraDepotEffect().getLeaderDepot().getResourceType().getValue()]+=lc.getEffect().getExtraDepotEffect().getLeaderDepot().getResourceQuantity();
             }
         }
-        for(int i=0;i<3;i++){
+        for(int i=0;i < warehouse.getNumberOfDepots();i++){
             if(!warehouse.getResourceTypeOfDepot(i).equals(Resource.ANY)) {
                 resources[warehouse.getResourceTypeOfDepot(i).getValue()]+= warehouse.getResourceQuantityOfDepot(i);
             }
@@ -251,5 +249,30 @@ public class PersonalBoard {
         return listOfProductions;
     }
 
+    /**
+     * Method that check if a new development card can be added legally to the Personal Board
+     * @param card is the card to add
+     * @return true only if the insertion is legal
+     */
+    public boolean cardInsertionIsLegal(DevelopmentCard card){
+        for (Stack<DevelopmentCard> stack : developmentCardSlots)
+            if (stack.isEmpty() || stack.peek().getFlag().getFlagLevel().getValue() == card.getFlag().getFlagLevel().getValue() - 1)
+                return true;
+        return false;
+    }
+
+    /**
+     * Method use to get the available effects of a certain {@link EffectType}
+     * @param effectType
+     * @return an empty list if no effect of this type is available or a list of effects if at least one is available
+     */
+    public List<Effect> getAvailableEffects(EffectType effectType){
+        List<Effect> availableEffects = new ArrayList<>();
+        //If there is not any leader card active return an empty list
+        if (!availableLeaderCards().isEmpty() && this.availableLeaderCards().stream().anyMatch(x -> x.getEffect().getEffectType() == effectType))
+            availableEffects = this.availableLeaderCards().stream().filter(x -> x.getEffect().getEffectType().equals(effectType)).map(LeaderCard::getEffect).collect(Collectors.toList());
+
+        return availableEffects;
+    }
 
 }

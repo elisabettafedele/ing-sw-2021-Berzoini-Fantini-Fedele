@@ -1,6 +1,5 @@
 package it.polimi.ingsw.model.cards;
 
-import it.polimi.ingsw.exceptions.InactiveCardException;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 
 import java.util.Objects;
@@ -53,7 +52,7 @@ public class LeaderCard extends Card {
     /**
      * @return the {@link Effect} of the card
      */
-    public Effect getEffect() throws InactiveCardException {
+    public Effect getEffect() {
         return this.effect;
     }
 

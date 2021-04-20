@@ -2,7 +2,11 @@ package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
+import it.polimi.ingsw.exceptions.ValueNotPresentException;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -44,6 +48,23 @@ public class DevelopmentCard extends Card {
      */
     public Production getProduction() {
         return production;
+    }
+
+    public Map<Resource, Integer> getDiscountedCost(List<Resource> discountedResources) {
+        Map<Resource, Integer> originalCost = null;
+        try {
+            originalCost = this.getCost().getResourceValue();
+        } catch (ValueNotPresentException e) {
+            e.printStackTrace();
+        }
+        Map<Resource, Integer> discountedCost = new HashMap<Resource, Integer>();
+        for (Resource resource : originalCost.keySet()) {
+            if (discountedResources.isEmpty() || !discountedResources.contains(resource))
+                discountedCost.put(resource, originalCost.get(resource));
+            else if (originalCost.get(resource) > 1 && discountedResources.contains(resource))
+                discountedCost.put(resource, originalCost.get(resource)-1);
+        }
+        return discountedCost;
     }
 
 

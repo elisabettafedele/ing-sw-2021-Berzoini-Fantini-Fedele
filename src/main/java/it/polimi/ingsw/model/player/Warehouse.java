@@ -5,6 +5,7 @@ import it.polimi.ingsw.exceptions.*;
 import it.polimi.ingsw.model.depot.Depot;
 import it.polimi.ingsw.model.depot.WarehouseDepot;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,6 +45,35 @@ public class Warehouse {
             throw new InvalidArgumentException();
         return depots[row].getResourceType();
     }
+
+    public List<Depot> getAvailableWarehouseDepotsForResourceType(Resource resource){
+        int row;
+        List<Depot> depots= new ArrayList<Depot>();
+        row = getRowIndexFromResource(resource);
+
+        //If a depot is already used for the resource
+        if (row != -1){
+            if (this.depots[row].enoughSpace(1))
+                depots.add(this.depots[row]);
+            return depots;
+        }
+
+        for (row = 0; row < numberOfDepots; row++){
+            if (this.depots[row].getResourceType() == Resource.ANY)
+                depots.add(this.depots[row]);
+        }
+
+        return depots;
+
+    }
+
+    /**
+     * @return the number of depot of the warehouse
+     */
+    public int getNumberOfDepots(){
+        return this.numberOfDepots;
+    }
+
 
     /**
      * @return the {@link Resource} type of resources contained in the depots

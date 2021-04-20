@@ -74,4 +74,8 @@ public class Game {
         return players.get(0);
     }
 
+    public GameType getGameType(){
+        return this.gameType;
+    }
+
 }

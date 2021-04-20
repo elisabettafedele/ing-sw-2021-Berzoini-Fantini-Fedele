@@ -2,10 +2,17 @@ package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.enumerations.FlagColor;
 import it.polimi.ingsw.enumerations.Level;
+import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
+import it.polimi.ingsw.exceptions.ValueNotPresentException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -54,6 +61,51 @@ public class DevelopmentCardTest {
     @Test
     public void getCost() {
         assertEquals(cost, developmentCard.getCost());
+    }
+
+    @Test
+    public void testGetDiscountedCostTwoDiscounts() throws InvalidArgumentException, ValueNotPresentException {
+        Map<Resource, Integer> originalCost = new HashMap<>();
+        originalCost.put(Resource.SERVANT, 2);
+        originalCost.put(Resource.SHIELD, 3);
+        List<Resource> discounts = new ArrayList<>();
+        discounts.add(Resource.SERVANT);
+        discounts.add(Resource.SHIELD);
+        Map<Resource, Integer> discountedCost = new HashMap<>();
+        discountedCost.put(Resource.SERVANT, 1);
+        discountedCost.put(Resource.SHIELD, 2);
+        Value originalValue = new Value(null, originalCost, 0);
+        DevelopmentCard card = new DevelopmentCard(victoryPoints, originalValue, flag, production, pathImageFront, pathImageBack);
+        assertEquals(discountedCost, card.getDiscountedCost(discounts));
+    }
+
+    @Test
+    public void testGetDiscountedCostOneDiscount() throws InvalidArgumentException, ValueNotPresentException {
+        Map<Resource, Integer> originalCost = new HashMap<>();
+        originalCost.put(Resource.SERVANT, 2);
+        originalCost.put(Resource.SHIELD, 3);
+        List<Resource> discounts = new ArrayList<>();
+        discounts.add(Resource.SERVANT);
+        Map<Resource, Integer> discountedCost = new HashMap<>();
+        discountedCost.put(Resource.SERVANT, 1);
+        discountedCost.put(Resource.SHIELD, 3);
+        Value originalValue = new Value(null, originalCost, 0);
+        DevelopmentCard card = new DevelopmentCard(victoryPoints, originalValue, flag, production, pathImageFront, pathImageBack);
+        assertEquals(discountedCost, card.getDiscountedCost(discounts));
+    }
+
+    @Test
+    public void testGetDiscountedCostEmptyList() throws InvalidArgumentException, ValueNotPresentException {
+        Map<Resource, Integer> originalCost = new HashMap<>();
+        originalCost.put(Resource.SERVANT, 2);
+        originalCost.put(Resource.SHIELD, 3);
+        List<Resource> discounts = new ArrayList<>();
+        Map<Resource, Integer> discountedCost = new HashMap<>();
+        discountedCost.put(Resource.SERVANT, 2);
+        discountedCost.put(Resource.SHIELD, 3);
+        Value originalValue = new Value(null, originalCost, 0);
+        DevelopmentCard card = new DevelopmentCard(victoryPoints, originalValue, flag, production, pathImageFront, pathImageBack);
+        assertEquals(discountedCost, card.getDiscountedCost(discounts));
     }
 
     @Test
