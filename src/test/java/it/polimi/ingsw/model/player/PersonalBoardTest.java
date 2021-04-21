@@ -1,15 +1,17 @@
 package it.polimi.ingsw.model.player;
 
-import it.polimi.ingsw.enumerations.FlagColor;
-import it.polimi.ingsw.enumerations.Level;
-import it.polimi.ingsw.enumerations.Resource;
+import it.polimi.ingsw.enumerations.*;
 import it.polimi.ingsw.exceptions.*;
 import it.polimi.ingsw.model.cards.*;
 import it.polimi.ingsw.model.depot.LeaderDepot;
+import it.polimi.ingsw.utility.LeaderCardParser;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
@@ -26,7 +28,7 @@ public class PersonalBoardTest {
     Production basicProduction;
     @Before
     public void setUp() throws Exception {
-        Map hm=new HashMap();
+        Map<Resource, Integer> hm=new HashMap<>();
         hm.put(Resource.COIN,5);
         basicValue=new Value(null,hm,0);
         basicProduction=new Production(basicValue,basicValue);
@@ -107,6 +109,38 @@ public class PersonalBoardTest {
     }
 
     @Test
+    public void testCardInsertionIsLegal() throws InvalidArgumentException {
+        ArrayList<LeaderCard> lcl=new ArrayList<>();
+        lcl.add(basicLeaderCard1);
+        lcl.add(basicLeaderCard2);
+        lcl.add(basicLeaderCard3);
+        lcl.add(basicLeaderCard4);
+        PersonalBoard pb = new PersonalBoard(lcl);
+        assertFalse(pb.cardInsertionIsLegal(basicDevelopmentCard2));
+        assertTrue(pb.cardInsertionIsLegal(basicDevelopmentCard1));
+    }
+
+    @Test
+    public void testGetAvailableEffects() throws InvalidArgumentException {
+        ArrayList<LeaderCard> lcl=new ArrayList<>();
+        lcl.add(basicLeaderCard1);
+        lcl.add(basicLeaderCard2);
+        lcl.add(basicLeaderCard3);
+        lcl.add(basicLeaderCard4);
+        PersonalBoard pb = new PersonalBoard(lcl);
+        pb.getLeaderCards().get(0).activate();
+        List <Effect> productionEffects = new ArrayList<>();
+        productionEffects.add(new Effect(basicProduction));
+        assertTrue(pb.getAvailableEffects(EffectType.PRODUCTION).containsAll(productionEffects));
+        assertTrue(productionEffects.containsAll(pb.getAvailableEffects(EffectType.PRODUCTION)));
+        pb.getLeaderCards().get(1).activate();
+        productionEffects.add(new Effect(basicProduction));
+        assertTrue(pb.getAvailableEffects(EffectType.PRODUCTION).containsAll(productionEffects));
+        assertTrue(productionEffects.containsAll(pb.getAvailableEffects(EffectType.PRODUCTION)));
+        assertTrue(pb.getAvailableEffects(EffectType.DISCOUNT).isEmpty());
+    }
+
+    @Test
     public void getLeaderCards_returnsCorrectLeaderCards() throws InvalidArgumentException {
         ArrayList<LeaderCard> lcl=new ArrayList<>();
         lcl.add(basicLeaderCard1);
@@ -158,6 +192,67 @@ public class PersonalBoardTest {
         assertFalse(pb.getLeaderCards().contains(basicLeaderCard2));
         assertTrue(pb.getLeaderCards().contains(basicLeaderCard1));
     }
+
+    @Test
+    public void testAddResourceFirstRowWarehouse() throws InvalidArgumentException, InvalidDepotException, InvalidResourceTypeException, InsufficientSpaceException {
+        ArrayList<LeaderCard> lcl=new ArrayList<>();
+        lcl.add(basicLeaderCard1);
+        lcl.add(basicLeaderCard2);
+        lcl.add(basicLeaderCard3);
+        lcl.add(basicLeaderCard4);
+        PersonalBoard pb=new PersonalBoard(lcl);
+        pb.addResources(ResourceStorageType.WAREHOUSE_FIRST_DEPOT, Resource.STONE, 1);
+        assertEquals(pb.getWarehouse().getResourceTypeOfDepot(0), Resource.STONE);
+        assertEquals(pb.getWarehouse().getResourceQuantityOfDepot(0), 1);
+        assertEquals(pb.getWarehouse().getResourceTypeOfDepot(1), Resource.ANY);
+        assertEquals(pb.getWarehouse().getResourceQuantityOfDepot(1), 0);
+        assertEquals(pb.getWarehouse().getResourceTypeOfDepot(2), Resource.ANY);
+        assertEquals(pb.getWarehouse().getResourceQuantityOfDepot(2), 0);
+    }
+
+    @Test
+    public void testAddResourceStrongbox() throws InvalidArgumentException, InvalidDepotException, InvalidResourceTypeException, InsufficientSpaceException {
+        ArrayList<LeaderCard> lcl=new ArrayList<>();
+        lcl.add(basicLeaderCard1);
+        lcl.add(basicLeaderCard2);
+        lcl.add(basicLeaderCard3);
+        lcl.add(basicLeaderCard4);
+        PersonalBoard pb=new PersonalBoard(lcl);
+        pb.addResources(ResourceStorageType.STRONGBOX, Resource.STONE, 1);
+        assertEquals(pb.getStrongbox()[Resource.STONE.getValue()].getResourceType(), Resource.STONE);
+        assertEquals(pb.getStrongbox()[Resource.STONE.getValue()].getResourceQuantity(), 1);
+        assertEquals(pb.getStrongbox()[Resource.COIN.getValue()].getResourceType(), Resource.COIN);
+        assertEquals(pb.getStrongbox()[Resource.COIN.getValue()].getResourceQuantity(), 0);
+        assertEquals(pb.getStrongbox()[Resource.SHIELD.getValue()].getResourceType(), Resource.SHIELD);
+        assertEquals(pb.getStrongbox()[Resource.SHIELD.getValue()].getResourceQuantity(), 0);
+        assertEquals(pb.getStrongbox()[Resource.SERVANT.getValue()].getResourceType(), Resource.SERVANT);
+        assertEquals(pb.getStrongbox()[Resource.SERVANT.getValue()].getResourceQuantity(), 0);
+    }
+
+    @Test
+    public void testAddResourceLeaderCard() throws JsonFileNotFoundException, InvalidArgumentException, FileNotFoundException, UnsupportedEncodingException, InvalidDepotException, InvalidResourceTypeException, InsufficientSpaceException, DifferentEffectTypeException {
+        List<LeaderCard> lcl = LeaderCardParser.parseCards();
+        lcl = lcl.stream().filter(x-> x.getEffect().getEffectType() == EffectType.EXTRA_DEPOT).collect(Collectors.toList());
+        PersonalBoard pb=new PersonalBoard(lcl);
+        lcl.forEach(x -> x.activate());
+        pb.addResources(ResourceStorageType.LEADER_DEPOT, Resource.STONE, 1);
+        List<Effect> effects = pb.getAvailableEffects(EffectType.EXTRA_DEPOT);
+        for (Effect effect : effects)
+            if (effect.getExtraDepotEffect().getLeaderDepot().getResourceType() == Resource.STONE)
+                assertEquals(effect.getExtraDepotEffect().getLeaderDepot().getResourceQuantity(), 1);
+            else
+                assertEquals(effect.getExtraDepotEffect().getLeaderDepot().getResourceQuantity(), 0);
+    }
+
+    @Test (expected = InvalidDepotException.class)
+    public void testInvalidDepotAddResource() throws JsonFileNotFoundException, InvalidArgumentException, FileNotFoundException, UnsupportedEncodingException, InvalidDepotException, InvalidResourceTypeException, InsufficientSpaceException {
+        List<LeaderCard> lcl = LeaderCardParser.parseCards();
+        lcl = lcl.stream().filter(x-> x.getEffect().getEffectType() == EffectType.EXTRA_DEPOT).collect(Collectors.toList());
+        PersonalBoard pb = new PersonalBoard(lcl);
+        pb.addResources(ResourceStorageType.LEADER_DEPOT, Resource.SERVANT, 2);
+    }
+
+
     @Test(expected = NoSuchElementException.class)
     public void removeLeaderCard_correctlyThrowsNoSuchElementException() throws InvalidArgumentException {
         ArrayList<LeaderCard> lcl=new ArrayList<>();
@@ -224,12 +319,12 @@ public class PersonalBoardTest {
         lcl.get(1).activate();
         lcl.get(1).getEffect().getExtraDepotEffect().getLeaderDepot().addResources(1);//1 COIN
         PersonalBoard pb=new PersonalBoard(lcl);
-        Map resourcesToBeAdded=new HashMap();
+        Map<Resource, Integer> resourcesToBeAdded=new HashMap();
         resourcesToBeAdded.put(Resource.COIN,2);
         resourcesToBeAdded.put(Resource.SERVANT,5);
         pb.addResourcesToStrongbox(resourcesToBeAdded);//2 COINS AND 5 SERVANTS
         pb.getWarehouse().addResourcesToDepot(1,Resource.SHIELD,1); //1 SHIELD
-        Map availableResources= pb.countResources();
+        Map<Resource, Integer> availableResources= pb.countResources();
         assertTrue(availableResources.get(Resource.COIN).equals(3));
         assertTrue(availableResources.get(Resource.STONE).equals(0));
         assertTrue(availableResources.get(Resource.SERVANT).equals(5));

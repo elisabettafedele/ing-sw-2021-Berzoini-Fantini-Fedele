@@ -33,6 +33,12 @@ public class GameTest {
     }
 
     @Test
+    public void testGameType() throws InvalidArgumentException, UnsupportedEncodingException {
+        multiGame = new Game(GameType.MULTI_PLAYER);
+        assertEquals(multiGame.getGameType(), GameType.MULTI_PLAYER);
+    }
+
+    @Test
     public void testAddGetPlayers() throws InvalidArgumentException, InvalidMethodException, UnsupportedEncodingException, ZeroPlayerException, InvalidPlayerAddException {
         multiGame = new Game(GameType.MULTI_PLAYER);
         multiGame.addPlayer(nicknames.get(0), leaderCards.subList(0, 4));
@@ -97,6 +103,5 @@ public class GameTest {
         multiGame = new Game(GameType.MULTI_PLAYER);
         multiGame.addPlayer(nicknames.get(0), null);
     }
-
 
 }

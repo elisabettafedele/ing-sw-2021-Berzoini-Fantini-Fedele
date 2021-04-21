@@ -1,10 +1,13 @@
 package it.polimi.ingsw.model.player;
 
 import it.polimi.ingsw.enumerations.EffectType;
+import it.polimi.ingsw.enumerations.Level;
 import it.polimi.ingsw.enumerations.Resource;
+import it.polimi.ingsw.enumerations.ResourceStorageType;
 import it.polimi.ingsw.exceptions.*;
 import it.polimi.ingsw.model.cards.*;
 import it.polimi.ingsw.model.depot.Depot;
+import it.polimi.ingsw.model.depot.LeaderDepot;
 import it.polimi.ingsw.model.depot.StrongboxDepot;
 
 import java.util.*;
@@ -256,7 +259,7 @@ public class PersonalBoard {
      */
     public boolean cardInsertionIsLegal(DevelopmentCard card){
         for (Stack<DevelopmentCard> stack : developmentCardSlots)
-            if (stack.isEmpty() || stack.peek().getFlag().getFlagLevel().getValue() == card.getFlag().getFlagLevel().getValue() - 1)
+            if ((stack.isEmpty() && card.getFlag().getFlagLevel() == Level.ONE)|| (!stack.isEmpty() && stack.peek().getFlag().getFlagLevel().getValue() == card.getFlag().getFlagLevel().getValue() - 1))
                 return true;
         return false;
     }
@@ -267,12 +270,55 @@ public class PersonalBoard {
      * @return an empty list if no effect of this type is available or a list of effects if at least one is available
      */
     public List<Effect> getAvailableEffects(EffectType effectType){
-        List<Effect> availableEffects = new ArrayList<>();
         //If there is not any leader card active return an empty list
-        if (!availableLeaderCards().isEmpty() && this.availableLeaderCards().stream().anyMatch(x -> x.getEffect().getEffectType() == effectType))
-            availableEffects = this.availableLeaderCards().stream().filter(x -> x.getEffect().getEffectType().equals(effectType)).map(LeaderCard::getEffect).collect(Collectors.toList());
+        return this.availableLeaderCards().stream().filter(x -> x.getEffect().getEffectType().equals(effectType)).map(LeaderCard::getEffect).collect(Collectors.toList());
+    }
 
-        return availableEffects;
+    //TODO finish JavaDoc
+    /**
+     * Method to add Resources of the same type to the personal board, given a specific {@link ResourceStorageType}
+     * @param depot the place where the resource(s) should be stored: it can be first, second, third row of the warehouse depot, the leader depots or the strongbox
+     * @param resource the type of the resource to be added
+     * @param quantity the quanitty of the resource to be added
+     * @throws InvalidDepotException
+     * @throws InvalidArgumentException
+     * @throws InvalidResourceTypeException
+     * @throws InsufficientSpaceException
+     */
+    public void addResources (ResourceStorageType depot, Resource resource, int quantity) throws InvalidDepotException, InvalidArgumentException, InvalidResourceTypeException, InsufficientSpaceException {
+        if (depot == ResourceStorageType.WAREHOUSE)
+            throw new InvalidDepotException("Invalid depot: you must specify the specific depot of the Warehouse");
+
+        //depot == Warehouse's depot
+        if (depot.getValue() < 3)
+            this.getWarehouse().addResourcesToDepot(depot.getValue(), resource, quantity);
+
+        //depot == Strongbox's depot
+        else if (depot == ResourceStorageType.STRONGBOX) {
+            Map<Resource, Integer> resourcesToAdd = new HashMap<>();
+            resourcesToAdd.put(resource, quantity);
+            this.addResourcesToStrongbox(resourcesToAdd);
+        }
+
+        //depot == Leader card's depot
+        else if (depot == ResourceStorageType.LEADER_DEPOT){
+            List<Effect> extraDepotEffects = this.getAvailableEffects(EffectType.EXTRA_DEPOT);
+            if (extraDepotEffects.isEmpty())
+                throw new InvalidDepotException("Invalid depot: there is not any leader card with Extra Depot effect active at the moment");
+            List<LeaderDepot> depots = new ArrayList<>();
+            for (Effect effect : extraDepotEffects) {
+                try {
+                    depots.add(effect.getExtraDepotEffect().getLeaderDepot());
+                } catch (DifferentEffectTypeException e) {
+                    e.printStackTrace();
+                    return;
+                }
+            }
+            depots = depots.stream().filter(x -> x.getResourceType() == resource).collect(Collectors.toList());
+            if (depots.isEmpty())
+                throw new InvalidDepotException("Invalid depot: the leader card with the extra depot for "+resource+" is not present/active in your personal board");
+            depots.get(0).addResources(quantity);
+        }
     }
 
 }

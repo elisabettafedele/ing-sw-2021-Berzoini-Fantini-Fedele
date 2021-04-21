@@ -55,7 +55,9 @@ public class DevelopmentCard extends Card {
         try {
             originalCost = this.getCost().getResourceValue();
         } catch (ValueNotPresentException e) {
+            System.out.println("It is not possible to get the discounted cost of this card since it is not a development card since and it does not have any resource cost\n");
             e.printStackTrace();
+            return null;
         }
         Map<Resource, Integer> discountedCost = new HashMap<Resource, Integer>();
         for (Resource resource : originalCost.keySet()) {

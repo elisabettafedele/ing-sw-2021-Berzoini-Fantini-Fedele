@@ -134,6 +134,14 @@ public class DevelopmentCardTest {
         assertFalse(developmentCard.getUsed());
     }
 
+    @Test
+    public void testResourceValueNotPresentCatch() throws InvalidArgumentException {
+        DevelopmentCard developmentCard = new DevelopmentCard(victoryPoints, cost, flag, production, pathImageFront, pathImageBack);
+        List<Resource> discounts = new ArrayList<>();
+        discounts.add(Resource.SERVANT);
+        developmentCard.getDiscountedCost(discounts);
+    }
+
     @Test (expected = InvalidArgumentException.class)
     public void Card_constructor_InvalidArgumentException_CostNull() throws InvalidArgumentException {
         DevelopmentCard developmentCard1 = new DevelopmentCard(victoryPoints, null, flag, production, pathImageFront, pathImageBack);

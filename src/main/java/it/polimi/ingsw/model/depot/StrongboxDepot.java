@@ -23,7 +23,7 @@ public class StrongboxDepot extends Depot{
             throw new InvalidArgumentException();
         }
         if (this.resourceType.equals(Resource.ANY)) {
-            throw new InvalidDepotException();
+            throw new InvalidDepotException("Invalid depot: the depot has no resource type, select it before adding resources");
         }
         this.resourceQuantity += quantity;
     }

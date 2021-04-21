@@ -91,7 +91,7 @@ public class WarehouseDepot extends Depot {
             throw new InvalidArgumentException();
         }
         if (this.resourceType.equals(Resource.ANY)) {
-            throw new InvalidDepotException();
+            throw new InvalidDepotException("Invalid depot: the depot has no resource type, select it before adding resources");
         }
         if (!enoughSpace(quantity))
             throw new InsufficientSpaceException(quantity, this.spaceAvailable());

@@ -46,6 +46,7 @@ public class Warehouse {
         return depots[row].getResourceType();
     }
 
+    //TODO test or delete this function...maybe it could be replaced by a function in personal board that is able to add and remove resources, given a StorageType
     public List<Depot> getAvailableWarehouseDepotsForResourceType(Resource resource){
         int row;
         List<Depot> depots= new ArrayList<Depot>();
@@ -57,10 +58,11 @@ public class Warehouse {
                 depots.add(this.depots[row]);
             return depots;
         }
-
-        for (row = 0; row < numberOfDepots; row++){
-            if (this.depots[row].getResourceType() == Resource.ANY)
-                depots.add(this.depots[row]);
+        else {
+            for (row = 0; row < numberOfDepots; row++) {
+                if (this.depots[row].getResourceType() == Resource.ANY)
+                    depots.add(this.depots[row]);
+            }
         }
 
         return depots;

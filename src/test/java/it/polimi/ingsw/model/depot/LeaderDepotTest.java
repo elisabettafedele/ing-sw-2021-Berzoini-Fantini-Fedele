@@ -23,6 +23,12 @@ public class LeaderDepotTest {
         assertEquals(depot.getResourceQuantity(), 2);
     }
 
+    @Test
+    public void testSpaceAvailable() throws InvalidArgumentException, InsufficientSpaceException {
+        depot.addResources(2);
+        assertEquals(depot.spaceAvailable(), 0);
+    }
+
     @Test (expected = InsufficientSpaceException.class)
     public void testExtraAdd() throws InsufficientSpaceException, InvalidDepotException, InvalidArgumentException {
         depot.addResources(3);
