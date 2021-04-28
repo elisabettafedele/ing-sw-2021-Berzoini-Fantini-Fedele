@@ -1,7 +1,7 @@
-package messages.toServer;
+package it.polimi.ingsw.messages.toServer;
 
-import Server.ClientHandler;
-import Server.Server;
+import it.polimi.ingsw.Server.ClientHandler;
+import it.polimi.ingsw.Server.Server;
 
 public interface MessageToServer {
     public void handleMessage(Server server, ClientHandler clientHandler);

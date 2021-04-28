@@ -1,10 +1,10 @@
-package messages.toServer;
+package it.polimi.ingsw.messages.toServer;
 
-import Server.ClientHandler;
-import Server.Server;
-import enumerations.ClientHandlerPhase;
-import enumerations.GameMode;
-import messages.toClient.NicknameRequest;
+import it.polimi.ingsw.Server.ClientHandler;
+import it.polimi.ingsw.Server.Server;
+import it.polimi.ingsw.enumerations.ClientHandlerPhase;
+import it.polimi.ingsw.enumerations.GameMode;
+import it.polimi.ingsw.messages.toClient.NicknameRequest;
 
 import java.io.Serializable;
 import java.util.logging.Level;

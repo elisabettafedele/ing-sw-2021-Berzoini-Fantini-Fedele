@@ -1,10 +1,10 @@
-package Server;
+package it.polimi.ingsw.Server;
 
-import enumerations.ClientHandlerPhase;
-import enumerations.GameMode;
-import messages.*;
-import messages.toClient.GameModeRequest;
-import messages.toServer.MessageToServer;
+import it.polimi.ingsw.enumerations.ClientHandlerPhase;
+import it.polimi.ingsw.enumerations.GameMode;
+import it.polimi.ingsw.messages.*;
+import it.polimi.ingsw.messages.toClient.GameModeRequest;
+import it.polimi.ingsw.messages.toServer.MessageToServer;
 
 
 import java.io.*;

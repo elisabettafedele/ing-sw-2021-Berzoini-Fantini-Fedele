@@ -1,10 +1,10 @@
-package Server;
+package it.polimi.ingsw.Server;
 
-import enumerations.ClientHandlerPhase;
-import enumerations.GameMode;
-import messages.toClient.NicknameRequest;
-import messages.toClient.NumberOfPlayersRequest;
-import messages.toClient.PlayersReadyToStartMessage;
+import it.polimi.ingsw.enumerations.ClientHandlerPhase;
+import it.polimi.ingsw.enumerations.GameMode;
+import it.polimi.ingsw.messages.toClient.NicknameRequest;
+import it.polimi.ingsw.messages.toClient.NumberOfPlayersRequest;
+import it.polimi.ingsw.messages.toClient.PlayersReadyToStartMessage;
 
 import java.io.IOException;
 import java.net.ServerSocket;

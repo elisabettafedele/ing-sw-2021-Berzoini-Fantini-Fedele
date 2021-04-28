@@ -1,4 +1,4 @@
-package messages;
+package it.polimi.ingsw.messages;
 
 public enum ConnectionMessage {
     PING ("Ping"),

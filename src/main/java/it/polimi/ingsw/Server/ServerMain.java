@@ -1,4 +1,4 @@
-package Server;
+package it.polimi.ingsw.Server;
 
 import java.util.ArrayList;
 import java.util.Arrays;

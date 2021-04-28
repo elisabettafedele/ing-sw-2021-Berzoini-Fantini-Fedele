@@ -1,9 +1,9 @@
-package messages.toServer;
+package it.polimi.ingsw.messages.toServer;
 
-import Server.ClientHandler;
-import Server.Server;
-import enumerations.ClientHandlerPhase;
-import messages.toClient.NumberOfPlayersRequest;
+import it.polimi.ingsw.Server.ClientHandler;
+import it.polimi.ingsw.Server.Server;
+import it.polimi.ingsw.enumerations.ClientHandlerPhase;
+import it.polimi.ingsw.messages.toClient.NumberOfPlayersRequest;
 
 import java.io.Serializable;
 

@@ -1,7 +1,7 @@
-package messages.toClient;
+package it.polimi.ingsw.messages.toClient;
 
-import client.Client;
-import client.View;
+import it.polimi.ingsw.client.Client;
+import it.polimi.ingsw.client.View;
 
 import java.io.Serializable;
 
