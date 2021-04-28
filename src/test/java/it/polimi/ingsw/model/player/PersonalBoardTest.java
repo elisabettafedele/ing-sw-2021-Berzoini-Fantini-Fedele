@@ -346,4 +346,22 @@ public class PersonalBoardTest {
     public void getAvailableProductions_correctlyReturnsAvailableProductions() throws DifferentEffectTypeException, InactiveCardException {
         assertTrue(personalBoard.getAvailableProductions().size()==3);
     }
+
+    @Test
+    public void testGetAvailableConversion() throws JsonFileNotFoundException, InvalidArgumentException, FileNotFoundException, UnsupportedEncodingException, InvalidSlotException {
+        List<LeaderCard> whiteMarbleLeader = LeaderCardParser.parseCards().stream().filter(x->x.getEffect().getEffectType() == EffectType.WHITE_MARBLE).collect(Collectors.toList());
+        PersonalBoard personalBoardBis=new PersonalBoard(whiteMarbleLeader);
+        personalBoardBis.addDevelopmentCard(basicDevelopmentCard1,0);
+        personalBoardBis.addDevelopmentCard(basicDevelopmentCard2,0);
+        assertTrue(personalBoardBis.getAvailableConversions().isEmpty());
+        for (LeaderCard card : personalBoardBis.getLeaderCards())
+            card.activate();
+        List<Marble> marbles = new ArrayList<>();
+        marbles.add(Marble.BLUE);
+        marbles.add(Marble.YELLOW);
+        marbles.add(Marble.GREY);
+        marbles.add(Marble.PURPLE);
+        assertTrue(personalBoardBis.getAvailableConversions().containsAll(marbles));
+        assertTrue(marbles.containsAll(personalBoardBis.getAvailableConversions()));
+    }
 }

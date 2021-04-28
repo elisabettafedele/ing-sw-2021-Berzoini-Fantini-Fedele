@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model.game;
 
-import it.polimi.ingsw.enumerations.GameType;
+import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.InvalidMethodException;
 import it.polimi.ingsw.exceptions.InvalidPlayerAddException;
@@ -16,20 +16,20 @@ import java.util.stream.Collectors;
 public class Game {
     private DevelopmentCardGrid developmentCardGrid;
     private Market market;
-    private GameType gameType;
+    private GameMode gameMode;
     private List<Player> players;
 
 
     /** //TODO
      * Class constructor
-     * @param gameType
+     * @param gameMode
      * @throws InvalidArgumentException
      * @throws UnsupportedEncodingException
      */
-    public Game(GameType gameType) throws InvalidArgumentException, UnsupportedEncodingException {
+    public Game(GameMode gameMode) throws InvalidArgumentException, UnsupportedEncodingException {
         this.developmentCardGrid = new DevelopmentCardGrid();
         this.market = new Market();
-        this.gameType = gameType;
+        this.gameMode = gameMode;
         this.players = new ArrayList<Player>();
     }
 
@@ -43,7 +43,7 @@ public class Game {
     public void addPlayer(String nickname, List<LeaderCard> leaderCards) throws InvalidArgumentException, InvalidPlayerAddException {
         if (leaderCards == null)
             throw new NullPointerException("Leader Cards cannot be null\n");
-        if (gameType == GameType.SINGLE_PLAYER && !players.isEmpty())
+        if (gameMode == gameMode.SINGLE_PLAYER && !players.isEmpty())
             throw new InvalidPlayerAddException("You are in SINGLE_PLAYER mode and a player is already present in the game\n");
         if (players.stream().map(Player::getNickname).collect(Collectors.toList()).contains(nickname))
             throw new InvalidArgumentException("Nickname already present in players list, the player has already received its leader cards\n");
@@ -57,7 +57,7 @@ public class Game {
     public List<Player> getPlayers() throws InvalidMethodException, ZeroPlayerException {
         if (players.size() == 0)
             throw new ZeroPlayerException("No player is present in the game");
-        if (gameType == GameType.SINGLE_PLAYER)
+        if (gameMode == GameMode.SINGLE_PLAYER)
             throw new InvalidMethodException("You are in single player mode, you should use the function getSinglePlayer to get the only player\n");
         return players;
     }
@@ -69,13 +69,13 @@ public class Game {
     public Player getSinglePlayer() throws InvalidMethodException, ZeroPlayerException {
         if (players.size() == 0)
             throw new ZeroPlayerException("No player is present in the game");
-        if (gameType == GameType.MULTI_PLAYER)
+        if (gameMode == GameMode.MULTI_PLAYER)
             throw new InvalidMethodException("You are in multi player mode, you should use the function getPlayers to get the players in the game\n");
         return players.get(0);
     }
 
-    public GameType getGameType(){
-        return this.gameType;
+    public GameMode getGameMode(){
+        return this.gameMode;
     }
 
 }

@@ -1,9 +1,6 @@
 package it.polimi.ingsw.model.player;
 
-import it.polimi.ingsw.enumerations.EffectType;
-import it.polimi.ingsw.enumerations.Level;
-import it.polimi.ingsw.enumerations.Resource;
-import it.polimi.ingsw.enumerations.ResourceStorageType;
+import it.polimi.ingsw.enumerations.*;
 import it.polimi.ingsw.exceptions.*;
 import it.polimi.ingsw.model.cards.*;
 import it.polimi.ingsw.model.depot.Depot;
@@ -319,6 +316,27 @@ public class PersonalBoard {
                 throw new InvalidDepotException("Invalid depot: the leader card with the extra depot for "+resource+" is not present/active in your personal board");
             depots.get(0).addResources(quantity);
         }
+    }
+
+    /**
+     * Method used to get the available white marble conversion of a Personal Board
+     * @return a List with the marbles that can be obtained from a white marble
+     */
+    public List<Marble> getAvailableConversions(){
+        List<Marble> availableConversions = new ArrayList<>();
+
+        //I get the available leader cards' effects
+        List<Effect> availableWhiteMarbleEffects = getAvailableEffects(EffectType.WHITE_MARBLE);
+
+        //I add the available marble conversions to the list of the available ones (if any)
+        for (Effect effect : availableWhiteMarbleEffects) {
+            try {
+                availableConversions.add(effect.getWhiteMarbleEffect());
+            } catch (DifferentEffectTypeException e) {
+                e.printStackTrace();
+            }
+        }
+        return availableConversions;
     }
 
 }

@@ -3,10 +3,7 @@ package it.polimi.ingsw.controller.actions;
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.controller.MultiplayerPlayPhase;
 import it.polimi.ingsw.controller.TurnController;
-import it.polimi.ingsw.enumerations.EffectType;
-import it.polimi.ingsw.enumerations.GameType;
-import it.polimi.ingsw.enumerations.Marble;
-import it.polimi.ingsw.enumerations.Resource;
+import it.polimi.ingsw.enumerations.*;
 import it.polimi.ingsw.exceptions.*;
 import it.polimi.ingsw.model.cards.Effect;
 import it.polimi.ingsw.model.cards.LeaderCard;
@@ -37,12 +34,6 @@ public class TakeResourcesFromMarketAction {
         return true;
     }
 
-    public void reset(){
-        insertionPosition = -1;
-        resourcesToStore = null;
-        personalBoard = null;
-    }
-
     private void marblesConversion(List<Marble> marbles) throws InvalidArgumentException {
         marbles.stream().filter(x -> x == Marble.RED).forEach(x -> {
             try {
@@ -53,23 +44,6 @@ public class TakeResourcesFromMarketAction {
         });
         resourcesToStore = marbles.stream().filter(x -> (x != Marble.WHITE && x != Marble.RED))
                 .map(x -> Resource.valueOf(x.getValue())).collect(Collectors.toList());
-    }
-
-    private List<Marble> getAvailableConversions(){
-        List<Marble> availableConversions = new ArrayList<>();
-
-        //I get the available leader cards' effects
-        List<Effect> availableWhiteMarbleEffects = personalBoard.getAvailableEffects(EffectType.WHITE_MARBLE);
-
-        //I add the available marble conversions to the list of the available ones (if any)
-        for (Effect effect : availableWhiteMarbleEffects) {
-            try {
-                availableConversions.add(effect.getWhiteMarbleEffect());
-            } catch (DifferentEffectTypeException e) {
-                e.printStackTrace();
-            }
-        }
-        return availableConversions;
     }
 
     private List<Depot> availableDepotsForResourceType(Resource resource) throws DifferentEffectTypeException {
@@ -92,14 +66,14 @@ public class TakeResourcesFromMarketAction {
         Depot depotChosen;
         LeaderDepot leaderDepot;
         WarehouseDepot warehouseDepot;
-        List<Marble> conversionsAvailable = getAvailableConversions();
+        List<Marble> conversionsAvailable = personalBoard.getAvailableConversions();
 
         MultiplayerPlayPhase multiplayerPlayPhase;
 
         // If the user has any leader card with white marble effect I ask him to choose:
         // a) whether he wants to convert it
         // b) which resource he wants to have
-        if (!getAvailableConversions().isEmpty())
+        if (!personalBoard.getAvailableConversions().isEmpty())
             for (Marble marble : marbles) {
                 if (marble == Marble.WHITE) {
                     //TODO parte in cui l'utente sceglie come convertire le biglie bianche marble = Marble.scelta_utente
@@ -114,7 +88,7 @@ public class TakeResourcesFromMarketAction {
             //getStorageFromClient
             List<Depot> availableDepots = availableDepotsForResourceType(resourcesToStore.get(0));
             if (availableDepots.isEmpty()){
-                if (controller.getGame().getGameType() == GameType.MULTI_PLAYER){
+                if (controller.getGame().getGameMode() == GameMode.MULTI_PLAYER){
                     controller.getGamePhase().handleResourceDiscard();
                 }
             }

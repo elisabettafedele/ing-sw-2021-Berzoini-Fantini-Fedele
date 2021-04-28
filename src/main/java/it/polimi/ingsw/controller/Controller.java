@@ -1,6 +1,6 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.enumerations.GameType;
+import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.model.game.Game;
 
@@ -11,9 +11,9 @@ public class Controller {
     private GamePhase gamePhase;
     private int controllerID;
 
-    public Controller(int id, GameType gameType) throws InvalidArgumentException, UnsupportedEncodingException {
+    public Controller(int id, GameMode gameMode) throws InvalidArgumentException, UnsupportedEncodingException {
         this.controllerID = id;
-        this.game = new Game(gameType);
+        this.game = new Game(gameMode);
         //TODO this.gamePhase = new GamePhase() link the setup phase
 
     }

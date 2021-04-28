@@ -1,7 +1,7 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.controller.actions.Action;
-import it.polimi.ingsw.enumerations.GameType;
+import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.model.player.Player;
 
 public class TurnController {
@@ -15,7 +15,7 @@ public class TurnController {
     public TurnController(Controller controller) {
         this.numberOfLeaderActionsDone = 0;
         this.standardActionDone = false;
-        this.interruptible = controller.getGame().getGameType() != GameType.MULTI_PLAYER;
+        this.interruptible = controller.getGame().getGameMode() != GameMode.MULTI_PLAYER;
         this.controller = controller;
     }
 

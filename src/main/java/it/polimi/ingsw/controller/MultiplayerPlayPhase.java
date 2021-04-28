@@ -7,7 +7,7 @@ import it.polimi.ingsw.model.player.Player;
 
 import java.util.List;
 
-public class MultiplayerPlayPhase implements GamePhase{
+public class MultiplayerPlayPhase implements GamePhase, PlayPhase{
 
     private Controller controller;
     private TurnController turnController;
