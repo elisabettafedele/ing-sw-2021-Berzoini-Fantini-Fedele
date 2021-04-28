@@ -1,4 +1,4 @@
-package enumerations;
+package it.polimi.ingsw.enumerations;
 
 public enum ClientHandlerPhase {
     WAITING_GAME_MODE,

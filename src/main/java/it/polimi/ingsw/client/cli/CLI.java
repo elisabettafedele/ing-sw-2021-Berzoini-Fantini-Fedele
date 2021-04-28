@@ -1,10 +1,10 @@
-package client.cli;
+package it.polimi.ingsw.client.cli;
 
 
-import client.Client;
-import client.View;
-import client.utilities.InputParser;
-import enumerations.GameMode;
+import it.polimi.ingsw.client.Client;
+import it.polimi.ingsw.client.View;
+import it.polimi.ingsw.client.utilities.InputParser;
+import it.polimi.ingsw.enumerations.GameMode;
 
 import java.util.regex.Pattern;
 

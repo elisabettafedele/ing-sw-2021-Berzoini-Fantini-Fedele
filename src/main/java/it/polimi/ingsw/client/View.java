@@ -1,6 +1,6 @@
-package client;
+package it.polimi.ingsw.client;
 
-import enumerations.GameMode;
+import it.polimi.ingsw.enumerations.GameMode;
 
 public interface View {
     //TO WRITE

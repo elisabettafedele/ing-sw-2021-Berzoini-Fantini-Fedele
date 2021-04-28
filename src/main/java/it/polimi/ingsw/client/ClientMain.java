@@ -1,7 +1,7 @@
-package client;
+package it.polimi.ingsw.client;
 
-import client.cli.CLI;
-import client.gui.GUI;
+import it.polimi.ingsw.client.cli.CLI;
+import it.polimi.ingsw.client.gui.GUI;
 
 public class ClientMain {
 

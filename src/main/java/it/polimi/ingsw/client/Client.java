@@ -1,7 +1,7 @@
-package client;
+package it.polimi.ingsw.client;
 
-import messages.ConnectionMessage;
-import messages.toClient.MessageToClient;
+import it.polimi.ingsw.messages.ConnectionMessage;
+import it.polimi.ingsw.messages.toClient.MessageToClient;
 
 import java.io.*;
 import java.net.InetSocketAddress;
