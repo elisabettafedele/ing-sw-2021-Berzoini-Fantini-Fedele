@@ -1,5 +1,6 @@
 package it.polimi.ingsw.Server;
 
+import it.polimi.ingsw.common.ClientHandlerInterface;
 import it.polimi.ingsw.enumerations.ClientHandlerPhase;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.messages.*;
@@ -12,7 +13,7 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.logging.Level;
 
-public class ClientHandler implements Runnable{
+public class ClientHandler implements Runnable, ClientHandlerInterface {
     public static final int PING_PERIOD = 8000; //PING_PERIOD = TIMEOUT/2
     //The timer gives one minute to the user to send the response
     public static final int SO_TIMEOUT_PERIOD = 160000;
@@ -85,9 +86,7 @@ public class ClientHandler implements Runnable{
         }
     }
 
-    /**
-     * Timer used to disconnect players who are too slow in sending their responses
-     */
+    @Override
     public void startTimer(){
         timer = new Thread(() -> {
             try{
@@ -99,10 +98,7 @@ public class ClientHandler implements Runnable{
         timer.start();
     }
 
-    /**
-     * Method used to send message to the client, through an object stream
-     * @param message the message to be sent
-     */
+    @Override
     public void sendMessageToClient(Serializable message) {
         try {
             os.writeObject(message);
@@ -146,31 +142,37 @@ public class ClientHandler implements Runnable{
             }
         }
     }
-
+    @Override
     public GameMode getGameMode() {
         return gameMode;
     }
 
+    @Override
     public String getNickname(){
         return nickname;
     }
 
+    @Override
     public ClientHandlerPhase getClientHandlerPhase(){
         return clientHandlerPhase;
     }
 
+    @Override
     public void setNickname(String nickname){
         this.nickname = nickname;
     }
 
+    @Override
     public void setClientHandlerPhase(ClientHandlerPhase clientHandlerPhase){
         this.clientHandlerPhase = clientHandlerPhase;
     }
 
+    @Override
     public void setGameMode(GameMode gameMode){
         this.gameMode = gameMode;
     }
 
+    @Override
     public void setGameStarted(boolean gameStarted){
         this.gameStarted = gameStarted;
     }
