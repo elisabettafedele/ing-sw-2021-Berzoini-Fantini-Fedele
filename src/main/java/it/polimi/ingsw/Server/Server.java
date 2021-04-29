@@ -1,5 +1,6 @@
 package it.polimi.ingsw.Server;
 
+import it.polimi.ingsw.common.ServerInterface;
 import it.polimi.ingsw.enumerations.ClientHandlerPhase;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.messages.toClient.NicknameRequest;
@@ -17,7 +18,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Server {
+public class Server implements ServerInterface {
     //Server's port
     private int port;
     //Thread pool which contains a thread for each client connected to the server
@@ -46,7 +47,7 @@ public class Server {
         try {
             serverSocket = new ServerSocket(port);
         } catch (IOException e) {
-            //I can write in the log that the server had a problem but I still do not know how the log works, so I will write it in system out
+            //I can write in the log that the server had a problem
             SERVER_LOGGER.log(Level.SEVERE, "Cannot open server on port " + port);
             return;
         }
@@ -68,6 +69,7 @@ public class Server {
         }
     }
 
+    @Override
     public void handleNicknameChoice(ClientHandler connection) {
         //SOLO MODE -> start the game
         if (connection.getGameMode() == GameMode.SINGLE_PLAYER && connection.getClientHandlerPhase() == ClientHandlerPhase.WAITING_NICKNAME) {
@@ -94,6 +96,7 @@ public class Server {
 
     }
 
+    @Override
     public void NewGameManager() {
         if(numberOfPlayersForNextGame == -1 && clientsInLobby.get(0).getClientHandlerPhase() != ClientHandlerPhase.WAITING_NUMBER_OF_PLAYERS){
             clientsInLobby.get(0).setClientHandlerPhase(ClientHandlerPhase.WAITING_NUMBER_OF_PLAYERS);
@@ -159,7 +162,7 @@ public class Server {
             lockLobby.unlock();
         }
     }
-
+    //TODO: to check if it works and if it has to be put in ServerInterface
     public void removeConnection(ClientHandler connection){
         try{
             lockLobby.lock();
@@ -171,6 +174,7 @@ public class Server {
         }
     }
 
+    @Override
     public void setNumberOfPlayersForNextGame(int numberOfPlayersForNextGame){
         this.numberOfPlayersForNextGame = numberOfPlayersForNextGame;
     }
