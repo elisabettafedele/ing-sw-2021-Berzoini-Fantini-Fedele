@@ -10,7 +10,7 @@ import java.io.Serializable;
 /**
  * Class to communicate the number of players desired
  */
-public class NumberOfPlayersResponse implements Serializable, MessageToServer {
+public class NumberOfPlayersResponse implements MessageToServer {
     private final int numberOfPlayers;
 
     public NumberOfPlayersResponse(int numberOfPlayers){

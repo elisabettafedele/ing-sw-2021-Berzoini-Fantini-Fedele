@@ -1,13 +1,13 @@
 package it.polimi.ingsw.messages.toClient;
 
-import it.polimi.ingsw.client.Client;
-import it.polimi.ingsw.client.View;
+//TODO: InputParser it's in the client package, move to the common or adjust the NumberOfPlayerResponse constructor?
 import it.polimi.ingsw.client.utilities.InputParser;
+import it.polimi.ingsw.common.ClientInterface;
+import it.polimi.ingsw.common.VirtualView;
+//TODO: This MessageToClient needs a MessageToServer... Need to be corrected?
 import it.polimi.ingsw.messages.toServer.NumberOfPlayersResponse;
 
-import java.io.Serializable;
-
-public class NumberOfPlayersRequest implements MessageToClient, Serializable {
+public class NumberOfPlayersRequest implements MessageToClient {
     private boolean isRetry;
 
     public NumberOfPlayersRequest(boolean isRetry){
@@ -15,7 +15,7 @@ public class NumberOfPlayersRequest implements MessageToClient, Serializable {
     }
 
     @Override
-    public void handleMessage(View view, Client client) {
+    public void handleMessage(VirtualView view, ClientInterface client) {
         view.displayNumberOfPlayersRequest(isRetry);
         client.sendMessageToServer(new NumberOfPlayersResponse(InputParser.getInt("Invalid number of players: please insert an integer number between 2 and 4")));
     }

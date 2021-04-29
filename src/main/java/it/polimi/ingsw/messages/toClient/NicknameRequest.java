@@ -1,12 +1,11 @@
 package it.polimi.ingsw.messages.toClient;
 
-import it.polimi.ingsw.client.Client;
-import it.polimi.ingsw.client.View;
+import it.polimi.ingsw.common.ClientInterface;
+import it.polimi.ingsw.common.VirtualView;
+//TODO: This MessageToClient needs a MessageToServer... Need to be corrected?
 import it.polimi.ingsw.messages.toServer.NicknameResponse;
 
-import java.io.Serializable;
-
-public class NicknameRequest implements MessageToClient, Serializable {
+public class NicknameRequest implements MessageToClient {
     private String message;
     private boolean isRetry;
     private boolean alreadyTaken;
@@ -17,7 +16,7 @@ public class NicknameRequest implements MessageToClient, Serializable {
     }
 
     @Override
-    public void handleMessage(View view, Client client) {
+    public void handleMessage(VirtualView view, ClientInterface client) {
         view.displayNicknameRequest(isRetry, alreadyTaken);
         client.sendMessageToServer(new NicknameResponse(view.getNickname()));
     }

@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
-public class NicknameResponse implements Serializable, MessageToServer {
+public class NicknameResponse implements MessageToServer {
     private final String nickname;
     private static final String NICKNAME_REGEXP = "^([a-zA-Z0-9._\\-]{1,20})$";
     private static final Pattern NICKNAME_PATTERN = Pattern.compile(NICKNAME_REGEXP);

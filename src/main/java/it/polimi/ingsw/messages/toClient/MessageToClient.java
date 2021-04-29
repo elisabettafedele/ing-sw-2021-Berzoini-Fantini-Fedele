@@ -1,8 +1,10 @@
 package it.polimi.ingsw.messages.toClient;
 
-import it.polimi.ingsw.client.Client;
-import it.polimi.ingsw.client.View;
+import it.polimi.ingsw.common.ClientInterface;
+import it.polimi.ingsw.common.VirtualView;
 
-public interface MessageToClient {
-    public void handleMessage(View view, Client client);
+import java.io.Serializable;
+
+public interface MessageToClient extends Serializable {
+    public void handleMessage(VirtualView view, ClientInterface client);
 }

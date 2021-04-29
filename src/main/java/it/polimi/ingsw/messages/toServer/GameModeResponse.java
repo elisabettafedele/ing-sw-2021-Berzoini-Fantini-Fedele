@@ -9,7 +9,7 @@ import it.polimi.ingsw.messages.toClient.NicknameRequest;
 import java.io.Serializable;
 import java.util.logging.Level;
 
-public class GameModeResponse implements Serializable, MessageToServer {
+public class GameModeResponse implements MessageToServer {
     private final GameMode gameMode;
 
     public GameModeResponse(GameMode gameMode){

@@ -1,14 +1,13 @@
 package it.polimi.ingsw.messages.toClient;
 
-import it.polimi.ingsw.client.Client;
-import it.polimi.ingsw.client.View;
+import it.polimi.ingsw.common.ClientInterface;
+import it.polimi.ingsw.common.VirtualView;
 
-import java.io.Serializable;
 
-public class PlayersReadyToStartMessage implements MessageToClient, Serializable {
+public class PlayersReadyToStartMessage implements MessageToClient {
 
     @Override
-    public void handleMessage(View view, Client client) {
+    public void handleMessage(VirtualView view, ClientInterface client) {
         view.displayPlayersReadyToStartMessage();
     }
 }
