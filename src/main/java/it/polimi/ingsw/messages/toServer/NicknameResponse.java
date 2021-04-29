@@ -5,7 +5,6 @@ import it.polimi.ingsw.Server.Server;
 import it.polimi.ingsw.enumerations.ClientHandlerPhase;
 import it.polimi.ingsw.messages.toClient.NicknameRequest;
 
-import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 

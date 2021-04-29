@@ -5,8 +5,6 @@ import it.polimi.ingsw.Server.Server;
 import it.polimi.ingsw.enumerations.ClientHandlerPhase;
 import it.polimi.ingsw.messages.toClient.NumberOfPlayersRequest;
 
-import java.io.Serializable;
-
 /**
  * Class to communicate the number of players desired
  */

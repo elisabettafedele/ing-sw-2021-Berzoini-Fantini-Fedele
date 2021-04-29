@@ -6,7 +6,6 @@ import it.polimi.ingsw.enumerations.ClientHandlerPhase;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.messages.toClient.NicknameRequest;
 
-import java.io.Serializable;
 import java.util.logging.Level;
 
 public class GameModeResponse implements MessageToServer {
