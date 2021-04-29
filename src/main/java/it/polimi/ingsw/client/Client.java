@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client;
 
+import it.polimi.ingsw.common.ClientInterface;
 import it.polimi.ingsw.messages.ConnectionMessage;
 import it.polimi.ingsw.messages.toClient.MessageToClient;
 
@@ -8,7 +9,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class Client {
+public class Client implements ClientInterface {
     private final int SOCKET_TIMEOUT = 40000;
     public static final int PING_PERIOD = 80000; //PING_PERIOD = TIMEOUT/2
 
@@ -73,6 +74,7 @@ public class Client {
 
     }
 
+    @Override
     public void sendMessageToServer(Serializable message){
         if (connected.get()){
             try {
