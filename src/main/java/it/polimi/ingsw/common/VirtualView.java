@@ -2,6 +2,8 @@ package it.polimi.ingsw.common;
 
 import it.polimi.ingsw.enumerations.GameMode;
 
+import java.util.List;
+
 public interface VirtualView {
     //TO WRITE
 
@@ -9,7 +11,7 @@ public interface VirtualView {
     void displayNicknameRequest(boolean isRetry, boolean alreadyTaken);
     void displayNumberOfPlayersRequest(boolean isRetry);
     void displayWaitingInTheLobbyMessage();
-    void displayPlayersReadyToStartMessage();
+    void displayPlayersReadyToStartMessage(List<String> nicknames);
 
 
 

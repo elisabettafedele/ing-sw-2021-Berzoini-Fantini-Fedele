@@ -30,7 +30,9 @@ public class NicknameResponse implements MessageToServer {
         }
         //The nickname is valid, the server will make another check later
         clientHandler.setNickname(nickname);
+        // TODO insert the port of the client in the log message
         Server.SERVER_LOGGER.log(Level.INFO, "New message from client that has chosen his nickname: "+ nickname);
+        clientHandler.setClientHandlerPhase(ClientHandlerPhase.WAITING_IN_THE_LOBBY);
         server.handleNicknameChoice(clientHandler);
     }
 

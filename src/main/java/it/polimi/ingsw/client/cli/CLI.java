@@ -6,6 +6,7 @@ import it.polimi.ingsw.client.View;
 import it.polimi.ingsw.client.utilities.InputParser;
 import it.polimi.ingsw.enumerations.GameMode;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class CLI implements View {
@@ -102,7 +103,8 @@ public class CLI implements View {
     }
 
     @Override
-    public void displayPlayersReadyToStartMessage() {
+    public void displayPlayersReadyToStartMessage(List<String> nicknames) {
+        //TODO print nicknames
         System.out.println("All the players are ready to start, the game will start in a while...");
     }
 

@@ -1,29 +1,68 @@
 package it.polimi.ingsw.controller.actions;
 
+import it.polimi.ingsw.Server.ClientHandler;
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.controller.MultiplayerPlayPhase;
+import it.polimi.ingsw.controller.PlayPhase;
 import it.polimi.ingsw.controller.TurnController;
 import it.polimi.ingsw.enumerations.*;
 import it.polimi.ingsw.exceptions.*;
+import it.polimi.ingsw.messages.toClient.MarbleInsertionPositionRequest;
 import it.polimi.ingsw.model.cards.Effect;
 import it.polimi.ingsw.model.cards.LeaderCard;
 import it.polimi.ingsw.model.depot.Depot;
 import it.polimi.ingsw.model.depot.LeaderDepot;
 import it.polimi.ingsw.model.depot.WarehouseDepot;
+import it.polimi.ingsw.model.game.Game;
 import it.polimi.ingsw.model.game.Market;
 import it.polimi.ingsw.model.player.PersonalBoard;
+import it.polimi.ingsw.model.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class TakeResourcesFromMarketAction {
+
+    /*
     private int insertionPosition;
     private Market market;
     private List<Resource> resourcesToStore;
     private PersonalBoard personalBoard;
-    private Controller controller;
+    private Controller controller;*/
 
+    private Player player;
+    private ClientHandler clientHandler;
+    private Market market;
+    private PlayPhase playPhase;
+
+
+    public TakeResourcesFromMarketAction(Player player, ClientHandler clientHandler, Market market, PlayPhase playPhase){
+        this.player = player;
+        this.clientHandler = clientHandler;
+        this.market = market;
+        this.playPhase = playPhase;
+    }
+
+    public boolean isExecutable() {
+        return true;
+    }
+
+    public void execute(TurnController turnController){
+        clientHandler.sendMessageToClient(new MarbleInsertionPositionRequest(false));
+    }
+
+
+
+
+
+
+
+
+
+
+
+    /*
     public TakeResourcesFromMarketAction(PersonalBoard personalBoard, Market market, int insertionPosition, Controller controller) {
         this.insertionPosition = insertionPosition;
         this.market = market;
@@ -109,5 +148,5 @@ public class TakeResourcesFromMarketAction {
         }
     }
 
-
+*/
 }

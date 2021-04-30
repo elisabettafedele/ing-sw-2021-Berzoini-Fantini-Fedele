@@ -6,6 +6,7 @@ import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.messages.toClient.NicknameRequest;
 import it.polimi.ingsw.messages.toClient.NumberOfPlayersRequest;
 import it.polimi.ingsw.messages.toClient.PlayersReadyToStartMessage;
+import it.polimi.ingsw.messages.toClient.WaitingInTheLobbyMessage;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -17,6 +18,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class Server implements ServerInterface {
     //Server's port
@@ -42,6 +44,9 @@ public class Server implements ServerInterface {
         this.clientsInLobby = new LinkedList<ClientHandler>();
     }
 
+    /**
+     * Method used to start the server
+     */
     public void startServer() {
         //First, I try to start the server, through its server socket. If the port is already in use an exception will be thrown
         try {
@@ -69,6 +74,14 @@ public class Server implements ServerInterface {
         }
     }
 
+    /**
+     * Method used to handle the choice of a nickname.
+     * If GameMode is Single player it makes the game starts
+     * If the GameMode is Multiplayer:
+     * - it adds the ClientHandler that has sent his nicknames to the list of waiting clients (if not already present)
+     * - it calls the NewGameManager method
+     * @param connection
+     */
     @Override
     public void handleNicknameChoice(ClientHandler connection) {
         //SOLO MODE -> start the game
@@ -78,17 +91,14 @@ public class Server implements ServerInterface {
         }
 
         //MULTIPLAYER
+        lockLobby.lock();
         try {
-            lockLobby.lock();
-
-            if(connection.getClientHandlerPhase() == ClientHandlerPhase.WAITING_NICKNAME){
-                if(!clientsInLobby.contains(connection)){
-                    clientsInLobby.add(connection);
-                }
-                connection.setClientHandlerPhase(ClientHandlerPhase.WAITING_IN_THE_LOBBY);
-                NewGameManager();
+            if(!clientsInLobby.contains(connection)){
+                clientsInLobby.add(connection);
             }
-
+            NewGameManager();
+            if (connection.getClientHandlerPhase() == ClientHandlerPhase.WAITING_IN_THE_LOBBY)
+                connection.sendMessageToClient(new WaitingInTheLobbyMessage());
         }
         finally {
             lockLobby.unlock();
@@ -96,55 +106,93 @@ public class Server implements ServerInterface {
 
     }
 
+    /**
+     * Method used to check the state of the waiting clients. In particular:
+     * - If the number of players has not been asked, it sends a request to the first player of the queue
+     * - If the number of players is already been decided, it checks whether a game is ready to start. In particular it checks:
+     *   a) If there are enough players in the lobby
+     *   b) If the nicknames of the players who will join the game are unique
+     * - If both a) and b) are true a new multiplayer game starts
+     */
     @Override
     public void NewGameManager() {
-        if(numberOfPlayersForNextGame == -1 && clientsInLobby.get(0).getClientHandlerPhase() != ClientHandlerPhase.WAITING_NUMBER_OF_PLAYERS){
-            clientsInLobby.get(0).setClientHandlerPhase(ClientHandlerPhase.WAITING_NUMBER_OF_PLAYERS);
-            clientsInLobby.get(0).sendMessageToClient(new NumberOfPlayersRequest(false));
-            return;
-        }else if(numberOfPlayersForNextGame != -1 && clientsInLobby.size() >= numberOfPlayersForNextGame){
-            if(!duplicatesNicknameForNextMatch()){
-                startNewGame();
-            }else{
-                askNicknameToFirstDuplicate();
+        lockLobby.lock();
+        try{
+            if(numberOfPlayersForNextGame == -1 && clientsInLobby.get(0).getClientHandlerPhase() != ClientHandlerPhase.WAITING_NUMBER_OF_PLAYERS){
+                clientsInLobby.get(0).setClientHandlerPhase(ClientHandlerPhase.WAITING_NUMBER_OF_PLAYERS);
+                clientsInLobby.get(0).sendMessageToClient(new NumberOfPlayersRequest(false));
+            }else if(numberOfPlayersForNextGame != -1 && clientsInLobby.size() >= numberOfPlayersForNextGame){
+                if(!duplicatesNicknameForNextMatch()){
+                    startNewGame();
+                }else{
+                    askNicknameToFirstDuplicate();
+                }
             }
+        } finally {
+            lockLobby.unlock();
         }
     }
 
-
+    /**
+     * Method that checks whether there are duplicates nicknames in the group of players who will join the next match
+     * @return
+     */
     private boolean duplicatesNicknameForNextMatch() {
-
-        for(int i = 1; i < numberOfPlayersForNextGame; i++){
-            for(int j = 0; j < i; j++){
-                if (clientsInLobby.get(j).getNickname().equals(clientsInLobby.get(i).getNickname())){
-                    return true;
+        lockLobby.lock();
+        try {
+            for (int i = 1; i < numberOfPlayersForNextGame; i++) {
+                for (int j = 0; j < i; j++) {
+                    if (clientsInLobby.get(j).getNickname().equals(clientsInLobby.get(i).getNickname())) {
+                        return true;
+                    }
                 }
             }
+        } finally {
+            lockLobby.unlock();
         }
         return false;
     }
 
+    /**
+     * Method used to manage the start of a multiplayer game
+     */
     private void startNewGame() {
-        for(int i = 0; i < numberOfPlayersForNextGame; i++){
-            clientsInLobby.get(0).setClientHandlerPhase(ClientHandlerPhase.READY_TO_START);
-            clientsInLobby.get(0).sendMessageToClient(new PlayersReadyToStartMessage());
-            clientsInLobby.remove(0);
-        }
-        numberOfPlayersForNextGame = -1;
-        if (clientsInLobby.size() > 0){
-            clientsInLobby.get(0).setClientHandlerPhase(ClientHandlerPhase.WAITING_NUMBER_OF_PLAYERS);
-            clientsInLobby.get(0).sendMessageToClient(new NumberOfPlayersRequest(false));
+        lockLobby.lock();
+        try {
+            List <String> playersInGame = clientsInLobby.stream().filter(x -> clientsInLobby.indexOf(x) < numberOfPlayersForNextGame).map(x -> x.getNickname()).collect(Collectors.toList());
+            for (int i = 0; i < numberOfPlayersForNextGame; i++) {
+                clientsInLobby.get(0).setClientHandlerPhase(ClientHandlerPhase.READY_TO_START);
+                clientsInLobby.get(0).sendMessageToClient(new PlayersReadyToStartMessage(playersInGame));
+                clientsInLobby.remove(0);
+            }
+            numberOfPlayersForNextGame = -1;
+            if (clientsInLobby.size() > 0) {
+                clientsInLobby.get(0).setClientHandlerPhase(ClientHandlerPhase.WAITING_NUMBER_OF_PLAYERS);
+                clientsInLobby.get(0).sendMessageToClient(new NumberOfPlayersRequest(false));
+            }
+        } finally {
+            lockLobby.unlock();
         }
     }
 
+    /**
+     * Method used to ask the nickname to the first duplicate of the queue
+     */
     private void askNicknameToFirstDuplicate() {
-        for(int i = 1; i < numberOfPlayersForNextGame; i++) {
-            for (int j = 0; j < i; j++) {
-                if (clientsInLobby.get(j).getNickname().equals(clientsInLobby.get(i).getNickname())) {
-                    clientsInLobby.get(i).setClientHandlerPhase(ClientHandlerPhase.WAITING_NICKNAME);
-                    clientsInLobby.get(i).sendMessageToClient(new NicknameRequest(true, true));
+        boolean found = false;
+        lockLobby.lock();
+        try {
+            for(int i = 1; i < numberOfPlayersForNextGame; i++) {
+                for (int j = 0; j < i; j++) {
+                    if (!found && clientsInLobby.get(j).getNickname().equals(clientsInLobby.get(i).getNickname()) && clientsInLobby.get(i).getClientHandlerPhase() != ClientHandlerPhase.WAITING_NICKNAME) {
+                        clientsInLobby.get(i).setClientHandlerPhase(ClientHandlerPhase.WAITING_NICKNAME);
+                        clientsInLobby.get(i).sendMessageToClient(new NicknameRequest(true, true));
+                        found = true;
+                    }
                 }
             }
+        } finally {
+            lockLobby.unlock();
         }
     }
     //Just a try
@@ -174,9 +222,30 @@ public class Server implements ServerInterface {
         }
     }
 
+    //TODO still testing but should work
+    public void removeConnectionBetti(ClientHandler connection){
+        int position = -1;
+        try{
+            lockLobby.lock();
+            position = clientsInLobby.indexOf(connection);
+            if (position > -1) {
+                clientsInLobby.remove(connection);
+                if (position == 0)
+                    numberOfPlayersForNextGame = -1;
+                if(position < numberOfPlayersForNextGame)
+                    NewGameManager();
+            }
+        }
+        finally {
+            lockLobby.unlock();
+        }
+    }
+
+
     @Override
     public void setNumberOfPlayersForNextGame(int numberOfPlayersForNextGame){
         this.numberOfPlayersForNextGame = numberOfPlayersForNextGame;
+        NewGameManager();
     }
 
 }
