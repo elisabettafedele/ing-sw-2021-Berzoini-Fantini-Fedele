@@ -108,6 +108,16 @@ public class CLI implements View {
         System.out.println("All the players are ready to start, the game will start in a while...");
     }
 
+    @Override
+    public void displayTimeoutExpiredMessage() {
+        System.out.println("Timeout has expired, do you want to reconnect? y | n");
+    }
+
+    @Override
+    public void displayMarbleInsertionPositionRequest() {
+        System.out.println("Insert a marble insertion position (from 1 to 8) to insert the marble in the market trace: ");
+    }
+
 
     @Override
     public GameMode getGameMode(){

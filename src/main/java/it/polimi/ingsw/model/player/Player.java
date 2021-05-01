@@ -10,6 +10,7 @@ public class Player {
     private PersonalBoard personalBoard;
     private int victoryPoints;
     private boolean winner;
+    private boolean active;
 
     /**
      * Constructor of the class player
@@ -45,6 +46,10 @@ public class Player {
         return victoryPoints;
     }
 
+    public boolean isActive(){
+        return active;
+    }
+
     /**
      * setter of the attribute winner
      * @param isWinner true only if the {@link Player} is the winner of the game
@@ -69,6 +74,10 @@ public class Player {
             throw new InvalidArgumentException("null or negative points added");
         }
         this.victoryPoints += points;
+    }
+
+    public void setActive(boolean active){
+        this.active = active;
     }
 
 }

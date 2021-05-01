@@ -1,6 +1,7 @@
 package it.polimi.ingsw.Server;
 
 import it.polimi.ingsw.common.ServerInterface;
+import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.enumerations.ClientHandlerPhase;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.messages.toClient.NicknameRequest;
@@ -11,8 +12,10 @@ import it.polimi.ingsw.messages.toClient.WaitingInTheLobbyMessage;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.locks.ReentrantLock;
@@ -31,6 +34,7 @@ public class Server implements ServerInterface {
     private int numberOfPlayersForNextGame = -1;
 
     private List<ClientHandler> clientsInLobby;
+    private Map<String, Controller> clientsDisconnected;
 
     ReentrantLock lockLobby = new ReentrantLock(true);
 
@@ -42,6 +46,7 @@ public class Server implements ServerInterface {
         this.port = port;
         this.executor = Executors.newCachedThreadPool();
         this.clientsInLobby = new LinkedList<ClientHandler>();
+        this.clientsDisconnected = new HashMap<>();
     }
 
     /**
@@ -65,9 +70,8 @@ public class Server implements ServerInterface {
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 SERVER_LOGGER.log(Level.INFO,"New client connection: [IP address: " + clientSocket.getInetAddress().getHostAddress() + ", port: " + port + "]");
-                ClientHandler clientConnection = new ClientHandler(clientSocket, this);
-
-                executor.submit(clientConnection);
+                ClientHandler clientHandler = new ClientHandler(clientSocket, this);
+                executor.submit(clientHandler);
             }
         } catch (IOException e) {
             SERVER_LOGGER.log(Level.SEVERE, "An exception caused the server to stop working.");
@@ -88,6 +92,11 @@ public class Server implements ServerInterface {
         if (connection.getGameMode() == GameMode.SINGLE_PLAYER && connection.getClientHandlerPhase() == ClientHandlerPhase.WAITING_NICKNAME) {
             //TODO handleNewSoloGame
             return;
+        }
+        if(knownClient(connection.getNickname())){
+            clientsDisconnected.get(connection.getNickname()).getPlayerByNickname(connection.getNickname()).setActive(true);
+            clientsDisconnected.get(connection.getNickname()).addConnection(connection);
+            clientsDisconnected.remove(connection.getNickname());
         }
 
         //MULTIPLAYER
@@ -163,6 +172,7 @@ public class Server implements ServerInterface {
             for (int i = 0; i < numberOfPlayersForNextGame; i++) {
                 clientsInLobby.get(0).setClientHandlerPhase(ClientHandlerPhase.READY_TO_START);
                 clientsInLobby.get(0).sendMessageToClient(new PlayersReadyToStartMessage(playersInGame));
+                clientsInLobby.get(0).setGameStarted(true);
                 clientsInLobby.remove(0);
             }
             numberOfPlayersForNextGame = -1;
@@ -246,6 +256,21 @@ public class Server implements ServerInterface {
     public void setNumberOfPlayersForNextGame(int numberOfPlayersForNextGame){
         this.numberOfPlayersForNextGame = numberOfPlayersForNextGame;
         NewGameManager();
+    }
+
+    public void handleDisconnection(ClientHandler clientHandler){
+        if (clientHandler.isGameStarted())
+            clientsDisconnected.put(clientHandler.getNickname(), clientHandler.getController());
+        else
+            removeConnectionBetti(clientHandler);
+    }
+
+    public void handleReconnection(ClientHandler clientHandler){
+
+    }
+
+    private boolean knownClient(String nickname) {
+        return clientsDisconnected.containsKey(nickname);
     }
 
 }

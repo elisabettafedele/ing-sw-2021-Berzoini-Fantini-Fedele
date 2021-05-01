@@ -1,10 +1,12 @@
 package it.polimi.ingsw.Server;
 
 import it.polimi.ingsw.common.ClientHandlerInterface;
+import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.enumerations.ClientHandlerPhase;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.messages.toClient.GameModeRequest;
+import it.polimi.ingsw.messages.toClient.TimeoutExpiredMessage;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
 
 
@@ -19,8 +21,10 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
     public static final int SO_TIMEOUT_PERIOD = 160000;
     public static final int TIMEOUT_FOR_RESPONSE = 60000;
 
-
     private final Socket socket;
+
+    private final String IPAddress;
+    private final int port;
     //For the game I will use an object stream, but to the debug the server it is easier to use just a simple reader and writer
     private ObjectOutputStream os;
     private ObjectInputStream is;
@@ -30,6 +34,17 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
 
     private final Thread pinger;
     private boolean active = false;
+
+    public Controller getController() {
+        return controller;
+    }
+
+    private Controller controller;
+
+    public boolean isGameStarted() {
+        return gameStarted;
+    }
+
     private boolean gameStarted = false;
 
     private String nickname;
@@ -44,6 +59,8 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
      */
     public ClientHandler(Socket socket, Server server){
         this.socket = socket;
+        this.IPAddress = socket.getInetAddress().getHostAddress();
+        this.port = socket.getPort();
         this.server = server;
         this.pinger = new Thread(() -> {
             while (active){
@@ -68,15 +85,18 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
             clientHandlerPhase = ClientHandlerPhase.WAITING_GAME_MODE;
             sendMessageToClient(new GameModeRequest());
 
+
             while(active){
                 try {
                     Object messageFromClient = is.readObject();
                     if(messageFromClient != null && !(messageFromClient == ConnectionMessage.PING)) {
                         ((MessageToServer) messageFromClient).handleMessage(server, this);
                     }
-                } catch (ClassNotFoundException e) {
+                } catch (ClassNotFoundException messageIgnored) {
+                } catch (SocketTimeoutException e){ //when the timer has expired
+                    sendMessageToClient(new TimeoutExpiredMessage());
                     handleSocketDisconnection();
-                } catch (SocketTimeoutException e){ //when the client is no longer connected
+                } catch (IOException e){//when the client is no longer connected
                     handleSocketDisconnection();
                 }
 
@@ -155,6 +175,14 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
     @Override
     public ClientHandlerPhase getClientHandlerPhase(){
         return clientHandlerPhase;
+    }
+
+    public String getIPAddress() {
+        return IPAddress;
+    }
+
+    public int getPort() {
+        return port;
     }
 
     @Override

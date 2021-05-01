@@ -12,6 +12,8 @@ public interface VirtualView {
     void displayNumberOfPlayersRequest(boolean isRetry);
     void displayWaitingInTheLobbyMessage();
     void displayPlayersReadyToStartMessage(List<String> nicknames);
+    void displayTimeoutExpiredMessage();
+    void displayMarbleInsertionPositionRequest();
 
 
 

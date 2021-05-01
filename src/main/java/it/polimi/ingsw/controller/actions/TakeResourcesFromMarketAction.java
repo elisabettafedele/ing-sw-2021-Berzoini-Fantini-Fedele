@@ -7,6 +7,7 @@ import it.polimi.ingsw.controller.PlayPhase;
 import it.polimi.ingsw.controller.TurnController;
 import it.polimi.ingsw.enumerations.*;
 import it.polimi.ingsw.exceptions.*;
+import it.polimi.ingsw.messages.toClient.ChooseWhiteMarbleConversionRequest;
 import it.polimi.ingsw.messages.toClient.MarbleInsertionPositionRequest;
 import it.polimi.ingsw.model.cards.Effect;
 import it.polimi.ingsw.model.cards.LeaderCard;
@@ -22,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class TakeResourcesFromMarketAction {
+public class TakeResourcesFromMarketAction implements Action{
 
     /*
     private int insertionPosition;
@@ -35,8 +36,16 @@ public class TakeResourcesFromMarketAction {
     private ClientHandler clientHandler;
     private Market market;
     private PlayPhase playPhase;
+    private List<Resource> resourcesToStore;
+    private List<Marble> marblesToConvert;
 
-
+    /**
+     * Constructor of the action
+     * @param player
+     * @param clientHandler
+     * @param market
+     * @param playPhase
+     */
     public TakeResourcesFromMarketAction(Player player, ClientHandler clientHandler, Market market, PlayPhase playPhase){
         this.player = player;
         this.clientHandler = clientHandler;
@@ -48,12 +57,92 @@ public class TakeResourcesFromMarketAction {
         return true;
     }
 
+    @Override
+    public void reset() {
+
+    }
+
     public void execute(TurnController turnController){
-        clientHandler.sendMessageToClient(new MarbleInsertionPositionRequest(false));
+        clientHandler.sendMessageToClient(new MarbleInsertionPositionRequest(this, false));
+    }
+
+    /**
+     * Method called once that the client has inserted the desired insertion position
+     * @param insertionPosition
+     */
+    public void handleInsertionPositionResponse(int insertionPosition){
+        try {
+            marblesToConvert = market.insertMarbleFromTheSlide(insertionPosition);
+        } catch (InvalidArgumentException e) { }
+        if (player.getPersonalBoard().getAvailableEffects(EffectType.WHITE_MARBLE).size() > 1 && marblesToConvert.contains(Marble.WHITE))
+            handleWhiteMarblesConversion();
+        else if ((player.getPersonalBoard().getAvailableEffects(EffectType.WHITE_MARBLE).size() == 1 && marblesToConvert.contains(Marble.WHITE)))
+            handleAutomaticConversion();
+        else {
+            try {
+                marblesConversion(marblesToConvert);
+            } catch (InvalidArgumentException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Method to convert all the white marbles in the only available marble conversion
+     */
+    public void handleAutomaticConversion(){
+        Marble conversion = getWhiteMarblesConversion().get(0);
+        marblesToConvert = marblesToConvert.stream().map(x -> x == Marble.WHITE ? conversion : x).collect(Collectors.toList());
+    }
+
+    /**
+     *
+     */
+    public void handleWhiteMarblesConversion(){
+        List <Marble> availableConversion = getWhiteMarblesConversion();
+        for (Marble marble : marblesToConvert)
+            if (marble == Marble.WHITE)
+                clientHandler.sendMessageToClient(new ChooseWhiteMarbleConversionRequest(availableConversion));
+    }
+
+    /**
+     * Method to change the color of the first white marble
+     * @param conversion the color of the produced marble
+     */
+    public void handleWhiteMarblesConversionResponse(Marble conversion){
+        for (int i = 0; i < marblesToConvert.size(); i++){
+            if (marblesToConvert.get(i) == Marble.WHITE){
+                marblesToConvert.set(i, conversion);
+                return;
+        }
+        }
+    }
+
+    private List<Marble> getWhiteMarblesConversion(){
+        List<Marble> availableConversions = new ArrayList<>();
+        List<Effect>effectsWhiteMarble = player.getPersonalBoard().getAvailableEffects(EffectType.WHITE_MARBLE);
+        for (Effect effect : effectsWhiteMarble) {
+            try {
+                availableConversions.add(effect.getWhiteMarbleEffect());
+            } catch (DifferentEffectTypeException e) {
+                e.printStackTrace();
+            }
+        }
+        return availableConversions;
     }
 
 
-
+    private void marblesConversion(List<Marble> marbles) throws InvalidArgumentException {
+        marbles.stream().filter(x -> x == Marble.RED).forEach(x -> {
+            try {
+                player.getPersonalBoard().moveMarker(1);
+            } catch (InvalidArgumentException e) {
+                e.printStackTrace();
+            }
+        });
+        resourcesToStore = marbles.stream().filter(x -> (x != Marble.WHITE && x != Marble.RED))
+                .map(x -> Resource.valueOf(x.getValue())).collect(Collectors.toList());
+    }
 
 
 
