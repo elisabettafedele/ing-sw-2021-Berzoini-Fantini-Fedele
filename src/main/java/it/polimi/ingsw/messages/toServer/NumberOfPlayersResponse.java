@@ -4,6 +4,7 @@ import it.polimi.ingsw.Server.ClientHandler;
 import it.polimi.ingsw.Server.Server;
 import it.polimi.ingsw.enumerations.ClientHandlerPhase;
 import it.polimi.ingsw.messages.toClient.NumberOfPlayersRequest;
+import it.polimi.ingsw.messages.toClient.WaitingInTheLobbyMessage;
 
 import java.util.logging.Level;
 
@@ -28,8 +29,8 @@ public class NumberOfPlayersResponse implements MessageToServer {
             Server.SERVER_LOGGER.log(Level.INFO, "New message from "+ clientHandler.getNickname() + " that has chosen the number of players: "+ numberOfPlayers);
             if (isLegal()) {
                 server.setNumberOfPlayersForNextGame(numberOfPlayers);
-                //TODO send a waiting in the lobby message
-                clientHandler.setClientHandlerPhase(ClientHandlerPhase.READY_TO_START);
+                clientHandler.sendMessageToClient(new WaitingInTheLobbyMessage());
+                clientHandler.setClientHandlerPhase(ClientHandlerPhase.WAITING_IN_THE_LOBBY);
             } else {
                 clientHandler.sendMessageToClient(new NumberOfPlayersRequest(true));
             }

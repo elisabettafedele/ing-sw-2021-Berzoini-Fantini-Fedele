@@ -6,7 +6,7 @@ import it.polimi.ingsw.common.VirtualView;
 public class WaitingInTheLobbyMessage implements MessageToClient {
 
     @Override
-    public void handleMessage(VirtualView view, ClientInterface client) {
+    public void handleMessage(VirtualView view) {
         view.displayWaitingInTheLobbyMessage();
     }
 }

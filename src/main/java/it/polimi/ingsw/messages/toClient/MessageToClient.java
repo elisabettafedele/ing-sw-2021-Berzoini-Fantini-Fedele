@@ -6,5 +6,5 @@ import it.polimi.ingsw.common.VirtualView;
 import java.io.Serializable;
 
 public interface MessageToClient extends Serializable {
-    public void handleMessage(VirtualView view, ClientInterface client);
+    public void handleMessage(VirtualView view);
 }

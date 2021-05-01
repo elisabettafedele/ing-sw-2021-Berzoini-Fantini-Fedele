@@ -15,8 +15,7 @@ public class NumberOfPlayersRequest implements MessageToClient {
     }
 
     @Override
-    public void handleMessage(VirtualView view, ClientInterface client) {
+    public void handleMessage(VirtualView view) {
         view.displayNumberOfPlayersRequest(isRetry);
-        client.sendMessageToServer(new NumberOfPlayersResponse(InputParser.getInt("Invalid number of players: please insert an integer number between 2 and 4")));
     }
 }

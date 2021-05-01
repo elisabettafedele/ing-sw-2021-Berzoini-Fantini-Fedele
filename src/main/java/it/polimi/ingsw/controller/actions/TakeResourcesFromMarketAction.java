@@ -57,11 +57,6 @@ public class TakeResourcesFromMarketAction implements Action{
         return true;
     }
 
-    @Override
-    public void reset() {
-
-    }
-
     public void execute(TurnController turnController){
         clientHandler.sendMessageToClient(new MarbleInsertionPositionRequest(this, false));
     }

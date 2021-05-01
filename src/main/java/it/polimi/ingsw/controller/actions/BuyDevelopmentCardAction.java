@@ -167,8 +167,4 @@ public class BuyDevelopmentCardAction implements Action{
         return false;
     }
 
-    @Override
-    public void reset() {
-
-    }
 }

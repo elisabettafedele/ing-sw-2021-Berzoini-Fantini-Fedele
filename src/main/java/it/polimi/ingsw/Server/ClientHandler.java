@@ -16,10 +16,10 @@ import java.net.SocketTimeoutException;
 import java.util.logging.Level;
 
 public class ClientHandler implements Runnable, ClientHandlerInterface {
-    public static final int PING_PERIOD = 8000; //PING_PERIOD = TIMEOUT/2
+    public static final int PING_PERIOD = 5000; //PING_PERIOD = TIMEOUT/2
     //The timer gives one minute to the user to send the response
-    public static final int SO_TIMEOUT_PERIOD = 160000;
-    public static final int TIMEOUT_FOR_RESPONSE = 60000;
+    public static final int SO_TIMEOUT_PERIOD = 100000;
+    public static final int TIMEOUT_FOR_RESPONSE = 15000;
 
     private final Socket socket;
 
@@ -84,12 +84,14 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
 
             clientHandlerPhase = ClientHandlerPhase.WAITING_GAME_MODE;
             sendMessageToClient(new GameModeRequest());
+            //startTimer();
 
 
             while(active){
                 try {
                     Object messageFromClient = is.readObject();
                     if(messageFromClient != null && !(messageFromClient == ConnectionMessage.PING)) {
+                        //stopTimer();
                         ((MessageToServer) messageFromClient).handleMessage(server, this);
                     }
                 } catch (ClassNotFoundException messageIgnored) {
@@ -118,12 +120,20 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
         timer.start();
     }
 
+    public void stopTimer(){
+        if (timer != null && timer.isAlive()){
+            timer.interrupt();
+            timer = null;
+        }
+    }
+
     @Override
     public void sendMessageToClient(Serializable message) {
         try {
             os.writeObject(message);
             os.flush();
             os.reset();
+            //startTimer();
         } catch (IOException e) {
             handleSocketDisconnection();
         }

@@ -13,7 +13,7 @@ public class ChooseWhiteMarbleConversionRequest implements MessageToClient{
     }
 
     @Override
-    public void handleMessage(VirtualView view, ClientInterface client) {
+    public void handleMessage(VirtualView view) {
 
     }
 }

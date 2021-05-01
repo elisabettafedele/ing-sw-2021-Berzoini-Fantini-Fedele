@@ -16,9 +16,8 @@ public class NicknameRequest implements MessageToClient {
     }
 
     @Override
-    public void handleMessage(VirtualView view, ClientInterface client) {
+    public void handleMessage(VirtualView view) {
         view.displayNicknameRequest(isRetry, alreadyTaken);
-        client.sendMessageToServer(new NicknameResponse(view.getNickname()));
     }
 
 }

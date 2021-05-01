@@ -1,8 +1,6 @@
 package it.polimi.ingsw.messages.toClient;
 
-import it.polimi.ingsw.common.ClientInterface;
 import it.polimi.ingsw.common.VirtualView;
-
 import java.util.List;
 
 
@@ -13,7 +11,7 @@ public class PlayersReadyToStartMessage implements MessageToClient {
     }
 
     @Override
-    public void handleMessage(VirtualView view, ClientInterface client) {
+    public void handleMessage(VirtualView view) {
         view.displayPlayersReadyToStartMessage(nicknames);
     }
 }

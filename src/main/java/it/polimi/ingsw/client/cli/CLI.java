@@ -5,6 +5,9 @@ import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.View;
 import it.polimi.ingsw.client.utilities.InputParser;
 import it.polimi.ingsw.enumerations.GameMode;
+import it.polimi.ingsw.messages.toServer.GameModeResponse;
+import it.polimi.ingsw.messages.toServer.NicknameResponse;
+import it.polimi.ingsw.messages.toServer.NumberOfPlayersResponse;
 
 import java.util.List;
 import java.util.regex.Pattern;
@@ -21,6 +24,8 @@ public class CLI implements View {
     private String IPAddress;
     private int port;
 
+    private Client client;
+
     public static void main(String[] args) {
         CLI cli= new CLI();
         cli.init();
@@ -28,7 +33,7 @@ public class CLI implements View {
 
     private void init(){
         askConnectionParameters();
-        Client client = new Client(IPAddress, port, this);
+        client = new Client(IPAddress, port, this);
         client.start();
     }
 
@@ -81,11 +86,13 @@ public class CLI implements View {
         else {
             System.out.println("Your nickname has already been taken, insert another one");
         }
+        client.sendMessageToServer(new NicknameResponse(InputParser.getLine()));
     }
 
     @Override
     public void displayGameModeRequest() {
         System.out.println("Insert a game mode, multiplayer or solo mode: m | s");
+        client.sendMessageToServer(new GameModeResponse(getGameMode()));
     }
 
     @Override
@@ -95,6 +102,7 @@ public class CLI implements View {
         else {
             System.out.println("Insert desired number of players: 2, 3 or 4");
         }
+        client.sendMessageToServer(new NumberOfPlayersResponse(InputParser.getInt("Invalid number of players: please insert an integer number between 2 and 4")));
     }
 
     @Override
@@ -110,7 +118,11 @@ public class CLI implements View {
 
     @Override
     public void displayTimeoutExpiredMessage() {
-        System.out.println("Timeout has expired, do you want to reconnect? y | n");
+        System.out.println("Timeout expired");
+        //boolean reconnect = getBoolean("Timeout expired, do you want to reconnect? y | n");
+        client.closeSocket();
+       // if (reconnect)
+           // client.start();
     }
 
     @Override
@@ -118,9 +130,7 @@ public class CLI implements View {
         System.out.println("Insert a marble insertion position (from 1 to 8) to insert the marble in the market trace: ");
     }
 
-
-    @Override
-    public GameMode getGameMode(){
+    private GameMode getGameMode(){
         while(true) {
             String gameModeString = InputParser.getLine();
             if (gameModeString.equals("m"))
@@ -133,10 +143,17 @@ public class CLI implements View {
         }
     }
 
-    @Override
-    public String getNickname() {
-        return InputParser.getLine();
+    private boolean getBoolean(String message){
+        String reconnectString;
+        do {
+            System.out.println(message);
+            reconnectString = InputParser.getLine();
+        } while (!reconnectString.equalsIgnoreCase("y")  && !reconnectString.equalsIgnoreCase("n"));
+        return reconnectString.equalsIgnoreCase("y");
+
     }
+
+
 
 
 }

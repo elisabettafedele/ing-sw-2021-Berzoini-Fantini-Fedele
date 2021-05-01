@@ -3,6 +3,7 @@ package it.polimi.ingsw.client;
 import it.polimi.ingsw.common.ClientInterface;
 import it.polimi.ingsw.messages.ConnectionMessage;
 import it.polimi.ingsw.messages.toClient.MessageToClient;
+import it.polimi.ingsw.messages.toClient.TimeoutExpiredMessage;
 
 import java.io.*;
 import java.net.InetSocketAddress;
@@ -13,8 +14,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Client implements ClientInterface {
-    private final int SOCKET_TIMEOUT = 40000;
-    public static final int PING_PERIOD = 80000; //PING_PERIOD = TIMEOUT/2
+    private final int SOCKET_TIMEOUT = 100000;
+    public static final int PING_PERIOD = 5000; //PING_PERIOD = TIMEOUT/2
 
     private View view;
 
@@ -38,7 +39,6 @@ public class Client implements ClientInterface {
         this.IPAddress = IPAddress;
         this.port = port;
         this.view = view;
-        this.incomingPackets = new LinkedBlockingQueue<>();
         this.packetReceiver = new Thread(this::manageIncomingPackets);
         this.pinger = new Thread(() -> {
             while (connected.get()){
@@ -55,6 +55,7 @@ public class Client implements ClientInterface {
 
     public void start(){
         socket = new Socket();
+        this.incomingPackets = new LinkedBlockingQueue<>();
         try {
             socket.connect(new InetSocketAddress(IPAddress, port), SOCKET_TIMEOUT);
             os = new ObjectOutputStream(socket.getOutputStream());
@@ -65,21 +66,28 @@ public class Client implements ClientInterface {
 
         connected.set(true);
         packetReceiver.start();
+        try {
+            while(connected.get()){
+                Object message = null;
+                    message = is.readObject();
 
-        while(connected.get()){
-            Object message = null;
-            try {
-                message = is.readObject();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e){
-                closeSocket();
-            }
-            if (message == ConnectionMessage.CONNECTION_CLOSED)
-                closeSocket();
-            else if(message != null && !(message == ConnectionMessage.PING)) {
-                incomingPackets.add(message);
-            }
+                if (message == ConnectionMessage.CONNECTION_CLOSED)
+                    closeSocket();
+                if (message instanceof TimeoutExpiredMessage){
+                    packetReceiver.interrupt();
+                    pinger.interrupt();
+                    ((TimeoutExpiredMessage) message).handleMessage(view);
+                    break;
+                }
+                else if(message != null && !(message == ConnectionMessage.PING)) {
+                    incomingPackets.add(message);
+                }
+
+        }
+        } catch (IOException | ClassNotFoundException e){
+            pinger.interrupt();
+        } finally {
+            closeSocket();
         }
 
     }
@@ -105,11 +113,13 @@ public class Client implements ClientInterface {
                 connected.set(false);
                 break;
             }
-            ((MessageToClient) message).handleMessage(view, this);
+            ((MessageToClient) message).handleMessage(view);
         }
     }
 
-    private void closeSocket(){
+    public void closeSocket(){
+        if (packetReceiver.isAlive())
+            packetReceiver.interrupt();
         connected.set(false);
         //TODO message
         try{

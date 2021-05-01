@@ -10,8 +10,7 @@ import java.util.Observer;
 public class GameModeRequest implements MessageToClient{
 
     @Override
-    public void handleMessage(VirtualView view, ClientInterface client) {
+    public void handleMessage(VirtualView view) {
         view.displayGameModeRequest();
-        client.sendMessageToServer(new GameModeResponse(view.getGameMode()));
     }
 }
