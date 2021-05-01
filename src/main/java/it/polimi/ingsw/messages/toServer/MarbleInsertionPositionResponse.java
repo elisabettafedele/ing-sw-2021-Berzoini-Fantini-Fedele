@@ -24,6 +24,5 @@ public class MarbleInsertionPositionResponse implements MessageToServer{
             clientHandler.sendMessageToClient(new MarbleInsertionPositionRequest(action, true));
         else
             ((TakeResourcesFromMarketAction) action).handleInsertionPositionResponse(insertionPosition);
-        //TODO hqndle the message
     }
 }

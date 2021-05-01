@@ -187,14 +187,6 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
         return clientHandlerPhase;
     }
 
-    public String getIPAddress() {
-        return IPAddress;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
     @Override
     public void setNickname(String nickname){
         this.nickname = nickname;

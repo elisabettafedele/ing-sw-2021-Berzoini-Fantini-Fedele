@@ -4,8 +4,10 @@ package it.polimi.ingsw.client.cli;
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.View;
 import it.polimi.ingsw.client.utilities.InputParser;
+import it.polimi.ingsw.controller.actions.Action;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.messages.toServer.GameModeResponse;
+import it.polimi.ingsw.messages.toServer.MarbleInsertionPositionResponse;
 import it.polimi.ingsw.messages.toServer.NicknameResponse;
 import it.polimi.ingsw.messages.toServer.NumberOfPlayersResponse;
 
@@ -126,8 +128,9 @@ public class CLI implements View {
     }
 
     @Override
-    public void displayMarbleInsertionPositionRequest() {
+    public void displayMarbleInsertionPositionRequest(Action action) {
         System.out.println("Insert a marble insertion position (from 1 to 8) to insert the marble in the market trace: ");
+        client.sendMessageToServer(new MarbleInsertionPositionResponse(action, InputParser.getInt("Invalid position: the position must be an integer from 1 to 8")));
     }
 
     private GameMode getGameMode(){

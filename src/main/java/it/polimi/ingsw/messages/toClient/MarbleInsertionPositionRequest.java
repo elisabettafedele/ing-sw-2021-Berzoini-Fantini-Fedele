@@ -12,11 +12,12 @@ public class MarbleInsertionPositionRequest implements MessageToClient{
     Action action;
     public MarbleInsertionPositionRequest(Action action, boolean isRetry) {
         this.isRetry = isRetry;
+        this.action = action;
     }
 
     @Override
     public void handleMessage(VirtualView view) {
-        //TODO view
+        view.displayMarbleInsertionPositionRequest(action);
         //client.sendMessageToServer(new MarbleInsertionPositionResponse(action, InputParser.getInt("The position must be an integer index")));
     }
 }

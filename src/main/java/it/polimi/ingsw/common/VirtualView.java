@@ -1,6 +1,8 @@
 package it.polimi.ingsw.common;
 
 
+import it.polimi.ingsw.controller.actions.Action;
+
 import java.util.List;
 
 public interface VirtualView {
@@ -13,5 +15,5 @@ public interface VirtualView {
     //CONNECTION
     void displayTimeoutExpiredMessage();
     //ACTIONS
-    void displayMarbleInsertionPositionRequest();
+    void displayMarbleInsertionPositionRequest(Action action);
 }
