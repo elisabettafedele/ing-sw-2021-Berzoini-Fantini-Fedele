@@ -7,6 +7,9 @@ import it.polimi.ingsw.messages.toClient.MessageToClient;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Client implements ClientInterface {
@@ -23,6 +26,10 @@ public class Client implements ClientInterface {
     private ObjectOutputStream os;
     private ObjectInputStream is;
 
+    private final Thread packetReceiver;
+
+    private BlockingQueue<Object> incomingPackets;
+
     private final AtomicBoolean connected = new AtomicBoolean(false);
 
     private final Thread pinger;
@@ -31,6 +38,8 @@ public class Client implements ClientInterface {
         this.IPAddress = IPAddress;
         this.port = port;
         this.view = view;
+        this.incomingPackets = new LinkedBlockingQueue<>();
+        this.packetReceiver = new Thread(this::manageIncomingPackets);
         this.pinger = new Thread(() -> {
             while (connected.get()){
                 try{
@@ -55,6 +64,7 @@ public class Client implements ClientInterface {
         }
 
         connected.set(true);
+        packetReceiver.start();
 
         while(connected.get()){
             Object message = null;
@@ -68,7 +78,7 @@ public class Client implements ClientInterface {
             if (message == ConnectionMessage.CONNECTION_CLOSED)
                 closeSocket();
             else if(message != null && !(message == ConnectionMessage.PING)) {
-                ((MessageToClient) message).handleMessage(view, this);
+                incomingPackets.add(message);
             }
         }
 
@@ -83,6 +93,19 @@ public class Client implements ClientInterface {
             } catch (IOException e) {
                 closeSocket();
             }
+        }
+    }
+
+    public void manageIncomingPackets(){
+        while (connected.get()){
+            Object message;
+            try {
+                message = incomingPackets.take();
+            } catch (InterruptedException e) {
+                connected.set(false);
+                break;
+            }
+            ((MessageToClient) message).handleMessage(view, this);
         }
     }
 
