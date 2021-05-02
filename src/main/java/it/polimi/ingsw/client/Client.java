@@ -28,6 +28,7 @@ public class Client implements ClientInterface {
     private ObjectInputStream is;
 
     private final Thread packetReceiver;
+    private final Thread serverObserver;
 
     private BlockingQueue<Object> incomingPackets;
 
@@ -40,6 +41,8 @@ public class Client implements ClientInterface {
         this.port = port;
         this.view = view;
         this.packetReceiver = new Thread(this::manageIncomingPackets);
+        this.serverObserver = new Thread(this::waitForMessages);
+
         this.pinger = new Thread(() -> {
             while (connected.get()){
                 try{
@@ -66,10 +69,15 @@ public class Client implements ClientInterface {
 
         connected.set(true);
         packetReceiver.start();
+        serverObserver.start();
+
+    }
+
+    public void waitForMessages(){
         try {
             while(connected.get()){
                 Object message = null;
-                    message = is.readObject();
+                message = is.readObject();
 
                 if (message == ConnectionMessage.CONNECTION_CLOSED)
                     closeSocket();
@@ -83,13 +91,12 @@ public class Client implements ClientInterface {
                     incomingPackets.add(message);
                 }
 
-        }
+            }
         } catch (IOException | ClassNotFoundException e){
             pinger.interrupt();
         } finally {
             closeSocket();
         }
-
     }
 
     @Override

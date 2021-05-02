@@ -14,10 +14,6 @@ import java.util.regex.Pattern;
 
 public class CLI implements View {
 
-    private static final String zeroTo255 = "([01]?[0-9]{1,2}|2[0-4][0-9]|25[0-5])";
-    private static final String IP_REGEXP = "^(" + zeroTo255 + "\\." + zeroTo255 + "\\." + zeroTo255 + "\\." + zeroTo255 + ")$";
-    private static final Pattern IP_PATTERN = Pattern.compile(IP_REGEXP);
-
     private static final String DEFAULT_ADDRESS = "127.0.0.1";
     private static final int DEFAULT_PORT = 1234;
 
@@ -54,7 +50,7 @@ public class CLI implements View {
                 this.port = DEFAULT_PORT;
                 return;
             }
-        }while(!IPAddressIsValid(IPAddress));
+        }while(!Utils.IPAddressIsValid(IPAddress));
         firstTry = true;
         this.IPAddress = IPAddress;
         //Insert port number
@@ -65,16 +61,8 @@ public class CLI implements View {
                 System.out.println("Invalid port number: enter an integer between 1024 and 65535");
             firstTry = false;
             port = InputParser.getInt("Invalid port number: enter an integer between 1024 and 65535");
-        }while (!portIsValid(port));
+        }while (!Utils.portIsValid(port));
         this.port = port;
-    }
-
-    private boolean IPAddressIsValid(String IP){
-        return IP != null && IP_PATTERN.matcher(IP).matches();
-    }
-
-    private boolean portIsValid(int port){
-        return port >= 1024 && port <= 65535;
     }
 
     @Override
