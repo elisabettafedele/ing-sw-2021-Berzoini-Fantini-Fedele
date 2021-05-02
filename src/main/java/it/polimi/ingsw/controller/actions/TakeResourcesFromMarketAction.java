@@ -58,6 +58,7 @@ public class TakeResourcesFromMarketAction implements Action{
     }
 
     public void execute(TurnController turnController){
+        clientHandler.setCurrentAction(this);
         clientHandler.sendMessageToClient(new MarbleInsertionPositionRequest(this, false));
     }
 

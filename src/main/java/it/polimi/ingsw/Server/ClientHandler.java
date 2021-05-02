@@ -2,6 +2,7 @@ package it.polimi.ingsw.Server;
 
 import it.polimi.ingsw.common.ClientHandlerInterface;
 import it.polimi.ingsw.controller.Controller;
+import it.polimi.ingsw.controller.actions.Action;
 import it.polimi.ingsw.enumerations.ClientHandlerPhase;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.messages.*;
@@ -29,6 +30,8 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
     private ObjectOutputStream os;
     private ObjectInputStream is;
     private Server server;
+
+    private Action currentAction;
 
     private Thread timer;
 
@@ -188,8 +191,19 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
     }
 
     @Override
+    public Action getCurrentAction() {
+        return currentAction;
+    }
+
+    @Override
+    public void setCurrentAction(Action currentAction) {
+        this.currentAction = currentAction;
+    }
+
+    @Override
     public void setNickname(String nickname){
         this.nickname = nickname;
+        server.handleNicknameChoice(this);
     }
 
     @Override

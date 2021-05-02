@@ -1,5 +1,6 @@
 package it.polimi.ingsw.common;
 
+import it.polimi.ingsw.controller.actions.Action;
 import it.polimi.ingsw.enumerations.ClientHandlerPhase;
 import it.polimi.ingsw.enumerations.GameMode;
 
@@ -14,6 +15,8 @@ public interface ClientHandlerInterface {
     GameMode getGameMode();
     String getNickname();
     ClientHandlerPhase getClientHandlerPhase();
+    public Action getCurrentAction() ;
+    public void setCurrentAction(Action currentAction);
     void setNickname(String nickname);
     void setClientHandlerPhase(ClientHandlerPhase clientHandlerPhase);
     void setGameMode(GameMode gameMode);

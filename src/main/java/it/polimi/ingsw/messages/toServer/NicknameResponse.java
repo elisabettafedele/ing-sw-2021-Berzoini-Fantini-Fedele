@@ -2,6 +2,8 @@ package it.polimi.ingsw.messages.toServer;
 
 import it.polimi.ingsw.Server.ClientHandler;
 import it.polimi.ingsw.Server.Server;
+import it.polimi.ingsw.common.ClientHandlerInterface;
+import it.polimi.ingsw.common.ServerInterface;
 import it.polimi.ingsw.enumerations.ClientHandlerPhase;
 import it.polimi.ingsw.messages.toClient.NicknameRequest;
 
@@ -21,7 +23,7 @@ public class NicknameResponse implements MessageToServer {
         return nickname;
     }
 
-    public void handleMessage(Server server, ClientHandler clientHandler){
+    public void handleMessage(ServerInterface server, ClientHandlerInterface clientHandler){
         if (nickname == null || clientHandler.getClientHandlerPhase() != ClientHandlerPhase.WAITING_NICKNAME)
             return;
         else if (!NICKNAME_PATTERN.matcher(nickname).matches()){
@@ -29,11 +31,12 @@ public class NicknameResponse implements MessageToServer {
             return;
         }
         //The nickname is valid, the server will make another check later
+        clientHandler.setClientHandlerPhase(ClientHandlerPhase.WAITING_IN_THE_LOBBY);
         clientHandler.setNickname(nickname);
         // TODO insert the port of the client in the log message
         Server.SERVER_LOGGER.log(Level.INFO, "New message from client that has chosen his nickname: "+ nickname);
-        clientHandler.setClientHandlerPhase(ClientHandlerPhase.WAITING_IN_THE_LOBBY);
-        server.handleNicknameChoice(clientHandler);
+
+        //server.handleNicknameChoice(clientHandler);
     }
 
 }
