@@ -202,6 +202,7 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
 
     @Override
     public void setNickname(String nickname){
+        Server.SERVER_LOGGER.log(Level.INFO, "New message from client that has chosen his nickname: "+ nickname);
         this.nickname = nickname;
         server.handleNicknameChoice(this);
     }
@@ -213,11 +214,16 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
 
     @Override
     public void setGameMode(GameMode gameMode){
+        Server.SERVER_LOGGER.log(Level.INFO, "New message from client that has chosen the game mode");
         this.gameMode = gameMode;
     }
 
     @Override
     public void setGameStarted(boolean gameStarted){
         this.gameStarted = gameStarted;
+    }
+
+    public void setNumberOfPlayersForNextGame(int numberOfPlayersForNextGame){
+        server.setNumberOfPlayersForNextGame(this, numberOfPlayersForNextGame);
     }
 }

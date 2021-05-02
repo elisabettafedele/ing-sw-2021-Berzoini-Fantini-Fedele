@@ -1,13 +1,10 @@
 package it.polimi.ingsw.messages.toServer;
 
-import it.polimi.ingsw.Server.ClientHandler;
-import it.polimi.ingsw.Server.Server;
 import it.polimi.ingsw.common.ClientHandlerInterface;
 import it.polimi.ingsw.common.ServerInterface;
 import it.polimi.ingsw.enumerations.ClientHandlerPhase;
 import it.polimi.ingsw.messages.toClient.NicknameRequest;
 
-import java.util.logging.Level;
 import java.util.regex.Pattern;
 
 public class NicknameResponse implements MessageToServer {
@@ -33,10 +30,6 @@ public class NicknameResponse implements MessageToServer {
         //The nickname is valid, the server will make another check later
         clientHandler.setClientHandlerPhase(ClientHandlerPhase.WAITING_IN_THE_LOBBY);
         clientHandler.setNickname(nickname);
-        // TODO insert the port of the client in the log message
-        Server.SERVER_LOGGER.log(Level.INFO, "New message from client that has chosen his nickname: "+ nickname);
-
-        //server.handleNicknameChoice(clientHandler);
     }
 
 }

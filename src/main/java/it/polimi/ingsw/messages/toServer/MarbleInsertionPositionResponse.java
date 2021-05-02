@@ -1,7 +1,5 @@
 package it.polimi.ingsw.messages.toServer;
 
-import it.polimi.ingsw.Server.ClientHandler;
-import it.polimi.ingsw.Server.Server;
 import it.polimi.ingsw.common.ClientHandlerInterface;
 import it.polimi.ingsw.common.ServerInterface;
 import it.polimi.ingsw.controller.actions.Action;
@@ -24,7 +22,7 @@ public class MarbleInsertionPositionResponse implements MessageToServer{
     public void handleMessage(ServerInterface server, ClientHandlerInterface clientHandler) {
         if (!isLegal())
             clientHandler.sendMessageToClient(new MarbleInsertionPositionRequest(action, true));
-        else // Non so se va bene
+        else //TODO Cosi non va bene devo mettere un interfaccia Action con tutte le funzioni!!!!!
             ((TakeResourcesFromMarketAction)clientHandler.getCurrentAction()).handleInsertionPositionResponse(insertionPosition);
     }
 }

@@ -15,12 +15,13 @@ public interface ClientHandlerInterface {
     GameMode getGameMode();
     String getNickname();
     ClientHandlerPhase getClientHandlerPhase();
-    public Action getCurrentAction() ;
-    public void setCurrentAction(Action currentAction);
+    Action getCurrentAction() ;
+    void setCurrentAction(Action currentAction);
     void setNickname(String nickname);
     void setClientHandlerPhase(ClientHandlerPhase clientHandlerPhase);
     void setGameMode(GameMode gameMode);
     void setGameStarted(boolean gameStarted);
+    void setNumberOfPlayersForNextGame(int numberOfPlayersForNextGame);
     /**
      * Timer used to disconnect players who are too slow in sending their responses
      */

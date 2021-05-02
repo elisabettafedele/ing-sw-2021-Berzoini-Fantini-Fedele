@@ -6,5 +6,5 @@ import it.polimi.ingsw.common.ServerInterface;
 import java.io.Serializable;
 
 public interface MessageToServer extends Serializable {
-    public void handleMessage(ServerInterface server, ClientHandlerInterface clientHandler);
+    void handleMessage(ServerInterface server, ClientHandlerInterface clientHandler);
 }

@@ -1,5 +1,6 @@
 package it.polimi.ingsw.Server;
 
+import it.polimi.ingsw.common.ClientHandlerInterface;
 import it.polimi.ingsw.common.ServerInterface;
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.enumerations.ClientHandlerPhase;
@@ -86,7 +87,7 @@ public class Server implements ServerInterface {
      * - it calls the NewGameManager method
      * @param connection
      */
-    @Override
+
     public void handleNicknameChoice(ClientHandler connection) {
         //SOLO MODE -> start the game
         if (connection.getGameMode() == GameMode.SINGLE_PLAYER && connection.getClientHandlerPhase() == ClientHandlerPhase.WAITING_NICKNAME) {
@@ -253,8 +254,9 @@ public class Server implements ServerInterface {
 
 
     @Override
-    public void setNumberOfPlayersForNextGame(int numberOfPlayersForNextGame){
+    public void setNumberOfPlayersForNextGame(ClientHandlerInterface clientHandler, int numberOfPlayersForNextGame){
         this.numberOfPlayersForNextGame = numberOfPlayersForNextGame;
+        Server.SERVER_LOGGER.log(Level.INFO, "New message from "+ clientHandler.getNickname() + " that has chosen the number of players: "+ numberOfPlayersForNextGame);
         NewGameManager();
     }
 

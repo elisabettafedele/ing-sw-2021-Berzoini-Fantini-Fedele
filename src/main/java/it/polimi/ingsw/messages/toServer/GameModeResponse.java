@@ -1,7 +1,5 @@
 package it.polimi.ingsw.messages.toServer;
 
-import it.polimi.ingsw.Server.ClientHandler;
-import it.polimi.ingsw.Server.Server;
 import it.polimi.ingsw.common.ClientHandlerInterface;
 import it.polimi.ingsw.common.ServerInterface;
 import it.polimi.ingsw.enumerations.ClientHandlerPhase;
@@ -24,7 +22,6 @@ public class GameModeResponse implements MessageToServer {
     @Override
     public void handleMessage(ServerInterface server, ClientHandlerInterface clientHandler) {
         if (clientHandler.getClientHandlerPhase() == ClientHandlerPhase.WAITING_GAME_MODE) {
-            Server.SERVER_LOGGER.log(Level.INFO, "New message from client that has chosen the game mode");
             clientHandler.setGameMode(gameMode);
             clientHandler.sendMessageToClient(new NicknameRequest(false, false));
             clientHandler.setClientHandlerPhase(ClientHandlerPhase.WAITING_NICKNAME);
