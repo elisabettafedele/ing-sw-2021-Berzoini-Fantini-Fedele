@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.gui.SetupSceneController">
+   <children>
+      <VBox fx:id="vBoxIPandPORT" layoutX="201.0" layoutY="100.0" prefHeight="200.0" prefWidth="198.0" visible="false">
+         <children>
+            <TextField fx:id="ipTextField" onKeyTyped="#ipChanged" promptText="Ip Address" text="127.0.0.1" />
+            <TextField fx:id="portTextField" onKeyTyped="#portChanged" promptText="Port Number" text="1234" />
+            <Button fx:id="connectButton" mnemonicParsing="false" onAction="#handleConnectButton" text="Connect" />
+         </children>
+      </VBox>
+      <VBox fx:id="vBoxGameMode" layoutX="187.0" layoutY="162.0" prefHeight="86.0" prefWidth="261.0" visible="false">
+         <children>
+            <Button fx:id="singlePlayerButton" mnemonicParsing="false" onAction="#handleSingleplayerButton" text="Singleplayer" />
+            <Button fx:id="multiPlayerButton" mnemonicParsing="false" onAction="#handleMultiplayerButton" text="Multiplayer" />
+         </children>
+      </VBox>
+      <VBox fx:id="vBoxNickname" layoutX="106.0" layoutY="100.0" prefHeight="200.0" prefWidth="423.0" visible="false">
+         <children>
+            <Label fx:id="nicknameInfoLabel" prefHeight="46.0" prefWidth="423.0" />
+            <TextField fx:id="nicknameField" promptText="Insert nickname" />
+            <Button fx:id="sendNicknameButton" mnemonicParsing="false" onAction="#handleSendNicknameButton" text="Confirm" />
+         </children>
+      </VBox>
+      <VBox fx:id="vBoxNumOfPlayers" layoutX="153.0" layoutY="100.0" prefHeight="200.0" prefWidth="294.0">
+         <children>
+            <Label text="Select number of players:" />
+            <ChoiceBox fx:id="numOfPlayersChoiceBox" prefWidth="150.0" />
+            <Button fx:id="sendNumOfPlayerButton" mnemonicParsing="false" onAction="#onNumOfPlayersChoiceBoxChosen" text="Confirm" />
+         </children>
+      </VBox>
+      <VBox fx:id="vBoxWaiting" layoutX="193.0" layoutY="100.0" prefHeight="200.0" prefWidth="249.0" visible="false">
+         <children>
+            <Label text="Waiting in the Lobby" />
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
