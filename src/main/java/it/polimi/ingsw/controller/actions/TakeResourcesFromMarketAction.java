@@ -9,6 +9,9 @@ import it.polimi.ingsw.enumerations.*;
 import it.polimi.ingsw.exceptions.*;
 import it.polimi.ingsw.messages.toClient.ChooseWhiteMarbleConversionRequest;
 import it.polimi.ingsw.messages.toClient.MarbleInsertionPositionRequest;
+import it.polimi.ingsw.messages.toServer.ChooseWhiteMarbleConversionResponse;
+import it.polimi.ingsw.messages.toServer.MarbleInsertionPositionResponse;
+import it.polimi.ingsw.messages.toServer.MessageToServer;
 import it.polimi.ingsw.model.cards.Effect;
 import it.polimi.ingsw.model.cards.LeaderCard;
 import it.polimi.ingsw.model.depot.Depot;
@@ -20,6 +23,7 @@ import it.polimi.ingsw.model.player.PersonalBoard;
 import it.polimi.ingsw.model.player.Player;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,11 +55,22 @@ public class TakeResourcesFromMarketAction implements Action{
         this.clientHandler = clientHandler;
         this.market = market;
         this.playPhase = playPhase;
+        this.resourcesToStore = new LinkedList<>();
     }
 
     public boolean isExecutable() {
         return true;
     }
+
+    @Override
+    public void handleMessage(MessageToServer message) {
+        if (message instanceof MarbleInsertionPositionResponse)
+            handleInsertionPositionResponse(((MarbleInsertionPositionResponse) message).getInsertionPosition());
+        if (message instanceof ChooseWhiteMarbleConversionResponse)
+            handleWhiteMarblesConversionResponse(((ChooseWhiteMarbleConversionResponse) message).getMarble());
+    }
+
+
 
     public void execute(TurnController turnController){
         clientHandler.setCurrentAction(this);
@@ -75,11 +90,7 @@ public class TakeResourcesFromMarketAction implements Action{
         else if ((player.getPersonalBoard().getAvailableEffects(EffectType.WHITE_MARBLE).size() == 1 && marblesToConvert.contains(Marble.WHITE)))
             handleAutomaticConversion();
         else {
-            try {
-                marblesConversion(marblesToConvert);
-            } catch (InvalidArgumentException e) {
-                e.printStackTrace();
-            }
+            marblesConversion();
         }
     }
 
@@ -89,6 +100,7 @@ public class TakeResourcesFromMarketAction implements Action{
     public void handleAutomaticConversion(){
         Marble conversion = getWhiteMarblesConversion().get(0);
         marblesToConvert = marblesToConvert.stream().map(x -> x == Marble.WHITE ? conversion : x).collect(Collectors.toList());
+        marblesConversion();
     }
 
     /**
@@ -96,9 +108,8 @@ public class TakeResourcesFromMarketAction implements Action{
      */
     public void handleWhiteMarblesConversion(){
         List <Marble> availableConversion = getWhiteMarblesConversion();
-        for (Marble marble : marblesToConvert)
-            if (marble == Marble.WHITE)
-                clientHandler.sendMessageToClient(new ChooseWhiteMarbleConversionRequest(availableConversion));
+        int numberOfWhiteMarbles = (int) marblesToConvert.stream().filter(x -> x == Marble.WHITE).count();
+        clientHandler.sendMessageToClient(new ChooseWhiteMarbleConversionRequest(availableConversion, numberOfWhiteMarbles));
     }
 
     /**
@@ -128,16 +139,16 @@ public class TakeResourcesFromMarketAction implements Action{
     }
 
 
-    private void marblesConversion(List<Marble> marbles) throws InvalidArgumentException {
-        marbles.stream().filter(x -> x == Marble.RED).forEach(x -> {
-            try {
-                player.getPersonalBoard().moveMarker(1);
-            } catch (InvalidArgumentException e) {
-                e.printStackTrace();
+    private void marblesConversion() {
+        for (Marble marble : marblesToConvert){
+            if (marble == Marble.RED) {
+                try {
+                    player.getPersonalBoard().moveMarker(1);
+                } catch (InvalidArgumentException ignored) { }
             }
-        });
-        resourcesToStore = marbles.stream().filter(x -> (x != Marble.WHITE && x != Marble.RED))
-                .map(x -> Resource.valueOf(x.getValue())).collect(Collectors.toList());
+            else if (marble != Marble.WHITE)
+                resourcesToStore.add(Resource.valueOf(marble.getValue()));
+        }
     }
 
 

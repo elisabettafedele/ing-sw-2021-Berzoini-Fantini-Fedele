@@ -2,6 +2,7 @@ package it.polimi.ingsw.common;
 
 
 import it.polimi.ingsw.controller.actions.Action;
+import it.polimi.ingsw.enumerations.Marble;
 
 import java.util.List;
 
@@ -16,4 +17,5 @@ public interface VirtualView {
     void displayTimeoutExpiredMessage();
     //ACTIONS
     void displayMarbleInsertionPositionRequest(Action action);
+    void displayChooseWhiteMarbleConversionRequest(List<Marble> marbles, int numberOfMarbles);
 }

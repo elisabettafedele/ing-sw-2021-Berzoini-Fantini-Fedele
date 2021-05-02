@@ -5,6 +5,7 @@ import it.polimi.ingsw.enumerations.EffectType;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.enumerations.ResourceStorageType;
 import it.polimi.ingsw.exceptions.*;
+import it.polimi.ingsw.messages.toServer.MessageToServer;
 import it.polimi.ingsw.model.cards.DevelopmentCard;
 import it.polimi.ingsw.model.cards.Effect;
 import it.polimi.ingsw.model.game.DevelopmentCardGrid;
@@ -166,5 +167,11 @@ public class BuyDevelopmentCardAction implements Action{
         }
         return false;
     }
+
+    @Override
+    public void handleMessage(MessageToServer message) {
+
+    }
+
 
 }

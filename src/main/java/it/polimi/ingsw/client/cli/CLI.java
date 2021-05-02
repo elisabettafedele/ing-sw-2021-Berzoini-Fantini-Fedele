@@ -6,10 +6,8 @@ import it.polimi.ingsw.client.View;
 import it.polimi.ingsw.client.utilities.InputParser;
 import it.polimi.ingsw.controller.actions.Action;
 import it.polimi.ingsw.enumerations.GameMode;
-import it.polimi.ingsw.messages.toServer.GameModeResponse;
-import it.polimi.ingsw.messages.toServer.MarbleInsertionPositionResponse;
-import it.polimi.ingsw.messages.toServer.NicknameResponse;
-import it.polimi.ingsw.messages.toServer.NumberOfPlayersResponse;
+import it.polimi.ingsw.enumerations.Marble;
+import it.polimi.ingsw.messages.toServer.*;
 
 import java.util.List;
 import java.util.regex.Pattern;
@@ -133,6 +131,12 @@ public class CLI implements View {
         client.sendMessageToServer(new MarbleInsertionPositionResponse(action, InputParser.getInt("Invalid position: the position must be an integer from 1 to 8")));
     }
 
+    @Override
+    public void displayChooseWhiteMarbleConversionRequest(List<Marble> marbles, int numberOfMarbles) {
+        System.out.println("You have these two possible white marble conversions: " + marbles.get(0) + " | " + marbles.get(1));
+        client.sendMessageToServer(new ChooseWhiteMarbleConversionResponse(getMarbleColor(marbles)));
+    }
+
     private GameMode getGameMode(){
         while(true) {
             String gameModeString = InputParser.getLine();
@@ -154,6 +158,26 @@ public class CLI implements View {
         } while (!reconnectString.equalsIgnoreCase("y")  && !reconnectString.equalsIgnoreCase("n"));
         return reconnectString.equalsIgnoreCase("y");
 
+    }
+
+    private Marble getMarbleColor(List<Marble> conversions){
+        Marble marble = null;
+        String marbleString;
+        boolean error = false;
+        do {
+            System.out.println("Select one conversion: ");
+            marbleString = InputParser.getLine();
+            try {
+                marble = Marble.valueOf(marbleString.toUpperCase());
+                error = false;
+                if (!conversions.contains(marble))
+                    error = true;
+            }catch (IllegalArgumentException e){
+                error = true;
+                System.out.println("Error: insert a valid marble color");
+            }
+        } while (error);
+        return marble;
     }
 
 

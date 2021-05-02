@@ -90,7 +90,7 @@ public class Server implements ServerInterface {
 
     public void handleNicknameChoice(ClientHandler connection) {
         //SOLO MODE -> start the game
-        if (connection.getGameMode() == GameMode.SINGLE_PLAYER && connection.getClientHandlerPhase() == ClientHandlerPhase.WAITING_NICKNAME) {
+        if (connection.getGameMode() == GameMode.SINGLE_PLAYER) {
             //TODO handleNewSoloGame
             return;
         }

@@ -1,8 +1,10 @@
 package it.polimi.ingsw.controller.actions;
 
 import it.polimi.ingsw.controller.TurnController;
+import it.polimi.ingsw.messages.toServer.MessageToServer;
 
 public interface Action {
-    public void execute(TurnController turnController);
-    public boolean isExecutable();
+    void execute(TurnController turnController);
+    boolean isExecutable();
+    void handleMessage(MessageToServer message);
 }

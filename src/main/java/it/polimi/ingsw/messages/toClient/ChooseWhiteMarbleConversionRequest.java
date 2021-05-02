@@ -8,12 +8,18 @@ import java.util.List;
 
 public class ChooseWhiteMarbleConversionRequest implements MessageToClient{
 
-    public ChooseWhiteMarbleConversionRequest(List<Marble> conversions){
+    private List<Marble> conversions;
+    private int numberOfWhiteMarbles;
 
+
+    public ChooseWhiteMarbleConversionRequest(List<Marble> conversions, int numberOfWhiteMarbles){
+        this.conversions = conversions;
+        this.numberOfWhiteMarbles = numberOfWhiteMarbles;
     }
 
     @Override
     public void handleMessage(VirtualView view) {
+        view.displayChooseWhiteMarbleConversionRequest(conversions, numberOfWhiteMarbles);
 
     }
 }

@@ -18,11 +18,16 @@ public class MarbleInsertionPositionResponse implements MessageToServer{
     private boolean isLegal(){
         return insertionPosition > 0 && insertionPosition < 8;
     }
+
+    public int getInsertionPosition(){
+        return this.insertionPosition;
+    }
+
     @Override
     public void handleMessage(ServerInterface server, ClientHandlerInterface clientHandler) {
         if (!isLegal())
             clientHandler.sendMessageToClient(new MarbleInsertionPositionRequest(action, true));
-        else //TODO Cosi non va bene devo mettere un interfaccia Action con tutte le funzioni!!!!!
-            ((TakeResourcesFromMarketAction)clientHandler.getCurrentAction()).handleInsertionPositionResponse(insertionPosition);
+        else
+            clientHandler.getCurrentAction().handleMessage(this);
     }
 }
