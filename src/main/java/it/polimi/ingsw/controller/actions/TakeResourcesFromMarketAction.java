@@ -9,8 +9,10 @@ import it.polimi.ingsw.enumerations.*;
 import it.polimi.ingsw.exceptions.*;
 import it.polimi.ingsw.messages.toClient.ChooseWhiteMarbleConversionRequest;
 import it.polimi.ingsw.messages.toClient.MarbleInsertionPositionRequest;
+import it.polimi.ingsw.messages.toClient.NotifyMarbleTaken;
 import it.polimi.ingsw.messages.toServer.ChooseWhiteMarbleConversionResponse;
 import it.polimi.ingsw.messages.toServer.MarbleInsertionPositionResponse;
+
 import it.polimi.ingsw.messages.toServer.MessageToServer;
 import it.polimi.ingsw.model.cards.Effect;
 import it.polimi.ingsw.model.cards.LeaderCard;
@@ -82,12 +84,15 @@ public class TakeResourcesFromMarketAction implements Action{
      * @param insertionPosition
      */
     public void handleInsertionPositionResponse(int insertionPosition){
+        int whiteMarblesNumber = player.getPersonalBoard().getAvailableEffects(EffectType.WHITE_MARBLE).size();
         try {
             marblesToConvert = market.insertMarbleFromTheSlide(insertionPosition);
+            clientHandler.sendMessageToClient(new NotifyMarbleTaken(marblesToConvert, whiteMarblesNumber > 1));
         } catch (InvalidArgumentException e) { }
-        if (player.getPersonalBoard().getAvailableEffects(EffectType.WHITE_MARBLE).size() > 1 && marblesToConvert.contains(Marble.WHITE))
+        if (whiteMarblesNumber > 1 && marblesToConvert.contains(Marble.WHITE)) {
             handleWhiteMarblesConversion();
-        else if ((player.getPersonalBoard().getAvailableEffects(EffectType.WHITE_MARBLE).size() == 1 && marblesToConvert.contains(Marble.WHITE)))
+        }
+        else if ((whiteMarblesNumber == 1 && marblesToConvert.contains(Marble.WHITE)))
             handleAutomaticConversion();
         else {
             marblesConversion();

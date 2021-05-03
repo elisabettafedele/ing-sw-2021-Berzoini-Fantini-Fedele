@@ -125,6 +125,20 @@ public class CLI implements View {
         client.sendMessageToServer(new ChooseWhiteMarbleConversionResponse(getMarbleColor(marbles)));
     }
 
+    @Override
+    public void displayMarblesTaken(List<Marble> marblesTaken, boolean needToChooseConversion) {
+        System.out.println("These are the colors of the marbles you took from the market:");
+        for (int i = 0; i < marblesTaken.size() - 1; i++)
+            System.out.println(marblesTaken.get(i) + ", ");
+        System.out.println(marblesTaken.get(marblesTaken.size()-1));
+        if (marblesTaken.contains(Marble.WHITE)){
+            if (!needToChooseConversion)
+                System.out.println("You have one White Marble Effect Active! White marbles will be automatically converted according to this effect");
+            else
+                System.out.println("You have more than one White Marble Effect Active! You need to choose one white marble at a time how you want to convert it");
+        }
+    }
+
     private GameMode getGameMode(){
         while(true) {
             String gameModeString = InputParser.getLine();

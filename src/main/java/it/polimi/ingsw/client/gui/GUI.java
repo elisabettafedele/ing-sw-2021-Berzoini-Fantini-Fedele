@@ -116,4 +116,9 @@ public class GUI extends Application implements View {
 
     }
 
+    @Override
+    public void displayMarblesTaken(List<Marble> marblesTaken, boolean needToChooseConversion) {
+
+    }
+
 }

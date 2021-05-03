@@ -18,4 +18,5 @@ public interface VirtualView {
     //ACTIONS
     void displayMarbleInsertionPositionRequest(Action action);
     void displayChooseWhiteMarbleConversionRequest(List<Marble> marbles, int numberOfMarbles);
+    void displayMarblesTaken(List<Marble> marblesTaken, boolean needToChooseConversion);
 }
