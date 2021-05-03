@@ -1,9 +1,11 @@
 package it.polimi.ingsw.client.gui;
 import it.polimi.ingsw.client.Client;
+import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.client.View;
 import it.polimi.ingsw.common.FunctionInterface;
 import it.polimi.ingsw.controller.actions.Action;
 import it.polimi.ingsw.enumerations.Marble;
+import it.polimi.ingsw.model.cards.LeaderCard;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -121,4 +123,11 @@ public class GUI extends Application implements View {
 
     }
 
+    @Override
+    public void displayChooseLeaderCardsRequest(List<Integer> leaderCards){}
+
+    @Override
+    public void loadLeaderCards(List<LeaderCard> leaderCards){
+        MatchData.getInstance().setAllLeaderCards(leaderCards);
+    }
 }

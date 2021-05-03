@@ -1,5 +1,6 @@
 package it.polimi.ingsw.common;
 
+import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.controller.actions.Action;
 import it.polimi.ingsw.enumerations.ClientHandlerPhase;
 import it.polimi.ingsw.enumerations.GameMode;
@@ -22,6 +23,7 @@ public interface ClientHandlerInterface {
     void setGameMode(GameMode gameMode);
     void setGameStarted(boolean gameStarted);
     void setNumberOfPlayersForNextGame(int numberOfPlayersForNextGame);
+    Controller getController();
     /**
      * Timer used to disconnect players who are too slow in sending their responses
      */

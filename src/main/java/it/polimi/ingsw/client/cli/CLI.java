@@ -2,15 +2,20 @@ package it.polimi.ingsw.client.cli;
 
 
 import it.polimi.ingsw.client.Client;
+import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.client.View;
 import it.polimi.ingsw.client.utilities.InputParser;
 import it.polimi.ingsw.controller.actions.Action;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.enumerations.Marble;
+import it.polimi.ingsw.exceptions.ValueNotPresentException;
 import it.polimi.ingsw.messages.toServer.*;
+import it.polimi.ingsw.model.cards.LeaderCard;
 
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class CLI implements View {
 
@@ -60,7 +65,7 @@ public class CLI implements View {
             else
                 System.out.println("Invalid port number: enter an integer between 1024 and 65535");
             firstTry = false;
-            port = InputParser.getInt("Invalid port number: enter an integer between 1024 and 65535");
+            port = InputParser.getInt("Invalid port number: enter an integer between 1024 and 65535", conditionOnIntegerRange(1024, 65535));
         }while (!Utils.portIsValid(port));
         this.port = port;
     }
@@ -90,7 +95,7 @@ public class CLI implements View {
         else {
             System.out.println("Insert desired number of players: 2, 3 or 4");
         }
-        client.sendMessageToServer(new NumberOfPlayersResponse(InputParser.getInt("Invalid number of players: please insert an integer number between 2 and 4")));
+        client.sendMessageToServer(new NumberOfPlayersResponse(InputParser.getInt("Invalid number of players: please insert an integer number between 2 and 4", conditionOnIntegerRange(2, 4))));
     }
 
     @Override
@@ -116,7 +121,7 @@ public class CLI implements View {
     @Override
     public void displayMarbleInsertionPositionRequest(Action action) {
         System.out.println("Insert a marble insertion position (from 1 to 8) to insert the marble in the market trace: ");
-        client.sendMessageToServer(new MarbleInsertionPositionResponse(action, InputParser.getInt("Invalid position: the position must be an integer from 1 to 8")));
+        client.sendMessageToServer(new MarbleInsertionPositionResponse(action, InputParser.getInt("Invalid position: the position must be an integer from 1 to 8", conditionOnIntegerRange(1, 8))));
     }
 
     @Override
@@ -182,7 +187,32 @@ public class CLI implements View {
         return marble;
     }
 
+    @Override
+    public void displayChooseLeaderCardsRequest(List<Integer> leaderCardsIDs) {
+        System.out.println("Choose two Leader Cards to keep");
+        for (Integer id : leaderCardsIDs){
+            System.out.println(MatchData.getInstance().getLeaderCardByID(id));
+        }
+        System.out.print("Insert the ID of the first leader card chosen: ");
+        int firstChoice = InputParser.getInt("Error: the ID provided is not available. Provide a valid ID", conditionOnInteger(leaderCardsIDs));
+        leaderCardsIDs.remove(firstChoice);
+        MatchData.getInstance().addChosenLeaderCard(firstChoice);
+        System.out.print("Insert the ID of the second leader card chosen: ");
+        int secondChoice = InputParser.getInt("Error: the ID provided is not available. Provide a valid ID", conditionOnInteger(leaderCardsIDs));
+        MatchData.getInstance().addChosenLeaderCard(secondChoice);
+        client.sendMessageToServer(new ChooseLeaderCardsResponse(leaderCardsIDs));
+    }
 
+    @Override
+    public void loadLeaderCards(List<LeaderCard> leaderCards){
+        MatchData.getInstance().setAllLeaderCards(leaderCards);
+    }
 
+    public static Predicate<Integer> conditionOnIntegerRange(int min, int max){
+        return p -> p >= min && p <= max;
+    }
 
+    public static Predicate<Integer> conditionOnInteger(List<Integer> list){
+        return p -> list.contains(p);
+    }
 }

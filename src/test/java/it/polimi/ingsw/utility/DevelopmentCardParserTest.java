@@ -25,6 +25,8 @@ public class DevelopmentCardParserTest {
         cards = DevelopmentCardParser.parseCards();
         DevelopmentCard card = cards.get(0);
 
+        assertEquals(card.getID(), 1);
+
 
         Map<Resource, Integer> prodCostValue = new LinkedHashMap<>();
         prodCostValue.put(Resource.COIN, 1);

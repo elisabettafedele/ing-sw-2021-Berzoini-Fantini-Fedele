@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.utilities;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.function.Predicate;
 
 public class InputParser {
 
@@ -29,7 +30,7 @@ public class InputParser {
         return line;
     }
 
-    public static Integer getInt(String errorMessage){
+    public static Integer getInt(String errorMessage, Predicate<Integer> condition){
         String numString;
         Integer num = null;
         boolean done = false;
@@ -46,7 +47,11 @@ public class InputParser {
                 numString = input.readLine();
                 try {
                     num = Integer.parseInt(numString);
-                    done = true;
+                    if (condition.test(num)) {
+                        done = true;
+                    }else{
+                        System.out.println(errorMessage);
+                    }
                 } catch (NumberFormatException e) {
                     System.out.print(errorMessage);
                 }

@@ -226,4 +226,8 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
     public void setNumberOfPlayersForNextGame(int numberOfPlayersForNextGame){
         server.setNumberOfPlayersForNextGame(this, numberOfPlayersForNextGame);
     }
+
+    public void setController(Controller controller){
+        this.controller = controller;
+    }
 }

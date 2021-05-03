@@ -188,9 +188,11 @@ public class Server implements ServerInterface {
                 clientsInLobby.get(0).sendMessageToClient(new PlayersReadyToStartMessage(playersInGame));
                 clientsInLobby.get(0).setGameStarted(true);
                 controller.addConnection(clientsInLobby.get(0));
+                clientsInLobby.get(0).setController(controller);
                 clientsInLobby.remove(0);
             }
             activeGames.add(controller);
+            controller.start();
             numberOfPlayersForNextGame = -1;
             if (clientsInLobby.size() > 0) {
                 clientsInLobby.get(0).setClientHandlerPhase(ClientHandlerPhase.WAITING_NUMBER_OF_PLAYERS);

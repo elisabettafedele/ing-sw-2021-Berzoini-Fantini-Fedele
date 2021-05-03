@@ -35,7 +35,6 @@ public class DevelopmentCardParser {
         JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
         JsonObject jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
         JsonArray jsonCards = jsonObject.getAsJsonArray("developmentCards");
-
         for (JsonElement cardElem : jsonCards){
             JsonObject card = cardElem.getAsJsonObject();
 
@@ -49,6 +48,11 @@ public class DevelopmentCardParser {
             int victoryPoints = card.get("victoryPoints").getAsInt();
 
             cards.add(new DevelopmentCard(victoryPoints, cost, flag, production, imageFront, imageBack));
+        }
+        int id = 1;
+        for (DevelopmentCard card : cards){
+            card.setID(id);
+            id++;
         }
         return cards;
     }

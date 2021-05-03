@@ -339,4 +339,12 @@ public class PersonalBoard {
         return availableConversions;
     }
 
+    public void removeLeaderCard(int ID){
+        for (LeaderCard leaderCard : leaderCards){
+            if(ID == leaderCard.getID()){
+                removeLeaderCard(leaderCard);
+            }
+        }
+    }
+
 }

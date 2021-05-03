@@ -14,6 +14,7 @@ public abstract class Card {
     private String pathImageFront;
     private String pathImageBack;
     private boolean used;
+    private int ID;
 
     /**
      * Constructs a Card made of
@@ -86,12 +87,21 @@ public abstract class Card {
         this.used = false;
     }
 
+    public int getID()
+    {
+        return this.ID;
+    }
+
+    public void setID(int ID){
+        this.ID = ID;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Card card = (Card) o;
-        return victoryPoints == card.victoryPoints && used == card.used && cost.equals(card.cost) && ((pathImageFront == null && card.pathImageFront == null) ||
+        return victoryPoints == card.victoryPoints && ID == card.ID && used == card.used && cost.equals(card.cost) && ((pathImageFront == null && card.pathImageFront == null) ||
                 pathImageFront.equals(card.pathImageFront)) && ((pathImageBack == null && card.pathImageBack == null) || pathImageBack.equals(card.pathImageBack));
     }
 
