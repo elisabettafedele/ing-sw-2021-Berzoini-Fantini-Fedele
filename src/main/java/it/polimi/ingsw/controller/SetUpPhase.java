@@ -4,6 +4,10 @@ import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.InvalidMethodException;
 import it.polimi.ingsw.exceptions.ZeroPlayerException;
 
-public interface GamePhase {
-    public void executePhase(Controller controller);
+public class SetUpPhase implements GamePhase{
+    @Override
+    public void executePhase(Controller controller) {
+
+    }
+
 }

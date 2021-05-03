@@ -8,19 +8,18 @@ import it.polimi.ingsw.model.player.Player;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Controller {
     private Game game;
     private GamePhase gamePhase;
-    private int controllerID;
     private List<Player> players;
-    private List<ClientHandler> connections;
+    private List<ClientHandler> clientHandlers;
 
-    public Controller(int id, GameMode gameMode) throws InvalidArgumentException, UnsupportedEncodingException {
-        this.controllerID = id;
+    public Controller(GameMode gameMode) throws InvalidArgumentException, UnsupportedEncodingException {
         this.game = new Game(gameMode);
-        this.connections = new ArrayList<>();
+        this.clientHandlers = new LinkedList<>();
         //TODO this.gamePhase = new GamePhase() link the setup phase
 
     }
@@ -42,7 +41,16 @@ public class Controller {
     }
 
     public void addConnection(ClientHandler connection){
-        this.connections.add(connection);
+        this.clientHandlers.add(connection);
+    }
+
+    public void removeConnection(ClientHandler connection){
+        this.clientHandlers.remove(connection);
+    }
+
+    public void startSetUp(){
+        this.gamePhase = new SetUpPhase();
+        this.gamePhase.executePhase(this);
     }
 
 }

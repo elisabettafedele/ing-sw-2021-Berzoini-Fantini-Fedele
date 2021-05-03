@@ -5,12 +5,14 @@ import it.polimi.ingsw.common.ServerInterface;
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.enumerations.ClientHandlerPhase;
 import it.polimi.ingsw.enumerations.GameMode;
+import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.messages.toClient.NicknameRequest;
 import it.polimi.ingsw.messages.toClient.NumberOfPlayersRequest;
 import it.polimi.ingsw.messages.toClient.PlayersReadyToStartMessage;
 import it.polimi.ingsw.messages.toClient.WaitingInTheLobbyMessage;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
@@ -37,6 +39,8 @@ public class Server implements ServerInterface {
     private List<ClientHandler> clientsInLobby;
     private Map<String, Controller> clientsDisconnected;
 
+    private List<Controller> activeGames;
+
     ReentrantLock lockLobby = new ReentrantLock(true);
 
 
@@ -48,6 +52,7 @@ public class Server implements ServerInterface {
         this.executor = Executors.newCachedThreadPool();
         this.clientsInLobby = new LinkedList<ClientHandler>();
         this.clientsDisconnected = new HashMap<>();
+        this.activeGames = new LinkedList<>();
     }
 
     /**
@@ -167,6 +172,14 @@ public class Server implements ServerInterface {
      * Method used to manage the start of a multiplayer game
      */
     private void startNewGame() {
+        Controller controller = null;
+        try {
+            controller = new Controller(GameMode.MULTI_PLAYER);
+        } catch (InvalidArgumentException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         lockLobby.lock();
         try {
             List <String> playersInGame = clientsInLobby.stream().filter(x -> clientsInLobby.indexOf(x) < numberOfPlayersForNextGame).map(x -> x.getNickname()).collect(Collectors.toList());
@@ -174,8 +187,10 @@ public class Server implements ServerInterface {
                 clientsInLobby.get(0).setClientHandlerPhase(ClientHandlerPhase.READY_TO_START);
                 clientsInLobby.get(0).sendMessageToClient(new PlayersReadyToStartMessage(playersInGame));
                 clientsInLobby.get(0).setGameStarted(true);
+                controller.addConnection(clientsInLobby.get(0));
                 clientsInLobby.remove(0);
             }
+            activeGames.add(controller);
             numberOfPlayersForNextGame = -1;
             if (clientsInLobby.size() > 0) {
                 clientsInLobby.get(0).setClientHandlerPhase(ClientHandlerPhase.WAITING_NUMBER_OF_PLAYERS);
