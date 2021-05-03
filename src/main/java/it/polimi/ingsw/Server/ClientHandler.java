@@ -160,7 +160,7 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
                 os.flush();
                 os.reset();
             } catch (IOException e) { }
-            server.removeConnectionBetti(this);
+            server.removeConnection(this);
             try {
                 is.close();
             } catch (IOException e) {

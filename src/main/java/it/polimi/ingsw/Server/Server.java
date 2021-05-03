@@ -206,35 +206,10 @@ public class Server implements ServerInterface {
             lockLobby.unlock();
         }
     }
-    //Just a try
-    public void removeConnection2(ClientHandler connection){
-        try{
-            lockLobby.lock();
-            if (clientsInLobby.contains(connection)){
-                if(clientsInLobby.get(0).equals(connection)){
-                    numberOfPlayersForNextGame = -1;
-                }
-                clientsInLobby.remove(connection);
-                NewGameManager();
-            }
-        }finally {
-            lockLobby.unlock();
-        }
-    }
-    //TODO: to check if it works and if it has to be put in ServerInterface
-    public void removeConnection(ClientHandler connection){
-        try{
-            lockLobby.lock();
-            if (clientsInLobby.contains(connection))
-                clientsInLobby.remove(connection);
-        }
-        finally {
-            lockLobby.unlock();
-        }
-    }
+
 
     //TODO still testing but should work
-    public void removeConnectionBetti(ClientHandler connection){
+    public void removeConnection(ClientHandler connection){
         int position = -1;
         try{
             lockLobby.lock();
@@ -264,7 +239,7 @@ public class Server implements ServerInterface {
         if (clientHandler.isGameStarted())
             clientsDisconnected.put(clientHandler.getNickname(), clientHandler.getController());
         else
-            removeConnectionBetti(clientHandler);
+            removeConnection(clientHandler);
     }
 
     public void handleReconnection(ClientHandler clientHandler){
