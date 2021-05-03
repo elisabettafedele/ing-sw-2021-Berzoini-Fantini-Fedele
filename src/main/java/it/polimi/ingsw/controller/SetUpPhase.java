@@ -41,7 +41,7 @@ public class SetUpPhase implements GamePhase {
                 e.printStackTrace();
             }
             controller.getConnectionByNickname(nicknames.get(i)).sendMessageToClient(new LoadLeaderCardsMessage(leaderCards));
-            controller.getConnectionByNickname(nicknames.get(i)).sendMessageToClient(new ChooseLeaderCardsRequest(leaderCards.stream().map(x -> x.getID()).collect(Collectors.toList())));
+            controller.getConnectionByNickname(nicknames.get(i)).sendMessageToClient(new ChooseLeaderCardsRequest(cards.stream().map(x -> x.getID()).collect(Collectors.toList())));
         }
 
     }

@@ -8,10 +8,15 @@ import it.polimi.ingsw.client.utilities.InputParser;
 import it.polimi.ingsw.controller.actions.Action;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.enumerations.Marble;
+import it.polimi.ingsw.exceptions.InvalidArgumentException;
+import it.polimi.ingsw.exceptions.JsonFileNotFoundException;
 import it.polimi.ingsw.exceptions.ValueNotPresentException;
 import it.polimi.ingsw.messages.toServer.*;
 import it.polimi.ingsw.model.cards.LeaderCard;
+import it.polimi.ingsw.utility.LeaderCardParser;
 
+import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -191,14 +196,14 @@ public class CLI implements View {
     public void displayChooseLeaderCardsRequest(List<Integer> leaderCardsIDs) {
         System.out.println("Choose two Leader Cards to keep");
         for (Integer id : leaderCardsIDs){
-            System.out.println(MatchData.getInstance().getLeaderCardByID(id));
+            System.out.printf("%d. %s \n", id, MatchData.getInstance().getLeaderCardByID(id));
         }
         System.out.print("Insert the ID of the first leader card chosen: ");
-        int firstChoice = InputParser.getInt("Error: the ID provided is not available. Provide a valid ID", conditionOnInteger(leaderCardsIDs));
+        Integer firstChoice = InputParser.getInt("Error: the ID provided is not available. Provide a valid ID", conditionOnInteger(leaderCardsIDs));
         leaderCardsIDs.remove(firstChoice);
         MatchData.getInstance().addChosenLeaderCard(firstChoice);
         System.out.print("Insert the ID of the second leader card chosen: ");
-        int secondChoice = InputParser.getInt("Error: the ID provided is not available. Provide a valid ID", conditionOnInteger(leaderCardsIDs));
+        Integer secondChoice = InputParser.getInt("Error: the ID provided is not available. Provide a valid ID", conditionOnInteger(leaderCardsIDs));
         MatchData.getInstance().addChosenLeaderCard(secondChoice);
         client.sendMessageToServer(new ChooseLeaderCardsResponse(leaderCardsIDs));
     }

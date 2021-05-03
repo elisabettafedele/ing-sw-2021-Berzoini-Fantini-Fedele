@@ -3,13 +3,15 @@ package it.polimi.ingsw.model.cards;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.model.depot.LeaderDepot;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * The class represents the extra depot available via some of the {@link LeaderCard}
  */
-public class ExtraDepot{
+public class ExtraDepot implements Serializable {
 
+    private static final long serialVersionUID = 4421532865781468978L;
     private LeaderDepot leaderDepot;
 
     /**

@@ -3,6 +3,7 @@ package it.polimi.ingsw.model.cards;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.model.player.PersonalBoard;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -12,8 +13,9 @@ import java.util.Objects;
  * the default production of {@link PersonalBoard}.
  *
  */
-public class Production{
+public class Production implements Serializable {
 
+    private static final long serialVersionUID = 9001594522480623528L;
     private Value productionCost;
     private Value productionOutput;
 

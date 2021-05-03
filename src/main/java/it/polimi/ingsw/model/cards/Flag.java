@@ -4,13 +4,14 @@ import it.polimi.ingsw.enumerations.FlagColor;
 import it.polimi.ingsw.enumerations.Level;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * Flag represents the {@link DevelopmentCard} flag, composed of a {@link Level} and a {@link FlagColor}.
  * The class is also utilized for {@link LeaderCard} activation cost.
  */
-public class Flag {
+public class Flag implements Serializable {
 
     private FlagColor flagColor;
     private Level flagLevel;

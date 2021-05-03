@@ -2,12 +2,13 @@ package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * Abstract {@link Card} is the generic representation of all the game's cards. It includes all the attributes that every card has.
  */
-public abstract class Card {
+public abstract class Card implements Serializable {
 
     private final int victoryPoints;
     private final Value cost;

@@ -112,7 +112,7 @@ public class Server implements ServerInterface {
                 clientsInLobby.add(connection);
             }
             NewGameManager();
-            if (connection.getClientHandlerPhase() == ClientHandlerPhase.WAITING_IN_THE_LOBBY)
+            if (clientsInLobby.contains(connection) && connection.getClientHandlerPhase() == ClientHandlerPhase.WAITING_IN_THE_LOBBY)
                 connection.sendMessageToClient(new WaitingInTheLobbyMessage());
         }
         finally {
@@ -192,6 +192,7 @@ public class Server implements ServerInterface {
                 clientsInLobby.remove(0);
             }
             activeGames.add(controller);
+            assert controller != null;
             controller.start();
             numberOfPlayersForNextGame = -1;
             if (clientsInLobby.size() > 0) {

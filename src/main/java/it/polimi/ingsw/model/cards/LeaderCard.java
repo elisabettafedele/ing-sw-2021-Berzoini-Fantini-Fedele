@@ -9,6 +9,7 @@ import java.util.Objects;
  */
 public class LeaderCard extends Card {
 
+    private static final long serialVersionUID = -5121414682747056044L;
     private boolean active;
     private Effect effect;
 

@@ -4,14 +4,16 @@ import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.ValueNotPresentException;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
 
 /**
  * The class represents the {@link DevelopmentCard} and {@link LeaderCard} costs and the production powers
  */
-public class Value {
+public class Value implements Serializable {
 
+    private static final long serialVersionUID = 3910562105507540474L;
     private Map<Flag, Integer> flagValue;
     private Map<Resource, Integer> resourceValue;
     private int faithValue;

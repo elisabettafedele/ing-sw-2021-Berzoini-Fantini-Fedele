@@ -14,6 +14,7 @@ import java.util.Objects;
  */
 public class DevelopmentCard extends Card {
 
+    private static final long serialVersionUID = -7585665187979106207L;
     private Flag flag;
     private Production production;
 

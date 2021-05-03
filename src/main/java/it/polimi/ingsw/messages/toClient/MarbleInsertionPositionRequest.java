@@ -1,11 +1,7 @@
 package it.polimi.ingsw.messages.toClient;
 
-import it.polimi.ingsw.client.utilities.InputParser;
-import it.polimi.ingsw.common.ClientInterface;
 import it.polimi.ingsw.common.VirtualView;
 import it.polimi.ingsw.controller.actions.Action;
-import it.polimi.ingsw.controller.actions.TakeResourcesFromMarketAction;
-import it.polimi.ingsw.messages.toServer.MarbleInsertionPositionResponse;
 
 public class MarbleInsertionPositionRequest implements MessageToClient{
     boolean isRetry;

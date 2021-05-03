@@ -7,6 +7,7 @@ import it.polimi.ingsw.exceptions.DifferentEffectTypeException;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.model.game.Market;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 //import it.polimi.ingsw.model.game.DevelopmentCardGrid;
@@ -14,8 +15,9 @@ import java.util.Objects;
 /**
  * The class can represents all the possible special ability of {@link LeaderCard}
  */
-public class Effect {
+public class Effect implements Serializable {
 
+    private static final long serialVersionUID = 5648199934717234253L;
     private Resource discountEffect;
     private Marble whiteMarbleEffect;
     private ExtraDepot extraDepotEffect;
