@@ -8,10 +8,11 @@ import it.polimi.ingsw.client.utilities.InputParser;
 import it.polimi.ingsw.controller.actions.Action;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.enumerations.Marble;
+import it.polimi.ingsw.messages.toClient.ChooseResourceAndStorageTypeRequest;
 import it.polimi.ingsw.messages.toServer.*;
 import it.polimi.ingsw.model.cards.LeaderCard;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 import java.util.function.Predicate;
 
 public class CLI implements View {
@@ -218,7 +219,28 @@ public class CLI implements View {
     }
 
     @Override
-    public void displayChooseResourceTypeRequest(List<String> resourceTypes, int quantity) {
+    public void displayChooseResourceTypeRequest(List<String> resourceTypes, List<String> storageTypes, int quantity) {
+        //TODO show choose resourche type view
+
+        System.out.printf("You have to choose %d resource type. \nAvailable resource types are:\n");
+        System.out.println(Arrays.toString(resourceTypes.toArray()));
+
+        List<String> selectedResources = new ArrayList<>();
+        for (int i = 0; i < quantity; i++)
+            selectedResources.add(InputParser.getString("Please select a valid resource type", conditionOnString(resourceTypes)));
+
+        if (quantity == 2 && selectedResources.get(0).equals(selectedResources.get(1)))
+            storageTypes.remove(0);
+
+        Map<String, String> storage = new HashMap<>();
+        for (String resource : selectedResources) {
+            System.out.println("Where do you want to store the " + resource + "?");
+            System.out.println("Available options are: ");
+            System.out.println(Arrays.toString(storageTypes.toArray()));
+            storage.put(resource, InputParser.getString("Invalid storage type", conditionOnString(storageTypes)));
+        }
+
+        client.sendMessageToServer(new ChooseResourceAndStorageTypeResponse(storage));
     }
 
     public void loadDevelopmentCards(Map<Integer, List<String>> lightDevelopmentCards) {
@@ -230,6 +252,10 @@ public class CLI implements View {
     }
 
     public static Predicate<Integer> conditionOnInteger(List<Integer> list){
-        return p -> list.contains(p);
+        return list::contains;
+    }
+
+    public static Predicate<String> conditionOnString(List<String> lis){
+        return lis::contains;
     }
 }

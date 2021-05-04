@@ -7,6 +7,7 @@ import it.polimi.ingsw.messages.toClient.LoadDevelopmentCardsMessage;
 import it.polimi.ingsw.messages.toClient.LoadLeaderCardsMessage;
 import it.polimi.ingsw.model.cards.DevelopmentCard;
 import it.polimi.ingsw.model.cards.LeaderCard;
+import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.utility.DevelopmentCardParser;
 import it.polimi.ingsw.utility.LeaderCardParser;
 
@@ -21,8 +22,8 @@ public class SetUpPhase implements GamePhase {
     @Override
     public void executePhase(Controller controller) {
         this.controller = controller;
-        setUpLeaderCards();
         setUpDevelopmentCards();
+        setUpLeaderCards();
     }
 
     private void setUpDevelopmentCards() {
@@ -63,7 +64,7 @@ public class SetUpPhase implements GamePhase {
         for (int i = 0; i < nicknames.size(); i++){
             List<LeaderCard> cards = leaderCards.subList(i * 4, i * 4 + 4);
             try {
-                controller.getGame().addPlayer(nicknames.get(i), cards);
+                controller.getGame().addPlayer(nicknames.get(i), cards, getInitialFaithPoints(i), hasInkwell(i));
                 //TODO set inkwell
             } catch (InvalidArgumentException | InvalidPlayerAddException e) {
                 e.printStackTrace();
@@ -73,5 +74,30 @@ public class SetUpPhase implements GamePhase {
             controller.getConnectionByNickname(nicknames.get(i)).setClientHandlerPhase(ClientHandlerPhase.WAITING_DISCARDED_LEADER_CARDS);
         }
 
+    }
+
+    private boolean hasInkwell(int index){
+        return index == 0;
+    }
+
+    private int getInitialFaithPoints(int index){
+        return index > 1 ? 1 : 0;
+    }
+
+
+    public int getNumberOfInitialResourcesByNickname(String nickname){
+        List<Player> players;
+        try {
+            players = controller.getGame().getPlayers();
+        } catch (InvalidMethodException | ZeroPlayerException e) {
+            e.printStackTrace();
+            return -1;
+        }
+        assert (players.size() < 5);
+        if (players.indexOf(controller.getPlayerByNickname(nickname)) == 0)
+            return 0;
+        if (players.indexOf(controller.getPlayerByNickname(nickname)) < 3 )
+            return 1;
+        return 2;
     }
 }

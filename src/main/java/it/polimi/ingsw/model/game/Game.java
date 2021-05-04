@@ -40,14 +40,17 @@ public class Game {
      * @throws InvalidArgumentException when the nickname of the player has already been inserted in the list of players
      * @throws InvalidMethodException when the game is SINGLE_PLAYER and someone tries to register more than one player
      */
-    public void addPlayer(String nickname, List<LeaderCard> leaderCards) throws InvalidArgumentException, InvalidPlayerAddException {
+    public void addPlayer(String nickname, List<LeaderCard> leaderCards, int initialFaithPoints, boolean hasInkwell) throws InvalidArgumentException, InvalidPlayerAddException {
         if (leaderCards == null)
             throw new NullPointerException("Leader Cards cannot be null\n");
         if (gameMode == gameMode.SINGLE_PLAYER && !players.isEmpty())
             throw new InvalidPlayerAddException("You are in SINGLE_PLAYER mode and a player is already present in the game\n");
         if (players.stream().map(Player::getNickname).collect(Collectors.toList()).contains(nickname))
             throw new InvalidArgumentException("Nickname already present in players list, the player has already received its leader cards\n");
-        players.add(new Player(nickname, leaderCards));
+        Player player = new Player(nickname, leaderCards);
+        player.setInkwell(hasInkwell);
+        player.getPersonalBoard().moveMarker(initialFaithPoints);
+        players.add(player);
     }
 
     /**

@@ -139,7 +139,7 @@ public class GUI extends Application implements View {
 
     @Override
 
-    public void displayChooseResourceTypeRequest(List<String> resourceTypes, int quantity) {
+    public void displayChooseResourceTypeRequest(List<String> resourceTypes, List<String> storageTypes, int quantity) {
     }
 
     public void loadDevelopmentCards(Map<Integer, List<String>> lightDevelopmentCards) {

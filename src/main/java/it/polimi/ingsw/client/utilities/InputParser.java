@@ -30,6 +30,20 @@ public class InputParser {
         return line;
     }
 
+    public static String getString(String errorMessage, Predicate<String> condition){
+        boolean done = false;
+        String line;
+        do{
+            line = getLine();
+            if (condition.test(line))
+                done = true;
+            else
+                System.out.println(errorMessage);
+        } while (!done);
+        return line;
+    }
+
+
     public static Integer getInt(String errorMessage, Predicate<Integer> condition){
         String numString;
         Integer num = null;
