@@ -11,6 +11,7 @@ import it.polimi.ingsw.enumerations.Marble;
 import it.polimi.ingsw.messages.toServer.*;
 import it.polimi.ingsw.model.cards.LeaderCard;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 public class CLI implements View {
@@ -218,7 +219,10 @@ public class CLI implements View {
 
     @Override
     public void displayChooseResourceTypeRequest(List<String> resourceTypes, int quantity) {
+    }
 
+    public void loadDevelopmentCards(Map<Integer, List<String>> lightDevelopmentCards) {
+        MatchData.getInstance().setAllDevelopmentCards(lightDevelopmentCards);
     }
 
     public static Predicate<Integer> conditionOnIntegerRange(int min, int max){

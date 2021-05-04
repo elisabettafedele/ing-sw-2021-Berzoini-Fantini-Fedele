@@ -7,6 +7,7 @@ import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.model.cards.LeaderCard;
 
 import java.util.List;
+import java.util.Map;
 
 public interface VirtualView {
     //LOBBY
@@ -26,4 +27,5 @@ public interface VirtualView {
     void displaySelectLeaderCardRequest(List<Integer> leaderCards);
     void loadLeaderCards(List<LeaderCard> leaderCards);
     void displayChooseResourceTypeRequest(List<String> resourceTypes, int quantity);
+    void loadDevelopmentCards(Map<Integer, List<String>> lightDevelopmentCards);
 }

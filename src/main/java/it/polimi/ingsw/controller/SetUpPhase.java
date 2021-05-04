@@ -12,9 +12,7 @@ import it.polimi.ingsw.utility.LeaderCardParser;
 
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class SetUpPhase implements GamePhase {
@@ -37,10 +35,17 @@ public class SetUpPhase implements GamePhase {
             e.printStackTrace();
         }
 
-
+        Map<Integer, List<String>> lightDevelopmentCards = new HashMap<>();
+        for (DevelopmentCard developmentCard : developmentCards){
+            List<String> description = new ArrayList<>();
+            description.add(developmentCard.toString());
+            description.add(developmentCard.getPathImageFront());
+            description.add(developmentCard.getPathImageBack());
+            lightDevelopmentCards.put(developmentCard.getID(), description);
+        }
 
         for (int i = 0; i < nicknames.size(); i++){
-            controller.getConnectionByNickname(nicknames.get(i)).sendMessageToClient(new LoadDevelopmentCardsMessage());
+            controller.getConnectionByNickname(nicknames.get(i)).sendMessageToClient(new LoadDevelopmentCardsMessage(lightDevelopmentCards));
         }
     }
 
