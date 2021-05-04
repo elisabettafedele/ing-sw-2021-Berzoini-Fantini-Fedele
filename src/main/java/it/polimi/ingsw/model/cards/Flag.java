@@ -47,6 +47,14 @@ public class Flag implements Serializable {
     }
 
     @Override
+    public String toString() {
+        return "Flag{" +
+                "flagColor=" + flagColor +
+                ", flagLevel=" + flagLevel +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

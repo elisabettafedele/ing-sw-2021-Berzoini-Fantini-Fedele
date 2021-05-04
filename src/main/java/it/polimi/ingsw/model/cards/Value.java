@@ -71,6 +71,15 @@ public class Value implements Serializable {
     }
 
     @Override
+    public String toString() {
+        return "Value{" +
+                "flagValue=" + flagValue +
+                ", resourceValue=" + resourceValue +
+                ", faithValue=" + faithValue +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

@@ -142,6 +142,26 @@ public class Effect implements Serializable {
         return effectType;
     }
 
+    @Override
+    public String toString() {
+        if(this.effectType == EffectType.DISCOUNT){
+            return "Effect{" +
+                    "discountEffect=" + discountEffect +
+                    '}';
+        }else if(this.effectType == EffectType.WHITE_MARBLE){
+            return "Effect{" +
+                    "whiteMarbleEffect=" + whiteMarbleEffect +
+                    '}';
+        }else if(this.effectType == EffectType.EXTRA_DEPOT){
+            return "Effect{" +
+                    "extraDepotEffect=" + extraDepotEffect +
+                    '}';
+        }else{
+            return "Effect{" +
+                    "productionEffect=" + productionEffect +
+                    '}';
+        }
+    }
 
     @Override
     public boolean equals(Object o) {
