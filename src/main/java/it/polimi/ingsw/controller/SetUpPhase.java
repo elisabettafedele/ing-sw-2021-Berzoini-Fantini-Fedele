@@ -2,8 +2,11 @@ package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.exceptions.*;
 import it.polimi.ingsw.messages.toClient.ChooseLeaderCardsRequest;
+import it.polimi.ingsw.messages.toClient.LoadDevelopmentCardsMessage;
 import it.polimi.ingsw.messages.toClient.LoadLeaderCardsMessage;
+import it.polimi.ingsw.model.cards.DevelopmentCard;
 import it.polimi.ingsw.model.cards.LeaderCard;
+import it.polimi.ingsw.utility.DevelopmentCardParser;
 import it.polimi.ingsw.utility.LeaderCardParser;
 
 import java.io.FileNotFoundException;
@@ -20,6 +23,22 @@ public class SetUpPhase implements GamePhase {
     public void executePhase(Controller controller) {
         this.controller = controller;
         setUpLeaderCards();
+        setUpDevelopmentCards();
+    }
+
+    private void setUpDevelopmentCards() {
+        List<String> nicknames = controller.getNicknames();
+        List<DevelopmentCard> developmentCards = null;
+
+        try {
+            developmentCards = DevelopmentCardParser.parseCards();
+        } catch (UnsupportedEncodingException | InvalidArgumentException e) {
+            e.printStackTrace();
+        }
+
+        for (int i = 0; i < nicknames.size(); i++){
+            controller.getConnectionByNickname(nicknames.get(i)).sendMessageToClient(new LoadDevelopmentCardsMessage());
+        }
     }
 
 
