@@ -16,6 +16,7 @@ import it.polimi.ingsw.model.cards.LeaderCard;
 import it.polimi.ingsw.utility.LeaderCardParser;
 
 import java.io.FileNotFoundException;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.function.Predicate;
@@ -205,7 +206,19 @@ public class CLI implements View {
         System.out.print("Insert the ID of the second leader card chosen: ");
         Integer secondChoice = InputParser.getInt("Error: the ID provided is not available. Provide a valid ID", conditionOnInteger(leaderCardsIDs));
         MatchData.getInstance().addChosenLeaderCard(secondChoice);
+        leaderCardsIDs.remove(secondChoice);
         client.sendMessageToServer(new ChooseLeaderCardsResponse(leaderCardsIDs));
+    }
+
+    @Override
+    public void displaySelectLeaderCardRequest(List<Integer> leaderCardsIDs) {
+        System.out.println("Select a Leader Card");
+        for (Integer id : leaderCardsIDs){
+            System.out.printf("%d. %s \n", id, MatchData.getInstance().getLeaderCardByID(id));
+        }
+        System.out.print("Insert the ID of the Leader Card you want to select: ");
+        Integer selection = InputParser.getInt("Error: the ID provided is not available. Provide a valid ID", conditionOnInteger(leaderCardsIDs));
+        client.sendMessageToServer( new SelectLeaderCardResponse(selection));
     }
 
     @Override

@@ -12,6 +12,10 @@ public class TurnController {
     private Controller controller;
     private boolean interruptible;
 
+    public Controller getController() {
+        return controller;
+    }
+
     public TurnController(Controller controller) {
         this.numberOfLeaderActionsDone = 0;
         this.standardActionDone = false;

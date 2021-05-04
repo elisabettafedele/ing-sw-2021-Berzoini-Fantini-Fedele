@@ -127,6 +127,11 @@ public class GUI extends Application implements View {
     public void displayChooseLeaderCardsRequest(List<Integer> leaderCards){}
 
     @Override
+    public void displaySelectLeaderCardRequest(List<Integer> leaderCards) {
+
+    }
+
+    @Override
     public void loadLeaderCards(List<LeaderCard> leaderCards){
         MatchData.getInstance().setAllLeaderCards(leaderCards);
     }

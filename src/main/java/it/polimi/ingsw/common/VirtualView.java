@@ -22,5 +22,6 @@ public interface VirtualView {
     void displayMarblesTaken(List<Marble> marblesTaken, boolean needToChooseConversion);
     //SETUP
     void displayChooseLeaderCardsRequest(List<Integer> leaderCards);
+    void displaySelectLeaderCardRequest(List<Integer> leaderCards);
     void loadLeaderCards(List<LeaderCard> leaderCards);
 }
