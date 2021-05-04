@@ -42,6 +42,7 @@ public class Server implements ServerInterface {
     private List<Controller> activeGames;
 
     ReentrantLock lockLobby = new ReentrantLock(true);
+    ReentrantLock lockGames = new ReentrantLock(true);
 
 
     public static final Logger SERVER_LOGGER = Logger.getLogger("Server logger");
@@ -96,7 +97,7 @@ public class Server implements ServerInterface {
     public void handleNicknameChoice(ClientHandler connection) {
         //SOLO MODE -> start the game
         if (connection.getGameMode() == GameMode.SINGLE_PLAYER) {
-            //TODO handleNewSoloGame
+            startNewGame(connection);
             return;
         }
         if(knownClient(connection.getNickname())){
@@ -191,7 +192,12 @@ public class Server implements ServerInterface {
                 clientsInLobby.get(0).setController(controller);
                 clientsInLobby.remove(0);
             }
-            activeGames.add(controller);
+            lockGames.lock();
+            try {
+                activeGames.add(controller);
+            } finally {
+                lockGames.unlock();
+            }
             assert controller != null;
             controller.start();
             numberOfPlayersForNextGame = -1;
@@ -202,6 +208,28 @@ public class Server implements ServerInterface {
         } finally {
             lockLobby.unlock();
         }
+    }
+
+    private void startNewGame(ClientHandler connection){
+        Controller controller = null;
+        try {
+            controller = new Controller(GameMode.SINGLE_PLAYER);
+        } catch (InvalidArgumentException | UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        connection.setClientHandlerPhase(ClientHandlerPhase.READY_TO_START);
+        connection.setGameStarted(true);
+        controller.addConnection(connection);
+        connection.setController(controller);
+        lockGames.lock();
+        try{
+            activeGames.add(controller);
+        } finally{
+            lockGames.unlock();
+        }
+        assert controller != null;
+        controller.start();
+
     }
 
     /**
