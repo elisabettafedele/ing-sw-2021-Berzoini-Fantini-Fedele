@@ -35,6 +35,13 @@ public class ExtraDepot implements Serializable {
     }
 
     @Override
+    public String toString() {
+        return "ExtraDepot{" +
+                "leaderDepot=" + leaderDepot +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

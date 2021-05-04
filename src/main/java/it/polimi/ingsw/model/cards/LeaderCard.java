@@ -49,6 +49,14 @@ public class LeaderCard extends Card {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "LeaderCard{" +
+                super.toString() +
+                "active=" + active +
+                ", effect=" + effect +
+                '}';
+    }
 
     /**
      * @return the {@link Effect} of the card

@@ -45,6 +45,14 @@ public class Production implements Serializable {
     }
 
     @Override
+    public String toString() {
+        return "Production{" +
+                "productionCost=" + productionCost +
+                ", productionOutput=" + productionOutput +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

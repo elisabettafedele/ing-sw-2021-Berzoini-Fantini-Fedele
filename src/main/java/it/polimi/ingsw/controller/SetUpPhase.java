@@ -37,6 +37,8 @@ public class SetUpPhase implements GamePhase {
             e.printStackTrace();
         }
 
+
+
         for (int i = 0; i < nicknames.size(); i++){
             controller.getConnectionByNickname(nicknames.get(i)).sendMessageToClient(new LoadDevelopmentCardsMessage());
         }

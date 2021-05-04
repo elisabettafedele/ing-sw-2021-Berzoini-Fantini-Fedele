@@ -70,6 +70,14 @@ public class DevelopmentCard extends Card {
         return discountedCost;
     }
 
+    @Override
+    public String toString() {
+        return "DevelopmentCard{" +
+                super.toString() +
+                "flag=" + flag +
+                ", production=" + production +
+                '}';
+    }
 
     @Override
     public boolean equals(Object o) {
