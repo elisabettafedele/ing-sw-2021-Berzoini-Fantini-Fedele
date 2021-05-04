@@ -135,4 +135,9 @@ public class GUI extends Application implements View {
     public void loadLeaderCards(List<LeaderCard> leaderCards){
         MatchData.getInstance().setAllLeaderCards(leaderCards);
     }
+
+    @Override
+    public void displayChooseResourceTypeRequest(List<String> resourceTypes, int quantity) {
+
+    }
 }

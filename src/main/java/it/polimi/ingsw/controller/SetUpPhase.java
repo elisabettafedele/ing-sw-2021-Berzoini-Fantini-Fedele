@@ -1,5 +1,6 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.enumerations.ClientHandlerPhase;
 import it.polimi.ingsw.exceptions.*;
 import it.polimi.ingsw.messages.toClient.ChooseLeaderCardsRequest;
 import it.polimi.ingsw.messages.toClient.LoadDevelopmentCardsMessage;
@@ -56,11 +57,13 @@ public class SetUpPhase implements GamePhase {
             List<LeaderCard> cards = leaderCards.subList(i * 4, i * 4 + 4);
             try {
                 controller.getGame().addPlayer(nicknames.get(i), cards);
+                //TODO set inkwell
             } catch (InvalidArgumentException | InvalidPlayerAddException e) {
                 e.printStackTrace();
             }
             controller.getConnectionByNickname(nicknames.get(i)).sendMessageToClient(new LoadLeaderCardsMessage(leaderCards));
             controller.getConnectionByNickname(nicknames.get(i)).sendMessageToClient(new ChooseLeaderCardsRequest(cards.stream().map(x -> x.getID()).collect(Collectors.toList())));
+            controller.getConnectionByNickname(nicknames.get(i)).setClientHandlerPhase(ClientHandlerPhase.WAITING_DISCARDED_LEADER_CARDS);
         }
 
     }

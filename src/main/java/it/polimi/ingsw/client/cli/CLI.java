@@ -8,20 +8,10 @@ import it.polimi.ingsw.client.utilities.InputParser;
 import it.polimi.ingsw.controller.actions.Action;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.enumerations.Marble;
-import it.polimi.ingsw.exceptions.InvalidArgumentException;
-import it.polimi.ingsw.exceptions.JsonFileNotFoundException;
-import it.polimi.ingsw.exceptions.ValueNotPresentException;
 import it.polimi.ingsw.messages.toServer.*;
 import it.polimi.ingsw.model.cards.LeaderCard;
-import it.polimi.ingsw.utility.LeaderCardParser;
-
-import java.io.FileNotFoundException;
-import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class CLI implements View {
 
@@ -224,6 +214,11 @@ public class CLI implements View {
     @Override
     public void loadLeaderCards(List<LeaderCard> leaderCards){
         MatchData.getInstance().setAllLeaderCards(leaderCards);
+    }
+
+    @Override
+    public void displayChooseResourceTypeRequest(List<String> resourceTypes, int quantity) {
+
     }
 
     public static Predicate<Integer> conditionOnIntegerRange(int min, int max){
