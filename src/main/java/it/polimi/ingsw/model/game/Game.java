@@ -60,8 +60,8 @@ public class Game {
     public List<Player> getPlayers() throws InvalidMethodException, ZeroPlayerException {
         if (players.size() == 0)
             throw new ZeroPlayerException("No player is present in the game");
-        if (gameMode == GameMode.SINGLE_PLAYER)
-            throw new InvalidMethodException("You are in single player mode, you should use the function getSinglePlayer to get the only player\n");
+        //if (gameMode == GameMode.SINGLE_PLAYER)
+           // throw new InvalidMethodException("You are in single player mode, you should use the function getSinglePlayer to get the only player\n");
         return players;
     }
 
@@ -79,6 +79,13 @@ public class Game {
 
     public GameMode getGameMode(){
         return this.gameMode;
+    }
+
+    public Player getPlayerByNickname(String nickname){
+        for (Player player : players)
+            if (player.getNickname().equals(nickname))
+                return player;
+    return null;
     }
 
 }

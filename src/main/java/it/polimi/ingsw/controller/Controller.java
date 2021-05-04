@@ -1,15 +1,15 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.Server.ClientHandler;
+import it.polimi.ingsw.common.ClientHandlerInterface;
 import it.polimi.ingsw.enumerations.ClientHandlerPhase;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.enumerations.ResourceStorageType;
-import it.polimi.ingsw.exceptions.InsufficientSpaceException;
-import it.polimi.ingsw.exceptions.InvalidArgumentException;
-import it.polimi.ingsw.exceptions.InvalidDepotException;
-import it.polimi.ingsw.exceptions.InvalidResourceTypeException;
+import it.polimi.ingsw.exceptions.*;
 import it.polimi.ingsw.messages.toClient.ChooseResourceAndStorageTypeRequest;
+import it.polimi.ingsw.messages.toClient.MessageToClient;
+import it.polimi.ingsw.messages.toClient.WaitingInTheLobbyMessage;
 import it.polimi.ingsw.messages.toServer.ChooseLeaderCardsResponse;
 import it.polimi.ingsw.messages.toServer.ChooseResourceAndStorageTypeResponse;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -31,12 +32,19 @@ public class Controller {
     private List<Player> players;
     private List<ClientHandler> clientHandlers;
     private ReentrantLock lockPlayers = new ReentrantLock(true);
+    private ReentrantLock lockConnections = new ReentrantLock(true);
+    private BlockingQueue<Object> incomingPackets;
 
     public Controller(GameMode gameMode) throws InvalidArgumentException, UnsupportedEncodingException {
         this.game = new Game(gameMode);
         this.clientHandlers = new LinkedList<>();
         //TODO this.gamePhase = new GamePhase() link the setup phase
 
+    }
+
+    public void start(){
+        this.gamePhase = new SetUpPhase();
+        this.gamePhase.executePhase(this);
     }
 
     public Game getGame(){
@@ -52,19 +60,33 @@ public class Controller {
     }
 
     public ClientHandler getConnectionByNickname(String nickname){
-        for (ClientHandler clientHandler : clientHandlers){
-            if (clientHandler.getNickname().equals(nickname)){
-                return clientHandler;
+        lockConnections.lock();
+        try{
+            for (ClientHandler clientHandler : clientHandlers){
+                if (clientHandler.getNickname().equals(nickname)){
+                    return clientHandler;
+                }
             }
+        } finally {
+            lockConnections.unlock();
+        }
+        return null;
+    }
+
+    public List<Player> getPlayers(){
+        try {
+            return game.getPlayers();
+        } catch (InvalidMethodException | ZeroPlayerException e) {
+            e.printStackTrace();
         }
         return null;
     }
 
     public Player getPlayerByNickname(String nickname){
-        lockPlayers.lock();
         Player player = null;
-        try {
-            for (Player p : players) {
+        lockPlayers.lock();
+        try{
+            for (Player p : getPlayers()) {
                 if (p.getNickname().equals(nickname))
                     player = p;
             }
@@ -75,37 +97,48 @@ public class Controller {
     }
 
     public void addConnection(ClientHandler connection){
-        this.clientHandlers.add(connection);
+        lockConnections.lock();
+        try {
+            this.clientHandlers.add(connection);
+        } finally {
+            lockConnections.unlock();
+        }
     }
 
     public void removeConnection(ClientHandler connection){
-        this.clientHandlers.remove(connection);
+        lockConnections.lock();
+        try {
+            this.clientHandlers.remove(connection);
+        } finally {
+            lockConnections.unlock();
+        }
     }
 
-    public void start(){
-        this.gamePhase = new SetUpPhase();
-        this.gamePhase.executePhase(this);
-    }
 
-    public void handleMessage(MessageToServer message, String nickname){
+
+    public void handleMessage(MessageToServer message, ClientHandlerInterface clientHandler){
+        String nickname = clientHandler.getNickname();
         if (message instanceof ChooseLeaderCardsResponse)
-            handleChooseLeaderCardResponse((ChooseLeaderCardsResponse) message, nickname);
+            handleChooseLeaderCardResponse((ChooseLeaderCardsResponse) message, clientHandler);
 
         if (message instanceof ChooseResourceAndStorageTypeResponse)
-            handleChooseResourceAndStorageTypeRequest((ChooseResourceAndStorageTypeResponse) message, nickname);
+            handleChooseResourceAndStorageTypeRequest((ChooseResourceAndStorageTypeResponse) message, clientHandler);
     }
 
-    public void handleChooseLeaderCardResponse(ChooseLeaderCardsResponse message, String nickname){
+    public synchronized void  handleChooseLeaderCardResponse(ChooseLeaderCardsResponse message, ClientHandlerInterface clientHandler){
+        String nickname = clientHandler.getNickname();
+        Player player = getPlayerByNickname(nickname);
         assert (gamePhase instanceof SetUpPhase);
         List <Integer> discardedCards = message.getDiscardedLeaderCards();
-        /*
+
         for (Integer id : discardedCards) {
-            getPlayerByNickname(nickname).getPersonalBoard().removeLeaderCard(id);
+            player.getPersonalBoard().removeLeaderCard(id);
         }
-         */
+
         if (((SetUpPhase) gamePhase).getNumberOfInitialResourcesByNickname(nickname) == 0){
             //TODO send a message with his personal board view
-            getConnectionByNickname(nickname).setClientHandlerPhase(ClientHandlerPhase.WAITING_HIS_TURN);
+            clientHandler.setClientHandlerPhase(ClientHandlerPhase.WAITING_HIS_TURN);
+            clientHandler.sendMessageToClient(new WaitingInTheLobbyMessage());
             return;
         }
 
@@ -122,14 +155,19 @@ public class Controller {
         int quantity = ((SetUpPhase) gamePhase).getNumberOfInitialResourcesByNickname(nickname);
 
         //I ask to the player to choose one or two type of resource
-        getConnectionByNickname(nickname).sendMessageToClient(new ChooseResourceAndStorageTypeRequest(resourceTypes, storageTypes, quantity));
-        getConnectionByNickname(nickname).setClientHandlerPhase(ClientHandlerPhase.WAITING_CHOOSE_RESOURCE_TYPE);
+        clientHandler.sendMessageToClient(new ChooseResourceAndStorageTypeRequest(resourceTypes, storageTypes, quantity));
+        clientHandler.setClientHandlerPhase(ClientHandlerPhase.WAITING_CHOOSE_RESOURCE_TYPE);
     }
 
-    private void handleChooseResourceAndStorageTypeRequest(ChooseResourceAndStorageTypeResponse message, String nickname){
-        Player player = getPlayerByNickname(nickname);
+    private synchronized void handleChooseResourceAndStorageTypeRequest(ChooseResourceAndStorageTypeResponse message, ClientHandlerInterface clientHandler){
+        Player player = null;
+        lockPlayers.lock();
+        try {
+            player = getPlayerByNickname(clientHandler.getNickname());
+        } finally {
+            lockConnections.unlock();
+        }
         Map<String, String> storage = message.getStorage();
-
         for (String resource : storage.keySet()) {
             try {
                 player.getPersonalBoard().addResources(ResourceStorageType.valueOf(storage.get(resource)), Resource.valueOf(resource), 1);

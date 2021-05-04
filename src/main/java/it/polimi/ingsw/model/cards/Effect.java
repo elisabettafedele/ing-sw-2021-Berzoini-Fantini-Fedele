@@ -110,6 +110,10 @@ public class Effect implements Serializable {
         return whiteMarbleEffect;
     }
 
+    public Resource getWhiteMarbleEffectResource() throws DifferentEffectTypeException {
+        return Resource.valueOf(getWhiteMarbleEffect().getValue());
+    }
+
     /**
      * Get the extra storage capability of the {@link LeaderCard}
      * @return the extra storage capability of the {@link LeaderCard}

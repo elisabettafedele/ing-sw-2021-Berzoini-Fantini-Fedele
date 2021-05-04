@@ -20,7 +20,7 @@ public interface VirtualView {
     void displayTimeoutExpiredMessage();
     //ACTIONS
     void displayMarbleInsertionPositionRequest(Action action);
-    void displayChooseWhiteMarbleConversionRequest(List<Marble> marbles, int numberOfMarbles);
+    void displayChooseWhiteMarbleConversionRequest(List<Resource> marbles, int numberOfMarbles);
     void displayMarblesTaken(List<Marble> marblesTaken, boolean needToChooseConversion);
     //SETUP
     void displayChooseLeaderCardsRequest(List<Integer> leaderCards);

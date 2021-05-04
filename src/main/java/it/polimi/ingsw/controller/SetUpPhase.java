@@ -5,6 +5,8 @@ import it.polimi.ingsw.exceptions.*;
 import it.polimi.ingsw.messages.toClient.ChooseLeaderCardsRequest;
 import it.polimi.ingsw.messages.toClient.LoadDevelopmentCardsMessage;
 import it.polimi.ingsw.messages.toClient.LoadLeaderCardsMessage;
+import it.polimi.ingsw.messages.toServer.MessageToServer;
+import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.DevelopmentCard;
 import it.polimi.ingsw.model.cards.LeaderCard;
 import it.polimi.ingsw.model.player.Player;
@@ -25,6 +27,8 @@ public class SetUpPhase implements GamePhase {
         setUpDevelopmentCards();
         setUpLeaderCards();
     }
+
+
 
     private void setUpDevelopmentCards() {
         List<String> nicknames = controller.getNicknames();
@@ -65,12 +69,11 @@ public class SetUpPhase implements GamePhase {
             List<LeaderCard> cards = leaderCards.subList(i * 4, i * 4 + 4);
             try {
                 controller.getGame().addPlayer(nicknames.get(i), cards, getInitialFaithPoints(i), hasInkwell(i));
-                //TODO set inkwell
             } catch (InvalidArgumentException | InvalidPlayerAddException e) {
                 e.printStackTrace();
             }
             controller.getConnectionByNickname(nicknames.get(i)).sendMessageToClient(new LoadLeaderCardsMessage(leaderCards));
-            controller.getConnectionByNickname(nicknames.get(i)).sendMessageToClient(new ChooseLeaderCardsRequest(cards.stream().map(x -> x.getID()).collect(Collectors.toList())));
+            controller.getConnectionByNickname(nicknames.get(i)).sendMessageToClient(new ChooseLeaderCardsRequest(cards.stream().map(Card::getID).collect(Collectors.toList())));
             controller.getConnectionByNickname(nicknames.get(i)).setClientHandlerPhase(ClientHandlerPhase.WAITING_DISCARDED_LEADER_CARDS);
         }
 
@@ -83,6 +86,27 @@ public class SetUpPhase implements GamePhase {
     private int getInitialFaithPoints(int index){
         return index > 1 ? 1 : 0;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     public int getNumberOfInitialResourcesByNickname(String nickname){

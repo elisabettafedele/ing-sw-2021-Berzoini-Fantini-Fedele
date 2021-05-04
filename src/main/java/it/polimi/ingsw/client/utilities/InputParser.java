@@ -31,16 +31,14 @@ public class InputParser {
     }
 
     public static String getString(String errorMessage, Predicate<String> condition){
-        boolean done = false;
         String line;
         do{
             line = getLine();
             if (condition.test(line))
-                done = true;
+                return line;
             else
                 System.out.println(errorMessage);
-        } while (!done);
-        return line;
+        } while (true);
     }
 
 

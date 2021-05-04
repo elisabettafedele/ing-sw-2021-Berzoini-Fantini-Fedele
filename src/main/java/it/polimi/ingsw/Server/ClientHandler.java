@@ -9,6 +9,7 @@ import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.messages.toClient.GameModeRequest;
 import it.polimi.ingsw.messages.toClient.TimeoutExpiredMessage;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
+import it.polimi.ingsw.model.player.Player;
 
 
 import java.io.*;
@@ -54,6 +55,8 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
     private GameMode gameMode;
 
     private ClientHandlerPhase clientHandlerPhase;
+
+    private Player player;
 
     /**
      * Class constructor. It enables a ping message that check the client's connection until it become inactive

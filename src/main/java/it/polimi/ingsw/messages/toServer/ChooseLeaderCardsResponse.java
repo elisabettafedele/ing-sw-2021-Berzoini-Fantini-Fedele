@@ -20,6 +20,6 @@ public class ChooseLeaderCardsResponse implements MessageToServer{
 
     @Override
     public void handleMessage(ServerInterface server, ClientHandlerInterface clientHandler) {
-        clientHandler.getController().handleMessage(this, clientHandler.getNickname());
+        clientHandler.getController().handleMessage(this, clientHandler);
     }
 }

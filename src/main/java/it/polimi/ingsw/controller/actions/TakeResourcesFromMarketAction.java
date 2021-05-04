@@ -69,7 +69,7 @@ public class TakeResourcesFromMarketAction implements Action{
         if (message instanceof MarbleInsertionPositionResponse)
             handleInsertionPositionResponse(((MarbleInsertionPositionResponse) message).getInsertionPosition());
         if (message instanceof ChooseWhiteMarbleConversionResponse)
-            handleWhiteMarblesConversionResponse(((ChooseWhiteMarbleConversionResponse) message).getMarble());
+            handleWhiteMarblesConversionResponse(((ChooseWhiteMarbleConversionResponse) message).getResource());
     }
 
 
@@ -81,12 +81,12 @@ public class TakeResourcesFromMarketAction implements Action{
 
     /**
      * Method called once that the client has inserted the desired insertion position
-     * @param insertionPosition
+     * @param insertionPosition a number between 1 and 7. It is the insertion position of the marble
      */
     public void handleInsertionPositionResponse(int insertionPosition){
         int whiteMarblesNumber = player.getPersonalBoard().getAvailableEffects(EffectType.WHITE_MARBLE).size();
         try {
-            marblesToConvert = market.insertMarbleFromTheSlide(insertionPosition);
+            marblesToConvert = market.insertMarbleFromTheSlide(insertionPosition-1);
             clientHandler.sendMessageToClient(new NotifyMarbleTaken(marblesToConvert, whiteMarblesNumber > 1));
         } catch (InvalidArgumentException e) { }
         if (whiteMarblesNumber > 1 && marblesToConvert.contains(Marble.WHITE)) {
@@ -103,7 +103,7 @@ public class TakeResourcesFromMarketAction implements Action{
      * Method to convert all the white marbles in the only available marble conversion
      */
     public void handleAutomaticConversion(){
-        Marble conversion = getWhiteMarblesConversion().get(0);
+        Marble conversion = Marble.valueOf(getWhiteMarblesConversion().get(0).getValue());
         marblesToConvert = marblesToConvert.stream().map(x -> x == Marble.WHITE ? conversion : x).collect(Collectors.toList());
         marblesConversion();
     }
@@ -112,7 +112,7 @@ public class TakeResourcesFromMarketAction implements Action{
      *
      */
     public void handleWhiteMarblesConversion(){
-        List <Marble> availableConversion = getWhiteMarblesConversion();
+        List <Resource> availableConversion = getWhiteMarblesConversion();
         int numberOfWhiteMarbles = (int) marblesToConvert.stream().filter(x -> x == Marble.WHITE).count();
         clientHandler.sendMessageToClient(new ChooseWhiteMarbleConversionRequest(availableConversion, numberOfWhiteMarbles));
     }
@@ -121,21 +121,21 @@ public class TakeResourcesFromMarketAction implements Action{
      * Method to change the color of the first white marble
      * @param conversion the color of the produced marble
      */
-    public void handleWhiteMarblesConversionResponse(Marble conversion){
+    public void handleWhiteMarblesConversionResponse(Resource conversion){
         for (int i = 0; i < marblesToConvert.size(); i++){
             if (marblesToConvert.get(i) == Marble.WHITE){
-                marblesToConvert.set(i, conversion);
+                marblesToConvert.set(i, Marble.valueOf(conversion.getValue()));
                 return;
         }
         }
     }
 
-    private List<Marble> getWhiteMarblesConversion(){
-        List<Marble> availableConversions = new ArrayList<>();
+    private List<Resource> getWhiteMarblesConversion(){
+        List<Resource> availableConversions = new ArrayList<>();
         List<Effect>effectsWhiteMarble = player.getPersonalBoard().getAvailableEffects(EffectType.WHITE_MARBLE);
         for (Effect effect : effectsWhiteMarble) {
             try {
-                availableConversions.add(effect.getWhiteMarbleEffect());
+                availableConversions.add(effect.getWhiteMarbleEffectResource());
             } catch (DifferentEffectTypeException e) {
                 e.printStackTrace();
             }
@@ -154,6 +154,10 @@ public class TakeResourcesFromMarketAction implements Action{
             else if (marble != Marble.WHITE)
                 resourcesToStore.add(Resource.valueOf(marble.getValue()));
         }
+    }
+
+    public void setMarblesToConvertTest(List<Marble> marbles){
+        this.marblesToConvert = marbles;
     }
 
 

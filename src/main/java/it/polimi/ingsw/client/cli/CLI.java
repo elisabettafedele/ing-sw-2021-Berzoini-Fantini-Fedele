@@ -8,6 +8,7 @@ import it.polimi.ingsw.client.utilities.InputParser;
 import it.polimi.ingsw.controller.actions.Action;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.enumerations.Marble;
+import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.messages.toClient.ChooseResourceAndStorageTypeRequest;
 import it.polimi.ingsw.messages.toServer.*;
 import it.polimi.ingsw.model.cards.LeaderCard;
@@ -123,9 +124,9 @@ public class CLI implements View {
     }
 
     @Override
-    public void displayChooseWhiteMarbleConversionRequest(List<Marble> marbles, int numberOfMarbles) {
-        System.out.println("You have these two possible white marble conversions: " + marbles.get(0) + " | " + marbles.get(1));
-        client.sendMessageToServer(new ChooseWhiteMarbleConversionResponse(getMarbleColor(marbles)));
+    public void displayChooseWhiteMarbleConversionRequest(List<Resource> resources, int numberOfMarbles) {
+        System.out.println("You have these two possible white marble conversions: " + resources.get(0) + " | " + resources.get(1));
+        client.sendMessageToServer(new ChooseWhiteMarbleConversionResponse(getMarbleColor(resources)));
     }
 
     @Override
@@ -165,24 +166,24 @@ public class CLI implements View {
 
     }
 
-    private Marble getMarbleColor(List<Marble> conversions){
-        Marble marble = null;
-        String marbleString;
+    private Resource getMarbleColor(List<Resource> conversions){
+        Resource resource = null;
+        String resourceString;
         boolean error = false;
         do {
             System.out.println("Select one conversion: ");
-            marbleString = InputParser.getLine();
+            resourceString = InputParser.getLine();
             try {
-                marble = Marble.valueOf(marbleString.toUpperCase());
+                resource = Resource.valueOf(resourceString.toUpperCase());
                 error = false;
-                if (!conversions.contains(marble))
+                if (!conversions.contains(resource))
                     error = true;
             }catch (IllegalArgumentException e){
                 error = true;
-                System.out.println("Error: insert a valid marble color");
+                System.out.println("Error: insert a valid resource type");
             }
         } while (error);
-        return marble;
+        return resource;
     }
 
     @Override
@@ -220,9 +221,9 @@ public class CLI implements View {
 
     @Override
     public void displayChooseResourceTypeRequest(List<String> resourceTypes, List<String> storageTypes, int quantity) {
-        //TODO show choose resourche type view
+        //TODO show choose resource type view
 
-        System.out.printf("You have to choose %d resource type. \nAvailable resource types are:\n");
+        System.out.printf("You have to choose %d resource type. \nAvailable resource types are:\n", quantity);
         System.out.println(Arrays.toString(resourceTypes.toArray()));
 
         List<String> selectedResources = new ArrayList<>();
