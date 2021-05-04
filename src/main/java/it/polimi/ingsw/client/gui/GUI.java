@@ -16,6 +16,7 @@ import javafx.stage.WindowEvent;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public class GUI extends Application implements View {
 
@@ -134,5 +135,10 @@ public class GUI extends Application implements View {
     @Override
     public void loadLeaderCards(List<LeaderCard> leaderCards){
         MatchData.getInstance().setAllLeaderCards(leaderCards);
+    }
+
+    @Override
+    public void loadDevelopmentCards(Map<Integer, List<String>> lightDevelopmentCards) {
+
     }
 }

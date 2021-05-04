@@ -19,6 +19,7 @@ import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -224,6 +225,11 @@ public class CLI implements View {
     @Override
     public void loadLeaderCards(List<LeaderCard> leaderCards){
         MatchData.getInstance().setAllLeaderCards(leaderCards);
+    }
+
+    @Override
+    public void loadDevelopmentCards(Map<Integer, List<String>> lightDevelopmentCards) {
+        MatchData.getInstance().setAllDevelopmentCards(lightDevelopmentCards);
     }
 
     public static Predicate<Integer> conditionOnIntegerRange(int min, int max){

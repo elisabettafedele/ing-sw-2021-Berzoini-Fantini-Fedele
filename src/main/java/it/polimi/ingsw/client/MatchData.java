@@ -4,10 +4,13 @@ import it.polimi.ingsw.model.cards.LeaderCard;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class MatchData {
     List<Integer> ownedLeaderCards;
     List<LeaderCard> allLeaderCards;
+
+    Map<Integer, List<String>> lightDevelopmentCards;
 
     private static MatchData instance;
 
@@ -44,4 +47,11 @@ public class MatchData {
         return null;
     }
 
+    public void setAllDevelopmentCards(Map<Integer, List<String>> lightDevelopmentCards) {
+        this.lightDevelopmentCards = lightDevelopmentCards;
+    }
+
+    public List<String> getDevelopmentCardByID(int ID){
+        return lightDevelopmentCards.get(ID);
+    }
 }
