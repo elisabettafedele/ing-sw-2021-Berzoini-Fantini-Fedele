@@ -63,10 +63,12 @@ public class SetUpPhase implements GamePhase {
             leaderCards = LeaderCardParser.parseCards();
         } catch (Exception | JsonFileNotFoundException e) { }
         Collections.shuffle(leaderCards);
-        Collections.shuffle(nicknames);
+        //Collections.shuffle(nicknames);
 
         for (int i = 0; i < nicknames.size(); i++){
-            List<LeaderCard> cards = leaderCards.subList(i * 4, i * 4 + 4);
+            List<LeaderCard> cards = new LinkedList<>();
+            for(int j=i*4; j<i*4 +4; j++)
+                cards.add(leaderCards.get(j));
             try {
                 controller.getGame().addPlayer(nicknames.get(i), cards, getInitialFaithPoints(i), hasInkwell(i));
             } catch (InvalidArgumentException | InvalidPlayerAddException e) {

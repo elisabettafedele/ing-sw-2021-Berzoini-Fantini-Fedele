@@ -33,8 +33,7 @@ public class Controller {
     private List<ClientHandler> clientHandlers;
     private ReentrantLock lockPlayers = new ReentrantLock(true);
     private ReentrantLock lockConnections = new ReentrantLock(true);
-    private BlockingQueue<Object> incomingPackets;
-
+    private GameMessageManager gameMessageManager;
     public Controller(GameMode gameMode) throws InvalidArgumentException, UnsupportedEncodingException {
         this.game = new Game(gameMode);
         this.clientHandlers = new LinkedList<>();
@@ -84,16 +83,18 @@ public class Controller {
 
     public Player getPlayerByNickname(String nickname){
         Player player = null;
-        lockPlayers.lock();
-        try{
-            for (Player p : getPlayers()) {
-                if (p.getNickname().equals(nickname))
-                    player = p;
-            }
-        } finally {
-            lockPlayers.unlock();
+        System.out.println("Getting the player for "+ nickname);
+        for (Player p : getPlayers()) {
+            if (p.getNickname().equals(nickname))
+                player = p;
         }
+        System.out.println("Got the player for "+ nickname);
+
         return player;
+    }
+
+    public GameMessageManager getGameMessageManager() {
+        return gameMessageManager;
     }
 
     public void addConnection(ClientHandler connection){
@@ -116,25 +117,40 @@ public class Controller {
 
 
 
-    public void handleMessage(MessageToServer message, ClientHandlerInterface clientHandler){
+    public synchronized void handleMessage(MessageToServer message, ClientHandlerInterface clientHandler){
         String nickname = clientHandler.getNickname();
-        if (message instanceof ChooseLeaderCardsResponse)
+        if (message instanceof ChooseLeaderCardsResponse) {
+            System.out.println("starting to handle the choose leader card resp of " + nickname);
             handleChooseLeaderCardResponse((ChooseLeaderCardsResponse) message, clientHandler);
+            System.out.println("finished to handle the choose leader card resp of " + nickname);
 
-        if (message instanceof ChooseResourceAndStorageTypeResponse)
-            handleChooseResourceAndStorageTypeRequest((ChooseResourceAndStorageTypeResponse) message, clientHandler);
-    }
-
-    public synchronized void  handleChooseLeaderCardResponse(ChooseLeaderCardsResponse message, ClientHandlerInterface clientHandler){
-        String nickname = clientHandler.getNickname();
-        Player player = getPlayerByNickname(nickname);
-        assert (gamePhase instanceof SetUpPhase);
-        List <Integer> discardedCards = message.getDiscardedLeaderCards();
-
-        for (Integer id : discardedCards) {
-            player.getPersonalBoard().removeLeaderCard(id);
         }
 
+        if (message instanceof ChooseResourceAndStorageTypeResponse) {
+            System.out.println("starting to handle the choose resource  resp of " + nickname);
+            handleChooseResourceAndStorageTypeRequest((ChooseResourceAndStorageTypeResponse) message, clientHandler);
+            System.out.println("starting to handle the choose resource resp of " + nickname);
+
+        }
+    }
+
+    public void  handleChooseLeaderCardResponse(ChooseLeaderCardsResponse message, ClientHandlerInterface clientHandler){
+        String nickname = clientHandler.getNickname();
+        Player player = getPlayerByNickname(nickname);
+        System.out.println("I am " + nickname + "got the player!");
+        assert (gamePhase instanceof SetUpPhase);
+        System.out.println("I am " + nickname + "got the player post assertion!");
+
+        List <Integer> discardedCards = message.getDiscardedLeaderCards();
+        System.out.println("I am " + nickname + "got the discarded cards!" + discardedCards +"CARDS PRE FOR");
+
+        for (Integer id : discardedCards) {
+            System.out.println("I am " + nickname + "removed " + id);
+            player.getPersonalBoard().removeLeaderCard(id);
+            System.out.println("I am " + nickname + "removed " + id);
+
+        }
+        System.out.println("I am " + nickname + "removed cards");
         if (((SetUpPhase) gamePhase).getNumberOfInitialResourcesByNickname(nickname) == 0){
             //TODO send a message with his personal board view
             clientHandler.setClientHandlerPhase(ClientHandlerPhase.WAITING_HIS_TURN);
@@ -150,16 +166,20 @@ public class Controller {
         storageTypes.add(ResourceStorageType.WAREHOUSE_FIRST_DEPOT.name());
         storageTypes.add(ResourceStorageType.WAREHOUSE_SECOND_DEPOT.name());
         storageTypes.add(ResourceStorageType.WAREHOUSE_THIRD_DEPOT.name());
+        System.out.println("I am " + nickname + ": depot");
 
         //Number of resources to choose and store
         int quantity = ((SetUpPhase) gamePhase).getNumberOfInitialResourcesByNickname(nickname);
 
         //I ask to the player to choose one or two type of resource
+        System.out.println("Sending message to "+ nickname);
+
         clientHandler.sendMessageToClient(new ChooseResourceAndStorageTypeRequest(resourceTypes, storageTypes, quantity));
+        System.out.println("Message sent to "+ nickname);
         clientHandler.setClientHandlerPhase(ClientHandlerPhase.WAITING_CHOOSE_RESOURCE_TYPE);
     }
 
-    private synchronized void handleChooseResourceAndStorageTypeRequest(ChooseResourceAndStorageTypeResponse message, ClientHandlerInterface clientHandler){
+    private void handleChooseResourceAndStorageTypeRequest(ChooseResourceAndStorageTypeResponse message, ClientHandlerInterface clientHandler){
         Player player = null;
         lockPlayers.lock();
         try {
