@@ -5,8 +5,8 @@ import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.model.player.Player;
 
 public class TurnController {
-    private int numberOfLeaderActionsDone;
-    private boolean standardActionDone;
+    private int numberOfLeaderActionsDone=0;
+    private boolean standardActionDone=false;
     private Action nextAction;
     private Player currentPlayer;
     private Controller controller;
@@ -25,5 +25,17 @@ public class TurnController {
 
     public Player getCurrentPlayer() {
         return currentPlayer;
+    }
+
+    public void checkFaithTrack(){
+
+    }
+
+    public void incrementNumberOfLeaderActionDone(){
+        numberOfLeaderActionsDone++;
+    }
+
+    public void setStandardActionDoneToTrue(){
+        standardActionDone=true;
     }
 }

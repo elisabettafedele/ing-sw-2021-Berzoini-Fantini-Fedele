@@ -5,6 +5,7 @@ import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.ValueNotPresentException;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -35,7 +36,7 @@ public class Value implements Serializable {
     }
 
     /**
-     * Get the {@link Flag} part of {@link Card}'s cost
+     * Get the {@link Flag} part of {@link Card}'s cost, cloned
      * @return the {@link Flag} part of {@link Card}'s cost
      * @throws ValueNotPresentException if this value has no flags
      */
@@ -43,7 +44,11 @@ public class Value implements Serializable {
         if(flagValue == null){
             throw new ValueNotPresentException("flag");
         }
-        return flagValue;
+        HashMap<Flag,Integer> copyOfFlagValue= new HashMap<>();
+        for(Map.Entry<Flag, Integer> entry : flagValue.entrySet()){
+            copyOfFlagValue.put(entry.getKey(), entry.getValue());
+        }
+        return copyOfFlagValue;
     }
 
     /**

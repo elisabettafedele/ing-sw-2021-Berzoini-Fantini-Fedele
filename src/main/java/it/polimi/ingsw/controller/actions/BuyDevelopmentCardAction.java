@@ -92,10 +92,12 @@ public class BuyDevelopmentCardAction implements Action{
         while (!done) {
             //Show available cards through stacks
             int chosenStackNumberTest = 1;
-            Stack<DevelopmentCard> chosenStack = personalBoard.getDevelopmentCards()[chosenStackNumberTest]; //!!!!!This is just an example
+            /*Stack<DevelopmentCard> chosenStack = personalBoard.getDevelopmentCards()[chosenStackNumberTest]; //!!!!!This is just an example
             DevelopmentCard chosenCard = chosenStack.peek();
             if (enoughResourcesAvailable(chosenCard) && personalBoard.cardInsertionIsLegal(chosenCard))
                 buyCard(chosenStack);
+
+             */
         }
 
     }

@@ -16,7 +16,7 @@ public class LeaderCard extends Card {
     /**
      *
      * @param victoryPoints the number of victory points obtained at the end of the game
-     * @param cost the number and type of {@link Flag} or the numebr of Faith points needed to activate the card
+     * @param cost the number and type of {@link Flag} or the number of Faith points needed to activate the card
      * @param effect the {@link Effect} of the card (production, discount, white marble conversion or extra depot)
      * @throws InvalidArgumentException
      */
