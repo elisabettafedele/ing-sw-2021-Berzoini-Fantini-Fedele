@@ -11,6 +11,7 @@ public class Player {
     private int victoryPoints;
     private boolean winner;
     private boolean active;
+    private boolean inkwell;
 
     /**
      * Constructor of the class player
@@ -78,6 +79,14 @@ public class Player {
 
     public void setActive(boolean active){
         this.active = active;
+    }
+
+    public boolean hasInkwell() {
+        return inkwell;
+    }
+
+    public void setInkwell(boolean inkwell) {
+        this.inkwell = inkwell;
     }
 
 }

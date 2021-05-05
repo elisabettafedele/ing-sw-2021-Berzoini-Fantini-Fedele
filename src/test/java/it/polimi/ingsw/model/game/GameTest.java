@@ -41,9 +41,9 @@ public class GameTest {
     @Test
     public void testAddGetPlayers() throws InvalidArgumentException, InvalidMethodException, UnsupportedEncodingException, ZeroPlayerException, InvalidPlayerAddException {
         multiGame = new Game(GameMode.MULTI_PLAYER);
-        multiGame.addPlayer(nicknames.get(0), leaderCards.subList(0, 4));
-        multiGame.addPlayer(nicknames.get(1), leaderCards.subList(4, 8));
-        multiGame.addPlayer(nicknames.get(2), leaderCards.subList(8, 12));
+        multiGame.addPlayer(nicknames.get(0), leaderCards.subList(0, 4), 0, false);
+        multiGame.addPlayer(nicknames.get(1), leaderCards.subList(4, 8), 0, false);
+        multiGame.addPlayer(nicknames.get(2), leaderCards.subList(8, 12), 0, false);
         List<Player> players = multiGame.getPlayers();
         assertEquals(players.get(0).getNickname(), "Betti");
         assertEquals(players.get(0).getPersonalBoard().getLeaderCards().get(0).getVictoryPoints(), 2);
@@ -52,7 +52,7 @@ public class GameTest {
     @Test
     public void testAddGetPlayer() throws InvalidArgumentException, UnsupportedEncodingException, InvalidMethodException, ZeroPlayerException, InvalidPlayerAddException {
         singleGame = new Game(GameMode.SINGLE_PLAYER);
-        singleGame.addPlayer(nicknames.get(0), leaderCards.subList(0, 4));
+        singleGame.addPlayer(nicknames.get(0), leaderCards.subList(0, 4), 0, false);
         assertEquals(singleGame.getSinglePlayer().getNickname(), "Betti");
     }
 
@@ -71,37 +71,37 @@ public class GameTest {
     @Test ( expected = InvalidArgumentException.class)
     public void testInvalidAddSameNickname() throws InvalidArgumentException, InvalidMethodException, UnsupportedEncodingException, InvalidPlayerAddException {
         multiGame = new Game(GameMode.MULTI_PLAYER);
-        multiGame.addPlayer(nicknames.get(0), leaderCards.subList(0, 4));
-        multiGame.addPlayer(nicknames.get(1), leaderCards.subList(4, 8));
-        multiGame.addPlayer(nicknames.get(2), leaderCards.subList(8, 12));
-        multiGame.addPlayer("Betti", leaderCards.subList(4, 8));
+        multiGame.addPlayer(nicknames.get(0), leaderCards.subList(0, 4), 0, false);
+        multiGame.addPlayer(nicknames.get(1), leaderCards.subList(4, 8), 0, false);
+        multiGame.addPlayer(nicknames.get(2), leaderCards.subList(8, 12), 0, false);
+        multiGame.addPlayer("Betti", leaderCards.subList(4, 8), 0, false);
     }
 
     @Test (expected = InvalidPlayerAddException.class)
     public void testInvalidAddSinglePlayer() throws InvalidArgumentException, UnsupportedEncodingException, InvalidMethodException, InvalidPlayerAddException {
         singleGame = new Game(GameMode.SINGLE_PLAYER);
-        singleGame.addPlayer(nicknames.get(0), leaderCards.subList(0, 4));
-        singleGame.addPlayer(nicknames.get(1), leaderCards.subList(4, 8));
+        singleGame.addPlayer(nicknames.get(0), leaderCards.subList(0, 4), 0, false);
+        singleGame.addPlayer(nicknames.get(1), leaderCards.subList(4, 8), 0, false);
     }
 
     @Test (expected = InvalidMethodException.class)
     public void testInvalidGetSinglePlayer() throws InvalidArgumentException, UnsupportedEncodingException, InvalidMethodException, ZeroPlayerException, InvalidPlayerAddException {
         singleGame = new Game(GameMode.SINGLE_PLAYER);
-        singleGame.addPlayer(nicknames.get(0), leaderCards.subList(0, 4));
+        singleGame.addPlayer(nicknames.get(0), leaderCards.subList(0, 4), 0, false);
         List<Player> players = singleGame.getPlayers();
     }
 
     @Test (expected = InvalidMethodException.class)
     public void testInvalidGetMultiPlayer() throws InvalidArgumentException, UnsupportedEncodingException, InvalidMethodException, ZeroPlayerException, InvalidPlayerAddException {
         multiGame = new Game(GameMode.MULTI_PLAYER);
-        multiGame.addPlayer(nicknames.get(0), leaderCards.subList(0, 4));
+        multiGame.addPlayer(nicknames.get(0), leaderCards.subList(0, 4), 0, false);
         Player players = multiGame.getSinglePlayer();
     }
 
     @Test (expected = NullPointerException.class)
     public void testInvalidLeaderCards() throws InvalidArgumentException, InvalidMethodException, UnsupportedEncodingException, InvalidPlayerAddException {
         multiGame = new Game(GameMode.MULTI_PLAYER);
-        multiGame.addPlayer(nicknames.get(0), null);
+        multiGame.addPlayer(nicknames.get(0), null, 0, false);
     }
 
 }

@@ -116,7 +116,7 @@ public class GUI extends Application implements View {
     }
 
     @Override
-    public void displayChooseWhiteMarbleConversionRequest(List<Marble> marbles, int numberOfMarbles) {
+    public void displayChooseWhiteMarbleConversionRequest(List<Resource> resources, int numberOfMarbles) {
 
     }
 
@@ -139,6 +139,10 @@ public class GUI extends Application implements View {
     }
 
     @Override
+
+    public void displayChooseResourceTypeRequest(List<String> resourceTypes, List<String> storageTypes, int quantity) {
+    }
+
     public void loadDevelopmentCards(Map<Integer, List<String>> lightDevelopmentCards) {
 
     }

@@ -14,6 +14,11 @@ import it.polimi.ingsw.model.cards.LeaderCard;
 
 import java.util.List;
 import java.util.Map;
+import it.polimi.ingsw.messages.toClient.ChooseResourceAndStorageTypeRequest;
+import it.polimi.ingsw.messages.toServer.*;
+import it.polimi.ingsw.model.cards.LeaderCard;
+
+import java.util.*;
 import java.util.function.Predicate;
 
 public class CLI implements View {
@@ -124,9 +129,9 @@ public class CLI implements View {
     }
 
     @Override
-    public void displayChooseWhiteMarbleConversionRequest(List<Marble> marbles, int numberOfMarbles) {
-        System.out.println("You have these two possible white marble conversions: " + marbles.get(0) + " | " + marbles.get(1));
-        client.sendMessageToServer(new ChooseWhiteMarbleConversionResponse(getMarbleColor(marbles)));
+    public void displayChooseWhiteMarbleConversionRequest(List<Resource> resources, int numberOfMarbles) {
+        System.out.println("You have these two possible white marble conversions: " + resources.get(0) + " | " + resources.get(1));
+        client.sendMessageToServer(new ChooseWhiteMarbleConversionResponse(getMarbleColor(resources)));
     }
 
     @Override
@@ -166,24 +171,24 @@ public class CLI implements View {
 
     }
 
-    private Marble getMarbleColor(List<Marble> conversions){
-        Marble marble = null;
-        String marbleString;
+    private Resource getMarbleColor(List<Resource> conversions){
+        Resource resource = null;
+        String resourceString;
         boolean error = false;
         do {
             System.out.println("Select one conversion: ");
-            marbleString = InputParser.getLine();
+            resourceString = InputParser.getLine();
             try {
-                marble = Marble.valueOf(marbleString.toUpperCase());
+                resource = Resource.valueOf(resourceString.toUpperCase());
                 error = false;
-                if (!conversions.contains(marble))
+                if (!conversions.contains(resource))
                     error = true;
             }catch (IllegalArgumentException e){
                 error = true;
-                System.out.println("Error: insert a valid marble color");
+                System.out.println("Error: insert a valid resource type");
             }
         } while (error);
-        return marble;
+        return resource;
     }
 
     @Override
@@ -220,6 +225,30 @@ public class CLI implements View {
     }
 
     @Override
+    public void displayChooseResourceTypeRequest(List<String> resourceTypes, List<String> storageTypes, int quantity) {
+        //TODO show choose resource type view
+
+        System.out.printf("You have to choose %d resource type. \nAvailable resource types are:\n", quantity);
+        System.out.println(Arrays.toString(resourceTypes.toArray()));
+
+        List<String> selectedResources = new ArrayList<>();
+        for (int i = 0; i < quantity; i++)
+            selectedResources.add(InputParser.getString("Please select a valid resource type", conditionOnString(resourceTypes)));
+
+        if (quantity == 2 && selectedResources.get(0).equals(selectedResources.get(1)))
+            storageTypes.remove(0);
+
+        Map<String, String> storage = new HashMap<>();
+        for (String resource : selectedResources) {
+            System.out.println("Where do you want to store the " + resource + "?");
+            System.out.println("Available options are: ");
+            System.out.println(Arrays.toString(storageTypes.toArray()));
+            storage.put(resource, InputParser.getString("Invalid storage type", conditionOnString(storageTypes)));
+        }
+
+        client.sendMessageToServer(new ChooseResourceAndStorageTypeResponse(storage));
+    }
+
     public void loadDevelopmentCards(Map<Integer, List<String>> lightDevelopmentCards) {
         MatchData.getInstance().setAllDevelopmentCards(lightDevelopmentCards);
     }
@@ -238,6 +267,10 @@ public class CLI implements View {
     }
 
     public static Predicate<Integer> conditionOnInteger(List<Integer> list){
-        return p -> list.contains(p);
+        return list::contains;
+    }
+
+    public static Predicate<String> conditionOnString(List<String> lis){
+        return lis::contains;
     }
 }

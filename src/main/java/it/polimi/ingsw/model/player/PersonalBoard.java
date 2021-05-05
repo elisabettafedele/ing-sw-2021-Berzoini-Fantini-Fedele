@@ -343,6 +343,7 @@ public class PersonalBoard {
         for (LeaderCard leaderCard : leaderCards){
             if(ID == leaderCard.getID()){
                 removeLeaderCard(leaderCard);
+                return;
             }
         }
     }
