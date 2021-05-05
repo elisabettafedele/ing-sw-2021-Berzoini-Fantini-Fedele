@@ -87,10 +87,16 @@ public class PersonalBoard {
     }
 
     /**
-     * @return Returns the whole developmentCardSlots structure ( 3 stacks of {@link DevelopmentCard})
+     * @return Returns all developmentCards as a list
      */
-    public Stack<DevelopmentCard>[] getDevelopmentCards(){
-        return developmentCardSlots;
+    public List<DevelopmentCard> getDevelopmentCards(){
+        List<DevelopmentCard> developmentCards=new ArrayList<>();
+        for(int i=0;i<developmentCardSlots.length;i++){
+            for(int ii=0; ii<developmentCardSlots[i].size();ii++){
+                developmentCards.add(developmentCardSlots[i].get(ii));
+            }
+        }
+        return developmentCards;
     }
 
     /**

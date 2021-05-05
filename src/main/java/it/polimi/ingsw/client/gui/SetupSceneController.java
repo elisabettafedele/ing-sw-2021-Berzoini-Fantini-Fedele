@@ -167,6 +167,7 @@ public class SetupSceneController {
                 vBoxNickname.setVisible(false);
                 vBoxNumOfPlayers.setVisible(true);
                 vBoxWaiting.setVisible(false);
+                //TODO default value or activate button only after choice
                 numOfPlayersChoiceBox.getItems().add("2");
                 numOfPlayersChoiceBox.getItems().add("3");
                 numOfPlayersChoiceBox.getItems().add("4");

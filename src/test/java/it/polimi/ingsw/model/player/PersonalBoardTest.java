@@ -91,7 +91,7 @@ public class PersonalBoardTest {
 
     @Test
     public void testGetDevelopmentCards(){
-        assertEquals(personalBoard.getDevelopmentCards()[0].size(), 2);
+        assertEquals(personalBoard.getDevelopmentCards().size(), 2);
     }
 
 //DOUBLE TEST
