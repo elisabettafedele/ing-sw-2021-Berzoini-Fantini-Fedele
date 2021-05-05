@@ -23,11 +23,9 @@ public class TakeResourcesFromMarketActionTest extends TestCase {
     @Before
     public void setUp() throws InvalidArgumentException, UnsupportedEncodingException {
         List<LeaderCard> cards = null;
-        try {
-            cards = LeaderCardParser.parseCards();
-        } catch (JsonFileNotFoundException | FileNotFoundException | UnsupportedEncodingException | InvalidArgumentException e) {
-            e.printStackTrace();
-        }
+
+        cards = LeaderCardParser.parseCards();
+
         cards = cards.subList(11, 15);
         TakeResourcesFromMarketAction action = new TakeResourcesFromMarketAction(new Player("Betti",cards), null, new Market(), new MultiplayerPlayPhase(new Controller(GameMode.MULTI_PLAYER)));
         action.handleWhiteMarblesConversion();

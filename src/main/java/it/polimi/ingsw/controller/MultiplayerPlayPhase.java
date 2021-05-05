@@ -28,4 +28,8 @@ public class MultiplayerPlayPhase implements GamePhase, PlayPhase{
     public void executePhase(Controller controller) {
         //TODO
     }
+
+    public String toString(){
+        return "Play Phase";
+    }
 }

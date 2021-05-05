@@ -1,6 +1,8 @@
 package it.polimi.ingsw.enumerations;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public enum ResourceStorageType {
@@ -21,5 +23,12 @@ public enum ResourceStorageType {
 
     public int getValue(){
         return value;
+    }
+
+    public static List<String> getWarehouseDepots(){
+        List<String> depots = new ArrayList<>();
+        for (int i = 0; i < 3; i++)
+            depots.add(valueOf(i).name());
+        return depots;
     }
 }

@@ -1,6 +1,8 @@
 package it.polimi.ingsw.enumerations;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,5 +26,13 @@ public enum Resource {
 
     public int getValue(){
         return value;
+    }
+
+    public static List<Resource> realValues(){
+        List<Resource> values = new ArrayList<>();
+        for (int i=0; i<4; i++){
+            values.add(valueOf(i));
+        }
+        return values;
     }
 }

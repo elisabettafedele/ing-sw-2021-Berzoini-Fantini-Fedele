@@ -140,7 +140,7 @@ public class GUI extends Application implements View {
 
     @Override
 
-    public void displayChooseResourceTypeRequest(List<String> resourceTypes, List<String> storageTypes, int quantity) {
+    public void displayChooseResourceTypeRequest(List<Resource> resourceTypes, List<String> storageTypes, int quantity) {
     }
 
     public void loadDevelopmentCards(Map<Integer, List<String>> lightDevelopmentCards) {
@@ -150,6 +150,11 @@ public class GUI extends Application implements View {
     @Override
     public void displayChooseProductionPowersRequest(List<Integer> productionCardsIDs, Map<Resource, Integer> availableResources) {
 
+    }
+
+    @Override
+    public void displayMessage(String message) {
+        //TODO
     }
 
 

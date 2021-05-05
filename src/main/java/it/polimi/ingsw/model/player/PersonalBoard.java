@@ -340,10 +340,7 @@ public class PersonalBoard {
     }
 
     public void removeLeaderCard(int ID){
-        System.out.println("starting to remove leader id");
-        System.out.println(leaderCards.size());
         for (LeaderCard leaderCard : leaderCards){
-            System.out.println(leaderCards);
             if(ID == leaderCard.getID()){
                 removeLeaderCard(leaderCard);
                 return;

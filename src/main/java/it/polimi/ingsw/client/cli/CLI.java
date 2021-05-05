@@ -20,6 +20,7 @@ import it.polimi.ingsw.model.cards.LeaderCard;
 
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class CLI implements View {
 
@@ -225,15 +226,16 @@ public class CLI implements View {
     }
 
     @Override
-    public void displayChooseResourceTypeRequest(List<String> resourceTypes, List<String> storageTypes, int quantity) {
+    public void displayChooseResourceTypeRequest(List<Resource> resourceTypes, List<String> storageTypes, int quantity) {
         //TODO show choose resource type view
 
         System.out.printf("You have to choose %d resource type. \nAvailable resource types are:\n", quantity);
         System.out.println(Arrays.toString(resourceTypes.toArray()));
 
+        List<String> resourcesToString = resourceTypes.stream().map(Enum::name).collect(Collectors.toList());
         List<String> selectedResources = new ArrayList<>();
         for (int i = 0; i < quantity; i++)
-            selectedResources.add(InputParser.getString("Please select a valid resource type", conditionOnString(resourceTypes)));
+            selectedResources.add(InputParser.getString("Please select a valid resource type", conditionOnString(resourcesToString)));
 
         if (quantity == 2 && selectedResources.get(0).equals(selectedResources.get(1)))
             storageTypes.remove(0);
@@ -260,6 +262,11 @@ public class CLI implements View {
             //askNextProduction() //look which are effectively available
             //ask to confirm or to choose another one;
         }while(!confirmed);
+    }
+
+    @Override
+    public void displayMessage(String message) {
+        System.out.println(message);
     }
 
     public static Predicate<Integer> conditionOnIntegerRange(int min, int max){

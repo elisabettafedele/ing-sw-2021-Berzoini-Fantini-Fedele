@@ -37,11 +37,16 @@ public class LeaderCardParser {
      * @throws UnsupportedEncodingException
      * @throws InvalidArgumentException
      */
-    public static List<LeaderCard> parseCards() throws JsonFileNotFoundException, FileNotFoundException, UnsupportedEncodingException, InvalidArgumentException {
+    public static List<LeaderCard> parseCards()  {
         List<LeaderCard> cards = new ArrayList<LeaderCard>();
         String path = "json/LeaderCards.json";
         InputStream in = LeaderCardParser.class.getClassLoader().getResourceAsStream(path);
-        JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
+        JsonReader reader = null;
+        try {
+            reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         JsonObject jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
         JsonArray jsonCards = jsonObject.getAsJsonArray("leaderCards");
         for (JsonElement cardElem : jsonCards){
@@ -49,17 +54,31 @@ public class LeaderCardParser {
 
             String effectTypeString = card.get("effectType").getAsString();
             EffectType effectType = EffectType.valueOf(effectTypeString);
-            Effect effect = LeaderCardParser.effectParser(effectType, card);
+            Effect effect = null;
+            try {
+                effect = LeaderCardParser.effectParser(effectType, card);
+            } catch (InvalidArgumentException e) {
+                e.printStackTrace();
+            }
 
             String imageFront = card.get("imageFront").getAsString();
             String imageBack = card.get("imageBack").getAsString();
 
             JsonArray costArray = card.get("cost").getAsJsonArray();
-            Value cost = ValueParser.parseValue(costArray);
+            Value cost = null;
+            try {
+                cost = ValueParser.parseValue(costArray);
+            } catch (InvalidArgumentException e) {
+                e.printStackTrace();
+            }
 
             int victoryPoints = card.get("victoryPoints").getAsInt();
 
-            cards.add(new LeaderCard(victoryPoints, cost, effect, imageFront, imageBack));
+            try {
+                cards.add(new LeaderCard(victoryPoints, cost, effect, imageFront, imageBack));
+            } catch (InvalidArgumentException e) {
+                e.printStackTrace();
+            }
 
         }
         int id = 49;
