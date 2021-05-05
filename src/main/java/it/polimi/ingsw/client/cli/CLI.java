@@ -8,21 +8,13 @@ import it.polimi.ingsw.client.utilities.InputParser;
 import it.polimi.ingsw.controller.actions.Action;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.enumerations.Marble;
-import it.polimi.ingsw.exceptions.InvalidArgumentException;
-import it.polimi.ingsw.exceptions.JsonFileNotFoundException;
-import it.polimi.ingsw.exceptions.ValueNotPresentException;
+import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.messages.toServer.*;
 import it.polimi.ingsw.model.cards.LeaderCard;
-import it.polimi.ingsw.utility.LeaderCardParser;
 
-import java.io.FileNotFoundException;
-import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class CLI implements View {
 
@@ -230,6 +222,15 @@ public class CLI implements View {
     @Override
     public void loadDevelopmentCards(Map<Integer, List<String>> lightDevelopmentCards) {
         MatchData.getInstance().setAllDevelopmentCards(lightDevelopmentCards);
+    }
+
+    @Override
+    public void displayChooseProductionPowersRequest(List<Integer> productionCardsIDs, Map<Resource, Integer> availableResources) {
+        boolean confirmed = false;
+        do{
+            //askNextProduction() //look which are effectively available
+            //ask to confirm or to choose another one;
+        }while(!confirmed);
     }
 
     public static Predicate<Integer> conditionOnIntegerRange(int min, int max){

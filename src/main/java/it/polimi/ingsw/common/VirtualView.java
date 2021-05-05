@@ -3,6 +3,7 @@ package it.polimi.ingsw.common;
 
 import it.polimi.ingsw.controller.actions.Action;
 import it.polimi.ingsw.enumerations.Marble;
+import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.model.cards.LeaderCard;
 
 import java.util.List;
@@ -26,4 +27,5 @@ public interface VirtualView {
     void displaySelectLeaderCardRequest(List<Integer> leaderCards);
     void loadLeaderCards(List<LeaderCard> leaderCards);
     void loadDevelopmentCards(Map<Integer, List<String>> lightDevelopmentCards);
+    void displayChooseProductionPowersRequest(List<Integer> productionCardsIDs, Map<Resource, Integer> availableResources);
 }

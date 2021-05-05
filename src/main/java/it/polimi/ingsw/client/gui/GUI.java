@@ -5,6 +5,7 @@ import it.polimi.ingsw.client.View;
 import it.polimi.ingsw.common.FunctionInterface;
 import it.polimi.ingsw.controller.actions.Action;
 import it.polimi.ingsw.enumerations.Marble;
+import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.model.cards.LeaderCard;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -141,4 +142,11 @@ public class GUI extends Application implements View {
     public void loadDevelopmentCards(Map<Integer, List<String>> lightDevelopmentCards) {
 
     }
+
+    @Override
+    public void displayChooseProductionPowersRequest(List<Integer> productionCardsIDs, Map<Resource, Integer> availableResources) {
+
+    }
+
+
 }
