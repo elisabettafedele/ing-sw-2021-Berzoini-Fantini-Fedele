@@ -126,6 +126,11 @@ public class GUI extends Application implements View {
     }
 
     @Override
+    public void displayChooseStorageTypeRequest(Resource resource, List<String> availableDepots) {
+
+    }
+
+    @Override
     public void displayChooseLeaderCardsRequest(List<Integer> leaderCards){}
 
     @Override

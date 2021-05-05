@@ -5,6 +5,6 @@ import it.polimi.ingsw.exceptions.InvalidMethodException;
 import it.polimi.ingsw.exceptions.ZeroPlayerException;
 
 public interface PlayPhase {
-    public void handleResourceDiscard() throws InvalidMethodException, ZeroPlayerException, InvalidArgumentException;
+    public void handleResourceDiscard(String nickname);
 
 }
