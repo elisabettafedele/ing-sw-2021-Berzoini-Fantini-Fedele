@@ -9,6 +9,7 @@ import it.polimi.ingsw.exceptions.DifferentEffectTypeException;
 import it.polimi.ingsw.exceptions.InactiveCardException;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.ValueNotPresentException;
+import it.polimi.ingsw.messages.toClient.ChooseProductionPowersRequest;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
 import it.polimi.ingsw.model.cards.*;
 import it.polimi.ingsw.model.player.PersonalBoard;
@@ -148,6 +149,7 @@ public class ActivateProductionAction implements Action{
             }
         }
 
+        clientHandler.sendMessageToClient(new ChooseProductionPowersRequest(availableProductionPowers, availableResources));
 
     }
 

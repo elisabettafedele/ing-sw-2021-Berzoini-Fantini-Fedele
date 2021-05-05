@@ -9,6 +9,11 @@ import it.polimi.ingsw.controller.actions.Action;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.enumerations.Marble;
 import it.polimi.ingsw.enumerations.Resource;
+import it.polimi.ingsw.messages.toServer.*;
+import it.polimi.ingsw.model.cards.LeaderCard;
+
+import java.util.List;
+import java.util.Map;
 import it.polimi.ingsw.messages.toClient.ChooseResourceAndStorageTypeRequest;
 import it.polimi.ingsw.messages.toServer.*;
 import it.polimi.ingsw.model.cards.LeaderCard;
@@ -246,6 +251,15 @@ public class CLI implements View {
 
     public void loadDevelopmentCards(Map<Integer, List<String>> lightDevelopmentCards) {
         MatchData.getInstance().setAllDevelopmentCards(lightDevelopmentCards);
+    }
+
+    @Override
+    public void displayChooseProductionPowersRequest(List<Integer> productionCardsIDs, Map<Resource, Integer> availableResources) {
+        boolean confirmed = false;
+        do{
+            //askNextProduction() //look which are effectively available
+            //ask to confirm or to choose another one;
+        }while(!confirmed);
     }
 
     public static Predicate<Integer> conditionOnIntegerRange(int min, int max){

@@ -28,4 +28,5 @@ public interface VirtualView {
     void loadLeaderCards(List<LeaderCard> leaderCards);
     void displayChooseResourceTypeRequest(List<String> resourceTypes, List<String> storageTypes, int quantity);
     void loadDevelopmentCards(Map<Integer, List<String>> lightDevelopmentCards);
+    void displayChooseProductionPowersRequest(List<Integer> productionCardsIDs, Map<Resource, Integer> availableResources);
 }

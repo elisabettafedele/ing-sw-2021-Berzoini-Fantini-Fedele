@@ -146,4 +146,11 @@ public class GUI extends Application implements View {
     public void loadDevelopmentCards(Map<Integer, List<String>> lightDevelopmentCards) {
 
     }
+
+    @Override
+    public void displayChooseProductionPowersRequest(List<Integer> productionCardsIDs, Map<Resource, Integer> availableResources) {
+
+    }
+
+
 }
