@@ -20,7 +20,7 @@ import java.util.logging.Level;
 public class ClientHandler implements Runnable, ClientHandlerInterface {
     public static final int PING_PERIOD = 5000; //PING_PERIOD = TIMEOUT/2
     //The timer gives one minute to the user to send the response
-    public static final int SO_TIMEOUT_PERIOD = 100000;
+    public static final int SO_TIMEOUT_PERIOD = 0;
     public static final int TIMEOUT_FOR_RESPONSE = 15000;
 
     private final Socket socket;
@@ -98,8 +98,13 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
                     Object messageFromClient = is.readObject();
                     if(messageFromClient != null && !(messageFromClient == ConnectionMessage.PING)) {
                         //stopTimer();
-                        ((MessageToServer) messageFromClient).handleMessage(server, this);
+                        //if (!gameStarted)
+                            ((MessageToServer) messageFromClient).handleMessage(server, this);
+
+                        //else
+                           // controller.getGameMessageManager().addMessage((MessageToServer) messageFromClient);
                     }
+
                 } catch (ClassNotFoundException messageIgnored) {
                 } catch (SocketTimeoutException e){ //when the timer has expired
                     sendMessageToClient(new TimeoutExpiredMessage());

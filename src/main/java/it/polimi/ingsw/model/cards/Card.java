@@ -100,7 +100,7 @@ public abstract class Card implements Serializable {
     @Override
     public String toString() {
         return "ID=" + ID +
-                "victoryPoints=" + victoryPoints +
+                ", victoryPoints=" + victoryPoints +
                 ", cost=" + cost +
                 ", used=" + used;
     }

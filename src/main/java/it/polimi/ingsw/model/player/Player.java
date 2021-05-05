@@ -30,6 +30,7 @@ public class Player {
      * @return the {@link PersonalBoard} of the {@link Player}
      */
     public PersonalBoard getPersonalBoard() {
+        System.out.println(nickname+"Getting the personal board");
         return personalBoard;
     }
 

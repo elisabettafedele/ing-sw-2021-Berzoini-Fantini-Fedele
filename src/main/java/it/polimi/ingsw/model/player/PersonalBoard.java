@@ -138,7 +138,7 @@ public class PersonalBoard {
      * @param leaderCardToBeRemoved The {@link LeaderCard} to  be removed
      * @throws NoSuchElementException leaderCards list doesn't contain leaderCardToBeRemoved
      */
-    public void removeLeaderCard(LeaderCard leaderCardToBeRemoved)throws NoSuchElementException{
+    public void removeLeaderCard(LeaderCard leaderCardToBeRemoved) throws NoSuchElementException{
         if(leaderCards.contains(leaderCardToBeRemoved)) {
             leaderCards.remove(leaderCardToBeRemoved);
         }
@@ -346,7 +346,10 @@ public class PersonalBoard {
     }
 
     public void removeLeaderCard(int ID){
+        System.out.println("starting to remove leader id");
+        System.out.println(leaderCards.size());
         for (LeaderCard leaderCard : leaderCards){
+            System.out.println(leaderCards);
             if(ID == leaderCard.getID()){
                 removeLeaderCard(leaderCard);
                 return;
