@@ -209,14 +209,19 @@ public class CLI implements View {
     }
 
     @Override
-    public void displaySelectLeaderCardRequest(List<Integer> leaderCardsIDs) {
-        System.out.println("Select a Leader Card");
-        for (Integer id : leaderCardsIDs){
-            System.out.printf("%d. %s \n", id, MatchData.getInstance().getLeaderCardByID(id));
+    public void displaySelectCardRequest(List<Integer> CardsIDs,boolean leaderORdevelopment) {
+        System.out.println("Select a card");
+        for (Integer id : CardsIDs){
+            if(leaderORdevelopment){
+                System.out.printf("%d. %s \n", id, MatchData.getInstance().getLeaderCardByID(id));
+            }
+            else{ System.out.printf("%d. %s \n", id, MatchData.getInstance().getDevelopmentCardByID(id));
+            }
+
         }
-        System.out.print("Insert the ID of the Leader Card you want to select: ");
-        Integer selection = InputParser.getInt("Error: the ID provided is not available. Provide a valid ID", conditionOnInteger(leaderCardsIDs));
-        client.sendMessageToServer( new SelectLeaderCardResponse(selection));
+        System.out.print("Insert the ID of the card you want to select: ");
+        Integer selection = InputParser.getInt("Error: the ID provided is not available. Provide a valid ID", conditionOnInteger(CardsIDs));
+        client.sendMessageToServer( new SelectCardResponse(selection));
     }
 
     @Override
@@ -260,6 +265,35 @@ public class CLI implements View {
             //askNextProduction() //look which are effectively available
             //ask to confirm or to choose another one;
         }while(!confirmed);
+    }
+
+    @Override
+    public void displaySelectDevelopmentCardSlotRequest(boolean firstSlotAvailable, boolean secondSlotAvailable, boolean thirdSlotAvailable) {
+        int selection = -1;
+        System.out.println("Select a development card slot");
+        if(firstSlotAvailable){
+            System.out.println("Slot number 0 is available");
+        }
+        if(secondSlotAvailable){
+            System.out.println("Slot number 1 is available");
+        }
+        if(thirdSlotAvailable){
+            System.out.println("Slot number 2 is available");
+        }
+        boolean done=false;
+        while(!done){
+            selection = InputParser.getInt("Error: write a number.");
+            if(selection>=0&&selection<3){
+                if((selection==0&&firstSlotAvailable)||(selection==1&&secondSlotAvailable)||(selection==2&&thirdSlotAvailable)){
+                    done=true;
+                }
+            }
+            if(!done){
+                System.out.println("Invalid choice");
+            }
+        }
+
+        client.sendMessageToServer( new SelectDevelopmentCardSlotResponse(selection));
     }
 
     public static Predicate<Integer> conditionOnIntegerRange(int min, int max){

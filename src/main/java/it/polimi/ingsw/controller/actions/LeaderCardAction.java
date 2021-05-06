@@ -1,19 +1,13 @@
 package it.polimi.ingsw.controller.actions;
 
 import it.polimi.ingsw.Server.ClientHandler;
-import it.polimi.ingsw.controller.PlayPhase;
 import it.polimi.ingsw.controller.TurnController;
-import it.polimi.ingsw.enumerations.FlagColor;
-import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.enumerations.Level;
-import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
-import it.polimi.ingsw.exceptions.InvalidMethodException;
 import it.polimi.ingsw.exceptions.ValueNotPresentException;
-import it.polimi.ingsw.exceptions.ZeroPlayerException;
-import it.polimi.ingsw.messages.toClient.SelectLeaderCardRequest;
+import it.polimi.ingsw.messages.toClient.SelectCardRequest;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
-import it.polimi.ingsw.messages.toServer.SelectLeaderCardResponse;
+import it.polimi.ingsw.messages.toServer.SelectCardResponse;
 import it.polimi.ingsw.model.cards.DevelopmentCard;
 import it.polimi.ingsw.model.cards.Flag;
 import it.polimi.ingsw.model.cards.LeaderCard;
@@ -26,14 +20,6 @@ public class LeaderCardAction implements Action{
     private ClientHandler clientHandler;
     boolean activateORdiscard;
     List<Integer> leaderCardsIDs =null;
-
-
-    /**
-     * Instantiate a Leader Card Action
-     * @param player the {@link Player} that executes the action
-     * @param clientHandler the {@link ClientHandler} associated to the player executing the action
-     * @param activateORdiscard set to true if you want to Activate the leaderCard, to false if you want to discard it;
-     */
     public LeaderCardAction(Player player, ClientHandler clientHandler, boolean activateORdiscard){
         this.player = player;
         this.clientHandler = clientHandler;
@@ -42,7 +28,7 @@ public class LeaderCardAction implements Action{
     @Override
     public void execute(TurnController turnController) {
         clientHandler.setCurrentAction(this);
-        clientHandler.sendMessageToClient(new SelectLeaderCardRequest(leaderCardsIDs));
+        clientHandler.sendMessageToClient(new SelectCardRequest(leaderCardsIDs,true));
         turnController.incrementNumberOfLeaderActionDone();
         turnController.checkFaithTrack();
     }
@@ -62,14 +48,14 @@ public class LeaderCardAction implements Action{
                 }
             }
         }
-        return leaderCardsIDs.size()!=0;
+        return !leaderCardsIDs.isEmpty();
     }
 
     @Override
     public void handleMessage(MessageToServer message) {
         for(LeaderCard lc : player.getPersonalBoard().getLeaderCards()){
             if(!lc.isActive()){
-                if(lc.getID()==((SelectLeaderCardResponse) message).getSelectedLeaderCard()){
+                if(lc.getID()==((SelectCardResponse) message).getSelectedCard()){
                     if(activateORdiscard) {lc.activate();}
                     else {
                         player.getPersonalBoard().removeLeaderCard(lc.getID());

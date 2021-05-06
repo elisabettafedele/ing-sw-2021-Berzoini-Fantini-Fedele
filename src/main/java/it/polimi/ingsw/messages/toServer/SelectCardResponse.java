@@ -5,14 +5,14 @@ import it.polimi.ingsw.common.ServerInterface;
 
 import java.util.List;
 
-public class SelectLeaderCardResponse implements  MessageToServer {
-    Integer selectedLeaderCard;
-    public SelectLeaderCardResponse(Integer selectedLeaderCard){
-        this.selectedLeaderCard = selectedLeaderCard;
+public class SelectCardResponse implements  MessageToServer {
+    Integer selectedCard;
+    public SelectCardResponse(Integer selectedCard){
+        this.selectedCard = selectedCard;
     }
 
-    public Integer getSelectedLeaderCard() {
-        return selectedLeaderCard;
+    public Integer getSelectedCard() {
+        return selectedCard;
     }
 
     @Override

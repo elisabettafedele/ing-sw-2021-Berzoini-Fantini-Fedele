@@ -129,7 +129,7 @@ public class GUI extends Application implements View {
     public void displayChooseLeaderCardsRequest(List<Integer> leaderCards){}
 
     @Override
-    public void displaySelectLeaderCardRequest(List<Integer> leaderCards) {
+    public void displaySelectCardRequest(List<Integer> leaderCards, boolean leaderORdevelopment) {
 
     }
 
@@ -149,6 +149,11 @@ public class GUI extends Application implements View {
 
     @Override
     public void displayChooseProductionPowersRequest(List<Integer> productionCardsIDs, Map<Resource, Integer> availableResources) {
+
+    }
+
+    @Override
+    public void displaySelectDevelopmentCardSlotRequest(boolean firstSlotAvailable, boolean secondSlotAvailable, boolean thirdSlotAvailable) {
 
     }
 
