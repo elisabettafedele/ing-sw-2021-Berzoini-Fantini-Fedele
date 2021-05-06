@@ -10,6 +10,7 @@ import it.polimi.ingsw.exceptions.InactiveCardException;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.ValueNotPresentException;
 import it.polimi.ingsw.messages.toClient.ChooseProductionPowersRequest;
+import it.polimi.ingsw.messages.toServer.ChooseProductionPowersResponse;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
 import it.polimi.ingsw.model.cards.*;
 import it.polimi.ingsw.model.player.PersonalBoard;
@@ -171,6 +172,13 @@ public class ActivateProductionAction implements Action{
 
     @Override
     public void handleMessage(MessageToServer message) {
+        List<Integer> productionPowerSelected = ((ChooseProductionPowersResponse) message).getProductionPowersSelected();
 
+        //check if productionPowerSelected.size() > 0. If so increment actionDone
+        //else return
+
+        //ask the client where he wants to remove the resources
+        //add all resources to strongbox
+        //if faithpoints were produced -> move marker, check faith track
     }
 }
