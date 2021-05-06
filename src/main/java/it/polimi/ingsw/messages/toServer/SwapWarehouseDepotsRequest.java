@@ -14,6 +14,15 @@ public class SwapWarehouseDepotsRequest implements MessageToServer{
 
     @Override
     public void handleMessage(ServerInterface server, ClientHandlerInterface clientHandler) {
+        clientHandler.getCurrentAction().handleMessage(this);
+    }
 
+
+    public String getOriginDepot() {
+        return originDepot;
+    }
+
+    public String getDestinationDepot() {
+        return destinationDepot;
     }
 }

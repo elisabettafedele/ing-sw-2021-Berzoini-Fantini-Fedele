@@ -11,7 +11,6 @@ import it.polimi.ingsw.enumerations.Marble;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.ValueNotPresentException;
-import it.polimi.ingsw.messages.toClient.ChooseProductionPowersRequest;
 import it.polimi.ingsw.messages.toServer.*;
 import it.polimi.ingsw.model.cards.LeaderCard;
 import it.polimi.ingsw.model.cards.Value;
@@ -31,9 +30,6 @@ public class CLI implements View {
 
     private static final String DEFAULT_ADDRESS = "127.0.0.1";
     private static final int DEFAULT_PORT = 1234;
-    private static final String DISCARD = "d";
-    private static final String REORGANIZE = "r";
-
     private final int BASIC_PRODUCTION_POWER = 0;
 
     private String IPAddress;
@@ -172,36 +168,48 @@ public class CLI implements View {
         List<String> acceptedValues = availableDepots;
         if (!setUpPhase) {
             System.out.println("Type d if you want to discard the resource or r if you want to reorganize your depots");
-            acceptedValues.add(DISCARD);
-            acceptedValues.add(REORGANIZE);
+            acceptedValues.add(Command.DISCARD.command);
+            acceptedValues.add(Command.REORGANIZE.command);
         }
         String choice = InputParser.getString("Insert a valid command", conditionOnString(acceptedValues));
-        if (choice.equals(DISCARD))
+        if (choice.equals(Command.DISCARD.command))
             client.sendMessageToServer(new DiscardResourceRequest(resource));
-        else if (choice.equals(REORGANIZE))
+        else if (choice.equals(Command.REORGANIZE.command))
             client.sendMessageToServer(new ReorganizeDepotRequest());
         else
             client.sendMessageToServer(new ChooseStorageTypeResponse(resource, choice, setUpPhase));
     }
 
+
     @Override
-    public void displayReorganizeDepotsRequest(List <String> depots) {
-        List<String> possibleCommands = new ArrayList<>();
-        possibleCommands.add("swap");
-        possibleCommands.add("move");
-        possibleCommands.add("END");
-        System.out.println("You can now reorganize your depots with the command swap or move. Let us show you two example: \n-'swap w1 w2': realizes a swap between the first and the second depot of the warehouse\n-'move l w1 2': moves two resources from the leader depot to the second row of the warehouse \n If you have finished write END");
-        System.out.println("1. Do you want to swap or move your resources? swap | move");
+    public void displayReorganizeDepotsRequest(List<String> depots, boolean first, boolean failure, List<Resource> availableLeaderResources){
+        if (first)
+            System.out.println("You can now reorganize your depots with the command" + Command.SWAP.command + " or " + Command.MOVE.command + ". Let us show you two example: \n-'"+Command.SWAP.command + "w1 w2': realizes a swap between the first and the second depot of the warehouse\n-'move l w1 2': moves two resources from the leader depot to the second row of the warehouse \n If you have finished type " + Command.END_REORGANIZE_DEPOTS.command);
+        if (failure)
+            System.out.println("Invalid reorganization: be careful not to swap warehouse depot with leader ones and to check the capacity of the depots.");
+        List<String> possibleCommands = Command.getReorganizeDepotsCommands();
+        possibleCommands.addAll(depots);
+        Resource resource = Resource.ANY;
+        System.out.println("Do you want to swap or move your resources? Type " + Command.END_REORGANIZE_DEPOTS.command + " if you want to end the reorganization of your depots");
+        System.out.println(Command.SWAP.command + " | " + Command.MOVE.command + " | " + Command.END_REORGANIZE_DEPOTS.command);
         String commandType = InputParser.getString("Please insert a valid command", conditionOnString(possibleCommands));
+        System.out.print("Select the origin depot: ");
         String originDepot = InputParser.getString("Please insert a valid depot", conditionOnString(depots));
+        System.out.print("Select the destination depot: ");
         String destinationDepot = InputParser.getString("Please insert a valid depot", conditionOnString(depots));
-        if (commandType.equals("END"))
+        if (commandType.equals(Command.END_REORGANIZE_DEPOTS.command))
             client.sendMessageToServer(new NotifyEndDepotsReorganization());
-        else if (commandType.equals("swap"))
+        else if (commandType.equals(Command.SWAP.command))
             client.sendMessageToServer(new SwapWarehouseDepotsRequest(originDepot,destinationDepot));
         else {
-            int quantity = InputParser.getInt("Please insert a valid resource quantity", conditionOnIntegerRange(1, 4));
-            client.sendMessageToServer(new MoveResourcesRequest(originDepot, destinationDepot, quantity));
+            System.out.print("Select the quantity of the resources you want to move: ");
+            Integer quantity = InputParser.getInt("Please insert a valid resource quantity", conditionOnIntegerRange(1, 4));
+            assert (quantity != null);
+            if (availableLeaderResources.size() == 2 && originDepot.equals("LEADER_DEPOT")) {
+                System.out.print("Select the type of resource you want to remove from the leader depot: ");
+                resource = Resource.valueOf(InputParser.getString("Insert a valid resource type", conditionOnString(availableLeaderResources.stream().map(x -> x.name()).collect(Collectors.toList()))));
+            }
+            client.sendMessageToServer(new MoveResourcesRequest(originDepot, destinationDepot, resource, quantity));
         }
     }
 
@@ -232,7 +240,7 @@ public class CLI implements View {
     private Resource getMarbleColor(List<Resource> conversions){
         Resource resource = null;
         String resourceString;
-        boolean error = false;
+        boolean error;
         do {
             System.out.println("Select one conversion: ");
             resourceString = InputParser.getLine();

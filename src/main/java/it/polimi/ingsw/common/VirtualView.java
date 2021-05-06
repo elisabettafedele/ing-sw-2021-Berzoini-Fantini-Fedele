@@ -24,7 +24,7 @@ public interface VirtualView {
     void displayChooseWhiteMarbleConversionRequest(List<Resource> marbles, int numberOfMarbles);
     void displayMarblesTaken(List<Marble> marblesTaken, boolean needToChooseConversion);
     void displayChooseStorageTypeRequest(Resource resource, List<String> availableDepots, boolean setUpPhase);
-    void displayReorganizeDepotsRequest(List<String> availableDepots);
+    void displayReorganizeDepotsRequest(List<String> depots, boolean first, boolean failure, List<Resource> availableLeaderResources);
     //SETUP
     void displayChooseLeaderCardsRequest(List<Integer> leaderCards);
     void displaySelectCardRequest(List<Integer> CardsIDs, boolean leaderORdevelopment);

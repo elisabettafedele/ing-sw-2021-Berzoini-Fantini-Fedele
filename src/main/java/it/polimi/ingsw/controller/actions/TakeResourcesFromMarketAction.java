@@ -26,6 +26,8 @@ public class TakeResourcesFromMarketAction implements Action {
     private List<Resource> resourcesToStore;
     private List<Marble> marblesToConvert;
     private TurnController turnController;
+    private List<String> availableDepotsForReorganization;
+    private List<Resource> availableLeaderResources;
 
     /**
      * Constructor of the action
@@ -63,13 +65,16 @@ public class TakeResourcesFromMarketAction implements Action {
             handleWhiteMarblesConversionResponse(((ChooseWhiteMarbleConversionResponse) message).getResource());
         if (message instanceof ChooseStorageTypeResponse)
             storeResource(((ChooseStorageTypeResponse) message).getResource(), ((ChooseStorageTypeResponse) message).getStorageType());
-        if (message instanceof DiscardResourceRequest) {
+        if (message instanceof DiscardResourceRequest)
             handleDiscard(((DiscardResourceRequest) message).getResource());
-        }
-        if (message instanceof ReorganizeDepotRequest){
+        if (message instanceof ReorganizeDepotRequest)
             handleReorganizeDepotsRequest();
-        }
-
+        if (message instanceof SwapWarehouseDepotsRequest)
+            handleSwapRequest(((SwapWarehouseDepotsRequest) message).getOriginDepot(), ((SwapWarehouseDepotsRequest) message).getDestinationDepot());
+        if (message instanceof MoveResourcesRequest)
+            handleMoveRequest(((MoveResourcesRequest) message).getOriginDepot(), ((MoveResourcesRequest) message).getDestinationDepot(), ((MoveResourcesRequest) message).getResource(), ((MoveResourcesRequest) message).getQuantity());
+        if (message instanceof NotifyEndDepotsReorganization)
+            handleEndDepotsOrganization();
     }
 
     /**
@@ -162,11 +167,68 @@ public class TakeResourcesFromMarketAction implements Action {
     }
 
     private void handleReorganizeDepotsRequest(){
-        List<String> depots = ResourceStorageType.getWarehouseDepots();
+        availableDepotsForReorganization = ResourceStorageType.getWarehouseDepots();
+        availableLeaderResources = new ArrayList<>();
+        for (Effect effect : player.getPersonalBoard().getAvailableEffects(EffectType.EXTRA_DEPOT)){
+            try{
+                availableLeaderResources.add(effect.getExtraDepotEffect().getLeaderDepot().getResourceType());
+            } catch (DifferentEffectTypeException e) {
+                e.printStackTrace();
+            }
+        }
         if (!player.getPersonalBoard().getAvailableEffects(EffectType.EXTRA_DEPOT).isEmpty())
-            depots.add(ResourceStorageType.LEADER_DEPOT.name());
-        clientHandler.sendMessageToClient(new SendReorganizeDepotsCommands(depots));
+            availableDepotsForReorganization.add(ResourceStorageType.LEADER_DEPOT.name());
+        clientHandler.sendMessageToClient(new SendReorganizeDepotsCommands(availableDepotsForReorganization, true, false, availableLeaderResources));
+    }
 
+    private void handleSwapRequest(String origin, String destination){
+        if (!ResourceStorageType.getWarehouseDepots().contains(origin) || !ResourceStorageType.getWarehouseDepots().contains(destination))
+            clientHandler.sendMessageToClient(new SendReorganizeDepotsCommands(availableDepotsForReorganization, false, true, availableLeaderResources));
+        else {
+            try {
+                player.getPersonalBoard().getWarehouse().switchRows(ResourceStorageType.valueOf(origin).getValue(), ResourceStorageType.valueOf(destination).getValue());
+                clientHandler.sendMessageToClient(new SendReorganizeDepotsCommands(availableDepotsForReorganization, false, false, availableLeaderResources));
+            } catch (UnswitchableDepotsException | InsufficientSpaceException e) {
+                clientHandler.sendMessageToClient(new SendReorganizeDepotsCommands(availableDepotsForReorganization, false, true, availableLeaderResources));
+            } catch (InvalidArgumentException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void handleMoveRequest(String originString, String destinationString, Resource resource, int quantity){
+        ResourceStorageType origin = ResourceStorageType.valueOf(originString);
+        ResourceStorageType destination = ResourceStorageType.valueOf(destinationString);
+        try {
+            Resource originResourceType = resource == Resource.ANY ? player.getPersonalBoard().getWarehouse().getResourceTypeOfDepot(ResourceStorageType.valueOf(originString).getValue()) : resource;
+        } catch (InvalidArgumentException e) {
+            e.printStackTrace();
+        }
+        try {
+            player.getPersonalBoard().removeResources(origin, resource, quantity);
+        } catch (InsufficientQuantityException e) {
+            clientHandler.sendMessageToClient(new SendReorganizeDepotsCommands(availableDepotsForReorganization, false, true, availableLeaderResources));
+        } catch (InvalidResourceTypeException e) {
+            e.printStackTrace();
+        }
+        try {
+            player.getPersonalBoard().addResources(destination, resource, quantity);
+            clientHandler.sendMessageToClient(new SendReorganizeDepotsCommands(availableDepotsForReorganization, false, false, availableLeaderResources));
+        } catch (InvalidDepotException | InvalidArgumentException | InvalidResourceTypeException e) {
+            e.printStackTrace();
+        } catch (InsufficientSpaceException e) {
+            try {
+                player.getPersonalBoard().addResources(origin, resource, quantity);
+                clientHandler.sendMessageToClient(new SendReorganizeDepotsCommands(availableDepotsForReorganization, false, true, availableLeaderResources));
+            } catch (InvalidDepotException | InvalidArgumentException | InvalidResourceTypeException | InsufficientSpaceException ignored) { }
+        }
+    }
+
+    void handleEndDepotsOrganization(){
+        if (resourcesToStore.isEmpty())
+            manageEndAction();
+        else
+            handleChooseStorageTypeRequest();
     }
 
     /**

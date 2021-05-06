@@ -331,6 +331,33 @@ public class PersonalBoard {
         }
     }
 
+    public void removeResources(ResourceStorageType resourceStorageType, Resource resource, int quantity) throws InsufficientQuantityException, InvalidResourceTypeException {
+        if (resourceStorageType.getValue() < 3) {
+            try {
+                getWarehouse().removeResourcesFromDepot(getWarehouse().getResourceTypeOfDepot(resourceStorageType.getValue()), quantity);
+            } catch (InvalidArgumentException e) {
+                e.printStackTrace();
+            }
+        }
+        else if (resourceStorageType == ResourceStorageType.LEADER_DEPOT){
+            for (Effect effect : getAvailableEffects(EffectType.EXTRA_DEPOT)){
+                try {
+                    if (effect.getExtraDepotEffect().getLeaderDepot().getResourceType() == resource)
+                        effect.getExtraDepotEffect().getLeaderDepot().removeResources(quantity);
+                } catch (DifferentEffectTypeException | InvalidArgumentException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        else if (resourceStorageType == ResourceStorageType.STRONGBOX){
+            try {
+                getStrongbox()[resource.getValue()].removeResources(quantity);
+            } catch (InvalidArgumentException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     /**
      * Method used to get the available white marble conversion of a Personal Board
      * @return a List with the marbles that can be obtained from a white marble

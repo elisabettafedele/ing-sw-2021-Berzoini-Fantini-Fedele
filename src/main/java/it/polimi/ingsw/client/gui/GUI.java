@@ -131,9 +131,7 @@ public class GUI extends Application implements View {
     }
 
     @Override
-    public void displayReorganizeDepotsRequest(List<String> availableDepots) {
-
-    }
+    public void displayReorganizeDepotsRequest(List<String> depots, boolean first, boolean failure, List<Resource> availableLeaderResource){}
 
 
     @Override
