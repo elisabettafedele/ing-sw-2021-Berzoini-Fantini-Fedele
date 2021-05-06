@@ -7,6 +7,7 @@ import it.polimi.ingsw.controller.actions.Action;
 import it.polimi.ingsw.enumerations.Marble;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.model.cards.LeaderCard;
+import it.polimi.ingsw.model.cards.Value;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -148,7 +149,7 @@ public class GUI extends Application implements View {
     }
 
     @Override
-    public void displayChooseProductionPowersRequest(List<Integer> productionCardsIDs, Map<Resource, Integer> availableResources) {
+    public void displayChooseProductionPowersRequest(Map<Integer, List<Value>> availableProductionPowers, Map<Resource, Integer> availableResources) {
 
     }
 

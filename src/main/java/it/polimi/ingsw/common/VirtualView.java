@@ -5,6 +5,7 @@ import it.polimi.ingsw.controller.actions.Action;
 import it.polimi.ingsw.enumerations.Marble;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.model.cards.LeaderCard;
+import it.polimi.ingsw.model.cards.Value;
 
 import java.util.List;
 import java.util.Map;
@@ -28,5 +29,5 @@ public interface VirtualView {
     void loadLeaderCards(List<LeaderCard> leaderCards);
     void displayChooseResourceTypeRequest(List<String> resourceTypes, List<String> storageTypes, int quantity);
     void loadDevelopmentCards(Map<Integer, List<String>> lightDevelopmentCards);
-    void displayChooseProductionPowersRequest(List<Integer> productionCardsIDs, Map<Resource, Integer> availableResources);
+    void displayChooseProductionPowersRequest(Map<Integer, List<Value>> availableProductionPowers, Map<Resource, Integer> availableResources);
 }

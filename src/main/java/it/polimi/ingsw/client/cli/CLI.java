@@ -9,14 +9,14 @@ import it.polimi.ingsw.controller.actions.Action;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.enumerations.Marble;
 import it.polimi.ingsw.enumerations.Resource;
+import it.polimi.ingsw.exceptions.ValueNotPresentException;
 import it.polimi.ingsw.messages.toServer.*;
 import it.polimi.ingsw.model.cards.LeaderCard;
 
 import java.util.List;
 import java.util.Map;
-import it.polimi.ingsw.messages.toClient.ChooseResourceAndStorageTypeRequest;
-import it.polimi.ingsw.messages.toServer.*;
-import it.polimi.ingsw.model.cards.LeaderCard;
+
+import it.polimi.ingsw.model.cards.Value;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -25,6 +25,8 @@ public class CLI implements View {
 
     private static final String DEFAULT_ADDRESS = "127.0.0.1";
     private static final int DEFAULT_PORT = 1234;
+
+    private final int BASIC_PRODUCTION_POWER = 0;
 
     private String IPAddress;
     private int port;
@@ -254,12 +256,96 @@ public class CLI implements View {
     }
 
     @Override
-    public void displayChooseProductionPowersRequest(List<Integer> productionCardsIDs, Map<Resource, Integer> availableResources) {
+    public void displayChooseProductionPowersRequest(Map<Integer, List<Value>> availableProductionPowers, Map<Resource, Integer> availableResources) {
         boolean confirmed = false;
+        List<Value> productionOutputs = new ArrayList<>(); //the resources/faithPoints produced
+        List<Value> resourcesSpent = new ArrayList<>(); //the resources spent
+        Map<Integer, List<Value>> selectedProductions = new HashMap<>();
+
         do{
+            List<Integer> IDs = displayAvailableProductions(availableProductionPowers, availableResources);
+            if(IDs.size() > 0){
+                System.out.print("Insert the ID of the card with the production you want to activate: ");
+                Integer selection = InputParser.getInt(
+                        "Error: the ID provided is not available. Provide a valid ID", conditionOnInteger(IDs));
+                if(selection == BASIC_PRODUCTION_POWER){
+                    manageBasicProductionPower(availableResources);
+                }else{
+
+                }
+                //delete the production chosen from the availables and save it in another list
+
+            }else{
+                System.out.println("You don't have enough resources for any production, do you want to buy resources for 0.99€?");
+            }
+
             //askNextProduction() //look which are effectively available
-            //ask to confirm or to choose another one;
+            //ask to confirm or to choose another one; If the player confirms with zero selections don't increment the actionDone variable!!!
         }while(!confirmed);
+        //client.sendMessageToServer(new ProductionResponse(...));
+    }
+
+    private void manageBasicProductionPower(Map<Resource, Integer> availableResources) {
+       List<Resource> usableResources = new ArrayList<Resource>();
+        List<Resource> chosenResources = new ArrayList<Resource>();
+        for(Map.Entry<Resource, Integer> entry : availableResources.entrySet()){
+            if(entry.getValue() > 0){
+                usableResources.add(entry.getKey());
+            }
+        }
+        if(usableResources.size() > 0){
+            for(int j = 0; j < 2; j++){
+                for(int i = 0; i < usableResources.size(); i++) {
+                    System.out.printf("%d." + usableResources.get(i) + "\n", i+1);
+                }
+                Integer selection = InputParser.getInt(
+                        "Error: the ID provided is not available. Provide a valid ID",
+                        conditionOnIntegerRange(1, usableResources.size()));
+                chosenResources.add(usableResources.get(selection));
+                if(availableResources.get(usableResources.get(selection)) <= 1){
+                    usableResources.remove(selection);
+                }
+
+            }
+        }
+    }
+
+    private void subtractResources(Value activationCost, Map<Resource, Integer> availableResources){
+
+    }
+
+    //check
+    private List<Integer> displayAvailableProductions(Map<Integer, List<Value>> availableProductionPowers, Map<Resource, Integer> availableResources){
+        List <Integer> availableProductionIDs = new ArrayList<>();
+        for(Map.Entry<Integer, List<Value>> entry : availableProductionPowers.entrySet()){
+            Map<Resource, Integer> activationCost = null;
+            try {
+                activationCost = entry.getValue().get(0).getResourceValue();
+            } catch (ValueNotPresentException e) {
+                //skip
+            }
+            if(hasResourcesForThisProduction(activationCost, availableResources)){
+                System.out.println(MatchData.getInstance().getDevelopmentCardByID(entry.getKey()).get(0));
+                availableProductionIDs.add(entry.getKey());
+            }
+        }
+        if(availableResources.values().stream().mapToInt(Integer::intValue).sum() >= 2){
+            System.out.println("Basic Production Power: " + availableProductionPowers.get(0));
+            availableProductionIDs.add(BASIC_PRODUCTION_POWER);
+        }
+        return availableProductionIDs;
+    }
+
+    private boolean hasResourcesForThisProduction(Map<Resource, Integer> activationCost, Map<Resource, Integer> availableResources){
+        boolean executable = true;
+        for (Map.Entry<Resource, Integer> entry : activationCost.entrySet()){
+            try {
+                executable = executable && entry.getValue() <= availableResources.get(entry.getKey());
+            }catch(Exception e){
+                //do nothing, it's only to easily skip a missing Resource in availableResources
+            }
+        }
+        return executable;
     }
 
     public static Predicate<Integer> conditionOnIntegerRange(int min, int max){
