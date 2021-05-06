@@ -174,10 +174,13 @@ public class TakeResourcesFromMarketAction implements Action {
      * @return a List of the name() of the {@link ResourceStorageType} available
      */
     private List<String> getAvailableDepots(Resource resource) {
-        List<String> availableDepots = new LinkedList<>();
-        //TODO
+        //Warehouse depots
+        List<String> availableDepots = player.getPersonalBoard().getWarehouse().getAvailableWarehouseDepotsForResourceType(resource).stream().map(Enum::name).collect(Collectors.toList());
+        if (player.getPersonalBoard().isLeaderDepotAvailable(resource, 1))
+            availableDepots.add(ResourceStorageType.LEADER_DEPOT.name());
         return availableDepots;
     }
+
 
     /**
      * Method used to handle the discard of a {@link Resource} of the acting player
@@ -192,7 +195,7 @@ public class TakeResourcesFromMarketAction implements Action {
     /**
      * Method used to store a specific {@link Resource} of the resourcesToStore in a specific depot
      *
-     * @param resource    the {@link Resource} the acting player wants to store
+     * @param resource the {@link Resource} the acting player wants to store
      * @param storageType name() of the {@link ResourceStorageType} where te acting player wants to store the {@link Resource}
      */
     private void storeResource(Resource resource, String storageType) {
@@ -215,99 +218,4 @@ public class TakeResourcesFromMarketAction implements Action {
         turnController.nextActionManager();
     }
 
-
-
-
-
-
-
-
-
-    /*
-    public TakeResourcesFromMarketAction(PersonalBoard personalBoard, Market market, int insertionPosition, Controller controller) {
-        this.insertionPosition = insertionPosition;
-        this.market = market;
-        this.personalBoard = personalBoard;
-    }
-
-    public boolean isExecutable() {
-        return true;
-    }
-
-    private void marblesConversion(List<Marble> marbles) throws InvalidArgumentException {
-        marbles.stream().filter(x -> x == Marble.RED).forEach(x -> {
-            try {
-                personalBoard.moveMarker(1);
-            } catch (InvalidArgumentException e) {
-                e.printStackTrace();
-            }
-        });
-        resourcesToStore = marbles.stream().filter(x -> (x != Marble.WHITE && x != Marble.RED))
-                .map(x -> Resource.valueOf(x.getValue())).collect(Collectors.toList());
-    }
-
-    private List<Depot> availableDepotsForResourceType(Resource resource) throws DifferentEffectTypeException {
-        List<Depot> depots = personalBoard.getWarehouse().getAvailableWarehouseDepotsForResourceType(resource);
-        List<LeaderCard> cards = personalBoard.availableLeaderCards();
-        LeaderDepot depot;
-        for (LeaderCard card : cards) {
-            if (card.getEffect().getEffectType() == EffectType.EXTRA_DEPOT) {
-                depot = card.getEffect().getExtraDepotEffect().getLeaderDepot();
-                if (depot.getResourceType() == resource && depot.spaceAvailable() > 1)
-                    depots.add(depot);
-            }
-        }
-        return depots;
-    }
-
-
-    public void execute(TurnController turnController) throws InvalidArgumentException, DifferentEffectTypeException, InvalidMethodException, ZeroPlayerException, InvalidDepotException, InsufficientSpaceException {
-        List<Marble> marbles = market.insertMarbleFromTheSlide(insertionPosition);
-        Depot depotChosen;
-        LeaderDepot leaderDepot;
-        WarehouseDepot warehouseDepot;
-        List<Marble> conversionsAvailable = personalBoard.getAvailableConversions();
-
-        MultiplayerPlayPhase multiplayerPlayPhase;
-
-        // If the user has any leader card with white marble effect I ask him to choose:
-        // a) whether he wants to convert it
-        // b) which resource he wants to have
-        if (!personalBoard.getAvailableConversions().isEmpty())
-            for (Marble marble : marbles) {
-                if (marble == Marble.WHITE) {
-
-                }
-            }
-
-        //I convert the marbles to the respective resources
-        marblesConversion(marbles);
-
-        //For each resource I ask to the client where he wants to store it
-        while (!resourcesToStore.isEmpty()){
-            //getStorageFromClient
-            List<Depot> availableDepots = availableDepotsForResourceType(resourcesToStore.get(0));
-            if (availableDepots.isEmpty()){
-                if (controller.getGame().getGameMode() == GameMode.MULTI_PLAYER){
-                    controller.getGamePhase().handleResourceDiscard();
-                }
-            }
-            else{
-
-                depotChosen = availableDepots.get(0);
-                if (depotChosen instanceof LeaderDepot) {
-                    leaderDepot = (LeaderDepot) depotChosen;
-                    leaderDepot.addResources(1);
-                }
-                else if (depotChosen instanceof WarehouseDepot) {
-                    warehouseDepot = (WarehouseDepot) depotChosen;
-                    warehouseDepot.addResources(1);
-                }
-
-            }
-            resourcesToStore.remove(0);
-        }
-    }
-
-*/
 }
