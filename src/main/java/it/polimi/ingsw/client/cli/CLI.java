@@ -20,11 +20,14 @@ import it.polimi.ingsw.model.cards.LeaderCard;
 
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class CLI implements View {
 
     private static final String DEFAULT_ADDRESS = "127.0.0.1";
     private static final int DEFAULT_PORT = 1234;
+    private static final String DISCARD = "d";
+    private static final String REORGANIZE = "r";
 
     private String IPAddress;
     private int port;
@@ -131,7 +134,13 @@ public class CLI implements View {
     @Override
     public void displayChooseWhiteMarbleConversionRequest(List<Resource> resources, int numberOfMarbles) {
         System.out.println("You have these two possible white marble conversions: " + resources.get(0) + " | " + resources.get(1));
-        client.sendMessageToServer(new ChooseWhiteMarbleConversionResponse(getMarbleColor(resources)));
+        List<Resource> resourcesChosen = new LinkedList<>();
+        for (int i = 0; i < numberOfMarbles; i++){
+            if (numberOfMarbles > 1)
+                System.out.printf("White marble #%d\n", i+1);
+            resourcesChosen.add(getMarbleColor(resources));
+        }
+        client.sendMessageToServer(new ChooseWhiteMarbleConversionResponse(resourcesChosen));
     }
 
     @Override
@@ -147,6 +156,25 @@ public class CLI implements View {
                 System.out.println("You have more than one White Marble Effect Active! You need to choose one white marble at a time how you want to convert it");
         }
     }
+
+    @Override
+    public void displayChooseStorageTypeRequest(Resource resource, List<String> availableDepots) {
+        System.out.println("Choose a depot for the "+ resource +"\nAvailable depots for this resource type are:");
+        for (String depot : availableDepots)
+            System.out.println("- " + depot);
+        System.out.println("Type d if you want to discard the resource or r if you want to reorganize your depots");
+        List<String> acceptedValues = availableDepots;
+        acceptedValues.add(DISCARD);
+        acceptedValues.add(REORGANIZE);
+        String choice = InputParser.getString("Insert a valid command", conditionOnString(acceptedValues));
+        if (choice.equals(DISCARD))
+            client.sendMessageToServer(new DiscardResourceRequest(resource));
+        else if (choice.equals(REORGANIZE))
+            client.sendMessageToServer(new ReorganizeDepotRequest());
+        else
+            client.sendMessageToServer(new ChooseStorageTypeResponse(resource, choice));
+    }
+
 
     private GameMode getGameMode(){
         while(true) {
@@ -236,9 +264,10 @@ public class CLI implements View {
         System.out.printf("You have to choose %d resource type. \nAvailable resource types are:\n", quantity);
         System.out.println(Arrays.toString(resourceTypes.toArray()));
 
+        List<String> resourcesToString = resourceTypes.stream().map(Enum::name).collect(Collectors.toList());
         List<String> selectedResources = new ArrayList<>();
         for (int i = 0; i < quantity; i++)
-            selectedResources.add(InputParser.getString("Please select a valid resource type", conditionOnString(resourceTypes)));
+            selectedResources.add(InputParser.getString("Please select a valid resource type", conditionOnString(resourcesToString)));
 
         if (quantity == 2 && selectedResources.get(0).equals(selectedResources.get(1)))
             storageTypes.remove(0);
@@ -266,7 +295,6 @@ public class CLI implements View {
             //ask to confirm or to choose another one;
         }while(!confirmed);
     }
-
     @Override
     public void displaySelectDevelopmentCardSlotRequest(boolean firstSlotAvailable, boolean secondSlotAvailable, boolean thirdSlotAvailable) {
         int selection = -1;
@@ -294,6 +322,10 @@ public class CLI implements View {
         }
 
         client.sendMessageToServer( new SelectDevelopmentCardSlotResponse(selection));
+    }
+    @Override
+    public void displayMessage(String message) {
+        System.out.println(message);
     }
 
     public static Predicate<Integer> conditionOnIntegerRange(int min, int max){

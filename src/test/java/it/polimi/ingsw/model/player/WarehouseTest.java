@@ -1,11 +1,17 @@
 package it.polimi.ingsw.model.player;
 
 import it.polimi.ingsw.enumerations.Resource;
+import it.polimi.ingsw.enumerations.ResourceStorageType;
 import it.polimi.ingsw.exceptions.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class WarehouseTest {
     Warehouse warehouse;
@@ -33,6 +39,17 @@ public class WarehouseTest {
         warehouse.removeResourcesFromDepot(Resource.COIN, 1);
         assertEquals(warehouse.getResourceTypeOfDepot(1), Resource.ANY);
         assertEquals(warehouse.getResourceQuantityOfDepot(1), 0);
+    }
+
+    @Test
+    public void testGetAvailableDepotForResourceType() throws InvalidDepotException, InvalidArgumentException, InvalidResourceTypeException, InsufficientSpaceException {
+        List<ResourceStorageType> depots = ResourceStorageType.getWarehouseDepots().stream().map(ResourceStorageType::valueOf).collect(Collectors.toList());
+        assertTrue(warehouse.getAvailableWarehouseDepotsForResourceType(Resource.COIN).containsAll(depots));
+        assertTrue(depots.containsAll(warehouse.getAvailableWarehouseDepotsForResourceType(Resource.COIN)));
+        warehouse.addResourcesToDepot(0, Resource.STONE, 1);
+        warehouse.addResourcesToDepot(1, Resource.SHIELD, 1);
+        warehouse.addResourcesToDepot(2, Resource.SERVANT, 1);
+        assertTrue(warehouse.getAvailableWarehouseDepotsForResourceType(Resource.COIN).isEmpty());
     }
 
     @Test(expected = InvalidArgumentException.class)

@@ -124,6 +124,11 @@ public class GUI extends Application implements View {
     public void displayMarblesTaken(List<Marble> marblesTaken, boolean needToChooseConversion) {
 
     }
+    @Override
+    public void displayChooseStorageTypeRequest(Resource resource, List<String> availableDepots) {
+
+    }
+
 
     @Override
     public void displayChooseLeaderCardsRequest(List<Integer> leaderCards){}
@@ -140,7 +145,7 @@ public class GUI extends Application implements View {
 
     @Override
 
-    public void displayChooseResourceTypeRequest(List<String> resourceTypes, List<String> storageTypes, int quantity) {
+    public void displayChooseResourceTypeRequest(List<Resource> resourceTypes, List<String> storageTypes, int quantity) {
     }
 
     public void loadDevelopmentCards(Map<Integer, List<String>> lightDevelopmentCards) {
@@ -151,7 +156,10 @@ public class GUI extends Application implements View {
     public void displayChooseProductionPowersRequest(List<Integer> productionCardsIDs, Map<Resource, Integer> availableResources) {
 
     }
-
+    @Override
+    public void displayMessage(String message) {
+        //TODO
+    }
     @Override
     public void displaySelectDevelopmentCardSlotRequest(boolean firstSlotAvailable, boolean secondSlotAvailable, boolean thirdSlotAvailable) {
 

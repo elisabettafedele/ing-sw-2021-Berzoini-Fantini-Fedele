@@ -3,6 +3,7 @@ package it.polimi.ingsw.controller.actions;
 import it.polimi.ingsw.Server.ClientHandler;
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.controller.MultiplayerPlayPhase;
+import it.polimi.ingsw.controller.TurnController;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.enumerations.Marble;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
@@ -23,14 +24,12 @@ public class TakeResourcesFromMarketActionTest extends TestCase {
     @Before
     public void setUp() throws InvalidArgumentException, UnsupportedEncodingException {
         List<LeaderCard> cards = null;
-        try {
-            cards = LeaderCardParser.parseCards();
-        } catch (JsonFileNotFoundException | FileNotFoundException | UnsupportedEncodingException | InvalidArgumentException e) {
-            e.printStackTrace();
-        }
+
+        cards = LeaderCardParser.parseCards();
+
         cards = cards.subList(11, 15);
-        TakeResourcesFromMarketAction action = new TakeResourcesFromMarketAction(new Player("Betti",cards), null, new Market(), new MultiplayerPlayPhase(new Controller(GameMode.MULTI_PLAYER)));
-        action.handleWhiteMarblesConversion();
+        //TakeResourcesFromMarketAction action = new TakeResourcesFromMarketAction(new Player("Betti",cards), null, new Market(), new MultiplayerPlayPhase(new Controller(GameMode.MULTI_PLAYER)), new TurnController(new Controller(G)));
+        //action.handleWhiteMarblesConversion();
 
     }
 

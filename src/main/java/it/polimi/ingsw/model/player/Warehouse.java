@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.player;
 
 import it.polimi.ingsw.enumerations.Resource;
+import it.polimi.ingsw.enumerations.ResourceStorageType;
 import it.polimi.ingsw.exceptions.*;
 import it.polimi.ingsw.model.depot.Depot;
 import it.polimi.ingsw.model.depot.WarehouseDepot;
@@ -46,22 +47,25 @@ public class Warehouse {
         return depots[row].getResourceType();
     }
 
-    //TODO test or delete this function...maybe it could be replaced by a function in personal board that is able to add and remove resources, given a StorageType
-    public List<Depot> getAvailableWarehouseDepotsForResourceType(Resource resource){
+    /**
+     * Method used to get the available {@link ResourceStorageType} of the {@link Warehouse} for a certain type of {@link Resource}
+     * @param resource the {@link Resource} to store
+     * @return a list of the available {@link ResourceStorageType} of the {@link Warehouse}
+     */
+    public List<ResourceStorageType> getAvailableWarehouseDepotsForResourceType(Resource resource){
         int row;
-        List<Depot> depots= new ArrayList<Depot>();
+        List<ResourceStorageType> depots= new ArrayList<ResourceStorageType>();
         row = getRowIndexFromResource(resource);
 
         //If a depot is already used for the resource
         if (row != -1){
             if (this.depots[row].enoughSpace(1))
-                depots.add(this.depots[row]);
+                depots.add(ResourceStorageType.valueOf(row));
             return depots;
-        }
-        else {
+        } else {
             for (row = 0; row < numberOfDepots; row++) {
                 if (this.depots[row].getResourceType() == Resource.ANY)
-                    depots.add(this.depots[row]);
+                    depots.add(ResourceStorageType.valueOf(row));
             }
         }
 

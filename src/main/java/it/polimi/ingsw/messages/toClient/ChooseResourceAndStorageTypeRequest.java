@@ -7,11 +7,11 @@ import java.util.List;
 
 public class ChooseResourceAndStorageTypeRequest implements MessageToClient{
 
-    private List<String> resourceTypes;
+    private List<Resource> resourceTypes;
     List<String> storageTypes;
     private int quantity;
 
-    public ChooseResourceAndStorageTypeRequest(List<String> resourceTypes, List<String> storageTypes, int quantity){
+    public ChooseResourceAndStorageTypeRequest(List<Resource> resourceTypes, List<String> storageTypes, int quantity){
         this.resourceTypes = resourceTypes;
         this.storageTypes = storageTypes;
         this.quantity = quantity;

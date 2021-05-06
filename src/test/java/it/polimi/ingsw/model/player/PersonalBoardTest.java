@@ -230,7 +230,7 @@ public class PersonalBoardTest {
     }
 
     @Test
-    public void testAddResourceLeaderCard() throws JsonFileNotFoundException, InvalidArgumentException, FileNotFoundException, UnsupportedEncodingException, InvalidDepotException, InvalidResourceTypeException, InsufficientSpaceException, DifferentEffectTypeException {
+    public void testAddResourceLeaderCard() throws InvalidArgumentException, InvalidDepotException, InvalidResourceTypeException, InsufficientSpaceException, DifferentEffectTypeException {
         List<LeaderCard> lcl = LeaderCardParser.parseCards();
         lcl = lcl.stream().filter(x-> x.getEffect().getEffectType() == EffectType.EXTRA_DEPOT).collect(Collectors.toList());
         PersonalBoard pb=new PersonalBoard(lcl);
@@ -245,7 +245,7 @@ public class PersonalBoardTest {
     }
 
     @Test (expected = InvalidDepotException.class)
-    public void testInvalidDepotAddResource() throws JsonFileNotFoundException, InvalidArgumentException, FileNotFoundException, UnsupportedEncodingException, InvalidDepotException, InvalidResourceTypeException, InsufficientSpaceException {
+    public void testInvalidDepotAddResource() throws InvalidArgumentException, InvalidDepotException, InvalidResourceTypeException, InsufficientSpaceException {
         List<LeaderCard> lcl = LeaderCardParser.parseCards();
         lcl = lcl.stream().filter(x-> x.getEffect().getEffectType() == EffectType.EXTRA_DEPOT).collect(Collectors.toList());
         PersonalBoard pb = new PersonalBoard(lcl);
@@ -363,5 +363,16 @@ public class PersonalBoardTest {
         marbles.add(Marble.PURPLE);
         assertTrue(personalBoardBis.getAvailableConversions().containsAll(marbles));
         assertTrue(marbles.containsAll(personalBoardBis.getAvailableConversions()));
+    }
+
+    @Test
+    public void testGetAvailableLeaderDepots() throws InvalidArgumentException, InvalidDepotException, InvalidResourceTypeException, InsufficientSpaceException {
+        List<LeaderCard> lcl = LeaderCardParser.parseCards();
+        lcl = lcl.stream().filter(x-> x.getEffect().getEffectType() == EffectType.EXTRA_DEPOT).collect(Collectors.toList());
+        lcl.forEach(LeaderCard::activate);
+        PersonalBoard pb = new PersonalBoard(lcl);
+        assertTrue(pb.isLeaderDepotAvailable(Resource.COIN, 1));
+        pb.addResources(ResourceStorageType.LEADER_DEPOT, Resource.COIN, 2);
+        assertFalse(pb.isLeaderDepotAvailable(Resource.COIN, 1));
     }
 }
