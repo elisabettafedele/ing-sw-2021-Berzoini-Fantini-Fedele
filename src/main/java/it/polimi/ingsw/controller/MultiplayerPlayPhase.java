@@ -11,10 +11,12 @@ public class MultiplayerPlayPhase implements GamePhase, PlayPhase{
 
     private Controller controller;
     private TurnController turnController;
+    private int turnIndex;
 
     public MultiplayerPlayPhase(Controller controller){
         this.controller = controller;
         this.turnController = new TurnController(controller);
+        this.turnIndex = 0;
     }
     @Override
     public void handleResourceDiscard(String nickname)  {
