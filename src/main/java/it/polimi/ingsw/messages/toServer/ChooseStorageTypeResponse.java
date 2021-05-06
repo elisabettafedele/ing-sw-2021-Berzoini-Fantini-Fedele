@@ -9,14 +9,19 @@ import javax.swing.*;
 public class ChooseStorageTypeResponse implements MessageToServer{
     private Resource resource;
     private String storageType;
+    private boolean setUpPhase;
 
-    public ChooseStorageTypeResponse(Resource resource, String storageType){
+    public ChooseStorageTypeResponse(Resource resource, String storageType, boolean setUpPhase){
         this.resource = resource;
         this.storageType = storageType;
+        this.setUpPhase = setUpPhase;
     }
     @Override
     public void handleMessage(ServerInterface server, ClientHandlerInterface clientHandler) {
-        clientHandler.getCurrentAction().handleMessage(this);
+        if (setUpPhase)
+            clientHandler.getController().handleMessage(this,clientHandler);
+        else
+            clientHandler.getCurrentAction().handleMessage(this);
     }
 
     public Resource getResource() {

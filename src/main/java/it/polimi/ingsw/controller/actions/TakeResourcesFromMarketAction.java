@@ -164,7 +164,7 @@ public class TakeResourcesFromMarketAction implements Action {
     private void handleChooseStorageTypeRequest() {
         Resource resource = resourcesToStore.get(0);
         List<String> availableDepots = getAvailableDepots(resource);
-        clientHandler.sendMessageToClient(new ChooseStorageTypeRequest(resource, availableDepots));
+        clientHandler.sendMessageToClient(new ChooseStorageTypeRequest(resource, availableDepots, false));
     }
 
     /**

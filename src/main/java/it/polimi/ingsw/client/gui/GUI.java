@@ -126,7 +126,7 @@ public class GUI extends Application implements View {
     }
 
     @Override
-    public void displayChooseStorageTypeRequest(Resource resource, List<String> availableDepots) {
+    public void displayChooseStorageTypeRequest(Resource resource, List<String> availableDepots, boolean setUpPhase) {
 
     }
 
@@ -145,7 +145,7 @@ public class GUI extends Application implements View {
 
     @Override
 
-    public void displayChooseResourceTypeRequest(List<Resource> resourceTypes, List<String> storageTypes, int quantity) {
+    public void displayChooseResourceTypeRequest(List<Resource> resourceTypes, int quantity) {
     }
 
     public void loadDevelopmentCards(Map<Integer, List<String>> lightDevelopmentCards) {

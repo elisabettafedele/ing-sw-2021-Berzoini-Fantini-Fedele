@@ -14,9 +14,6 @@ import it.polimi.ingsw.model.cards.LeaderCard;
 
 import java.util.List;
 import java.util.Map;
-import it.polimi.ingsw.messages.toClient.ChooseResourceAndStorageTypeRequest;
-import it.polimi.ingsw.messages.toServer.*;
-import it.polimi.ingsw.model.cards.LeaderCard;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -158,21 +155,23 @@ public class CLI implements View {
     }
 
     @Override
-    public void displayChooseStorageTypeRequest(Resource resource, List<String> availableDepots) {
+    public void displayChooseStorageTypeRequest(Resource resource, List<String> availableDepots, boolean setUpPhase) {
         System.out.println("Choose a depot for the "+ resource +"\nAvailable depots for this resource type are:");
         for (String depot : availableDepots)
             System.out.println("- " + depot);
-        System.out.println("Type d if you want to discard the resource or r if you want to reorganize your depots");
         List<String> acceptedValues = availableDepots;
-        acceptedValues.add(DISCARD);
-        acceptedValues.add(REORGANIZE);
+        if (!setUpPhase) {
+            System.out.println("Type d if you want to discard the resource or r if you want to reorganize your depots");
+            acceptedValues.add(DISCARD);
+            acceptedValues.add(REORGANIZE);
+        }
         String choice = InputParser.getString("Insert a valid command", conditionOnString(acceptedValues));
         if (choice.equals(DISCARD))
             client.sendMessageToServer(new DiscardResourceRequest(resource));
         else if (choice.equals(REORGANIZE))
             client.sendMessageToServer(new ReorganizeDepotRequest());
         else
-            client.sendMessageToServer(new ChooseStorageTypeResponse(resource, choice));
+            client.sendMessageToServer(new ChooseStorageTypeResponse(resource, choice, setUpPhase));
     }
 
     private GameMode getGameMode(){
@@ -252,29 +251,37 @@ public class CLI implements View {
     }
 
     @Override
-    public void displayChooseResourceTypeRequest(List<Resource> resourceTypes, List<String> storageTypes, int quantity) {
+    public void displayChooseResourceTypeRequest(List<Resource> resourceTypes, int quantity) {
         //TODO show choose resource type view
 
         System.out.printf("You have to choose %d resource type. \nAvailable resource types are:\n", quantity);
         System.out.println(Arrays.toString(resourceTypes.toArray()));
 
         List<String> resourcesToString = resourceTypes.stream().map(Enum::name).collect(Collectors.toList());
-        List<String> selectedResources = new ArrayList<>();
+        List<Resource> selectedResources = new ArrayList<>();
         for (int i = 0; i < quantity; i++)
-            selectedResources.add(InputParser.getString("Please select a valid resource type", conditionOnString(resourcesToString)));
+            selectedResources.add(Resource.valueOf(InputParser.getString("Please select a valid resource type", conditionOnString(resourcesToString))));
 
+        client.sendMessageToServer(new ChooseResourceTypeResponse(selectedResources));
+        /*
         if (quantity == 2 && selectedResources.get(0).equals(selectedResources.get(1)))
             storageTypes.remove(0);
 
         Map<String, String> storage = new HashMap<>();
-        for (String resource : selectedResources) {
-            System.out.println("Where do you want to store the " + resource + "?");
+        for (int i =0; i < quantity; i++) {
+            System.out.println("Where do you want to store the " + selectedResources.get(i) + "?");
             System.out.println("Available options are: ");
             System.out.println(Arrays.toString(storageTypes.toArray()));
-            storage.put(resource, InputParser.getString("Invalid storage type", conditionOnString(storageTypes)));
+            storage.put(selectedResources.get(i), InputParser.getString("Invalid storage type", conditionOnString(storageTypes)));
+            if (quantity == 2){
+                if (selectedResources.get(0).equals(selectedResources.get(1)))
+                    a
+            }
         }
 
-        client.sendMessageToServer(new ChooseResourceAndStorageTypeResponse(storage));
+        client.sendMessageToServer(new ChooseResourceTypeResponse(storage));
+        */
+
     }
 
     public void loadDevelopmentCards(Map<Integer, List<String>> lightDevelopmentCards) {

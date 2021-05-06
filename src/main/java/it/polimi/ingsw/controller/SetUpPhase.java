@@ -7,7 +7,8 @@ import it.polimi.ingsw.enumerations.ResourceStorageType;
 import it.polimi.ingsw.exceptions.*;
 import it.polimi.ingsw.messages.toClient.*;
 import it.polimi.ingsw.messages.toServer.ChooseLeaderCardsResponse;
-import it.polimi.ingsw.messages.toServer.ChooseResourceAndStorageTypeResponse;
+import it.polimi.ingsw.messages.toServer.ChooseResourceTypeResponse;
+import it.polimi.ingsw.messages.toServer.ChooseStorageTypeResponse;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.DevelopmentCard;
@@ -18,15 +19,17 @@ import it.polimi.ingsw.utility.LeaderCardParser;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class SetUpPhase implements GamePhase {
     Controller controller;
     Map<String, Integer> initialResourceByNickname;
+    Map<String, List<Resource>> resourcesToStoreByNickname;
+
 
     @Override
     public void executePhase(Controller controller) {
         this.controller = controller;
+        resourcesToStoreByNickname = new HashMap<>();
         sendLightCards();
         setUpLeaderCards();
     }
@@ -36,8 +39,11 @@ public class SetUpPhase implements GamePhase {
             removeLeaderCards(((ChooseLeaderCardsResponse) message).getDiscardedLeaderCards(), clientHandler);
         }
 
-        if (message instanceof ChooseResourceAndStorageTypeResponse)
-            storeResources(((ChooseResourceAndStorageTypeResponse) message).getStorage(), clientHandler);
+        if (message instanceof ChooseResourceTypeResponse)
+            setInitialResourcesByNickname(((ChooseResourceTypeResponse) message).getResources(), clientHandler);
+
+        if (message instanceof ChooseStorageTypeResponse)
+            storeResource(((ChooseStorageTypeResponse) message).getResource(), ((ChooseStorageTypeResponse) message).getStorageType(), clientHandler);
     }
 
     private void setUpLeaderCards() {
@@ -84,20 +90,36 @@ public class SetUpPhase implements GamePhase {
 
     private void assignResources(ClientHandler clientHandler) {
         List<Resource> resourceTypes = Resource.realValues();
-        clientHandler.sendMessageToClient(new ChooseResourceAndStorageTypeRequest(resourceTypes, ResourceStorageType.getWarehouseDepots(), getNumberOfInitialResourcesByNickname(clientHandler.getNickname())));
         clientHandler.setClientHandlerPhase(ClientHandlerPhase.WAITING_CHOOSE_RESOURCE_TYPE);
+        clientHandler.sendMessageToClient(new ChooseResourceTypeRequest(resourceTypes, getNumberOfInitialResourcesByNickname(clientHandler.getNickname())));
     }
 
-    private void storeResources(Map<String, String> storage, ClientHandler clientHandler) {
+    private void setInitialResourcesByNickname(List<Resource> resources, ClientHandler clientHandler){
+        resourcesToStoreByNickname.put(clientHandler.getNickname(), resources);
+        List<String> availableDepots = ResourceStorageType.getWarehouseDepots();
+        if (resources.size() == 2 && resources.get(0) == resources.get(1))
+            availableDepots.remove(ResourceStorageType.WAREHOUSE_FIRST_DEPOT.name());
+        clientHandler.setClientHandlerPhase(ClientHandlerPhase.WAITING_CHOOSE_STORAGE_TYPE);
+        clientHandler.sendMessageToClient(new ChooseStorageTypeRequest(resources.get(0), availableDepots, true));
+    }
+
+    private void storeResource(Resource resource, String storageType, ClientHandler clientHandler){
         Player player = controller.getPlayerByNickname(clientHandler.getNickname());
-        for (String resource : storage.keySet()) {
-            try {
-                player.getPersonalBoard().addResources(ResourceStorageType.valueOf(storage.get(resource)), Resource.valueOf(resource), 1);
-            } catch (InvalidDepotException | InvalidArgumentException | InvalidResourceTypeException | InsufficientSpaceException e) {
-                e.printStackTrace();
-            }
+        resourcesToStoreByNickname.get(player.getNickname()).remove(resource);
+        try {
+            player.getPersonalBoard().addResources(ResourceStorageType.valueOf(storageType), resource, 1);
+        } catch (InvalidDepotException | InvalidArgumentException | InvalidResourceTypeException | InsufficientSpaceException e) {
+            e.printStackTrace();
         }
-        sendSetUpFinishedMessage(clientHandler);
+        if (resourcesToStoreByNickname.get(player.getNickname()).isEmpty()) {
+            sendSetUpFinishedMessage(clientHandler);
+        } else {
+            Resource resourceType = resourcesToStoreByNickname.get(player.getNickname()).get(0);
+            List<String> availableStorage = player.getPersonalBoard().getWarehouse().getAvailableWarehouseDepotsForResourceType(resourceType).stream().map(x -> x.name()).collect(Collectors.toList());
+            clientHandler.setClientHandlerPhase(ClientHandlerPhase.WAITING_CHOOSE_STORAGE_TYPE);
+            clientHandler.sendMessageToClient(new ChooseStorageTypeRequest(resourceType, availableStorage, true));
+        }
+
     }
 
     private void sendSetUpFinishedMessage(ClientHandler clientHandler) {
