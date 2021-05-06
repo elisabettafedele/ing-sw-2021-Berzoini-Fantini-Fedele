@@ -23,6 +23,7 @@ import java.util.Map;
 
 
 import java.util.*;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -183,6 +184,27 @@ public class CLI implements View {
             client.sendMessageToServer(new ChooseStorageTypeResponse(resource, choice, setUpPhase));
     }
 
+    @Override
+    public void displayReorganizeDepotsRequest(List <String> depots) {
+        List<String> possibleCommands = new ArrayList<>();
+        possibleCommands.add("swap");
+        possibleCommands.add("move");
+        possibleCommands.add("END");
+        System.out.println("You can now reorganize your depots with the command swap or move. Let us show you two example: \n-'swap w1 w2': realizes a swap between the first and the second depot of the warehouse\n-'move l w1 2': moves two resources from the leader depot to the second row of the warehouse \n If you have finished write END");
+        System.out.println("1. Do you want to swap or move your resources? swap | move");
+        String commandType = InputParser.getString("Please insert a valid command", conditionOnString(possibleCommands));
+        String originDepot = InputParser.getString("Please insert a valid depot", conditionOnString(depots));
+        String destinationDepot = InputParser.getString("Please insert a valid depot", conditionOnString(depots));
+        if (commandType.equals("END"))
+            client.sendMessageToServer(new NotifyEndDepotsReorganization());
+        else if (commandType.equals("swap"))
+            client.sendMessageToServer(new SwapWarehouseDepotsRequest(originDepot,destinationDepot));
+        else {
+            int quantity = InputParser.getInt("Please insert a valid resource quantity", conditionOnIntegerRange(1, 4));
+            client.sendMessageToServer(new MoveResourcesRequest(originDepot, destinationDepot, quantity));
+        }
+    }
+
 
     private GameMode getGameMode(){
         while(true) {
@@ -278,24 +300,6 @@ public class CLI implements View {
             selectedResources.add(Resource.valueOf(InputParser.getString("Please select a valid resource type", conditionOnString(resourcesToString))));
 
         client.sendMessageToServer(new ChooseResourceTypeResponse(selectedResources));
-        /*
-        if (quantity == 2 && selectedResources.get(0).equals(selectedResources.get(1)))
-            storageTypes.remove(0);
-
-        Map<String, String> storage = new HashMap<>();
-        for (int i =0; i < quantity; i++) {
-            System.out.println("Where do you want to store the " + selectedResources.get(i) + "?");
-            System.out.println("Available options are: ");
-            System.out.println(Arrays.toString(storageTypes.toArray()));
-            storage.put(selectedResources.get(i), InputParser.getString("Invalid storage type", conditionOnString(storageTypes)));
-            if (quantity == 2){
-                if (selectedResources.get(0).equals(selectedResources.get(1)))
-                    a
-            }
-        }
-
-        client.sendMessageToServer(new ChooseResourceTypeResponse(storage));
-        */
 
     }
 
@@ -545,4 +549,8 @@ public class CLI implements View {
     public static Predicate<String> conditionOnString(List<String> lis){
         return lis::contains;
     }
+
+
+    public static BiPredicate<String, List<String>> conditionOnReorganizeDepotsCommand =
+            Utils::isACorrectReorganizeDepotCommand;
 }

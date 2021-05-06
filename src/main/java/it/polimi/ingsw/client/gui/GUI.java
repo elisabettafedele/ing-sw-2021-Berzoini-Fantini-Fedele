@@ -130,6 +130,11 @@ public class GUI extends Application implements View {
 
     }
 
+    @Override
+    public void displayReorganizeDepotsRequest(List<String> availableDepots) {
+
+    }
+
 
     @Override
     public void displayChooseLeaderCardsRequest(List<Integer> leaderCards){}

@@ -66,6 +66,9 @@ public class TakeResourcesFromMarketAction implements Action {
         if (message instanceof DiscardResourceRequest) {
             handleDiscard(((DiscardResourceRequest) message).getResource());
         }
+        if (message instanceof ReorganizeDepotRequest){
+            handleReorganizeDepotsRequest();
+        }
 
     }
 
@@ -156,6 +159,14 @@ public class TakeResourcesFromMarketAction implements Action {
                 resourcesToStore.add(Resource.valueOf(marble.getValue()));
         }
         clientHandler.sendMessageToClient(new TextMessage("Conversion done!\nYou now have to store these resources" + resourcesToStore));
+    }
+
+    private void handleReorganizeDepotsRequest(){
+        List<String> depots = ResourceStorageType.getWarehouseDepots();
+        if (!player.getPersonalBoard().getAvailableEffects(EffectType.EXTRA_DEPOT).isEmpty())
+            depots.add(ResourceStorageType.LEADER_DEPOT.name());
+        clientHandler.sendMessageToClient(new SendReorganizeDepotsCommands(depots));
+
     }
 
     /**
