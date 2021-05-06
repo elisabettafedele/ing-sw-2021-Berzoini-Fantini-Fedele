@@ -260,11 +260,19 @@ public class PersonalBoard {
      * @param card is the card to add
      * @return true only if the insertion is legal
      */
-    public boolean cardInsertionIsLegal(DevelopmentCard card){
-        for (Stack<DevelopmentCard> stack : developmentCardSlots)
-            if ((stack.isEmpty() && card.getFlag().getFlagLevel() == Level.ONE)|| (!stack.isEmpty() && stack.peek().getFlag().getFlagLevel().getValue() == card.getFlag().getFlagLevel().getValue() - 1))
+    public boolean cardInsertionIsLegal(DevelopmentCard card) {
+        for (Stack<DevelopmentCard> stack : developmentCardSlots) {
+            if ((stack.isEmpty() && card.getFlag().getFlagLevel() == Level.ONE) || (!stack.isEmpty() && stack.peek().getFlag().getFlagLevel().getValue() == card.getFlag().getFlagLevel().getValue() - 1)){
                 return true;
+            }
+        }
         return false;
+    }
+    public boolean cardInsertionIsLegal(DevelopmentCard card, int slotNum) {
+            if ((developmentCardSlots[slotNum].isEmpty() && card.getFlag().getFlagLevel() == Level.ONE) || (!developmentCardSlots[slotNum].isEmpty() && developmentCardSlots[slotNum].peek().getFlag().getFlagLevel().getValue() == card.getFlag().getFlagLevel().getValue() - 1)){
+                return true;
+            }
+            return false;
     }
 
     /**
@@ -277,16 +285,15 @@ public class PersonalBoard {
         return this.availableLeaderCards().stream().filter(x -> x.getEffect().getEffectType().equals(effectType)).map(LeaderCard::getEffect).collect(Collectors.toList());
     }
 
-    //TODO finish JavaDoc
     /**
      * Method to add Resources of the same type to the personal board, given a specific {@link ResourceStorageType}
      * @param depot the place where the resource(s) should be stored: it can be first, second, third row of the warehouse depot, the leader depots or the strongbox
      * @param resource the type of the resource to be added
-     * @param quantity the quanitty of the resource to be added
-     * @throws InvalidDepotException
-     * @throws InvalidArgumentException
-     * @throws InvalidResourceTypeException
-     * @throws InsufficientSpaceException
+     * @param quantity the quantity of the resource to be added
+     * @throws InvalidDepotException if the depot type is Warehouse, it is too generic, you must provide a more specific one
+     * @throws InvalidArgumentException when the quantity is null or negative
+     * @throws InvalidResourceTypeException if the resource type provided is ANY
+     * @throws InsufficientSpaceException if the depot does not have sufficient space to store the resource
      */
     public void addResources (ResourceStorageType depot, Resource resource, int quantity) throws InvalidDepotException, InvalidArgumentException, InvalidResourceTypeException, InsufficientSpaceException {
         if (depot == ResourceStorageType.WAREHOUSE)
@@ -345,16 +352,38 @@ public class PersonalBoard {
         return availableConversions;
     }
 
+    /**
+     * Method used to remove a {@link LeaderCard given its ID}
+     * @param ID the ID of the {@link LeaderCard} to remove
+     */
     public void removeLeaderCard(int ID){
-        System.out.println("starting to remove leader id");
-        System.out.println(leaderCards.size());
         for (LeaderCard leaderCard : leaderCards){
-            System.out.println(leaderCards);
             if(ID == leaderCard.getID()){
                 removeLeaderCard(leaderCard);
                 return;
             }
         }
+    }
+
+    /**
+     * Method used to check whether there is an available Leader
+     * @param resource the {@link Resource} to store
+     * @param quantity the quantity of the {@link Resource} to store
+     * @return true only if it is possible to store a certain quantity of a certain {@link Resource} in a {@link LeaderDepot}
+     */
+    public boolean isLeaderDepotAvailable(Resource resource, int quantity){
+        List<Effect> effects = getAvailableEffects(EffectType.EXTRA_DEPOT);
+        if (effects.isEmpty() || quantity > 2)
+            return false;
+        for (Effect effect : effects){
+            try {
+                if (effect.getExtraDepotEffect().getLeaderDepot().getResourceType() == resource && effect.getExtraDepotEffect().getLeaderDepot().getResourceQuantity() < 3 - quantity)
+                    return true;
+            } catch (DifferentEffectTypeException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
     }
 
 }

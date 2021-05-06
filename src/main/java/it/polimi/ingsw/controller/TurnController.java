@@ -31,6 +31,10 @@ public class TurnController {
 
     }
 
+    public void nextActionManager(){
+        //TODO
+    }
+
     public void incrementNumberOfLeaderActionDone(){
         numberOfLeaderActionsDone++;
     }

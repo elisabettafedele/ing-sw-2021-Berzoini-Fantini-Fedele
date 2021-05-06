@@ -16,16 +16,31 @@ public class MultiplayerPlayPhase implements GamePhase, PlayPhase{
         this.controller = controller;
         this.turnController = new TurnController(controller);
     }
-
-    public void handleResourceDiscard() throws InvalidMethodException, ZeroPlayerException, InvalidArgumentException {
-        List<Player> players = controller.getGame().getPlayers();
+    @Override
+    public void handleResourceDiscard(String nickname)  {
+        List<Player> players = null;
+        try {
+            players = controller.getGame().getPlayers();
+        } catch (InvalidMethodException | ZeroPlayerException e) {
+            e.printStackTrace();
+        }
         for (Player player : players){
-            if (!turnController.getCurrentPlayer().equals(player))
-                player.getPersonalBoard().moveMarker(1);
+            if (!nickname.equals(player.getNickname())) {
+                try {
+                    player.getPersonalBoard().moveMarker(1);
+                } catch (InvalidArgumentException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
+
     @Override
     public void executePhase(Controller controller) {
         //TODO
+    }
+
+    public String toString(){
+        return "Play Phase";
     }
 }

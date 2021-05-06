@@ -4,7 +4,7 @@ import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.InvalidMethodException;
 import it.polimi.ingsw.exceptions.ZeroPlayerException;
 
-public class SinglePlayerPlayPhase implements GamePhase{
+public class SinglePlayerPlayPhase implements GamePhase, PlayPhase{
     private Controller controller;
     private TurnController turnController;
     private int blackCrossPosition;
@@ -18,8 +18,8 @@ public class SinglePlayerPlayPhase implements GamePhase{
     public void executePhase(Controller controller) {
         //TODO
     }
-
-    public void handleResourceDiscard() throws InvalidMethodException, ZeroPlayerException, InvalidArgumentException {
+    @Override
+    public void handleResourceDiscard(String nickname) {
         blackCrossPosition++;
     }
 }

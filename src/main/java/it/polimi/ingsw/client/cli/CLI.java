@@ -12,19 +12,24 @@ import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.exceptions.ValueNotPresentException;
 import it.polimi.ingsw.messages.toServer.*;
 import it.polimi.ingsw.model.cards.LeaderCard;
+import it.polimi.ingsw.model.cards.Value;
 
 import java.util.List;
 import java.util.Map;
 
-import it.polimi.ingsw.model.cards.Value;
+
+
 
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class CLI implements View {
 
     private static final String DEFAULT_ADDRESS = "127.0.0.1";
     private static final int DEFAULT_PORT = 1234;
+    private static final String DISCARD = "d";
+    private static final String REORGANIZE = "r";
 
     private final int BASIC_PRODUCTION_POWER = 0;
 
@@ -133,7 +138,13 @@ public class CLI implements View {
     @Override
     public void displayChooseWhiteMarbleConversionRequest(List<Resource> resources, int numberOfMarbles) {
         System.out.println("You have these two possible white marble conversions: " + resources.get(0) + " | " + resources.get(1));
-        client.sendMessageToServer(new ChooseWhiteMarbleConversionResponse(getMarbleColor(resources)));
+        List<Resource> resourcesChosen = new LinkedList<>();
+        for (int i = 0; i < numberOfMarbles; i++){
+            if (numberOfMarbles > 1)
+                System.out.printf("White marble #%d\n", i+1);
+            resourcesChosen.add(getMarbleColor(resources));
+        }
+        client.sendMessageToServer(new ChooseWhiteMarbleConversionResponse(resourcesChosen));
     }
 
     @Override
@@ -149,6 +160,27 @@ public class CLI implements View {
                 System.out.println("You have more than one White Marble Effect Active! You need to choose one white marble at a time how you want to convert it");
         }
     }
+
+    @Override
+    public void displayChooseStorageTypeRequest(Resource resource, List<String> availableDepots, boolean setUpPhase) {
+        System.out.println("Choose a depot for the "+ resource +"\nAvailable depots for this resource type are:");
+        for (String depot : availableDepots)
+            System.out.println("- " + depot);
+        List<String> acceptedValues = availableDepots;
+        if (!setUpPhase) {
+            System.out.println("Type d if you want to discard the resource or r if you want to reorganize your depots");
+            acceptedValues.add(DISCARD);
+            acceptedValues.add(REORGANIZE);
+        }
+        String choice = InputParser.getString("Insert a valid command", conditionOnString(acceptedValues));
+        if (choice.equals(DISCARD))
+            client.sendMessageToServer(new DiscardResourceRequest(resource));
+        else if (choice.equals(REORGANIZE))
+            client.sendMessageToServer(new ReorganizeDepotRequest());
+        else
+            client.sendMessageToServer(new ChooseStorageTypeResponse(resource, choice, setUpPhase));
+    }
+
 
     private GameMode getGameMode(){
         while(true) {
@@ -211,14 +243,19 @@ public class CLI implements View {
     }
 
     @Override
-    public void displaySelectLeaderCardRequest(List<Integer> leaderCardsIDs) {
-        System.out.println("Select a Leader Card");
-        for (Integer id : leaderCardsIDs){
-            System.out.printf("%d. %s \n", id, MatchData.getInstance().getLeaderCardByID(id));
+    public void displaySelectCardRequest(List<Integer> CardsIDs,boolean leaderORdevelopment) {
+        System.out.println("Select a card");
+        for (Integer id : CardsIDs){
+            if(leaderORdevelopment){
+                System.out.printf("%d. %s \n", id, MatchData.getInstance().getLeaderCardByID(id));
+            }
+            else{ System.out.printf("%d. %s \n", id, MatchData.getInstance().getDevelopmentCardByID(id));
+            }
+
         }
-        System.out.print("Insert the ID of the Leader Card you want to select: ");
-        Integer selection = InputParser.getInt("Error: the ID provided is not available. Provide a valid ID", conditionOnInteger(leaderCardsIDs));
-        client.sendMessageToServer( new SelectLeaderCardResponse(selection));
+        System.out.print("Insert the ID of the card you want to select: ");
+        Integer selection = InputParser.getInt("Error: the ID provided is not available. Provide a valid ID", conditionOnInteger(CardsIDs));
+        client.sendMessageToServer( new SelectCardResponse(selection));
     }
 
     @Override
@@ -227,29 +264,41 @@ public class CLI implements View {
     }
 
     @Override
-    public void displayChooseResourceTypeRequest(List<String> resourceTypes, List<String> storageTypes, int quantity) {
+    public void displayChooseResourceTypeRequest(List<Resource> resourceTypes, int quantity) {
         //TODO show choose resource type view
 
         System.out.printf("You have to choose %d resource type. \nAvailable resource types are:\n", quantity);
         System.out.println(Arrays.toString(resourceTypes.toArray()));
 
-        List<String> selectedResources = new ArrayList<>();
+        List<String> resourcesToString = resourceTypes.stream().map(Enum::name).collect(Collectors.toList());
+        List<Resource> selectedResources = new ArrayList<>();
         for (int i = 0; i < quantity; i++)
-            selectedResources.add(InputParser.getString("Please select a valid resource type", conditionOnString(resourceTypes)));
+            selectedResources.add(Resource.valueOf(InputParser.getString("Please select a valid resource type", conditionOnString(resourcesToString))));
 
+        client.sendMessageToServer(new ChooseResourceTypeResponse(selectedResources));
+        /*
         if (quantity == 2 && selectedResources.get(0).equals(selectedResources.get(1)))
             storageTypes.remove(0);
 
         Map<String, String> storage = new HashMap<>();
-        for (String resource : selectedResources) {
-            System.out.println("Where do you want to store the " + resource + "?");
+        for (int i =0; i < quantity; i++) {
+            System.out.println("Where do you want to store the " + selectedResources.get(i) + "?");
             System.out.println("Available options are: ");
             System.out.println(Arrays.toString(storageTypes.toArray()));
-            storage.put(resource, InputParser.getString("Invalid storage type", conditionOnString(storageTypes)));
+            storage.put(selectedResources.get(i), InputParser.getString("Invalid storage type", conditionOnString(storageTypes)));
+            if (quantity == 2){
+                if (selectedResources.get(0).equals(selectedResources.get(1)))
+                    a
+            }
         }
 
-        client.sendMessageToServer(new ChooseResourceAndStorageTypeResponse(storage));
+        client.sendMessageToServer(new ChooseResourceTypeResponse(storage));
+        */
+
     }
+
+
+
 
     public void loadDevelopmentCards(Map<Integer, List<String>> lightDevelopmentCards) {
         MatchData.getInstance().setAllDevelopmentCards(lightDevelopmentCards);
@@ -346,6 +395,38 @@ public class CLI implements View {
             }
         }
         return executable;
+    }
+    @Override
+    public void displaySelectDevelopmentCardSlotRequest(boolean firstSlotAvailable, boolean secondSlotAvailable, boolean thirdSlotAvailable) {
+        int selection = -1;
+        System.out.println("Select a development card slot");
+        if(firstSlotAvailable){
+            System.out.println("Slot number 0 is available");
+        }
+        if(secondSlotAvailable){
+            System.out.println("Slot number 1 is available");
+        }
+        if(thirdSlotAvailable){
+            System.out.println("Slot number 2 is available");
+        }
+        boolean done=false;
+        while(!done){
+            selection = InputParser.getInt("Error: write a number.");
+            if(selection>=0&&selection<3){
+                if((selection==0&&firstSlotAvailable)||(selection==1&&secondSlotAvailable)||(selection==2&&thirdSlotAvailable)){
+                    done=true;
+                }
+            }
+            if(!done){
+                System.out.println("Invalid choice");
+            }
+        }
+
+        client.sendMessageToServer( new SelectDevelopmentCardSlotResponse(selection));
+    }
+    @Override
+    public void displayMessage(String message) {
+        System.out.println(message);
     }
 
     public static Predicate<Integer> conditionOnIntegerRange(int min, int max){

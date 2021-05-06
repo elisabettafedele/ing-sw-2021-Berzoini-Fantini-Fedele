@@ -23,11 +23,15 @@ public interface VirtualView {
     void displayMarbleInsertionPositionRequest(Action action);
     void displayChooseWhiteMarbleConversionRequest(List<Resource> marbles, int numberOfMarbles);
     void displayMarblesTaken(List<Marble> marblesTaken, boolean needToChooseConversion);
+    void displayChooseStorageTypeRequest(Resource resource, List<String> availableDepots, boolean setUpPhase);
     //SETUP
     void displayChooseLeaderCardsRequest(List<Integer> leaderCards);
-    void displaySelectLeaderCardRequest(List<Integer> leaderCards);
+    void displaySelectCardRequest(List<Integer> CardsIDs, boolean leaderORdevelopment);
     void loadLeaderCards(List<LeaderCard> leaderCards);
-    void displayChooseResourceTypeRequest(List<String> resourceTypes, List<String> storageTypes, int quantity);
+    void displayChooseResourceTypeRequest(List<Resource> resourceTypes, int quantity);
     void loadDevelopmentCards(Map<Integer, List<String>> lightDevelopmentCards);
     void displayChooseProductionPowersRequest(Map<Integer, List<Value>> availableProductionPowers, Map<Resource, Integer> availableResources);
+    void displaySelectDevelopmentCardSlotRequest(boolean firstSlotAvailable, boolean secondSlotAvailable, boolean thirdSlotAvailable);
+    void displayMessage(String message);
+
 }
