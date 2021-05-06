@@ -25,10 +25,13 @@ public interface VirtualView {
     void displayChooseStorageTypeRequest(Resource resource, List<String> availableDepots, boolean setUpPhase);
     //SETUP
     void displayChooseLeaderCardsRequest(List<Integer> leaderCards);
-    void displaySelectLeaderCardRequest(List<Integer> leaderCards);
+    void displaySelectCardRequest(List<Integer> CardsIDs, boolean leaderORdevelopment);
     void loadLeaderCards(List<LeaderCard> leaderCards);
     void displayChooseResourceTypeRequest(List<Resource> resourceTypes, int quantity);
     void loadDevelopmentCards(Map<Integer, List<String>> lightDevelopmentCards);
     void displayChooseProductionPowersRequest(List<Integer> productionCardsIDs, Map<Resource, Integer> availableResources);
+
+    void displaySelectDevelopmentCardSlotRequest(boolean firstSlotAvailable, boolean secondSlotAvailable, boolean thirdSlotAvailable);
     void displayMessage(String message);
+
 }

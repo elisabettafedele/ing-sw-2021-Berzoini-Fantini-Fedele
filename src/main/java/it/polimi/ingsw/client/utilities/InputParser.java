@@ -41,6 +41,34 @@ public class InputParser {
         } while (true);
     }
 
+    public static Integer getInt(String errorMessage){
+        String numString;
+        Integer num = null;
+        boolean done = false;
+
+        try {
+            do {
+                //Reset buffer
+                while(input.ready())
+                    input.readLine(); //Flush
+                //Wait for user
+                while (!input.ready()) {
+                    Thread.sleep(200);
+                }
+                numString = input.readLine();
+                try {
+                    num = Integer.parseInt(numString);
+                } catch (NumberFormatException e) {
+                    System.out.print(errorMessage);
+                }
+            }while(!done);
+
+        }catch (InterruptedException | IOException e){
+            Thread.currentThread().interrupt();
+            return null;
+        }
+        return num;
+    }
 
     public static Integer getInt(String errorMessage, Predicate<Integer> condition){
         String numString;

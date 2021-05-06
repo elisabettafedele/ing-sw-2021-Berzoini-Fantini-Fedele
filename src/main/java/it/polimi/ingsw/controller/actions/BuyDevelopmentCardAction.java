@@ -1,33 +1,35 @@
 package it.polimi.ingsw.controller.actions;
 
+import it.polimi.ingsw.Server.ClientHandler;
 import it.polimi.ingsw.controller.TurnController;
 import it.polimi.ingsw.enumerations.EffectType;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.enumerations.ResourceStorageType;
 import it.polimi.ingsw.exceptions.*;
+import it.polimi.ingsw.messages.toClient.SelectCardRequest;
+import it.polimi.ingsw.messages.toClient.SelectDevelopmentCardSlotRequest;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
+import it.polimi.ingsw.messages.toServer.SelectCardResponse;
 import it.polimi.ingsw.model.cards.DevelopmentCard;
 import it.polimi.ingsw.model.cards.Effect;
-import it.polimi.ingsw.model.game.DevelopmentCardGrid;
-import it.polimi.ingsw.model.player.PersonalBoard;
 import it.polimi.ingsw.model.player.Player;
 
 import java.util.*;
 
 public class BuyDevelopmentCardAction implements Action{
-    private DevelopmentCard cardToBuy;
+    private ClientHandler clientHandler;
     private Player currentPlayer;
-    private DevelopmentCardGrid developmentCardGrid;
-    private PersonalBoard personalBoard;
-    private Map<Resource, Integer> playersPossession;
-    private boolean done;
+    private TurnController turnController;
+    private List<Integer> buyableCardsIDs;
+    private DevelopmentCard developmentCardChosen;
 
 
-    public BuyDevelopmentCardAction(DevelopmentCard card, Player currentPlayer, DevelopmentCardGrid developmentCardGrid){
+
+
+    public BuyDevelopmentCardAction(Player currentPlayer, ClientHandler clientHandler, TurnController turnController){
         this.currentPlayer = currentPlayer;
-        this.developmentCardGrid = developmentCardGrid;
-        this.personalBoard = currentPlayer.getPersonalBoard();
-        this.done = false;
+        this.clientHandler = clientHandler;
+        this.turnController=turnController;//gli serve già alla isExecutable();
     }
 
 
@@ -51,53 +53,16 @@ public class BuyDevelopmentCardAction implements Action{
         }
     }
 
-    private void addCardToPersonalBoard(DevelopmentCard cardToBeAdded){
-        int slotNumber;
-        int slotTest = 2;
-        slotNumber = slotTest;
-        //TODO ask to the client where to add the card and write the slot chosen in slotNumber, the value given above is just a test
-        try {
-            personalBoard.addDevelopmentCard(cardToBeAdded, slotNumber);
-        }catch (InvalidSlotException e1){
-            //TODO Tell to the client that his choice was not possible
-            //Then, call the function again
-            addCardToPersonalBoard(cardToBeAdded);
-        }catch (InvalidArgumentException e2){
-            //TODO Tell the client the number of the depot is not in the correct range
-            addCardToPersonalBoard(cardToBeAdded);
-        }
-
-    }
-
-
-    private void buyCard(Stack<DevelopmentCard> stack){
-        DevelopmentCard chosenCard = stack.peek();
-        Map<Resource, Integer> cost = chosenCard.getDiscountedCost(this.getDiscountedResources());
-
-        //First, the client pays
-        removeResources(cost);
-
-        //Second, I remove the card from the grid
-        stack.remove(chosenCard);
-
-        //Third, I add the card to the personal board, making the client choose where to add it
-        addCardToPersonalBoard(chosenCard);
-
-
-    }
-
 
     @Override
     public void execute(TurnController turnController) {
-        while (!done) {
-            //Show available cards through stacks
-            int chosenStackNumberTest = 1;
-            /*Stack<DevelopmentCard> chosenStack = personalBoard.getDevelopmentCards()[chosenStackNumberTest]; //!!!!!This is just an example
-            DevelopmentCard chosenCard = chosenStack.peek();
-            if (enoughResourcesAvailable(chosenCard) && personalBoard.cardInsertionIsLegal(chosenCard))
-                buyCard(chosenStack);
-
-             */
+        clientHandler.setCurrentAction(this);
+        this.turnController=turnController;
+        clientHandler.sendMessageToClient(new SelectCardRequest(buyableCardsIDs,false));
+        clientHandler.sendMessageToClient(new SelectDevelopmentCardSlotRequest(currentPlayer.getPersonalBoard().cardInsertionIsLegal(developmentCardChosen,0),currentPlayer.getPersonalBoard().cardInsertionIsLegal(developmentCardChosen,1),currentPlayer.getPersonalBoard().cardInsertionIsLegal(developmentCardChosen,2)));
+        turnController.setStandardActionDoneToTrue();
+        if(currentPlayer.getPersonalBoard().getNumOfDevelopmentCards()==7){
+            //TODO implementa la endTrigger nel Turn controller
         }
 
     }
@@ -108,7 +73,7 @@ public class BuyDevelopmentCardAction implements Action{
      */
     private List<Resource> getDiscountedResources(){
         List <Resource> discounts = new ArrayList<>();
-        List <Effect> discountEffects = personalBoard.getAvailableEffects(EffectType.DISCOUNT);
+        List <Effect> discountEffects = currentPlayer.getPersonalBoard().getAvailableEffects(EffectType.DISCOUNT);
         if (!discountEffects.isEmpty()) {
             for (Effect effect : discountEffects) {
                 try {
@@ -162,17 +127,35 @@ public class BuyDevelopmentCardAction implements Action{
      */
     @Override
     public boolean isExecutable() {
-        List<DevelopmentCard> availableCards = developmentCardGrid.getAvailableCards();
+        List<DevelopmentCard> availableCards = turnController.getController().getGame().getDevelopmentCardGrid().getAvailableCards();
         for (DevelopmentCard card : availableCards) {
-            if (enoughResourcesAvailable(card) && personalBoard.cardInsertionIsLegal(card))
-                return true;
+            if (enoughResourcesAvailable(card) && currentPlayer.getPersonalBoard().cardInsertionIsLegal(card));
+                buyableCardsIDs.add(card.getID());
         }
-        return false;
+        return !availableCards.isEmpty();
     }
 
     @Override
     public void handleMessage(MessageToServer message) {
+            for(DevelopmentCard dc:turnController.getController().getGame().getDevelopmentCardGrid().getAvailableCards()){
+                if(dc.getID()==((SelectCardResponse) message).getSelectedCard()){
+                    developmentCardChosen=dc;
+                }
+            }
+    }
 
+    public void insertCard(int slot){
+        try {
+            turnController.getController().getGame().getDevelopmentCardGrid().removeCard(developmentCardChosen);
+            Map<Resource, Integer> cost = developmentCardChosen.getDiscountedCost(this.getDiscountedResources());
+            removeResources(cost);
+            currentPlayer.getPersonalBoard().addDevelopmentCard(developmentCardChosen,slot);
+
+        } catch (InvalidArgumentException e) {
+            e.printStackTrace();
+        } catch (InvalidSlotException e) {
+            e.printStackTrace();
+        }
     }
 
 

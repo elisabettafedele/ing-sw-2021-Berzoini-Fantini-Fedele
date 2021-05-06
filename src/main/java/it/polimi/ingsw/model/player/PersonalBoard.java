@@ -260,11 +260,19 @@ public class PersonalBoard {
      * @param card is the card to add
      * @return true only if the insertion is legal
      */
-    public boolean cardInsertionIsLegal(DevelopmentCard card){
-        for (Stack<DevelopmentCard> stack : developmentCardSlots)
-            if ((stack.isEmpty() && card.getFlag().getFlagLevel() == Level.ONE)|| (!stack.isEmpty() && stack.peek().getFlag().getFlagLevel().getValue() == card.getFlag().getFlagLevel().getValue() - 1))
+    public boolean cardInsertionIsLegal(DevelopmentCard card) {
+        for (Stack<DevelopmentCard> stack : developmentCardSlots) {
+            if ((stack.isEmpty() && card.getFlag().getFlagLevel() == Level.ONE) || (!stack.isEmpty() && stack.peek().getFlag().getFlagLevel().getValue() == card.getFlag().getFlagLevel().getValue() - 1)){
                 return true;
+            }
+        }
         return false;
+    }
+    public boolean cardInsertionIsLegal(DevelopmentCard card, int slotNum) {
+            if ((developmentCardSlots[slotNum].isEmpty() && card.getFlag().getFlagLevel() == Level.ONE) || (!developmentCardSlots[slotNum].isEmpty() && developmentCardSlots[slotNum].peek().getFlag().getFlagLevel().getValue() == card.getFlag().getFlagLevel().getValue() - 1)){
+                return true;
+            }
+            return false;
     }
 
     /**
