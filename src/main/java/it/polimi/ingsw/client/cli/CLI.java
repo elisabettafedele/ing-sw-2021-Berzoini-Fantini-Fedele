@@ -258,7 +258,7 @@ public class CLI implements View {
     }
 
     @Override
-    public void displayChooseResourceTypeRequest(List<String> resourceTypes, List<String> storageTypes, int quantity) {
+    public void displayChooseResourceTypeRequest(List<Resource> resourceTypes, List<String> storageTypes, int quantity) {
         //TODO show choose resource type view
 
         System.out.printf("You have to choose %d resource type. \nAvailable resource types are:\n", quantity);
@@ -282,6 +282,9 @@ public class CLI implements View {
 
         client.sendMessageToServer(new ChooseResourceAndStorageTypeResponse(storage));
     }
+
+
+
 
     public void loadDevelopmentCards(Map<Integer, List<String>> lightDevelopmentCards) {
         MatchData.getInstance().setAllDevelopmentCards(lightDevelopmentCards);
