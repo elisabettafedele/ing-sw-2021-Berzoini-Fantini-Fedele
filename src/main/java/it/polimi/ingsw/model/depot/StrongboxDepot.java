@@ -18,7 +18,7 @@ public class StrongboxDepot extends Depot{
      * Increments the number of {@link Resource} available in the {@link Depot}
      * @param quantity number of {@link Resource} to add to the {@link Depot}
      */
-    public void addResources(int quantity) throws InvalidDepotException, InvalidArgumentException, InsufficientSpaceException {
+    public void addResources(int quantity) throws InvalidDepotException, InvalidArgumentException {
         if (quantity < 0){
             throw new InvalidArgumentException();
         }

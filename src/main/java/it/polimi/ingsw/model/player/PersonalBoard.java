@@ -262,7 +262,7 @@ public class PersonalBoard {
      * @throws InvalidDepotException
      * @throws InvalidArgumentException
      */
-    public void addResourcesToStrongbox(Map<Resource,Integer> resourcesToBeAdded) throws InvalidDepotException, InvalidArgumentException, InsufficientSpaceException {
+    public void addResourcesToStrongbox(Map<Resource,Integer> resourcesToBeAdded) throws InvalidDepotException, InvalidArgumentException {
         for(Map.Entry<Resource,Integer> entry : resourcesToBeAdded.entrySet()){
             strongbox[entry.getKey().getValue()].addResources(entry.getValue());
         }
