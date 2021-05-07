@@ -30,6 +30,7 @@ public class App
         for(int i = 0; i < set.size(); i++){
             System.out.printf("%d" + set +"\n", i+1);
         }
+
     }
 }
 

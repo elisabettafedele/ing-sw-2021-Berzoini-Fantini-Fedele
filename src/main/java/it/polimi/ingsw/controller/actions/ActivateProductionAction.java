@@ -5,16 +5,14 @@ import it.polimi.ingsw.Server.Server;
 import it.polimi.ingsw.controller.TurnController;
 import it.polimi.ingsw.enumerations.EffectType;
 import it.polimi.ingsw.enumerations.Resource;
-import it.polimi.ingsw.exceptions.DifferentEffectTypeException;
-import it.polimi.ingsw.exceptions.InactiveCardException;
-import it.polimi.ingsw.exceptions.InvalidArgumentException;
-import it.polimi.ingsw.exceptions.ValueNotPresentException;
+import it.polimi.ingsw.exceptions.*;
 import it.polimi.ingsw.messages.toClient.ChooseProductionPowersRequest;
 import it.polimi.ingsw.messages.toServer.ChooseProductionPowersResponse;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
 import it.polimi.ingsw.model.cards.*;
 import it.polimi.ingsw.model.player.PersonalBoard;
 import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.utility.RemoveResources;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -29,6 +27,7 @@ public class ActivateProductionAction implements Action{
     private List<DevelopmentCard> availableDevelopmentCards;
     private ClientHandler clientHandler;
     private final int BASIC_PRODUCTION_POWER = 0;
+    private TurnController turnController;
 
     public ActivateProductionAction(Player player, ClientHandler clientHandler){
         this.clientHandler = clientHandler;
@@ -102,21 +101,22 @@ public class ActivateProductionAction implements Action{
      * @return true if the player has the minimum amount of resources for this production
      */
     private boolean hasResourcesForThisProduction(Map<Resource, Integer> activationCost){
-        boolean executable = true;
+        boolean hasResource = true;
         for (Map.Entry<Resource, Integer> entry : activationCost.entrySet()){
             try {
-                executable = executable && entry.getValue() <= availableResources.get(entry.getKey());
+                hasResource = hasResource && entry.getValue() <= availableResources.get(entry.getKey());
             }catch(Exception e){
                 //do nothing, it's only to easily skip a missing Resource in availableResources
             }
         }
-        return executable;
+        return hasResource;
     }
 
     @Override
     public void execute(TurnController turnController) {
         clientHandler.setCurrentAction(this);
-        //List<Integer> availableProductionPowers = new ArrayList<>();
+        this.turnController = turnController;
+
         Iterator<DevelopmentCard> developmentCardIterator = availableDevelopmentCards.iterator();
 
         Map<Integer, List<Value>> availableProductionPowers = new HashMap<>();
@@ -174,11 +174,79 @@ public class ActivateProductionAction implements Action{
     public void handleMessage(MessageToServer message) {
         List<Integer> productionPowerSelected = ((ChooseProductionPowersResponse) message).getProductionPowersSelected();
 
-        //check if productionPowerSelected.size() > 0. If so increment actionDone
-        //else return
+        Map<Resource, Integer> resourceToRemove = new HashMap<>();
+        Map<Resource, Integer> resourceToAdd = new HashMap<>();
+        int faithPoints = 0;
 
-        //ask the client where he wants to remove the resources
-        //add all resources to strongbox
-        //if faithpoints were produced -> move marker, check faith track
+        List<Value> productionPower;
+
+        if(productionPowerSelected.size() < 1)
+            return;
+
+
+
+        for (Integer id : productionPowerSelected){
+            productionPower = getProductionByID(id);
+            manageCost(productionPower.get(0), resourceToRemove);
+            faithPoints += manageCost(productionPower.get(1), resourceToAdd);
+        }
+
+        RemoveResources.removeResources(resourceToRemove, clientHandler, player);
+
+        try {
+            personalBoard.addResourcesToStrongbox(resourceToAdd);
+        } catch (InvalidDepotException e) {
+            e.printStackTrace();
+        } catch (InvalidArgumentException e) {
+            e.printStackTrace();
+        }
+
+        if(faithPoints > 0){
+            try {
+                personalBoard.moveMarker(faithPoints);
+                turnController.checkFaithTrack();
+            } catch (InvalidArgumentException e) {
+                e.printStackTrace();
+            }
+        }
+
+        turnController.setStandardActionDoneToTrue();
+
+    }
+
+    private int manageCost(Value value, Map<Resource, Integer> resourceToManage) {
+
+        try {
+            for(Map.Entry<Resource, Integer> entry : value.getResourceValue().entrySet()){
+                resourceToManage.put(entry.getKey(), resourceToManage.get(entry.getKey()) + entry.getValue());
+            }
+        } catch (ValueNotPresentException e) {
+            e.printStackTrace();
+        }
+
+        //if the Value has faith points they are returned, else 0 is returned
+        try {
+            return value.getFaithValue();
+        } catch (ValueNotPresentException e) {
+            return 0;
+        }
+    }
+
+    private List<Value> getProductionByID(int id) {
+        for (LeaderCard lc : availableProductionLeaderCards){
+            if(lc.getID() == id) {
+                try {
+                    return lc.getEffect().getProductionEffect().getProductionPower();
+                } catch (DifferentEffectTypeException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        for (DevelopmentCard dc : availableDevelopmentCards){
+            if(dc.getID() == id){
+                return dc.getProduction().getProductionPower();
+            }
+        }
+        return null;
     }
 }
