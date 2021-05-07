@@ -10,15 +10,13 @@ import it.polimi.ingsw.exceptions.InactiveCardException;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.ValueNotPresentException;
 import it.polimi.ingsw.messages.toClient.ChooseProductionPowersRequest;
+import it.polimi.ingsw.messages.toServer.ChooseProductionPowersResponse;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
 import it.polimi.ingsw.model.cards.*;
 import it.polimi.ingsw.model.player.PersonalBoard;
 import it.polimi.ingsw.model.player.Player;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -30,6 +28,7 @@ public class ActivateProductionAction implements Action{
     private List<LeaderCard> availableProductionLeaderCards;
     private List<DevelopmentCard> availableDevelopmentCards;
     private ClientHandler clientHandler;
+    private final int BASIC_PRODUCTION_POWER = 0;
 
     public ActivateProductionAction(Player player, ClientHandler clientHandler){
         this.clientHandler = clientHandler;
@@ -49,6 +48,11 @@ public class ActivateProductionAction implements Action{
 
     @Override
     public boolean isExecutable() {
+
+        //first check on the basic production power
+        if(availableResources.values().stream().mapToInt(Integer::intValue).sum() >= 2){
+            return true;
+        }
 
         Map<Resource, Integer> activationCost = null;
         DevelopmentCard developmentCard = null;
@@ -112,18 +116,18 @@ public class ActivateProductionAction implements Action{
     @Override
     public void execute(TurnController turnController) {
         clientHandler.setCurrentAction(this);
-        List<Integer> availableProductionPowers = new ArrayList<>();
+        //List<Integer> availableProductionPowers = new ArrayList<>();
         Iterator<DevelopmentCard> developmentCardIterator = availableDevelopmentCards.iterator();
 
-        Map<Resource, Integer> activationCost = null;
-        DevelopmentCard developmentCard = null;
+        Map<Integer, List<Value>> availableProductionPowers = new HashMap<>();
+        DevelopmentCard developmentCard;
 
         //add to availableProductionPowers all the Production powers from Development Cards that can be activated
         while(developmentCardIterator.hasNext()){
             developmentCard = developmentCardIterator.next();
             try {
                 if(hasResourcesForThisProduction(developmentCard.getProduction().getProductionPower().get(0).getResourceValue()))
-                    availableProductionPowers.add(developmentCard.getID());
+                    availableProductionPowers.put(developmentCard.getID(), developmentCard.getProduction().getProductionPower());
             } catch (ValueNotPresentException e) {
                 e.printStackTrace();
                 Server.SERVER_LOGGER.log(Level.WARNING, "The Development card " + developmentCard.toString() + "" +
@@ -133,14 +137,14 @@ public class ActivateProductionAction implements Action{
         }
 
         Iterator<LeaderCard> leaderCardIterator = availableProductionLeaderCards.iterator();
-        LeaderCard leaderCard = null;
+        LeaderCard leaderCard;
 
         //add to availableProductionPowers all the Production powers from Leader Cards that can be activated
         while(leaderCardIterator.hasNext()){
             leaderCard = leaderCardIterator.next();
             try {
                 if(hasResourcesForThisProduction(leaderCard.getEffect().getProductionEffect().getProductionPower().get(0).getResourceValue()))
-                    availableProductionPowers.add(leaderCard.getID());
+                    availableProductionPowers.put(leaderCard.getID(), leaderCard.getEffect().getProductionEffect().getProductionPower());
             } catch (ValueNotPresentException | DifferentEffectTypeException e) {
                 e.printStackTrace();
                 Server.SERVER_LOGGER.log(Level.WARNING, "The Leader card " + leaderCard.toString() + "" +
@@ -149,12 +153,32 @@ public class ActivateProductionAction implements Action{
             }
         }
 
+        //Building basic production power
+        Map<Resource, Integer> cost = new HashMap<>();
+        cost.put(Resource.ANY, 2);
+        Map<Resource, Integer> output = new HashMap<>();
+        output.put(Resource.ANY, 1);
+        Production basic_production = null;
+        try {
+            basic_production = new Production(new Value(null, cost, 0), new Value(null, output, 0));
+        } catch (InvalidArgumentException e) {
+            //e.printStackTrace();
+            System.out.println("Exception should not be raised here. Correct the code");
+        }
+        availableProductionPowers.put(BASIC_PRODUCTION_POWER, basic_production.getProductionPower());
         clientHandler.sendMessageToClient(new ChooseProductionPowersRequest(availableProductionPowers, availableResources));
 
     }
 
     @Override
     public void handleMessage(MessageToServer message) {
+        List<Integer> productionPowerSelected = ((ChooseProductionPowersResponse) message).getProductionPowersSelected();
 
+        //check if productionPowerSelected.size() > 0. If so increment actionDone
+        //else return
+
+        //ask the client where he wants to remove the resources
+        //add all resources to strongbox
+        //if faithpoints were produced -> move marker, check faith track
     }
 }

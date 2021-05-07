@@ -9,14 +9,18 @@ import it.polimi.ingsw.controller.actions.Action;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.enumerations.Marble;
 import it.polimi.ingsw.enumerations.Resource;
+import it.polimi.ingsw.exceptions.InvalidArgumentException;
+import it.polimi.ingsw.exceptions.ValueNotPresentException;
 import it.polimi.ingsw.enumerations.ResourceStorageType;
 import it.polimi.ingsw.messages.toServer.*;
 import it.polimi.ingsw.model.cards.LeaderCard;
+import it.polimi.ingsw.model.cards.Value;
 
 import java.util.List;
 import java.util.Map;
 
 import java.util.*;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -24,8 +28,7 @@ public class CLI implements View {
 
     private static final String DEFAULT_ADDRESS = "127.0.0.1";
     private static final int DEFAULT_PORT = 1234;
-    private static final String DISCARD = "d";
-    private static final String REORGANIZE = "r";
+    private final int BASIC_PRODUCTION_POWER = 0;
 
     private String IPAddress;
     private int port;
@@ -163,16 +166,49 @@ public class CLI implements View {
         List<String> acceptedValues = availableDepots;
         if (!setUpPhase) {
             System.out.println("Type d if you want to discard the resource or r if you want to reorganize your depots");
-            acceptedValues.add(DISCARD);
-            acceptedValues.add(REORGANIZE);
+            acceptedValues.add(Command.DISCARD.command);
+            acceptedValues.add(Command.REORGANIZE.command);
         }
         String choice = InputParser.getString("Insert a valid command", conditionOnString(acceptedValues));
-        if (choice.equals(DISCARD))
+        if (choice.equals(Command.DISCARD.command))
             client.sendMessageToServer(new DiscardResourceRequest(resource));
-        else if (choice.equals(REORGANIZE))
+        else if (choice.equals(Command.REORGANIZE.command))
             client.sendMessageToServer(new ReorganizeDepotRequest());
         else
             client.sendMessageToServer(new ChooseStorageTypeResponse(resource, choice, setUpPhase));
+    }
+
+
+    @Override
+    public void displayReorganizeDepotsRequest(List<String> depots, boolean first, boolean failure, List<Resource> availableLeaderResources){
+        if (first)
+            System.out.println("You can now reorganize your depots with the command" + Command.SWAP.command + " or " + Command.MOVE.command + ". Let us show you two example: \n-'"+Command.SWAP.command + "w1 w2': realizes a swap between the first and the second depot of the warehouse\n-'move l w1 2': moves two resources from the leader depot to the second row of the warehouse \n If you have finished type " + Command.END_REORGANIZE_DEPOTS.command);
+        if (failure)
+            System.out.println("Invalid reorganization: be careful not to swap warehouse depot with leader ones and to check the capacity of the depots.");
+        List<String> possibleCommands = Command.getReorganizeDepotsCommands();
+        possibleCommands.addAll(depots);
+        Resource resource = Resource.ANY;
+        System.out.println("Do you want to swap or move your resources? Type " + Command.END_REORGANIZE_DEPOTS.command + " if you want to end the reorganization of your depots");
+        System.out.println(Command.SWAP.command + " | " + Command.MOVE.command + " | " + Command.END_REORGANIZE_DEPOTS.command);
+        String commandType = InputParser.getString("Please insert a valid command", conditionOnString(possibleCommands));
+        System.out.print("Select the origin depot: ");
+        String originDepot = InputParser.getString("Please insert a valid depot", conditionOnString(depots));
+        System.out.print("Select the destination depot: ");
+        String destinationDepot = InputParser.getString("Please insert a valid depot", conditionOnString(depots));
+        if (commandType.equals(Command.END_REORGANIZE_DEPOTS.command))
+            client.sendMessageToServer(new NotifyEndDepotsReorganization());
+        else if (commandType.equals(Command.SWAP.command))
+            client.sendMessageToServer(new SwapWarehouseDepotsRequest(originDepot,destinationDepot));
+        else {
+            System.out.print("Select the quantity of the resources you want to move: ");
+            Integer quantity = InputParser.getInt("Please insert a valid resource quantity", conditionOnIntegerRange(1, 4));
+            assert (quantity != null);
+            if (availableLeaderResources.size() == 2 && originDepot.equals("LEADER_DEPOT")) {
+                System.out.print("Select the type of resource you want to remove from the leader depot: ");
+                resource = Resource.valueOf(InputParser.getString("Insert a valid resource type", conditionOnString(availableLeaderResources.stream().map(x -> x.name()).collect(Collectors.toList()))));
+            }
+            client.sendMessageToServer(new MoveResourcesRequest(originDepot, destinationDepot, resource, quantity));
+        }
     }
 
 
@@ -202,7 +238,7 @@ public class CLI implements View {
     private Resource getMarbleColor(List<Resource> conversions){
         Resource resource = null;
         String resourceString;
-        boolean error = false;
+        boolean error;
         do {
             System.out.println("Select one conversion: ");
             resourceString = InputParser.getLine();
@@ -270,24 +306,6 @@ public class CLI implements View {
             selectedResources.add(Resource.valueOf(InputParser.getString("Please select a valid resource type", conditionOnString(resourcesToString))));
 
         client.sendMessageToServer(new ChooseResourceTypeResponse(selectedResources));
-        /*
-        if (quantity == 2 && selectedResources.get(0).equals(selectedResources.get(1)))
-            storageTypes.remove(0);
-
-        Map<String, String> storage = new HashMap<>();
-        for (int i =0; i < quantity; i++) {
-            System.out.println("Where do you want to store the " + selectedResources.get(i) + "?");
-            System.out.println("Available options are: ");
-            System.out.println(Arrays.toString(storageTypes.toArray()));
-            storage.put(selectedResources.get(i), InputParser.getString("Invalid storage type", conditionOnString(storageTypes)));
-            if (quantity == 2){
-                if (selectedResources.get(0).equals(selectedResources.get(1)))
-                    a
-            }
-        }
-
-        client.sendMessageToServer(new ChooseResourceTypeResponse(storage));
-        */
 
     }
 
@@ -299,12 +317,199 @@ public class CLI implements View {
     }
 
     @Override
-    public void displayChooseProductionPowersRequest(List<Integer> productionCardsIDs, Map<Resource, Integer> availableResources) {
+    public void displayChooseProductionPowersRequest(Map<Integer, List<Value>> availableProductionPowers, Map<Resource, Integer> availableResources) {
         boolean confirmed = false;
+        boolean wantsToRemove = false;
+        Map<Integer, List<Value>> selectedProductions = new HashMap<>();
+        List<Value> actualChosenProduction = null;
+
         do{
-            //askNextProduction() //look which are effectively available
-            //ask to confirm or to choose another one;
+            if(!wantsToRemove){
+                List<Integer> IDs = displayAvailableProductions(availableProductionPowers, availableResources);
+                if(IDs.size() > 0){
+                    System.out.print("Insert the ID of the card with the production you want to activate: ");
+                    Integer selection = InputParser.getInt(
+                            "Error: the ID provided is not available. Provide a valid ID", conditionOnInteger(IDs));
+                    if(selection == BASIC_PRODUCTION_POWER){
+                        actualChosenProduction = manageBasicProductionPower(availableResources);
+                    }else{
+                        actualChosenProduction = availableProductionPowers.get(selection);
+                    }
+                    selectedProductions.put(selection, actualChosenProduction);
+                    availableProductionPowers.remove(selection);
+                    subtractResources(actualChosenProduction.get(0), availableResources);
+                    //delete the production chosen from the available and save it in another list
+
+                }else{
+                    System.out.println("You don't have enough resources for any production, do you want to buy resources for 0.99€?");
+                }
+            }else{
+                manageRemoveProduction(availableProductionPowers, selectedProductions, availableResources);
+            }
+
+            System.out.println("Your current selections are:");
+            for(Map.Entry<Integer, List<Value>> entry : selectedProductions.entrySet()){
+                System.out.println(entry.getKey() + ", " + entry.getValue());
+            }
+            System.out.printf("What do you want to do:\n1. Select another production\n" +
+                    "2. Remove an already chosen production\n3. Confirm your list of production(s)");
+            Integer selection = InputParser.getInt(
+                    "Error: the ID provided is not available. Provide a valid ID", conditionOnIntegerRange(1, 3));
+            if(selection == 3){
+                confirmed = true;
+            }else if(selection == 2){
+                wantsToRemove = true;
+            }else{
+                wantsToRemove = false;
+                confirmed = false; //Useless but leave it here for now
+            }
         }while(!confirmed);
+        List<Integer> productionPowersSelected= new ArrayList<>(selectedProductions.keySet());
+        client.sendMessageToServer(new ChooseProductionPowersResponse(productionPowersSelected)); //If the player confirms with zero selections don't increment the actionDone variable!!!
+    }
+
+    private void manageRemoveProduction(Map<Integer, List<Value>> availableProductionPowers,
+                                        Map<Integer, List<Value>> selectedProductions,
+                                        Map<Resource, Integer> availableResources) {
+        List<Integer> selectedIDs = new ArrayList<>();
+        System.out.println("Your current productions are:");
+        for(Map.Entry<Integer, List<Value>> entry : selectedProductions.entrySet()){
+            System.out.println(entry.getKey() + ", " + entry.getValue());
+            selectedIDs.add(entry.getKey());
+        }
+        System.out.print("Select the production ID you want to remove: ");
+        Integer selection = InputParser.getInt(
+                "Error: the ID provided is not available. Provide a valid ID", conditionOnInteger(selectedIDs));
+        //Re-adding the selected production to the available ones
+        availableProductionPowers.put(selection, selectedProductions.get(selection));
+        Map<Resource, Integer> activationCost = null;
+        try {
+            activationCost = selectedProductions.get(selection).get(0).getResourceValue();
+        } catch (ValueNotPresentException e) {
+            e.printStackTrace();
+        }
+        //Removing the selected production from the chosen ones
+        selectedProductions.remove(selection);
+        //Re-adding the activation cost resources of the production removed to the available resources
+        for(Map.Entry<Resource, Integer> entry : activationCost.entrySet()){
+            availableResources.put(entry.getKey(), availableResources.get(entry.getKey()) + entry.getValue());
+        }
+    }
+
+    private List<Value> manageBasicProductionPower(Map<Resource, Integer> availableResources) {
+        List<Resource> usableResources = new ArrayList<Resource>();
+        List<Resource> chosenResources = new ArrayList<Resource>();
+        //Saving in usableResources which Resource has a quantity > 0
+        for(Map.Entry<Resource, Integer> entry : availableResources.entrySet()){
+            if(entry.getValue() > 0){
+                usableResources.add(entry.getKey());
+            }
+        }
+        if(usableResources.size() > 0){
+            for(int j = 0; j < 2; j++){
+                System.out.print("Choose the");
+                if(j == 0){
+                    System.out.print(" first");
+                }else{
+                    System.out.print(" second");
+                }
+                System.out.println(" resource to be used in the basic production power");
+                //Displaying the usableResources for the basic production power
+                for(int i = 0; i < usableResources.size(); i++) {
+                    System.out.printf("%d. " + usableResources.get(i) + "\n", i+1);
+                }
+                //Selecting the resource to be used for the basic production power
+                Integer selection = InputParser.getInt(
+                        "Error: the given number is not present in the list. Provide a valid number",
+                        conditionOnIntegerRange(1, usableResources.size()));
+                //Adding the chosen resource to the chosenResources List
+                chosenResources.add(usableResources.get(selection - 1));
+                //If that Resource type had quantity equal to 1 it is removed from the usableResources list
+                if(availableResources.get(usableResources.get(selection - 1)) <= 1){
+                    usableResources.remove(selection);
+                }
+            }
+
+            //displaying the resources that can be produced
+            List<Resource> realValues = Resource.realValues();
+            System.out.println("Choose the resource you want to produce");
+            for(int k = 0; k < realValues.size(); k++){
+                System.out.printf("%d. " + realValues.get(k), k+1);
+            }
+            //Selecting the desired resource
+            Integer selection = InputParser.getInt(
+                    "Error: the given number is not present in the list. Provide a valid number",
+                    conditionOnIntegerRange(1, realValues.size()));
+            chosenResources.add(realValues.get(selection - 1));
+        }else{
+            System.out.println("You don't have enough resources for this production");
+        }
+
+        //TODO: do directly the chosenResource.add() above with the following variables.
+        List<Value> production= new ArrayList<>();
+        Map<Resource, Integer> productionCost = new HashMap<>();
+        productionCost.put(chosenResources.get(0), 1);
+        productionCost.put(chosenResources.get(1), 1);
+        Map<Resource, Integer> productionOutput = new HashMap<>();
+        productionOutput.put(chosenResources.get(2), 1);
+
+        try {
+            production.add(new Value(null, productionCost, 0));
+            production.add(new Value(null, productionOutput, 0));
+        } catch (InvalidArgumentException e) {
+            e.printStackTrace();
+        }
+
+        return production;
+    }
+
+    private void subtractResources(Value activationCost, Map<Resource, Integer> availableResources){
+        Map<Resource, Integer> resourceToBeRemoved = null;
+        try {
+            resourceToBeRemoved = activationCost.getResourceValue();
+        } catch (ValueNotPresentException e) {
+            e.printStackTrace();
+        }
+        for(Map.Entry<Resource, Integer> entry : resourceToBeRemoved.entrySet()){
+            availableResources.put(entry.getKey(), availableResources.get(entry.getKey()) - 1);
+            if(availableResources.get(entry.getKey()) == 0){
+                availableResources.remove(entry.getKey());
+            }
+        }
+    }
+
+    //check
+    private List<Integer> displayAvailableProductions(Map<Integer, List<Value>> availableProductionPowers, Map<Resource, Integer> availableResources){
+        List <Integer> availableProductionIDs = new ArrayList<>();
+        for(Map.Entry<Integer, List<Value>> entry : availableProductionPowers.entrySet()){
+            Map<Resource, Integer> activationCost = null;
+            try {
+                activationCost = entry.getValue().get(0).getResourceValue();
+            } catch (ValueNotPresentException e) {
+                //skip
+            }
+            if(hasResourcesForThisProduction(activationCost, availableResources)){
+                System.out.println(MatchData.getInstance().getDevelopmentCardByID(entry.getKey()).get(0));
+                availableProductionIDs.add(entry.getKey());
+            }
+        }
+        if(availableResources.values().stream().mapToInt(Integer::intValue).sum() >= 2){
+            System.out.println("Basic Production Power: " + availableProductionPowers.get(0));
+            availableProductionIDs.add(BASIC_PRODUCTION_POWER);
+        }
+        return availableProductionIDs;
+    }
+
+    private boolean hasResourcesForThisProduction(Map<Resource, Integer> activationCost, Map<Resource, Integer> availableResources){
+        boolean executable = true;
+        for (Map.Entry<Resource, Integer> entry : activationCost.entrySet()){
+            try {
+                executable = executable && entry.getValue() <= availableResources.get(entry.getKey());
+            }catch(Exception e){
+                //do nothing, it's only to easily skip a missing Resource in availableResources
+            }
+        }
+        return executable;
     }
     @Override
     public void displaySelectDevelopmentCardSlotRequest(boolean firstSlotAvailable, boolean secondSlotAvailable, boolean thirdSlotAvailable) {
@@ -381,4 +586,8 @@ public class CLI implements View {
     public static Predicate<String> conditionOnString(List<String> lis){
         return lis::contains;
     }
+
+
+    public static BiPredicate<String, List<String>> conditionOnReorganizeDepotsCommand =
+            Utils::isACorrectReorganizeDepotCommand;
 }

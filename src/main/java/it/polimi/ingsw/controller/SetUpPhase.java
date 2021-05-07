@@ -135,7 +135,7 @@ public class SetUpPhase implements GamePhase {
             if (controller.getConnectionByNickname(nickname).getClientHandlerPhase() != ClientHandlerPhase.SET_UP_FINISHED)
                 return;
         }
-        controller.setGamePhase(nicknames.size() > 1 ? new MultiplayerPlayPhase(controller) : new SinglePlayerPlayPhase(controller));
+        controller.setPlayPhase();
     }
 
 

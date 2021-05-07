@@ -105,6 +105,10 @@ public class Warehouse {
         return depots[row].getResourceQuantity();
     }
 
+    public Depot getWarehouseDepot(int row){
+        return depots[row];
+    }
+
     /**
      * Method used to find where a specific resource type is located in the Warehouse
      * @param res the type of the resource searched
