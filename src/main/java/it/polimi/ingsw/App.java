@@ -14,22 +14,13 @@ import java.util.*;
 public class App 
 {
     public static void main(String[] args ) throws InvalidArgumentException, DifferentEffectTypeException {
-        Map<Resource, Integer> availableResources = new HashMap<>();
-        availableResources.put(Resource.COIN, 2);
-        availableResources.put(Resource.STONE, 1);
-        availableResources.put(Resource.SERVANT, 3);
+        Queue<Integer> fifo = new LinkedList<>();
 
-        System.out.println(availableResources.values().stream().mapToInt(Integer::intValue).sum() >= 2);
+        fifo.add(5);
+        fifo.add(7);
+        fifo.add(12);
 
-        Set<Resource> set = new HashSet<>();
-        set.add(Resource.COIN);
-        set.add(Resource.STONE);
-        set.add(Resource.COIN);
-        System.out.println(set);
-
-        for(int i = 0; i < set.size(); i++){
-            System.out.printf("%d" + set +"\n", i+1);
-        }
+        System.out.println(fifo.remove());
 
     }
 }
