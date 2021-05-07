@@ -2,6 +2,7 @@ package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.Server.ClientHandler;
 import it.polimi.ingsw.enumerations.ClientHandlerPhase;
+import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.enumerations.ResourceStorageType;
 import it.polimi.ingsw.exceptions.*;
@@ -74,7 +75,6 @@ public class SetUpPhase implements GamePhase {
 
     }
 
-
     private void removeLeaderCards(List<Integer> discardedCards, ClientHandler clientHandler) {
         String nickname = clientHandler.getNickname();
         Player player = controller.getPlayerByNickname(nickname);
@@ -135,7 +135,7 @@ public class SetUpPhase implements GamePhase {
             if (controller.getConnectionByNickname(nickname).getClientHandlerPhase() != ClientHandlerPhase.SET_UP_FINISHED)
                 return;
         }
-        controller.setPlayPhase();
+        controller.setGamePhase(controller.getGame().getGameMode() == GameMode.MULTI_PLAYER ? new MultiplayerPlayPhase(controller) : new SinglePlayerPlayPhase(controller));
     }
 
 

@@ -1,0 +1,5 @@
+package it.polimi.ingsw.enumerations;
+
+public enum Action {
+    TAKE_RESOURCE_FROM_MARKET, BUY_DEVELOPMENT_CARD, ACTIVATE_PRODUCTION, ACTIVATE_LEADER_CARD, DISCARD_LEADER_CARD;
+}

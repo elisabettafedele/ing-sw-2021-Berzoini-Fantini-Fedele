@@ -75,11 +75,6 @@ public class Controller {
         //IN-GAME MESSAGES
     }
 
-    public void setPlayPhase(){
-        gamePhase = game.getGameMode() == GameMode.MULTI_PLAYER ? new MultiplayerPlayPhase(this) : new SinglePlayerPlayPhase(this);
-        gamePhase.executePhase(this);
-    }
-
     public Game getGame(){
         return this.game;
     }
@@ -123,6 +118,7 @@ public class Controller {
     public void setGamePhase(GamePhase gamePhase) {
         this.gamePhase = gamePhase;
         sendMessageToAll(new TextMessage(gamePhase.toString() + " has started!"));
+        gamePhase.executePhase(this);
 
     }
 

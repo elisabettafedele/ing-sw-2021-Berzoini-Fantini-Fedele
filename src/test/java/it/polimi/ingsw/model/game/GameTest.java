@@ -85,13 +85,6 @@ public class GameTest {
     }
 
     @Test (expected = InvalidMethodException.class)
-    public void testInvalidGetSinglePlayer() throws InvalidArgumentException, UnsupportedEncodingException, InvalidMethodException, ZeroPlayerException, InvalidPlayerAddException {
-        singleGame = new Game(GameMode.SINGLE_PLAYER);
-        singleGame.addPlayer(nicknames.get(0), leaderCards.subList(0, 4), 0, false);
-        List<Player> players = singleGame.getPlayers();
-    }
-
-    @Test (expected = InvalidMethodException.class)
     public void testInvalidGetMultiPlayer() throws InvalidArgumentException, UnsupportedEncodingException, InvalidMethodException, ZeroPlayerException, InvalidPlayerAddException {
         multiGame = new Game(GameMode.MULTI_PLAYER);
         multiGame.addPlayer(nicknames.get(0), leaderCards.subList(0, 4), 0, false);
