@@ -97,4 +97,8 @@ public class Game {
     public FaithTrack getFaithTrack() {
         return faithTrack;
     }
+
+    public Market getMarket() {
+        return market;
+    }
 }

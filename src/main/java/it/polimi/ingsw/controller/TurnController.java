@@ -1,8 +1,14 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.controller.actions.Action;
+import it.polimi.ingsw.controller.actions.*;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.model.player.Player;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class TurnController {
     private int numberOfLeaderActionsDone=0;
@@ -12,6 +18,7 @@ public class TurnController {
     private Controller controller;
     private boolean interruptible;
     private boolean endTrigger=false;
+    private List<Action> possibleActions;
 
     public Controller getController() {
         return controller;
@@ -22,6 +29,7 @@ public class TurnController {
         this.standardActionDone = false;
         this.interruptible = controller.getGame().getGameMode() != GameMode.MULTI_PLAYER;
         this.controller = controller;
+        this.possibleActions = new ArrayList<>();
     }
 
     public Player getCurrentPlayer() {
@@ -35,6 +43,24 @@ public class TurnController {
     public void nextActionManager(){
         //TODO
     }
+
+    public void chooseAction(){
+
+    }
+
+    public List<Action> getAvailableActions(){
+        return possibleActions.stream().filter(Action::isExecutable).collect(Collectors.toList());
+    }
+
+    private void buildActions(){
+        possibleActions.add(new TakeResourcesFromMarketAction(this, controller));
+        possibleActions.add(new BuyDevelopmentCardAction(currentPlayer, controller.getConnectionByNickname(currentPlayer.getNickname()), this));
+        possibleActions.add(new ActivateProductionAction(currentPlayer, controller.getConnectionByNickname(currentPlayer.getNickname())));
+        possibleActions.add(new LeaderCardAction(currentPlayer, controller.getConnectionByNickname(currentPlayer.getNickname()), true));
+        possibleActions.add(new LeaderCardAction(currentPlayer, controller.getConnectionByNickname(currentPlayer.getNickname()), false));
+    }
+
+
 
 
 

@@ -122,6 +122,11 @@ public class Controller {
 
     }
 
+    public GamePhase getGamePhase(){
+        return gamePhase;
+    }
+
+
     public void sendMessageToAll(MessageToClient message){
         lockConnections.lock();
         try{

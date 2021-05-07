@@ -1,6 +1,7 @@
 package it.polimi.ingsw.controller.actions;
 
 import it.polimi.ingsw.Server.ClientHandler;
+import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.controller.PlayPhase;
 import it.polimi.ingsw.controller.TurnController;
 import it.polimi.ingsw.enumerations.*;
@@ -21,6 +22,7 @@ public class TakeResourcesFromMarketAction implements Action {
 
     private Player player;
     private ClientHandler clientHandler;
+    private Controller controller;
     private Market market;
     private PlayPhase playPhase;
     private List<Resource> resourcesToStore;
@@ -31,26 +33,26 @@ public class TakeResourcesFromMarketAction implements Action {
 
     /**
      * Constructor of the action
-     *
-     * @param player         the acting {@link Player}
-     * @param clientHandler  the {@link ClientHandler} of the acting player
-     * @param market         the market of the {@link it.polimi.ingsw.model.game.Game} the acting player is playing in
-     * @param playPhase      can be {@link it.polimi.ingsw.controller.MultiplayerPlayPhase} or {@link it.polimi.ingsw.controller.SinglePlayerPlayPhase}
-     * @param turnController the turn controller of the {@link it.polimi.ingsw.model.game.Game} the acting player is playing to
+     * @param turnController
+     * @param controller
      */
-    public TakeResourcesFromMarketAction(Player player, ClientHandler clientHandler, Market market, PlayPhase playPhase, TurnController turnController) {
-        this.player = player;
-        this.clientHandler = clientHandler;
-        this.market = market;
-        this.playPhase = playPhase;
+    public TakeResourcesFromMarketAction(TurnController turnController, Controller controller) {
+        this.controller = controller;
         this.resourcesToStore = new LinkedList<>();
         this.turnController = turnController;
+        this.market = controller.getGame().getMarket();
+        this.playPhase = (PlayPhase) controller.getGamePhase();
     }
 
+    @Override
     public boolean isExecutable() {
         return true;
     }
 
+    public void reset(String nickname) {
+        this.player = controller.getPlayerByNickname(nickname);
+        this.clientHandler = controller.getConnectionByNickname(nickname);
+    }
 
     public void execute(TurnController turnController) {
         clientHandler.setCurrentAction(this);
