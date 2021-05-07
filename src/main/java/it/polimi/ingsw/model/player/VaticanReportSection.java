@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.player;
 
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
+import it.polimi.ingsw.model.game.FaithTrack;
 
 /**
  * The class represents a Vatican Report Section of the {@link FaithTrack}

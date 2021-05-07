@@ -4,6 +4,7 @@ import it.polimi.ingsw.enumerations.*;
 import it.polimi.ingsw.exceptions.*;
 import it.polimi.ingsw.model.cards.*;
 import it.polimi.ingsw.model.depot.LeaderDepot;
+import it.polimi.ingsw.model.game.FaithTrack;
 import it.polimi.ingsw.utility.LeaderCardParser;
 import org.junit.Before;
 import org.junit.Test;
@@ -62,10 +63,6 @@ public class PersonalBoardTest {
         PersonalBoard pb=new PersonalBoard(lcl);
     }
 
-    @Test
-    public void getFaithTrack_correctlyReturnsFaithTrack() throws InvalidArgumentException {
-        assertEquals(FaithTrack.instance(),personalBoard.getFaithTrack());
-    }
 
     @Test
     public void testGetStrongbox(){

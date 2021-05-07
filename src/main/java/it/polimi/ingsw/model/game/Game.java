@@ -18,6 +18,7 @@ public class Game {
     private Market market;
     private GameMode gameMode;
     private List<Player> players;
+    private FaithTrack faithTrack;
 
 
     /** //TODO
@@ -31,6 +32,7 @@ public class Game {
         this.market = new Market();
         this.gameMode = gameMode;
         this.players = new ArrayList<Player>();
+        this.faithTrack = new FaithTrack();
     }
 
     /**
@@ -92,4 +94,7 @@ public class Game {
         return developmentCardGrid;
     }
 
+    public FaithTrack getFaithTrack() {
+        return faithTrack;
+    }
 }

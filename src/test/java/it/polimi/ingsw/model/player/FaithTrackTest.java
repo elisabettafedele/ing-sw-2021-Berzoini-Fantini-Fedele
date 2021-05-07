@@ -1,10 +1,7 @@
 package it.polimi.ingsw.model.player;
 
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
-import it.polimi.ingsw.model.player.FaithTrack;
-import it.polimi.ingsw.model.player.VaticanReportSection;
-import org.junit.After;
-import org.junit.AfterClass;
+import it.polimi.ingsw.model.game.FaithTrack;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,7 +15,7 @@ public class FaithTrackTest {
 
     @Before
     public void setUp() throws Exception {
-        faithTrack=FaithTrack.instance();
+        faithTrack = new FaithTrack();
     }
 
    //since FaithTrack is a singleton and no order between tests can be assumed,everything has to be in the same test where instructions order can be imposed.

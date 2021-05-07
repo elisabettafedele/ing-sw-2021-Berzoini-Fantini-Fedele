@@ -1,6 +1,7 @@
-package it.polimi.ingsw.model.player;
+package it.polimi.ingsw.model.game;
 
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
+import it.polimi.ingsw.model.player.VaticanReportSection;
 
 import java.util.*;
 
@@ -9,7 +10,6 @@ import java.util.*;
  */
 
 public class FaithTrack {
-    private static FaithTrack instance;
     private Iterator<VaticanReportSection> vaticanReportSectionIterator;
     private final int length;
     private LinkedHashMap< Integer , Integer > trackVictoryPoints;
@@ -19,12 +19,14 @@ public class FaithTrack {
      * Constructs the FaithTrack and automatically assigns to currentSection the first next element of the vaticanReportSectionIterator
      * @throws InvalidArgumentException
      */
-    private FaithTrack() throws InvalidArgumentException {
+    public FaithTrack() {
         length = 24;
         List<VaticanReportSection> tempList= new ArrayList<>();
-        tempList.add(new VaticanReportSection(5,8,2));
-        tempList.add(new VaticanReportSection(12,16,3));
-        tempList.add(new VaticanReportSection(19,24,4));
+        try {
+            tempList.add(new VaticanReportSection(5, 8, 2));
+            tempList.add(new VaticanReportSection(12, 16, 3));
+            tempList.add(new VaticanReportSection(19, 24, 4));
+        } catch (InvalidArgumentException e){}
         vaticanReportSectionIterator=tempList.iterator();
         currentSection= vaticanReportSectionIterator.next();
         trackVictoryPoints=new LinkedHashMap<>();
@@ -36,18 +38,6 @@ public class FaithTrack {
         trackVictoryPoints.put(18,12);
         trackVictoryPoints.put(21,16);
         trackVictoryPoints.put(24,20);
-    }
-
-    /**
-     *
-     * @return Returns the instance of FaithTrack (singleton)
-     * @throws InvalidArgumentException
-     */
-    public static FaithTrack instance() throws InvalidArgumentException {
-        if(instance==null){
-            instance=new FaithTrack();
-        }
-        return instance;
     }
 
 

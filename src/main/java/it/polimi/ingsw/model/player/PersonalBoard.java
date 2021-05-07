@@ -6,6 +6,7 @@ import it.polimi.ingsw.model.cards.*;
 import it.polimi.ingsw.model.depot.Depot;
 import it.polimi.ingsw.model.depot.LeaderDepot;
 import it.polimi.ingsw.model.depot.StrongboxDepot;
+import it.polimi.ingsw.model.game.FaithTrack;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -20,7 +21,6 @@ public class PersonalBoard {
     private Stack<DevelopmentCard>[] developmentCardSlots;
     private List<LeaderCard> leaderCards;
     private Production defaultProduction;
-    private FaithTrack faithTrack;
     private final int numberOfStrongboxDepots = 4;
     private final int numberOfDevelopmentCardSlots = 3;
     private final int numberOfInitialLeaderCards = 4;
@@ -33,7 +33,6 @@ public class PersonalBoard {
         if(leaderCards==null||leaderCards.size()!=numberOfInitialLeaderCards){
             throw new InvalidArgumentException();
         }
-        faithTrack=FaithTrack.instance();
         strongbox = new StrongboxDepot[numberOfStrongboxDepots];
         strongbox[0]= new StrongboxDepot(Resource.COIN);
         strongbox[1]= new StrongboxDepot(Resource.STONE);
@@ -51,7 +50,6 @@ public class PersonalBoard {
         Map output = new HashMap();
         output.put(Resource.ANY,1);
         defaultProduction = new Production(new Value(null,input,0),new Value( null,output,0));
-        this.faithTrack = faithTrack;
     }
 
     /**
@@ -68,14 +66,6 @@ public class PersonalBoard {
      */
     public Warehouse getWarehouse(){
         return warehouse;
-    }
-
-    /**
-     *
-     * @return Returns FaithTrack
-     */
-    public FaithTrack getFaithTrack() {
-        return faithTrack;
     }
 
     /**
