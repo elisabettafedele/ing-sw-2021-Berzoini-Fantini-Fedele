@@ -182,9 +182,9 @@ public class CLI implements View {
     @Override
     public void displayReorganizeDepotsRequest(List<String> depots, boolean first, boolean failure, List<Resource> availableLeaderResources){
         if (first)
-            System.out.println("You can now reorganize your depots with the command" + Command.SWAP.command + " or " + Command.MOVE.command + ". Let us show you two example: \n-'"+Command.SWAP.command + "w1 w2': realizes a swap between the first and the second depot of the warehouse\n-'move l w1 2': moves two resources from the leader depot to the second row of the warehouse \n If you have finished type " + Command.END_REORGANIZE_DEPOTS.command);
+            System.out.println("You can now reorganize your depots with the command" + Command.SWAP.command + " or " + Command.MOVE.command + "- "+ Command.SWAP + ": realizes a swap of two depots which contain different resource types\n- " + Command.MOVE + ": move a certain number of resources from one depot to another (be careful because the leader depots have a fixed resource type!\nIf you have finished type " + Command.END_REORGANIZE_DEPOTS.command);
         if (failure)
-            System.out.println("Invalid reorganization: be careful not to swap warehouse depot with leader ones and to check the capacity of the depots.");
+            System.out.println("Invalid reorganization: check the capacity and the type of the depots before reorganizing.");
         List<String> possibleCommands = Command.getReorganizeDepotsCommands();
         possibleCommands.addAll(depots);
         Resource resource = Resource.ANY;

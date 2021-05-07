@@ -166,9 +166,13 @@ public class TakeResourcesFromMarketAction implements Action {
         clientHandler.sendMessageToClient(new TextMessage("Conversion done!\nYou now have to store these resources" + resourcesToStore));
     }
 
+    /**
+     * Method used when the acting player asks to reorganize his depots
+     */
     private void handleReorganizeDepotsRequest(){
         availableDepotsForReorganization = ResourceStorageType.getWarehouseDepots();
         availableLeaderResources = new ArrayList<>();
+        //If the player has some leader depots, I save the Resource type of these depots in availableDepotsResources, so that I will be able to identify the depot in the client. If he does not, the list will be empty
         for (Effect effect : player.getPersonalBoard().getAvailableEffects(EffectType.EXTRA_DEPOT)){
             try{
                 availableLeaderResources.add(effect.getExtraDepotEffect().getLeaderDepot().getResourceType());
@@ -181,7 +185,13 @@ public class TakeResourcesFromMarketAction implements Action {
         clientHandler.sendMessageToClient(new SendReorganizeDepotsCommands(availableDepotsForReorganization, true, false, availableLeaderResources));
     }
 
+    /**
+     * Method used to handle the request of a swap from the client, during depots' reorganization
+     * @param origin the string of the corresponding {@link ResourceStorageType} of the first depot to swap
+     * @param destination the string of the corresponding {@link ResourceStorageType} of the second depot to swap
+     */
     private void handleSwapRequest(String origin, String destination){
+        //It is not possible to swap resources between leader depots and warehouse
         if (!ResourceStorageType.getWarehouseDepots().contains(origin) || !ResourceStorageType.getWarehouseDepots().contains(destination))
             clientHandler.sendMessageToClient(new SendReorganizeDepotsCommands(availableDepotsForReorganization, false, true, availableLeaderResources));
         else {
@@ -196,34 +206,46 @@ public class TakeResourcesFromMarketAction implements Action {
         }
     }
 
+    /**
+     * Method used to handle the move of a certain quanity of resource from a depot to another
+     * @param originString
+     * @param destinationString
+     * @param resource must be specified only if the client has more than one leader depot and decides to select LEADER as origin or destination, otherwise it is ANY
+     * @param quantity
+     */
     private void handleMoveRequest(String originString, String destinationString, Resource resource, int quantity){
         ResourceStorageType origin = ResourceStorageType.valueOf(originString);
         ResourceStorageType destination = ResourceStorageType.valueOf(destinationString);
+        Resource originResourceType = Resource.ANY;
         try {
-            Resource originResourceType = resource == Resource.ANY ? player.getPersonalBoard().getWarehouse().getResourceTypeOfDepot(ResourceStorageType.valueOf(originString).getValue()) : resource;
+            originResourceType = resource == Resource.ANY ? player.getPersonalBoard().getWarehouse().getResourceTypeOfDepot(ResourceStorageType.valueOf(originString).getValue()) : resource;
         } catch (InvalidArgumentException e) {
             e.printStackTrace();
         }
         try {
-            player.getPersonalBoard().removeResources(origin, resource, quantity);
+            player.getPersonalBoard().removeResources(origin, originResourceType, quantity);
         } catch (InsufficientQuantityException e) {
             clientHandler.sendMessageToClient(new SendReorganizeDepotsCommands(availableDepotsForReorganization, false, true, availableLeaderResources));
         } catch (InvalidResourceTypeException e) {
             e.printStackTrace();
         }
         try {
-            player.getPersonalBoard().addResources(destination, resource, quantity);
+            player.getPersonalBoard().addResources(destination, originResourceType, quantity);
             clientHandler.sendMessageToClient(new SendReorganizeDepotsCommands(availableDepotsForReorganization, false, false, availableLeaderResources));
         } catch (InvalidDepotException | InvalidArgumentException | InvalidResourceTypeException e) {
             e.printStackTrace();
         } catch (InsufficientSpaceException e) {
             try {
-                player.getPersonalBoard().addResources(origin, resource, quantity);
+                //If the add of resources in the destination depot was not possible, I add again the resources to the origin depot
+                player.getPersonalBoard().addResources(origin, originResourceType, quantity);
                 clientHandler.sendMessageToClient(new SendReorganizeDepotsCommands(availableDepotsForReorganization, false, true, availableLeaderResources));
             } catch (InvalidDepotException | InvalidArgumentException | InvalidResourceTypeException | InsufficientSpaceException ignored) { }
         }
     }
 
+    /**
+     * Method used to end the Reorganization of the depots
+     */
     void handleEndDepotsOrganization(){
         if (resourcesToStore.isEmpty())
             manageEndAction();
