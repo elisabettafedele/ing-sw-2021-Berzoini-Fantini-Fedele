@@ -8,11 +8,13 @@ import it.polimi.ingsw.enumerations.ResourceStorageType;
 import it.polimi.ingsw.exceptions.*;
 import it.polimi.ingsw.messages.toClient.SelectCardRequest;
 import it.polimi.ingsw.messages.toClient.SelectDevelopmentCardSlotRequest;
+import it.polimi.ingsw.messages.toClient.SelectStorageRequest;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
 import it.polimi.ingsw.messages.toServer.SelectCardResponse;
 import it.polimi.ingsw.model.cards.DevelopmentCard;
 import it.polimi.ingsw.model.cards.Effect;
 import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.utility.RemoveResources;
 
 import java.util.*;
 
@@ -33,27 +35,6 @@ public class BuyDevelopmentCardAction implements Action{
     }
 
 
-
-    private void removeResources(Map<Resource, Integer> resourcesToRemove){
-        Set<Resource> resourcesTypeToRemove = resourcesToRemove.keySet();
-        ResourceStorageType positionChosen;
-        int quantityChosen;
-        for (Resource resource : resourcesTypeToRemove){
-            if (resourcesToRemove.isEmpty())
-                return;
-            if (resourcesToRemove.get(resource) == 0)
-                resourcesToRemove.remove(resource);
-            else{
-                //TODO Provide the client the depots from where he can take the resources
-
-
-
-            }
-
-        }
-    }
-
-
     @Override
     public void execute(TurnController turnController) {
         clientHandler.setCurrentAction(this);
@@ -62,7 +43,7 @@ public class BuyDevelopmentCardAction implements Action{
         clientHandler.sendMessageToClient(new SelectDevelopmentCardSlotRequest(currentPlayer.getPersonalBoard().cardInsertionIsLegal(developmentCardChosen,0),currentPlayer.getPersonalBoard().cardInsertionIsLegal(developmentCardChosen,1),currentPlayer.getPersonalBoard().cardInsertionIsLegal(developmentCardChosen,2)));
         turnController.setStandardActionDoneToTrue();
         if(currentPlayer.getPersonalBoard().getNumOfDevelopmentCards()==7){
-            //TODO implementa la endTrigger nel Turn controller
+            turnController.setEndTriggerToTrue();
         }
 
     }
@@ -148,7 +129,7 @@ public class BuyDevelopmentCardAction implements Action{
         try {
             turnController.getController().getGame().getDevelopmentCardGrid().removeCard(developmentCardChosen);
             Map<Resource, Integer> cost = developmentCardChosen.getDiscountedCost(this.getDiscountedResources());
-            removeResources(cost);
+            RemoveResources.removeResources(cost,clientHandler,currentPlayer);
             currentPlayer.getPersonalBoard().addDevelopmentCard(developmentCardChosen,slot);
 
         } catch (InvalidArgumentException e) {

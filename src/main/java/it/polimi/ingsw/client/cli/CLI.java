@@ -9,6 +9,7 @@ import it.polimi.ingsw.controller.actions.Action;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.enumerations.Marble;
 import it.polimi.ingsw.enumerations.Resource;
+import it.polimi.ingsw.enumerations.ResourceStorageType;
 import it.polimi.ingsw.messages.toServer.*;
 import it.polimi.ingsw.model.cards.LeaderCard;
 
@@ -336,6 +337,37 @@ public class CLI implements View {
     @Override
     public void displayMessage(String message) {
         System.out.println(message);
+    }
+
+    @Override
+    public void displaySelectStorageRequest(Resource resource, boolean isInWarehouse, boolean isInStrongbox, boolean isInLeaderDepot) {
+        while(true){
+            System.out.println("You can take a " + resource.toString() + " from:");
+            if(isInWarehouse){
+                System.out.println("1-Warehouse");
+            }
+            if(isInStrongbox){
+                System.out.println("2-Strongbox");
+            }
+            if(isInLeaderDepot){
+                System.out.println("3-Leader Depot");
+            }
+            System.out.println("Where would you like to remove it? Select the relative number");
+            int selection = InputParser.getInt("Error: write a number.");
+            if (selection==1&&isInWarehouse){
+                client.sendMessageToServer( new SelectStorageResponse(resource,ResourceStorageType.WAREHOUSE));
+                return;
+            }
+            if (selection==2&&isInStrongbox){
+                client.sendMessageToServer(new SelectStorageResponse(resource,ResourceStorageType.STRONGBOX));
+                return;
+            }
+            if (selection==3&&isInLeaderDepot){
+                client.sendMessageToServer(new SelectStorageResponse(resource,ResourceStorageType.LEADER_DEPOT));
+                return;
+            }
+            System.out.println("Incorrect choice");
+        }
     }
 
     public static Predicate<Integer> conditionOnIntegerRange(int min, int max){

@@ -11,6 +11,7 @@ public class TurnController {
     private Player currentPlayer;
     private Controller controller;
     private boolean interruptible;
+    private boolean endTrigger=false;
 
     public Controller getController() {
         return controller;
@@ -41,5 +42,9 @@ public class TurnController {
 
     public void setStandardActionDoneToTrue(){
         standardActionDone=true;
+    }
+
+    public void setEndTriggerToTrue() {
+        endTrigger = true;
     }
 }

@@ -160,6 +160,13 @@ public class GUI extends Application implements View {
     public void displayMessage(String message) {
         //TODO
     }
+
+    @Override
+    public void displaySelectStorageRequest(Resource resource, boolean isInWarehouse, boolean isInStrongbox, boolean isInLeaderDepot) {
+
+    }
+
+
     @Override
     public void displaySelectDevelopmentCardSlotRequest(boolean firstSlotAvailable, boolean secondSlotAvailable, boolean thirdSlotAvailable) {
 

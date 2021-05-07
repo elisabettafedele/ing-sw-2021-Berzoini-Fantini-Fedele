@@ -86,6 +86,72 @@ public class PersonalBoard {
         return markerPosition;
     }
 
+    public boolean isResourceAvailableAndRemove(ResourceStorageType depot, Resource resource, int quantity, boolean wantToRemove){
+        if(depot==ResourceStorageType.STRONGBOX){
+            for(int i=0; i< 3 ; i++){
+                if(strongbox[i].getResourceType()==resource && strongbox[i].getResourceQuantity()>=quantity){
+                    if(wantToRemove){
+                        try {
+                            strongbox[i].removeResources(quantity);
+                        } catch (InsufficientQuantityException e) {
+                            e.printStackTrace();
+                        } catch (InvalidArgumentException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    return true;
+                }
+            }
+            return false;
+        }
+        if(depot==ResourceStorageType.LEADER_DEPOT){
+            List<Effect> extraDepotEffects = this.getAvailableEffects(EffectType.EXTRA_DEPOT);
+            if (extraDepotEffects.isEmpty())
+                return false;
+            for (Effect effect : extraDepotEffects) {
+                try {
+                    if(effect.getExtraDepotEffect().getLeaderDepot().getResourceType()==resource&& effect.getExtraDepotEffect().getLeaderDepot().getResourceQuantity()>=quantity){
+                        if(wantToRemove){
+                            try {
+                                effect.getExtraDepotEffect().getLeaderDepot().removeResources(quantity);
+                            } catch (InsufficientQuantityException e) {
+                                e.printStackTrace();
+                            } catch (InvalidArgumentException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        return true;
+                    }
+                } catch (DifferentEffectTypeException e) {
+                }
+            }
+            return false;
+        }
+        if(depot==ResourceStorageType.WAREHOUSE){
+            for(int ii=0;ii<warehouse.getNumberOfDepots();ii++){
+                try {
+                    if(resource==warehouse.getResourceTypeOfDepot(ii)&&warehouse.getResourceQuantityOfDepot(ii)>=quantity){
+                        if(wantToRemove){
+                            try {
+                                warehouse.removeResourcesFromDepot(resource,quantity);
+                            } catch (InvalidResourceTypeException e) {
+                                e.printStackTrace();
+                            } catch (InsufficientQuantityException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        return true;
+                    }
+                } catch (InvalidArgumentException e) {
+                    e.printStackTrace();
+                }
+            }
+            return false;
+        }
+        return false;
+    }
+
+
     /**
      * @return Returns all developmentCards as a list
      */
