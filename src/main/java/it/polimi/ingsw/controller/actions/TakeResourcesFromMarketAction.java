@@ -34,10 +34,11 @@ public class TakeResourcesFromMarketAction implements Action {
     /**
      * Constructor of the action
      * @param turnController
-     * @param controller
      */
-    public TakeResourcesFromMarketAction(TurnController turnController, Controller controller) {
-        this.controller = controller;
+    public TakeResourcesFromMarketAction(TurnController turnController) {
+        this.player= turnController.getCurrentPlayer();
+        this.turnController=turnController;
+        this.controller = turnController.getController();
         this.resourcesToStore = new LinkedList<>();
         this.turnController = turnController;
         this.market = controller.getGame().getMarket();
@@ -49,12 +50,17 @@ public class TakeResourcesFromMarketAction implements Action {
         return true;
     }
 
-    public void reset(String nickname) {
-        this.player = controller.getPlayerByNickname(nickname);
-        this.clientHandler = controller.getConnectionByNickname(nickname);
+    @Override
+    public void reset(Player currentPlayer) {
+        this.player = currentPlayer;
+        this.clientHandler = controller.getConnectionByNickname(currentPlayer.getNickname());
+        resourcesToStore=new LinkedList<>();
+        marblesToConvert= new LinkedList<>();
+        availableLeaderResources= new LinkedList<>();
+        availableDepotsForReorganization=new LinkedList<>();
     }
 
-    public void execute(TurnController turnController) {
+    public void execute() {
         clientHandler.setCurrentAction(this);
         clientHandler.sendMessageToClient(new MarbleInsertionPositionRequest(this, false));
     }

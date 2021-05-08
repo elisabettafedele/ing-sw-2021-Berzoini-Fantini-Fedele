@@ -53,11 +53,11 @@ public class TurnController {
     }
 
     private void buildActions(){
-        possibleActions.add(new TakeResourcesFromMarketAction(this, controller));
-        possibleActions.add(new BuyDevelopmentCardAction(currentPlayer, controller.getConnectionByNickname(currentPlayer.getNickname()), this));
-        possibleActions.add(new ActivateProductionAction(currentPlayer, controller.getConnectionByNickname(currentPlayer.getNickname())));
-        possibleActions.add(new LeaderCardAction(currentPlayer, controller.getConnectionByNickname(currentPlayer.getNickname()), true));
-        possibleActions.add(new LeaderCardAction(currentPlayer, controller.getConnectionByNickname(currentPlayer.getNickname()), false));
+        possibleActions.add(new TakeResourcesFromMarketAction(this));
+        possibleActions.add(new BuyDevelopmentCardAction(this));
+        possibleActions.add(new ActivateProductionAction(this));
+        possibleActions.add(new LeaderCardAction(this, true));
+        possibleActions.add(new LeaderCardAction(this, false));
     }
 
 

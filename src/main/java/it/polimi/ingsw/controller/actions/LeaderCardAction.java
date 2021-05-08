@@ -20,13 +20,24 @@ public class LeaderCardAction implements Action{
     private ClientHandler clientHandler;
     boolean activateORdiscard;
     List<Integer> leaderCardsIDs =null;
-    public LeaderCardAction(Player player, ClientHandler clientHandler, boolean activateORdiscard){
-        this.player = player;
-        this.clientHandler = clientHandler;
+    TurnController turnController;
+
+    public LeaderCardAction(TurnController turnController, boolean activateORdiscard){
+        this.player = turnController.getCurrentPlayer();
+        this.turnController=turnController;
+        this.clientHandler = turnController.getController().getConnectionByNickname(player.getNickname());
         this.activateORdiscard=activateORdiscard;
     }
+
     @Override
-    public void execute(TurnController turnController) {
+    public void reset(Player currentPlayer) {
+        this.player = currentPlayer;
+        this.clientHandler = turnController.getController().getConnectionByNickname(currentPlayer.getNickname());
+        leaderCardsIDs=null;
+    }
+
+    @Override
+    public void execute() {
         clientHandler.setCurrentAction(this);
         clientHandler.sendMessageToClient(new SelectCardRequest(leaderCardsIDs,true));
         turnController.incrementNumberOfLeaderActionDone();

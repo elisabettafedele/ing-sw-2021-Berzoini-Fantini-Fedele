@@ -4,11 +4,9 @@ import it.polimi.ingsw.Server.ClientHandler;
 import it.polimi.ingsw.controller.TurnController;
 import it.polimi.ingsw.enumerations.EffectType;
 import it.polimi.ingsw.enumerations.Resource;
-import it.polimi.ingsw.enumerations.ResourceStorageType;
 import it.polimi.ingsw.exceptions.*;
 import it.polimi.ingsw.messages.toClient.SelectCardRequest;
 import it.polimi.ingsw.messages.toClient.SelectDevelopmentCardSlotRequest;
-import it.polimi.ingsw.messages.toClient.SelectStorageRequest;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
 import it.polimi.ingsw.messages.toServer.SelectCardResponse;
 import it.polimi.ingsw.model.cards.DevelopmentCard;
@@ -16,7 +14,9 @@ import it.polimi.ingsw.model.cards.Effect;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.utility.RemoveResources;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class BuyDevelopmentCardAction implements Action{
     private ClientHandler clientHandler;
@@ -28,17 +28,17 @@ public class BuyDevelopmentCardAction implements Action{
 
 
 
-    public BuyDevelopmentCardAction(Player currentPlayer, ClientHandler clientHandler, TurnController turnController){
-        this.currentPlayer = currentPlayer;
-        this.clientHandler = clientHandler;
-        this.turnController=turnController;//gli serve già alla isExecutable();
+    public BuyDevelopmentCardAction( TurnController turnController){
+        this.turnController=turnController;
+        this.currentPlayer = turnController.getCurrentPlayer();
+        this.clientHandler = turnController.getController().getConnectionByNickname(currentPlayer.getNickname());
+
     }
 
 
     @Override
-    public void execute(TurnController turnController) {
+    public void execute() {
         clientHandler.setCurrentAction(this);
-        this.turnController=turnController;
         clientHandler.sendMessageToClient(new SelectCardRequest(buyableCardsIDs,false));
         clientHandler.sendMessageToClient(new SelectDevelopmentCardSlotRequest(currentPlayer.getPersonalBoard().cardInsertionIsLegal(developmentCardChosen,0),currentPlayer.getPersonalBoard().cardInsertionIsLegal(developmentCardChosen,1),currentPlayer.getPersonalBoard().cardInsertionIsLegal(developmentCardChosen,2)));
         turnController.setStandardActionDoneToTrue();
@@ -47,6 +47,15 @@ public class BuyDevelopmentCardAction implements Action{
         }
 
     }
+
+    @Override
+    public void reset(Player currentPlayer) {
+        this.currentPlayer = currentPlayer;
+        this.clientHandler = turnController.getController().getConnectionByNickname(currentPlayer.getNickname());
+        buyableCardsIDs=null;
+        developmentCardChosen=null;
+    }
+
 
     /**
      * Private method used to get the discounted resources of the player,

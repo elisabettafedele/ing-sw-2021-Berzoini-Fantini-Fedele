@@ -29,9 +29,10 @@ public class ActivateProductionAction implements Action{
     private final int BASIC_PRODUCTION_POWER = 0;
     private TurnController turnController;
 
-    public ActivateProductionAction(Player player, ClientHandler clientHandler){
-        this.clientHandler = clientHandler;
-        this.player = player;
+    public ActivateProductionAction(TurnController turnController){
+        this.turnController=turnController;
+        this.player = turnController.getCurrentPlayer();
+        this.clientHandler = turnController.getController().getConnectionByNickname(player.getNickname());
         this.personalBoard = this.player.getPersonalBoard();
         //TODO: manage this exceptions
         try {
@@ -44,7 +45,22 @@ public class ActivateProductionAction implements Action{
         this.availableProductionLeaderCards = this.availableProductionLeaderCards.stream().filter(
                 lc -> lc.getEffect().getEffectType() == EffectType.PRODUCTION).collect(Collectors.toList());
     }
-
+    @Override
+    public void reset(Player currentPlayer) {
+        this.player = currentPlayer;
+        this.clientHandler = turnController.getController().getConnectionByNickname(currentPlayer.getNickname());
+        this.personalBoard = this.player.getPersonalBoard();
+        //TODO: manage this exceptions
+        try {
+            this.availableResources = this.personalBoard.countResources();
+        } catch (InactiveCardException | InvalidArgumentException | DifferentEffectTypeException e) {
+            e.printStackTrace();
+        }
+        this.availableProductionLeaderCards = this.personalBoard.availableLeaderCards();
+        this.availableDevelopmentCards = this.personalBoard.availableDevelopmentCards();
+        this.availableProductionLeaderCards = this.availableProductionLeaderCards.stream().filter(
+                lc -> lc.getEffect().getEffectType() == EffectType.PRODUCTION).collect(Collectors.toList());
+    }
     @Override
     public boolean isExecutable() {
 
@@ -113,9 +129,8 @@ public class ActivateProductionAction implements Action{
     }
 
     @Override
-    public void execute(TurnController turnController) {
+    public void execute() {
         clientHandler.setCurrentAction(this);
-        this.turnController = turnController;
 
         Iterator<DevelopmentCard> developmentCardIterator = availableDevelopmentCards.iterator();
 
