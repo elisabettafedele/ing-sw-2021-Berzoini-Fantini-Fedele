@@ -25,7 +25,7 @@ public class SinglePlayerPlayPhase implements GamePhase, PlayPhase{
 
     @Override
     public void executePhase(Controller controller) {
-        //TODO
+        //while(!turnController.)
     }
     @Override
     public void handleResourceDiscard(String nickname) {

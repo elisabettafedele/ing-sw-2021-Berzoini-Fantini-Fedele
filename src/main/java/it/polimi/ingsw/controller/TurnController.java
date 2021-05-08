@@ -112,7 +112,9 @@ public class TurnController {
 
 
 
-
+    public boolean isEndTriggered(){
+        return this.endTrigger;
+    }
 
     public void incrementNumberOfLeaderActionDone(){
         numberOfLeaderActionsDone++;

@@ -14,14 +14,19 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.PriorityQueue;
 import java.util.Queue;
 
+/**
+ * Utility class to parse the action tokens from a json file
+ */
 public class SoloActionTokenParser {
 
     private SoloActionTokenParser(){ throw new IllegalStateException("Utility class"); }
 
+    /**
+     * Method to parse all the {@link SoloActionToken} from the json file.
+     * @return the queue of {@link SoloActionToken}
+     */
     public static Queue<SoloActionToken> parseTokens(){
         Queue<SoloActionToken> tokens = new LinkedList<>();
         String path = "json/SoloActionTokens.json";

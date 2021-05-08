@@ -34,7 +34,6 @@ public class Controller {
      */
     public void start(){
         this.setGamePhase(new SetUpPhase());
-        this.gamePhase.executePhase(this);
     }
 
 
