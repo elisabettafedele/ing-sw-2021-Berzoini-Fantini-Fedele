@@ -19,9 +19,13 @@ public class App
         fifo.add(5);
         fifo.add(7);
         fifo.add(12);
-
-        System.out.println(fifo.remove());
-
+        System.out.println(fifo);
+        Collections.shuffle((List<Integer>) fifo);
+        System.out.println(fifo);
+        fifo.add(fifo.remove());
+        System.out.println(fifo);
+        fifo.add(fifo.remove());
+        System.out.println(fifo);
     }
 }
 
