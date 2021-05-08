@@ -318,7 +318,7 @@ public class TakeResourcesFromMarketAction implements Action {
      */
     private void manageEndAction() {
         turnController.setStandardActionDoneToTrue();
-        turnController.nextActionManager();
+        //turnController.nextActionManager();
     }
 
 }

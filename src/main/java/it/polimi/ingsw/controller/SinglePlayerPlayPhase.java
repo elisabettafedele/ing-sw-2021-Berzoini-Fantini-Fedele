@@ -1,26 +1,26 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.Server.ClientHandler;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.InvalidMethodException;
 import it.polimi.ingsw.exceptions.ZeroPlayerException;
+import it.polimi.ingsw.messages.toServer.MessageToServer;
 import it.polimi.ingsw.model.player.Player;
 
-public class SinglePlayerPlayPhase implements GamePhase, PlayPhase{
-    private Controller controller;
-    private TurnController turnController;
-    private Player player;
+public class SinglePlayerPlayPhase extends PlayPhase implements GamePhase{
+
     private int blackCrossPosition;
 
     public SinglePlayerPlayPhase(Controller controller){
-        this.controller = controller;
+        setController(controller);
         try {
-           this.player=controller.getGame().getSinglePlayer();
+           setPlayer(getController().getGame().getSinglePlayer());
         } catch (InvalidMethodException e) {
             e.printStackTrace();
         } catch (ZeroPlayerException e) {
             e.printStackTrace();
         }
-        turnController= new TurnController(controller,player);
+        setTurnController(new TurnController(getController(),getPlayer()));
     }
 
     @Override
@@ -30,5 +30,10 @@ public class SinglePlayerPlayPhase implements GamePhase, PlayPhase{
     @Override
     public void handleResourceDiscard(String nickname) {
         blackCrossPosition++;
+    }
+
+    @Override
+    public void handleMessage(MessageToServer message, ClientHandler clientHandler) {
+
     }
 }

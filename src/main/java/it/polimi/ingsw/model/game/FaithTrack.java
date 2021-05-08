@@ -63,11 +63,16 @@ public class FaithTrack {
         return returnedSection;
     }
 
+    public int getLength() {
+        return length;
+    }
+
     /**
      *
      * @param playerPosition number of  box on the {@link FaithTrack} on which the player is.
      * @return sum of all victory points a player is eligible to achieve if he's in {@link FaithTrack}'box playerPosition
      */
+
     public int getVictoryPoints(int playerPosition) {
         int victoryPoints = 0;
         for(Map.Entry<Integer,Integer> entry : trackVictoryPoints.entrySet()){

@@ -37,19 +37,23 @@ public class VaticanReportSectionTest {
     public void getPopeFavorPoints_correctlyReturnsPopeFavorPoints() {
         assertEquals(3,vaticanReportSection.getPopeFavorPoints());
     }
-
+/*
     @Test
     public void isVaticanReportAvailable_correctlyReturnsTrue() throws InvalidArgumentException {
         vaticanReportSectionConstructorTest = new VaticanReportSection(1,2,3);
         assertTrue(vaticanReportSectionConstructorTest.isVaticanReportAvailable());
     }
 
+ */
+/*
     @Test
     public void setVaticanReportUnavailable_correctlySetsVaticanReportAvailableToFalse() throws InvalidArgumentException {
         vaticanReportSectionConstructorTest = new VaticanReportSection(1,2,3);
         vaticanReportSectionConstructorTest.setVaticanReportUnavailable();
         assertFalse(vaticanReportSectionConstructorTest.isVaticanReportAvailable());
     }
+
+ */
 
     @Test (expected = InvalidArgumentException.class)
     public void VaticanReportSection_constructor_InvalidArgumentException_negativeStart() throws InvalidArgumentException {

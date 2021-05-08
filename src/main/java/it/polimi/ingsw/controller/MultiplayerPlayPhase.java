@@ -1,30 +1,29 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.Server.ClientHandler;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.InvalidMethodException;
 import it.polimi.ingsw.exceptions.ZeroPlayerException;
+import it.polimi.ingsw.messages.toServer.MessageToServer;
 import it.polimi.ingsw.model.player.Player;
 
 import java.util.List;
 
-public class MultiplayerPlayPhase implements GamePhase, PlayPhase{
+public class MultiplayerPlayPhase extends PlayPhase implements GamePhase{
 
-    private Controller controller;
-    private TurnController turnController;
-    private Player currentPlayer;
     private int turnIndex;
 
     public MultiplayerPlayPhase(Controller controller){
-        this.controller = controller;
+        setController(controller);
         this.turnIndex = 0;
-        this.currentPlayer = controller.getPlayers().get(turnIndex);
-        this.turnController = new TurnController(controller,this.currentPlayer);
+       setPlayer(controller.getPlayers().get(turnIndex));
+        setTurnController(new TurnController(controller,getPlayer()));
     }
     @Override
     public void handleResourceDiscard(String nickname)  {
         List<Player> players = null;
         try {
-            players = controller.getGame().getPlayers();
+            players = getController().getGame().getPlayers();
         } catch (InvalidMethodException | ZeroPlayerException e) {
             e.printStackTrace();
         }
@@ -37,6 +36,11 @@ public class MultiplayerPlayPhase implements GamePhase, PlayPhase{
                 }
             }
         }
+    }
+
+    @Override
+    public void handleMessage(MessageToServer message, ClientHandler clientHandler) {
+
     }
 
     @Override

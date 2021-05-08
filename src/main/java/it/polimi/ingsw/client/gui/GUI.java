@@ -4,6 +4,7 @@ import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.client.View;
 import it.polimi.ingsw.common.FunctionInterface;
 import it.polimi.ingsw.controller.actions.Action;
+import it.polimi.ingsw.enumerations.ActionType;
 import it.polimi.ingsw.enumerations.Marble;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.model.cards.LeaderCard;
@@ -167,6 +168,11 @@ public class GUI extends Application implements View {
 
     @Override
     public void displaySelectStorageRequest(Resource resource, boolean isInWarehouse, boolean isInStrongbox, boolean isInLeaderDepot) {
+
+    }
+
+    @Override
+    public void displayChooseActionRequest(Map<ActionType, Boolean> executableActions) {
 
     }
 

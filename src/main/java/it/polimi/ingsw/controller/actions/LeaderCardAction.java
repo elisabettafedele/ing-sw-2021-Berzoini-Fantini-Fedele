@@ -111,7 +111,6 @@ public class LeaderCardAction implements Action{
                 }
             }
         } catch (ValueNotPresentException e) {
-            //TODO non saprei se serve gestirla, direi di no
         }
         return true;
 
