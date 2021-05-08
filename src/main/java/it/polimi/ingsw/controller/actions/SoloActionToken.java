@@ -29,7 +29,7 @@ public abstract class SoloActionToken {
      * Executes the action of Lorenzo il Magnifico when playing in single player game mode
      * @param singlePlayerPlayPhase
      */
-    abstract void useActionToken(SinglePlayerPlayPhase singlePlayerPlayPhase);
+    public abstract void useActionToken(SinglePlayerPlayPhase singlePlayerPlayPhase);
 
     @Override
     public boolean equals(Object o) {
@@ -43,4 +43,5 @@ public abstract class SoloActionToken {
     public int hashCode() {
         return Objects.hash(pathImageFront, pathImageBack);
     }
+
 }

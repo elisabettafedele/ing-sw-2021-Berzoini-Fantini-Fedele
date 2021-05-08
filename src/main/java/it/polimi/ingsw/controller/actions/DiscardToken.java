@@ -18,7 +18,7 @@ public class DiscardToken extends SoloActionToken{
 
     @Override
     public void useActionToken(SinglePlayerPlayPhase singlePlayerPlayPhase) {
-
+        singlePlayerPlayPhase.discardDevelopmentCards(this.numOfCardRemoved, this.flagColor);
     }
 
     @Override

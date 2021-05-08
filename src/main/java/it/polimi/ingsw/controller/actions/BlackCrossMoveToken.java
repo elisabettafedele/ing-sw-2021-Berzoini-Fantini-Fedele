@@ -17,7 +17,9 @@ public class BlackCrossMoveToken extends SoloActionToken{
 
     @Override
     public void useActionToken(SinglePlayerPlayPhase singlePlayerPlayPhase) {
-
+        singlePlayerPlayPhase.moveBlackCross(numOfMoves);
+        if(shuffle)
+            singlePlayerPlayPhase.shuffleTokens();
     }
 
     @Override
