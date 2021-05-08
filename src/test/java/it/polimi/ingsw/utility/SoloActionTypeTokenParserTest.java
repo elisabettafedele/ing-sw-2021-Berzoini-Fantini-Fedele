@@ -11,7 +11,7 @@ import java.util.Queue;
 
 import static org.junit.Assert.*;
 
-public class SoloActionTokenParserTest {
+public class SoloActionTypeTokenParserTest {
 
     @Test
     public void TestParseTokens() {

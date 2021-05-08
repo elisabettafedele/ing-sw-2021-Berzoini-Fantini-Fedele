@@ -16,9 +16,9 @@ public class MultiplayerPlayPhase implements GamePhase, PlayPhase{
 
     public MultiplayerPlayPhase(Controller controller){
         this.controller = controller;
-        this.turnController = new TurnController(controller);
         this.turnIndex = 0;
         this.currentPlayer = controller.getPlayers().get(turnIndex);
+        this.turnController = new TurnController(controller,this.currentPlayer);
     }
     @Override
     public void handleResourceDiscard(String nickname)  {
