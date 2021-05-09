@@ -124,9 +124,9 @@ public class CLI implements View {
     }
 
     @Override
-    public void displayMarbleInsertionPositionRequest(Action action) {
+    public void displayMarbleInsertionPositionRequest() {
         System.out.println("Insert a marble insertion position (from 1 to 8) to insert the marble in the market trace: ");
-        client.sendMessageToServer(new MarbleInsertionPositionResponse(action, InputParser.getInt("Invalid position: the position must be an integer from 1 to 8", conditionOnIntegerRange(1, 8))));
+        client.sendMessageToServer(new MarbleInsertionPositionResponse(InputParser.getInt("Invalid position: the position must be an integer from 1 to 8", conditionOnIntegerRange(1, 8))));
     }
 
     @Override
@@ -188,13 +188,15 @@ public class CLI implements View {
         System.out.println("Do you want to swap or move your resources? Type " + Command.END_REORGANIZE_DEPOTS.command + " if you want to end the reorganization of your depots");
         System.out.println(Command.SWAP.command + " | " + Command.MOVE.command + " | " + Command.END_REORGANIZE_DEPOTS.command);
         String commandType = InputParser.getString("Please insert a valid command", conditionOnString(possibleCommands));
+        if (commandType.equals(Command.END_REORGANIZE_DEPOTS.command)) {
+            client.sendMessageToServer(new NotifyEndDepotsReorganization());
+            return;
+        }
         System.out.print("Select the origin depot: ");
         String originDepot = InputParser.getString("Please insert a valid depot", conditionOnString(depots));
         System.out.print("Select the destination depot: ");
         String destinationDepot = InputParser.getString("Please insert a valid depot", conditionOnString(depots));
-        if (commandType.equals(Command.END_REORGANIZE_DEPOTS.command))
-            client.sendMessageToServer(new NotifyEndDepotsReorganization());
-        else if (commandType.equals(Command.SWAP.command))
+        if (commandType.equals(Command.SWAP.command))
             client.sendMessageToServer(new SwapWarehouseDepotsRequest(originDepot,destinationDepot));
         else {
             System.out.print("Select the quantity of the resources you want to move: ");
@@ -573,11 +575,21 @@ public class CLI implements View {
     }
 
     @Override
-    public void displayChooseActionRequest(Map<ActionType, Boolean> executableActions) {
-        System.out.println("It's your turn!");
+    public void displayChooseActionRequest(Map<ActionType, Boolean> executableActions, boolean standardActionDone) {
+        List<String> availableActions = executableActions.keySet().stream().filter(executableActions::get).map(Enum::name).collect(Collectors.toList());
+        System.out.println("Choose your next action! These are the ones available\n" + availableActions);
+        if (standardActionDone)
+            System.out.println("Otherwise, you can end your turn now, just typing \"end\"");
+        availableActions.add("end");
         //TODO gestire la possibilità di vedere gli altri giocatori la grid e il market prima di scegliere la action
         int selection=0;//per esempio, corrisponde al value della actionType (nella enum) scelta
-        client.sendMessageToServer(new ChooseActionResponse(selection));
+        String selectionString = InputParser.getString("Please insert a valid action name", conditionOnString(availableActions));
+        if (selectionString.equals("end"))
+            client.sendMessageToServer(new EndTurnRequest());
+        else {
+            selection = ActionType.valueOf(selectionString).getValue();
+            client.sendMessageToServer(new ChooseActionResponse(selection));
+        }
 
     }
 

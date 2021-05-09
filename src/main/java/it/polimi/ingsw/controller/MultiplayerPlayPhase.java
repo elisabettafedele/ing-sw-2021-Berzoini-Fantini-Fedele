@@ -4,6 +4,8 @@ import it.polimi.ingsw.Server.ClientHandler;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.InvalidMethodException;
 import it.polimi.ingsw.exceptions.ZeroPlayerException;
+import it.polimi.ingsw.messages.toServer.ChooseActionResponse;
+import it.polimi.ingsw.messages.toServer.EndTurnRequest;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
 import it.polimi.ingsw.model.player.Player;
 
@@ -17,7 +19,6 @@ public class MultiplayerPlayPhase extends PlayPhase implements GamePhase{
         setController(controller);
         this.turnIndex = 0;
         setPlayer(controller.getPlayers().get(turnIndex));
-        setTurnController(new TurnController(controller,getPlayer()));
     }
     @Override
     public void handleResourceDiscard(String nickname)  {
@@ -38,14 +39,11 @@ public class MultiplayerPlayPhase extends PlayPhase implements GamePhase{
         }
     }
 
-    @Override
-    public void handleMessage(MessageToServer message, ClientHandler clientHandler) {
-
-    }
 
     @Override
     public void executePhase(Controller controller) {
-
+        setTurnController(new TurnController(controller,getPlayer()));
+        getTurnController().start(getPlayer());
     }
 
     public String toString(){

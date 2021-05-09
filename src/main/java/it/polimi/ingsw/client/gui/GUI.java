@@ -113,7 +113,7 @@ public class GUI extends Application implements View {
     }
 
     @Override
-    public void displayMarbleInsertionPositionRequest(Action action) {
+    public void displayMarbleInsertionPositionRequest() {
 
     }
 
@@ -172,7 +172,7 @@ public class GUI extends Application implements View {
     }
 
     @Override
-    public void displayChooseActionRequest(Map<ActionType, Boolean> executableActions) {
+    public void displayChooseActionRequest(Map<ActionType, Boolean> executableActions, boolean standardActionDone) {
 
     }
 

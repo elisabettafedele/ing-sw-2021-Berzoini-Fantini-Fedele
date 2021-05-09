@@ -7,16 +7,10 @@ import it.polimi.ingsw.controller.actions.TakeResourcesFromMarketAction;
 import it.polimi.ingsw.messages.toClient.MarbleInsertionPositionRequest;
 
 public class MarbleInsertionPositionResponse implements MessageToServer{
-    Action action;
     private int insertionPosition;
 
-    public MarbleInsertionPositionResponse(Action action, int insertionPosition){
-        this.action = action;
+    public MarbleInsertionPositionResponse(int insertionPosition){
         this.insertionPosition = insertionPosition;
-    }
-
-    private boolean isLegal(){
-        return insertionPosition > 0 && insertionPosition < 8;
     }
 
     public int getInsertionPosition(){
@@ -25,9 +19,6 @@ public class MarbleInsertionPositionResponse implements MessageToServer{
 
     @Override
     public void handleMessage(ServerInterface server, ClientHandlerInterface clientHandler) {
-        if (!isLegal())
-            clientHandler.sendMessageToClient(new MarbleInsertionPositionRequest(action, true));
-        else
-            clientHandler.getCurrentAction().handleMessage(this);
+        clientHandler.getCurrentAction().handleMessage(this);
     }
 }

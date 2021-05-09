@@ -33,7 +33,7 @@ public class LeaderCardAction implements Action{
     public void reset(Player currentPlayer) {
         this.player = currentPlayer;
         this.clientHandler = turnController.getController().getConnectionByNickname(currentPlayer.getNickname());
-        leaderCardsIDs=null;
+        leaderCardsIDs=new ArrayList<>();
     }
 
     @Override

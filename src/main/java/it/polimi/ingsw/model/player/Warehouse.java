@@ -170,7 +170,7 @@ public class Warehouse {
     public void switchRows(int one, int other) throws UnswitchableDepotsException, InsufficientSpaceException, InvalidArgumentException {
         Resource tmpType;
         int tmpQuantity;
-        if (one == other || one < 0 || one >= numberOfDepots || other >= numberOfDepots || other < 0)
+        if (one < 0 || one >= numberOfDepots || other >= numberOfDepots || other < 0)
             throw new InvalidArgumentException("invalid row number\n");
         if (!switchable(one, other))
             throw new UnswitchableDepotsException();

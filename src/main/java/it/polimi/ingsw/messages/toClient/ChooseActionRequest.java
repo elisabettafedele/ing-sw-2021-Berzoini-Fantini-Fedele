@@ -8,12 +8,14 @@ import java.util.Map;
 public class ChooseActionRequest implements  MessageToClient
 {
     Map<ActionType, Boolean> executableActions;
-    public ChooseActionRequest(Map<ActionType, Boolean> executableActions) {
+    boolean standardActionDone;
+    public ChooseActionRequest(Map<ActionType, Boolean> executableActions, boolean standardActionDone) {
         this.executableActions=executableActions;
+        this.standardActionDone = standardActionDone;
     }
 
     @Override
     public void handleMessage(VirtualView view) {
-        view.displayChooseActionRequest(executableActions);
+        view.displayChooseActionRequest(executableActions, standardActionDone);
     }
 }

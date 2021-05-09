@@ -59,7 +59,7 @@ public class TakeResourcesFromMarketAction implements Action {
 
     public void execute() {
         clientHandler.setCurrentAction(this);
-        clientHandler.sendMessageToClient(new MarbleInsertionPositionRequest(this, false));
+        clientHandler.sendMessageToClient(new MarbleInsertionPositionRequest());
     }
 
     @Override
@@ -141,7 +141,7 @@ public class TakeResourcesFromMarketAction implements Action {
      *
      * @return an {@link ArrayList} containing all the possible {@link Resource} types that a white marble can be converted to, according to the {@link LeaderCard} possessed by the acting player
      */
-    private List<Resource> getWhiteMarblesConversion() {
+    public List<Resource> getWhiteMarblesConversion() {
         List<Resource> availableConversions = new ArrayList<>();
         List<Effect> effectsWhiteMarble = player.getPersonalBoard().getAvailableEffects(EffectType.WHITE_MARBLE);
         for (Effect effect : effectsWhiteMarble) {
@@ -168,7 +168,8 @@ public class TakeResourcesFromMarketAction implements Action {
             } else if (marble != Marble.WHITE)
                 resourcesToStore.add(Resource.valueOf(marble.getValue()));
         }
-        clientHandler.sendMessageToClient(new TextMessage("Conversion done!\nYou now have to store these resources" + resourcesToStore));
+        clientHandler.sendMessageToClient(new TextMessage("Conversion done!\nYou now have to store these resources: " + resourcesToStore));
+        handleChooseStorageTypeRequest();
     }
 
     /**
@@ -290,6 +291,10 @@ public class TakeResourcesFromMarketAction implements Action {
     private void handleDiscard(Resource resource) {
         resourcesToStore.remove(resource);
         playPhase.handleResourceDiscard(player.getNickname());
+        if (resourcesToStore.isEmpty())
+            manageEndAction();
+        else
+            handleChooseStorageTypeRequest();
     }
 
     /**
@@ -315,7 +320,7 @@ public class TakeResourcesFromMarketAction implements Action {
      */
     private void manageEndAction() {
         turnController.setStandardActionDoneToTrue();
-        //turnController.nextActionManager();
+        turnController.setNextAction();
     }
 
 }

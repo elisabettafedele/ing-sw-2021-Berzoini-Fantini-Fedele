@@ -53,7 +53,7 @@ public class BuyDevelopmentCardAction implements Action{
     public void reset(Player currentPlayer) {
         this.currentPlayer = currentPlayer;
         this.clientHandler = turnController.getController().getConnectionByNickname(currentPlayer.getNickname());
-        buyableCardsIDs=null;
+        buyableCardsIDs=new ArrayList<>();
         developmentCardChosen=null;
     }
 

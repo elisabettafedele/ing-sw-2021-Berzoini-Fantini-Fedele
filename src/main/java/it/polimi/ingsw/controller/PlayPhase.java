@@ -5,6 +5,7 @@ import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.InvalidMethodException;
 import it.polimi.ingsw.exceptions.ZeroPlayerException;
 import it.polimi.ingsw.messages.toServer.ChooseActionResponse;
+import it.polimi.ingsw.messages.toServer.EndTurnRequest;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
 import it.polimi.ingsw.model.player.Player;
 
@@ -41,9 +42,10 @@ public abstract class PlayPhase {
 
     }
     public void handleMessage(MessageToServer message, ClientHandler clientHandler) {
-        if(message instanceof ChooseActionResponse){
-            getTurnController().setActionChosen(((ChooseActionResponse) message).getActionChosen());
-        }
+        if (message instanceof ChooseActionResponse)
+            getTurnController().doAction(((ChooseActionResponse) message).getActionChosen());
+        if (message instanceof EndTurnRequest)
+            getTurnController().endTurn();
     }
 
 }

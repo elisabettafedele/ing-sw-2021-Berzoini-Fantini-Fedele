@@ -21,7 +21,7 @@ public interface VirtualView {
     //CONNECTION
     void displayTimeoutExpiredMessage();
     //ACTIONS
-    void displayMarbleInsertionPositionRequest(Action action);
+    void displayMarbleInsertionPositionRequest();
     void displayChooseWhiteMarbleConversionRequest(List<Resource> marbles, int numberOfMarbles);
     void displayMarblesTaken(List<Marble> marblesTaken, boolean needToChooseConversion);
     void displayChooseStorageTypeRequest(Resource resource, List<String> availableDepots, boolean setUpPhase);
@@ -38,5 +38,5 @@ public interface VirtualView {
 
     void displaySelectStorageRequest(Resource resource, boolean isInWarehouse, boolean isInStrongbox, boolean isInLeaderDepot);
 
-    void displayChooseActionRequest(Map<ActionType, Boolean> executableActions);
+    void displayChooseActionRequest(Map<ActionType, Boolean> executableActions, boolean standardActionDone);
 }
