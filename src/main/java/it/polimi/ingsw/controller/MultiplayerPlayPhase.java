@@ -16,7 +16,7 @@ public class MultiplayerPlayPhase extends PlayPhase implements GamePhase{
     public MultiplayerPlayPhase(Controller controller){
         setController(controller);
         this.turnIndex = 0;
-       setPlayer(controller.getPlayers().get(turnIndex));
+        setPlayer(controller.getPlayers().get(turnIndex));
         setTurnController(new TurnController(controller,getPlayer()));
     }
     @Override

@@ -1,9 +1,7 @@
 package it.polimi.ingsw.controller.actions;
 
 import it.polimi.ingsw.Server.ClientHandler;
-import it.polimi.ingsw.controller.Controller;
-import it.polimi.ingsw.controller.PlayPhase;
-import it.polimi.ingsw.controller.TurnController;
+import it.polimi.ingsw.controller.*;
 import it.polimi.ingsw.enumerations.*;
 import it.polimi.ingsw.exceptions.*;
 import it.polimi.ingsw.messages.toClient.*;
@@ -40,7 +38,6 @@ public class TakeResourcesFromMarketAction implements Action {
         this.turnController=turnController;
         this.controller = turnController.getController();
         this.resourcesToStore = new LinkedList<>();
-        this.turnController = turnController;
         this.market = controller.getGame().getMarket();
         this.playPhase = (PlayPhase) controller.getGamePhase();
     }

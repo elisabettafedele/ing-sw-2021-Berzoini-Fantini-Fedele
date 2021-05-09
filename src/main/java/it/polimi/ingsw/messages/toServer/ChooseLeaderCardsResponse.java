@@ -23,6 +23,6 @@ public class ChooseLeaderCardsResponse implements MessageToServer{
     @Override
     public void handleMessage(ServerInterface server, ClientHandlerInterface clientHandler) {
         Server.SERVER_LOGGER.log(Level.INFO, "New message from " + clientHandler.getNickname() + " that has chosen his leader cards");
-        clientHandler.getCurrentAction().handleMessage(this);
+        clientHandler.getController().handleMessage(this, clientHandler);
     }
 }
