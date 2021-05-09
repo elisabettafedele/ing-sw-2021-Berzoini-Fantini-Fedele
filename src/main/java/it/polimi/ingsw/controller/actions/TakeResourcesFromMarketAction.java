@@ -163,13 +163,16 @@ public class TakeResourcesFromMarketAction implements Action {
             if (marble == Marble.RED) {
                 try {
                     player.getPersonalBoard().moveMarker(1);
-                } catch (InvalidArgumentException ignored) {
-                }
+                } catch (InvalidArgumentException ignored) { }
             } else if (marble != Marble.WHITE)
                 resourcesToStore.add(Resource.valueOf(marble.getValue()));
         }
-        clientHandler.sendMessageToClient(new TextMessage("Conversion done!\nYou now have to store these resources: " + resourcesToStore));
-        handleChooseStorageTypeRequest();
+        if (resourcesToStore.isEmpty()) {
+            manageEndAction();
+        } else {
+            clientHandler.sendMessageToClient(new TextMessage("Conversion done!\nYou now have to store these resources: " + resourcesToStore));
+            handleChooseStorageTypeRequest();
+        }
     }
 
     /**

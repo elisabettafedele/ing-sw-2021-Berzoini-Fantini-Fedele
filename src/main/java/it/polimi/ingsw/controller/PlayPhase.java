@@ -38,6 +38,8 @@ public abstract class PlayPhase {
         return player;
     }
 
+    public abstract void nextTurn();
+
     public void handleResourceDiscard(String nickname){
 
     }

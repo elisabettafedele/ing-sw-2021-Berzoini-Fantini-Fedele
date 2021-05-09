@@ -338,7 +338,7 @@ public class PersonalBoard {
      */
     public List<Effect> getAvailableEffects(EffectType effectType){
         //If there is not any leader card active return an empty list
-        return this.availableLeaderCards().stream().filter(x -> x.isActive() && x.getEffect().getEffectType().equals(effectType)).map(LeaderCard::getEffect).collect(Collectors.toList());
+        return this.availableLeaderCards().stream().filter(x -> (x.isActive() && x.getEffect().getEffectType().equals(effectType))).map(LeaderCard::getEffect).collect(Collectors.toList());
     }
 
     /**

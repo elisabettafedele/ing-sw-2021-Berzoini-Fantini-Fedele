@@ -100,6 +100,11 @@ public class SinglePlayerPlayPhase extends PlayPhase implements GamePhase{
     }
 
     @Override
+    public void nextTurn() {
+        //TODO
+    }
+
+    @Override
     public void handleResourceDiscard(String nickname) {
         moveBlackCross(1);
     }

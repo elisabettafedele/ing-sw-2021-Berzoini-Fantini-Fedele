@@ -20,6 +20,13 @@ public class MultiplayerPlayPhase extends PlayPhase implements GamePhase{
         this.turnIndex = 0;
         setPlayer(controller.getPlayers().get(turnIndex));
     }
+
+    @Override
+    public void nextTurn() {
+        turnIndex = turnIndex == getController().getPlayers().size() - 1 ? 0 : turnIndex + 1;
+        getTurnController().start(getController().getPlayers().get(turnIndex));
+    }
+
     @Override
     public void handleResourceDiscard(String nickname)  {
         List<Player> players = null;
@@ -38,6 +45,7 @@ public class MultiplayerPlayPhase extends PlayPhase implements GamePhase{
             }
         }
     }
+
 
 
     @Override

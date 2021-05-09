@@ -149,7 +149,7 @@ public class CLI implements View {
         System.out.println(marblesTaken.get(marblesTaken.size()-1));
         if (marblesTaken.contains(Marble.WHITE)){
             if (!needToChooseConversion)
-                System.out.println("You have one White Marble Effect Active! White marbles will be automatically converted according to this effect");
+                System.out.println("White marbles will be automatically converted according to your leader card effects (if any)");
             else
                 System.out.println("You have more than one White Marble Effect Active! You need to choose one white marble at a time how you want to convert it");
         }
@@ -157,9 +157,13 @@ public class CLI implements View {
 
     @Override
     public void displayChooseStorageTypeRequest(Resource resource, List<String> availableDepots, boolean setUpPhase) {
-        System.out.println("Choose a depot for the "+ resource +"\nAvailable depots for this resource type are:");
-        for (String depot : availableDepots)
-            System.out.println("- " + depot);
+        if (availableDepots.isEmpty())
+            System.out.println("There are no available depots for this resource type");
+        else {
+            System.out.println("Choose a depot for the " + resource + "\nAvailable depots for this resource type are:");
+            for (String depot : availableDepots)
+                System.out.println("- " + depot);
+        }
         List<String> acceptedValues = availableDepots;
         if (!setUpPhase) {
             System.out.println("Type d if you want to discard the resource or r if you want to reorganize your depots");

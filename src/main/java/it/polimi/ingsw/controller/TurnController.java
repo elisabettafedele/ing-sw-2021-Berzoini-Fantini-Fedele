@@ -202,6 +202,7 @@ public class TurnController {
 
     public void endTurn(){
         clientHandler.sendMessageToClient(new TextMessage("Turn ended"));
+        ((PlayPhase) controller.getGamePhase()).nextTurn();
     }
 
 }
