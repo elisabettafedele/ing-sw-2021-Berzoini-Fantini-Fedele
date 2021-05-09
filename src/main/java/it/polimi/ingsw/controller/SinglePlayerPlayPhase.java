@@ -42,7 +42,7 @@ public class SinglePlayerPlayPhase implements GamePhase, PlayPhase{
 
     @Override
     public void executePhase(Controller controller) {
-        while(!turnController.isEndTriggered()){
+        while(!turnController.isEndTriggered()){ //controlla se basta questo come controllo
             turnController.start(this.player);
             if(!turnController.isEndTriggered())
                 useActionToken();
