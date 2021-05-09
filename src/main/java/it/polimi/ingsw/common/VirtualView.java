@@ -2,6 +2,7 @@ package it.polimi.ingsw.common;
 
 
 import it.polimi.ingsw.controller.actions.Action;
+import it.polimi.ingsw.enumerations.ActionType;
 import it.polimi.ingsw.enumerations.Marble;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.model.cards.LeaderCard;
@@ -36,4 +37,6 @@ public interface VirtualView {
     void displayMessage(String message);
 
     void displaySelectStorageRequest(Resource resource, boolean isInWarehouse, boolean isInStrongbox, boolean isInLeaderDepot);
+
+    void displayChooseActionRequest(Map<ActionType, Boolean> executableActions);
 }

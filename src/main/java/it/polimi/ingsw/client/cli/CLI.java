@@ -6,12 +6,9 @@ import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.client.View;
 import it.polimi.ingsw.client.utilities.InputParser;
 import it.polimi.ingsw.controller.actions.Action;
-import it.polimi.ingsw.enumerations.GameMode;
-import it.polimi.ingsw.enumerations.Marble;
-import it.polimi.ingsw.enumerations.Resource;
+import it.polimi.ingsw.enumerations.*;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.ValueNotPresentException;
-import it.polimi.ingsw.enumerations.ResourceStorageType;
 import it.polimi.ingsw.messages.toServer.*;
 import it.polimi.ingsw.model.cards.LeaderCard;
 import it.polimi.ingsw.model.cards.Value;
@@ -573,6 +570,15 @@ public class CLI implements View {
             }
             System.out.println("Incorrect choice");
         }
+    }
+
+    @Override
+    public void displayChooseActionRequest(Map<ActionType, Boolean> executableActions) {
+        System.out.println("It's your turn!");
+        //TODO gestire la possibilità di vedere gli altri giocatori la grid e il market prima di scegliere la action
+        int selection=0;//per esempio, corrisponde al value della actionType (nella enum) scelta
+        client.sendMessageToServer(new ChooseActionResponse(selection));
+
     }
 
     public static Predicate<Integer> conditionOnIntegerRange(int min, int max){

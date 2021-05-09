@@ -2,10 +2,12 @@ package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.controller.actions.SoloActionToken;
 import it.polimi.ingsw.enumerations.FlagColor;
+import it.polimi.ingsw.Server.ClientHandler;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.InvalidMethodException;
 import it.polimi.ingsw.exceptions.ZeroPlayerException;
 import it.polimi.ingsw.model.cards.DevelopmentCard;
+import it.polimi.ingsw.messages.toServer.MessageToServer;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.utility.SoloActionTokenParser;
 
@@ -14,7 +16,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.stream.Collectors;
 
-public class SinglePlayerPlayPhase implements GamePhase, PlayPhase{
+public class SinglePlayerPlayPhase extends PlayPhase implements GamePhase{
     private Controller controller;
     private TurnController turnController;
     private Player player;
@@ -76,4 +78,9 @@ public class SinglePlayerPlayPhase implements GamePhase, PlayPhase{
         moveBlackCross(1);
     }
 
+
+    @Override
+    public void handleMessage(MessageToServer message, ClientHandler clientHandler) {
+
+    }
 }

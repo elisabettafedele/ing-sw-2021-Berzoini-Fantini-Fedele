@@ -1,9 +1,17 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.Server.ClientHandler;
 import it.polimi.ingsw.controller.actions.*;
 import it.polimi.ingsw.enumerations.ActionType;
 import it.polimi.ingsw.enumerations.GameMode;
+import it.polimi.ingsw.exceptions.InvalidArgumentException;
+import it.polimi.ingsw.exceptions.InvalidMethodException;
+import it.polimi.ingsw.exceptions.ZeroPlayerException;
+import it.polimi.ingsw.messages.toClient.ChooseActionRequest;
+import it.polimi.ingsw.messages.toClient.ChooseProductionPowersRequest;
+import it.polimi.ingsw.model.player.PersonalBoard;
 import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.model.player.VaticanReportSection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +19,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class TurnController {
+    private ClientHandler clientHandler;
     private int numberOfLeaderActionsDone=0;
     private boolean standardActionDone=false;
     private Action nextAction;
@@ -21,6 +30,7 @@ public class TurnController {
     private boolean endTrigger=false;
     private List<Action> possibleActions;
     private Map<ActionType, Boolean> executableActions;
+    private int actionChosen= -1;
 
     public Controller getController() {
         return controller;
@@ -28,6 +38,7 @@ public class TurnController {
 
     public TurnController(Controller controller,Player currentPlayer) {
         this.currentPlayer=currentPlayer;
+        this.clientHandler= controller.getConnectionByNickname(currentPlayer.getNickname());
         this.numberOfLeaderActionsDone = 0;
         this.standardActionDone = false;
         this.isInterruptible = controller.getGame().getGameMode() != GameMode.MULTI_PLAYER;
@@ -43,14 +54,26 @@ public class TurnController {
 
     public void start(Player currentPlayer){
         this.currentPlayer=currentPlayer;
+        this.clientHandler= controller.getConnectionByNickname(currentPlayer.getNickname());
         reset();
         while(!((endTrigger && isInterruptible) || endTurnImmediately || executableActions.values().stream().filter(x->x==true).collect(Collectors.toList()).isEmpty())){
             checkExecutableActions();
+            clientHandler.sendMessageToClient(new ChooseActionRequest(executableActions));
+            while(actionChosen==-1){
+                //da fare in un thread
+            }
+            if(executableActions.get(ActionType.valueOf(actionChosen))==true){
+                possibleActions.get(actionChosen).execute();
+            }
+            actionChosen=-1;
+            if(isInterruptible&&controller.getGame().getDevelopmentCardGrid().checkEmptyColumn()){
+                endTurnImmediately=true;
+            }
         }
 
     }
 
-    public void reset(){
+    private void reset(){
         numberOfLeaderActionsDone=0;
         standardActionDone=false;
         endTurnImmediately=false;
@@ -81,24 +104,47 @@ public class TurnController {
             }
         }
     }
+
+    public void setActionChosen(int actionChosen){
+        this.actionChosen=actionChosen;
+    }
     public Player getCurrentPlayer() {
         return currentPlayer;
     }
 
     public void checkFaithTrack(){
+        if(controller.getGame().getFaithTrack().isVaticanReport(currentPlayer.getPersonalBoard().getMarkerPosition())){
+            VaticanReportSection vaticanReportSection=controller.getGame().getFaithTrack().getCurrentSection();
+            if(!isInterruptible){
+                try {
+                    for(Player p: controller.getGame().getPlayers()){
+                        if(p.getPersonalBoard().getMarkerPosition()>= vaticanReportSection.getStart()){
+                            try {
+                                p.addVictoryPoints(vaticanReportSection.getPopeFavorPoints());
+                            } catch (InvalidArgumentException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                } catch (InvalidMethodException e) {
+                    e.printStackTrace();
+                } catch (ZeroPlayerException e) {
+                    e.printStackTrace();
+                }
+            }
+            else{
+                try {
+                    currentPlayer.addVictoryPoints(vaticanReportSection.getPopeFavorPoints());
+                } catch (InvalidArgumentException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(currentPlayer.getPersonalBoard().getMarkerPosition()==controller.getGame().getFaithTrack().getLength()){
+                endTrigger=true;
+            }
 
-    }
+        }
 
-    public void nextActionManager(){
-        //TODO
-    }
-
-    public void chooseAction(){
-
-    }
-
-    public List<Action> getAvailableActions(){
-        return possibleActions.stream().filter(Action::isExecutable).collect(Collectors.toList());
     }
 
     private void buildActions(){

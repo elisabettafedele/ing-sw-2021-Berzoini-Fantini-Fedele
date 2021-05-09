@@ -72,6 +72,9 @@ public class Controller {
         }
 
         //IN-GAME MESSAGES
+        if(gamePhase instanceof PlayPhase){
+            ((PlayPhase) gamePhase).handleMessage(message,(ClientHandler) clientHandler);
+        }
     }
 
     public Game getGame(){

@@ -12,7 +12,7 @@ public class VaticanReportSection {
     private final int  start;
     private final int  end;
     private final int  popeFavorPoints;
-    private boolean vaticanReportAvailable;
+    //private boolean vaticanReportAvailable;
 
     /**
      *
@@ -28,7 +28,7 @@ public class VaticanReportSection {
         this.start = start;
         this.end = end;
         this.popeFavorPoints = popesFavorPoints;
-        this.vaticanReportAvailable = true;
+        //this.vaticanReportAvailable = true;
     }
 
     /**
@@ -59,14 +59,20 @@ public class VaticanReportSection {
      *
      * @return returns true is vatican report is available, false otherwise
      */
+    /*
     public boolean isVaticanReportAvailable() {
         return vaticanReportAvailable;
     }
 
+     */
+
     /**
      * Makes vatican report unavailable
      */
+    /*
     public void setVaticanReportUnavailable() {
         vaticanReportAvailable=false;
     }
+
+     */
 }

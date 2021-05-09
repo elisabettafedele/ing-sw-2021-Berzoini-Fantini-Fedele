@@ -9,6 +9,7 @@ import it.polimi.ingsw.messages.toClient.SelectCardRequest;
 import it.polimi.ingsw.messages.toClient.SelectDevelopmentCardSlotRequest;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
 import it.polimi.ingsw.messages.toServer.SelectCardResponse;
+import it.polimi.ingsw.messages.toServer.SelectDevelopmentCardSlotResponse;
 import it.polimi.ingsw.model.cards.DevelopmentCard;
 import it.polimi.ingsw.model.cards.Effect;
 import it.polimi.ingsw.model.player.Player;
@@ -127,26 +128,26 @@ public class BuyDevelopmentCardAction implements Action{
 
     @Override
     public void handleMessage(MessageToServer message) {
-            for(DevelopmentCard dc:turnController.getController().getGame().getDevelopmentCardGrid().getAvailableCards()){
-                if(dc.getID()==((SelectCardResponse) message).getSelectedCard()){
-                    developmentCardChosen=dc;
+        if(message instanceof SelectCardResponse) {
+            for (DevelopmentCard dc : turnController.getController().getGame().getDevelopmentCardGrid().getAvailableCards()) {
+                if (dc.getID() == ((SelectCardResponse) message).getSelectedCard()) {
+                    developmentCardChosen = dc;
                 }
             }
-    }
+        }
+        if(message instanceof SelectDevelopmentCardSlotResponse){
+            try {
+                turnController.getController().getGame().getDevelopmentCardGrid().removeCard(developmentCardChosen);
+                Map<Resource, Integer> cost = developmentCardChosen.getDiscountedCost(this.getDiscountedResources());
+                RemoveResources.removeResources(cost,clientHandler,currentPlayer);
+                currentPlayer.getPersonalBoard().addDevelopmentCard(developmentCardChosen,((SelectDevelopmentCardSlotResponse) message).getSlotSelected());
 
-    public void insertCard(int slot){
-        try {
-            turnController.getController().getGame().getDevelopmentCardGrid().removeCard(developmentCardChosen);
-            Map<Resource, Integer> cost = developmentCardChosen.getDiscountedCost(this.getDiscountedResources());
-            RemoveResources.removeResources(cost,clientHandler,currentPlayer);
-            currentPlayer.getPersonalBoard().addDevelopmentCard(developmentCardChosen,slot);
-
-        } catch (InvalidArgumentException e) {
-            e.printStackTrace();
-        } catch (InvalidSlotException e) {
-            e.printStackTrace();
+            } catch (InvalidArgumentException e) {
+                e.printStackTrace();
+            } catch (InvalidSlotException e) {
+                e.printStackTrace();
+            }
         }
     }
-
 
 }
