@@ -22,7 +22,6 @@ public class SinglePlayerPlayPhase extends PlayPhase implements GamePhase{
     private Player player;
     private int blackCrossPosition;
     private Queue<SoloActionToken> tokens;
-    //private Player LorenzoIlMagnifico = controller.getGame().
 
     public SinglePlayerPlayPhase(Controller controller){
         this.controller = controller;
@@ -38,39 +37,66 @@ public class SinglePlayerPlayPhase extends PlayPhase implements GamePhase{
         shuffleTokens();
     }
 
-    public void shuffleTokens() {
-        Collections.shuffle((List<SoloActionToken>) this.tokens);
-    }
-
     @Override
     public void executePhase(Controller controller) {
-        while(!turnController.isEndTriggered()){ //controlla se basta questo come controllo
+        while(!turnController.isEndTriggered()){ //TODO: check if only this is ok, should be
             turnController.start(this.player);
-            if(!turnController.isEndTriggered())
-                useActionToken();
+            if(!turnController.isEndTriggered()) {
+                useActionToken();//TODO: view communication.
+            }
+            else{
+                player.setWinner(true);
+            }
         }
+        //nextPhase
     }
 
     private void useActionToken() {
         SoloActionToken token = tokens.remove(); //removing the first of the queue;
         tokens.add(token); //saving the used token at the end of the queue;
-
         token.useActionToken(this);
+    }
 
-
+    public void shuffleTokens() {
+        Collections.shuffle((List<SoloActionToken>) this.tokens);
     }
 
     public void discardDevelopmentCards(int numOfCard2Remove, FlagColor flagColor){
-        List<DevelopmentCard> availableCards = controller.getGame().getDevelopmentCardGrid().getAvailableCards();
-        availableCards = availableCards.stream().filter(dc -> dc.getFlag().getFlagColor().equals(flagColor)).collect(Collectors.toList());
-        //mi serve solo la carta di livello più basso!
-        if(availableCards.size() >= numOfCard2Remove){
+        for(int i = 0; i < numOfCard2Remove; i++){
+            List<DevelopmentCard> availableCards = controller.getGame().getDevelopmentCardGrid().getAvailableCards();
+            List<DevelopmentCard> rightColorCards = availableCards.stream().filter(dc -> dc.getFlag().getFlagColor().equals(flagColor)).collect(Collectors.toList());
+
+            if(rightColorCards.size() > 0){
+                DevelopmentCard card2Remove = getLowerCard(rightColorCards);
+                try {
+                    controller.getGame().getDevelopmentCardGrid().removeCard(card2Remove);
+                } catch (InvalidArgumentException e) {
+                    e.printStackTrace();
+                }
+            }else{
+                turnController.setEndTriggerToTrue();
+                player.setWinner(false); //useless cause is false by default, leave here just to remember
+                //TODO: lost the game communication
+                break;
+            }
 
         }
     }
 
+    private DevelopmentCard getLowerCard(List<DevelopmentCard> availableCards) {
+        DevelopmentCard lowerDevelopmentCard = availableCards.get(0);
+        for(DevelopmentCard dc : availableCards){
+            if(dc.getFlag().getFlagLevel().getValue() < lowerDevelopmentCard.getFlag().getFlagLevel().getValue()){
+                lowerDevelopmentCard = dc;
+            }
+        }
+        return lowerDevelopmentCard;
+    }
+
     public void moveBlackCross(int step){
         blackCrossPosition += step;
+        turnController.checkFaithTrack(); //TODO: need to be the checked for the black cross
+        //TODO, manage eventual Lorenzo's victory.
     }
 
     @Override
@@ -78,7 +104,7 @@ public class SinglePlayerPlayPhase extends PlayPhase implements GamePhase{
         moveBlackCross(1);
     }
 
-
+    //TODO: check this
     @Override
     public void handleMessage(MessageToServer message, ClientHandler clientHandler) {
 
