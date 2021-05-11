@@ -90,15 +90,7 @@ public class BuyDevelopmentCardAction implements Action{
     private boolean enoughResourcesAvailable(DevelopmentCard card)  {
         //First, I get the players possessions
         Map<Resource, Integer> possessions = null;
-        try {
-            possessions = currentPlayer.getPersonalBoard().countResources();
-        } catch (InactiveCardException e) {
-            e.printStackTrace();
-        } catch (DifferentEffectTypeException e) {
-            e.printStackTrace();
-        } catch (InvalidArgumentException e) {
-            e.printStackTrace();
-        }
+        possessions = currentPlayer.getPersonalBoard().countResources();
         assert(possessions != null);
         //Then, I get the available Discount Effects, if any
         List <Resource> discounts = getDiscountedResources();

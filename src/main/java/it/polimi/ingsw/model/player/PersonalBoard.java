@@ -6,7 +6,6 @@ import it.polimi.ingsw.model.cards.*;
 import it.polimi.ingsw.model.depot.Depot;
 import it.polimi.ingsw.model.depot.LeaderDepot;
 import it.polimi.ingsw.model.depot.StrongboxDepot;
-import it.polimi.ingsw.model.game.FaithTrack;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -233,7 +232,7 @@ public class PersonalBoard {
      * @throws InvalidArgumentException
      */
 
-    public Map<Resource,Integer> countResources() throws InactiveCardException, DifferentEffectTypeException, InvalidArgumentException {
+    public Map<Resource,Integer> countResources() {
         Map<Resource,Integer> availableResources=new HashMap<>();
         int[] resources=new int[4] ;
         for(int i=0;i<numberOfStrongboxDepots;i++){
@@ -241,12 +240,20 @@ public class PersonalBoard {
         }
         for(LeaderCard lc : availableLeaderCards()){
             if(lc.getEffect().getEffectType()== EffectType.EXTRA_DEPOT){
-                resources[lc.getEffect().getExtraDepotEffect().getLeaderDepot().getResourceType().getValue()]+=lc.getEffect().getExtraDepotEffect().getLeaderDepot().getResourceQuantity();
+                try {
+                    resources[lc.getEffect().getExtraDepotEffect().getLeaderDepot().getResourceType().getValue()]+=lc.getEffect().getExtraDepotEffect().getLeaderDepot().getResourceQuantity();
+                } catch (DifferentEffectTypeException e) {
+                    e.printStackTrace();
+                }
             }
         }
         for(int i=0;i < warehouse.getNumberOfDepots();i++){
-            if(!warehouse.getResourceTypeOfDepot(i).equals(Resource.ANY)) {
-                resources[warehouse.getResourceTypeOfDepot(i).getValue()]+= warehouse.getResourceQuantityOfDepot(i);
+            try {
+                if(!warehouse.getResourceTypeOfDepot(i).equals(Resource.ANY)) {
+                    resources[warehouse.getResourceTypeOfDepot(i).getValue()]+= warehouse.getResourceQuantityOfDepot(i);
+                }
+            } catch (InvalidArgumentException e) {
+                e.printStackTrace();
             }
         }
         for(int i=0;i<4;i++){
@@ -469,4 +476,11 @@ public class PersonalBoard {
         return false;
     }
 
+    public int countResourceNumber(){
+        Map<Resource, Integer> resources = countResources();
+        int quantity = 0;
+        for (Resource resource : resources.keySet())
+            quantity += resource.getValue();
+        return quantity;
+    }
 }

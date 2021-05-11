@@ -50,4 +50,6 @@ public abstract class PlayPhase {
             getTurnController().endTurn();
     }
 
+    public abstract void handleEndTriggered();
+
 }

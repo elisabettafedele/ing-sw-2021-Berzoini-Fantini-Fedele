@@ -114,4 +114,9 @@ public class SinglePlayerPlayPhase extends PlayPhase implements GamePhase{
     public void handleMessage(MessageToServer message, ClientHandler clientHandler) {
 
     }
+
+    @Override
+    public void handleEndTriggered() {
+        controller.endMatch();
+    }
 }

@@ -64,9 +64,10 @@ public class TurnController {
     }
 
     public void setNextAction(){
+        checkFaithTrack();
         checkExecutableActions();
-        if(isInterruptible && controller.getGame().getDevelopmentCardGrid().checkEmptyColumn()){
-            endTurnImmediately=true;
+        if(isInterruptible && (controller.getGame().getDevelopmentCardGrid().checkEmptyColumn() || endTrigger)){
+            controller.endMatch();
         }
         if (!((endTrigger && isInterruptible) || endTurnImmediately || executableActions.values().stream().filter(x->x==true).collect(Collectors.toList()).isEmpty()))
             clientHandler.sendMessageToClient(new ChooseActionRequest(executableActions, standardActionDone));
@@ -130,9 +131,7 @@ public class TurnController {
                             }
                         }
                     }
-                } catch (InvalidMethodException e) {
-                    e.printStackTrace();
-                } catch (ZeroPlayerException e) {
+                } catch (InvalidMethodException | ZeroPlayerException e) {
                     e.printStackTrace();
                 }
             }
@@ -143,8 +142,8 @@ public class TurnController {
                     e.printStackTrace();
                 }
             }
-            if(currentPlayer.getPersonalBoard().getMarkerPosition()==controller.getGame().getFaithTrack().getLength()){
-                endTrigger=true;
+            if(currentPlayer.getPersonalBoard().getMarkerPosition()>=controller.getGame().getFaithTrack().getLength()){
+                ((PlayPhase) controller.getGamePhase()).handleEndTriggered();
             }
 
         }

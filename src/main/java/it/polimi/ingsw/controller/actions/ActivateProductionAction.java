@@ -35,11 +35,7 @@ public class ActivateProductionAction implements Action{
         this.clientHandler = turnController.getController().getConnectionByNickname(player.getNickname());
         this.personalBoard = this.player.getPersonalBoard();
         //TODO: manage this exceptions
-        try {
-            this.availableResources = this.personalBoard.countResources();
-        } catch (InactiveCardException | InvalidArgumentException | DifferentEffectTypeException e) {
-            e.printStackTrace();
-        }
+        this.availableResources = this.personalBoard.countResources();
         this.availableProductionLeaderCards = this.personalBoard.availableLeaderCards();
         this.availableDevelopmentCards = this.personalBoard.availableDevelopmentCards();
         this.availableProductionLeaderCards = this.availableProductionLeaderCards.stream().filter(
@@ -51,11 +47,7 @@ public class ActivateProductionAction implements Action{
         this.clientHandler = turnController.getController().getConnectionByNickname(currentPlayer.getNickname());
         this.personalBoard = this.player.getPersonalBoard();
         //TODO: manage this exceptions
-        try {
-            this.availableResources = this.personalBoard.countResources();
-        } catch (InactiveCardException | InvalidArgumentException | DifferentEffectTypeException e) {
-            e.printStackTrace();
-        }
+        this.availableResources = this.personalBoard.countResources();
         this.availableProductionLeaderCards = this.personalBoard.availableLeaderCards();
         this.availableDevelopmentCards = this.personalBoard.availableDevelopmentCards();
         this.availableProductionLeaderCards = this.availableProductionLeaderCards.stream().filter(

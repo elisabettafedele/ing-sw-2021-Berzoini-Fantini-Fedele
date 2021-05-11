@@ -14,6 +14,7 @@ import java.util.List;
 public class MultiplayerPlayPhase extends PlayPhase implements GamePhase{
 
     private int turnIndex;
+    private boolean endTrigger;
 
     public MultiplayerPlayPhase(Controller controller){
         setController(controller);
@@ -24,7 +25,10 @@ public class MultiplayerPlayPhase extends PlayPhase implements GamePhase{
     @Override
     public void nextTurn() {
         turnIndex = turnIndex == getController().getPlayers().size() - 1 ? 0 : turnIndex + 1;
-        getTurnController().start(getController().getPlayers().get(turnIndex));
+        if (endTrigger && getTurnController().getController().getPlayers().get(turnIndex).hasInkwell())
+            getController().endMatch();
+        else
+            getTurnController().start(getController().getPlayers().get(turnIndex));
     }
 
     @Override
@@ -46,6 +50,10 @@ public class MultiplayerPlayPhase extends PlayPhase implements GamePhase{
         }
     }
 
+    @Override
+    public void handleEndTriggered() {
+        endTrigger = true;
+    }
 
 
     @Override

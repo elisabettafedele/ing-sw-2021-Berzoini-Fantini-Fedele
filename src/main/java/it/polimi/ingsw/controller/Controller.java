@@ -2,6 +2,7 @@ package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.Server.ClientHandler;
 import it.polimi.ingsw.common.ClientHandlerInterface;
+import it.polimi.ingsw.controller.actions.SinglePlayerEndPhase;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.exceptions.*;
 import it.polimi.ingsw.messages.toClient.MessageToClient;
@@ -137,5 +138,9 @@ public class Controller {
         } finally {
             lockConnections.unlock();
         }
+    }
+
+    public void endMatch(){
+        setGamePhase(gamePhase instanceof MultiplayerPlayPhase ? new MultiplayerEndPhase() : new SinglePlayerEndPhase());
     }
 }
