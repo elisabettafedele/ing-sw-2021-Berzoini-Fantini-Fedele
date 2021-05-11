@@ -4,6 +4,7 @@ import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.exceptions.DifferentEffectTypeException;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 
+import java.util.Map;
 
 
 /**
@@ -13,7 +14,7 @@ import it.polimi.ingsw.exceptions.InvalidArgumentException;
 public class App 
 {
     public static void main(String[] args ) throws InvalidArgumentException, DifferentEffectTypeException {
-
+        //Map<>
     }
 }
 
