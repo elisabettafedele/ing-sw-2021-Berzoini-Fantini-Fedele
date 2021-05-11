@@ -179,7 +179,9 @@ public class TakeResourcesFromMarketAction implements Action {
      * Method used when the acting player asks to reorganize his depots
      */
     private void handleReorganizeDepotsRequest(){
-        availableDepotsForReorganization = ResourceStorageType.getWarehouseDepots();
+        availableDepotsForReorganization = new ArrayList<>();
+        if (!player.getPersonalBoard().getWarehouse().getResourceTypes().isEmpty())
+            availableDepotsForReorganization = ResourceStorageType.getWarehouseDepots();
         availableLeaderResources = new ArrayList<>();
         //If the player has some leader depots, I save the Resource type of these depots in availableDepotsResources, so that I will be able to identify the depot in the client. If he does not, the list will be empty
         for (Effect effect : player.getPersonalBoard().getAvailableEffects(EffectType.EXTRA_DEPOT)){

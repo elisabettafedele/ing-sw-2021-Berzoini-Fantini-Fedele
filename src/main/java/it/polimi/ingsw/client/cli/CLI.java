@@ -125,8 +125,8 @@ public class CLI implements View {
 
     @Override
     public void displayMarbleInsertionPositionRequest() {
-        System.out.println("Insert a marble insertion position (from 1 to 8) to insert the marble in the market trace: ");
-        client.sendMessageToServer(new MarbleInsertionPositionResponse(InputParser.getInt("Invalid position: the position must be an integer from 1 to 8", conditionOnIntegerRange(1, 8))));
+        System.out.println("Insert a marble insertion position (from 1 to 7) to insert the marble in the market trace: ");
+        client.sendMessageToServer(new MarbleInsertionPositionResponse(InputParser.getInt("Invalid position: the position must be an integer from 1 to 8", conditionOnIntegerRange(1, 7))));
     }
 
     @Override
@@ -158,7 +158,7 @@ public class CLI implements View {
     @Override
     public void displayChooseStorageTypeRequest(Resource resource, List<String> availableDepots, boolean setUpPhase) {
         if (availableDepots.isEmpty())
-            System.out.println("There are no available depots for this resource type");
+            System.out.println("There are no available depots for " + resource);
         else {
             System.out.println("Choose a depot for the " + resource + "\nAvailable depots for this resource type are:");
             for (String depot : availableDepots)
@@ -182,6 +182,12 @@ public class CLI implements View {
 
     @Override
     public void displayReorganizeDepotsRequest(List<String> depots, boolean first, boolean failure, List<Resource> availableLeaderResources){
+        //Just temporary I want to make this check earlier
+        if (depots.isEmpty()){
+            System.out.println("You do not have any depot to reorganize");
+            client.sendMessageToServer(new NotifyEndDepotsReorganization());
+            return;
+        }
         if (first)
             System.out.println("You can now reorganize your depots with the command" + Command.SWAP.command + " or " + Command.MOVE.command + "- "+ Command.SWAP + ": realizes a swap of two depots which contain different resource types\n- " + Command.MOVE + ": move a certain number of resources from one depot to another (be careful because the leader depots have a fixed resource type!\nIf you have finished type " + Command.END_REORGANIZE_DEPOTS.command);
         if (failure)

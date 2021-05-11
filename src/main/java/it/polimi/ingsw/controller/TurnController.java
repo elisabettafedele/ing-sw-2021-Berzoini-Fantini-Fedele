@@ -76,28 +76,6 @@ public class TurnController {
         possibleActions.get(actionChosen).execute();
     }
 
-
-    /*****************************************************
-    public void start(Player currentPlayer){
-        this.currentPlayer=currentPlayer;
-        this.clientHandler= controller.getConnectionByNickname(currentPlayer.getNickname());
-        reset();
-        while(!((endTrigger && isInterruptible) || endTurnImmediately || executableActions.values().stream().filter(x->x==true).collect(Collectors.toList()).isEmpty())){
-            checkExecutableActions();
-            clientHandler.sendMessageToClient(new ChooseActionRequest(executableActions));
-            while(actionChosen==-1){
-                //da fare in un thread
-            }
-            if(executableActions.get(ActionType.valueOf(actionChosen))==true){
-                possibleActions.get(actionChosen).execute();
-            }
-            actionChosen=-1;
-            if(isInterruptible&&controller.getGame().getDevelopmentCardGrid().checkEmptyColumn()){
-                endTurnImmediately=true;
-            }
-        }
-
-    }****************************************************/
     private void reset(){
         numberOfLeaderActionsDone=0;
         standardActionDone=false;
