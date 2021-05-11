@@ -39,9 +39,9 @@ public class MarketTest {
         numOfMarbles[marbles.get(0).getValue()]++;
         assertTrue(numOfMarbles[0] == 2);
         assertTrue(numOfMarbles[1] == 2);
-        assertTrue(numOfMarbles[2] == 1);
+        assertTrue(numOfMarbles[2] == 2);
         assertTrue(numOfMarbles[3] == 2);
-        assertTrue(numOfMarbles[4] == 2);
+        assertTrue(numOfMarbles[4] == 1);
         assertTrue(numOfMarbles[5] == 4);
 
     }

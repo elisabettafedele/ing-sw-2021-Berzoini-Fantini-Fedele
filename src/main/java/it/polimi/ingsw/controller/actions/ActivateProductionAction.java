@@ -169,6 +169,14 @@ public class ActivateProductionAction implements Action{
         }
 
         //Building basic production power
+        Production basic_production = buildBasicProductionPower();
+
+        availableProductionPowers.put(BASIC_PRODUCTION_POWER, basic_production.getProductionPower());
+        clientHandler.sendMessageToClient(new ChooseProductionPowersRequest(availableProductionPowers, availableResources));
+
+    }
+
+    private Production buildBasicProductionPower() {
         Map<Resource, Integer> cost = new HashMap<>();
         cost.put(Resource.ANY, 2);
         Map<Resource, Integer> output = new HashMap<>();
@@ -180,25 +188,32 @@ public class ActivateProductionAction implements Action{
             //e.printStackTrace();
             System.out.println("Exception should not be raised here. Correct the code");
         }
-        availableProductionPowers.put(BASIC_PRODUCTION_POWER, basic_production.getProductionPower());
-        clientHandler.sendMessageToClient(new ChooseProductionPowersRequest(availableProductionPowers, availableResources));
-
+        return basic_production;
     }
 
     @Override
     public void handleMessage(MessageToServer message) {
         List<Integer> productionPowerSelected = ((ChooseProductionPowersResponse) message).getProductionPowersSelected();
+        List<Value> basicProductionPower;
+
 
         Map<Resource, Integer> resourceToRemove = new HashMap<>();
         Map<Resource, Integer> resourceToAdd = new HashMap<>();
         int faithPoints = 0;
+
+        initializeResourceMaps(resourceToAdd, resourceToRemove);
 
         List<Value> productionPower;
 
         if(productionPowerSelected.size() < 1)
             return;
 
-
+        if(productionPowerSelected.contains(BASIC_PRODUCTION_POWER)){
+            basicProductionPower = ((ChooseProductionPowersResponse) message).getBasicProductionPower();
+            manageCost(basicProductionPower.get(0), resourceToRemove);
+            manageCost(basicProductionPower.get(0), resourceToAdd);
+            productionPowerSelected.remove(Integer.valueOf(BASIC_PRODUCTION_POWER));
+        }
 
         for (Integer id : productionPowerSelected){
             productionPower = getProductionByID(id);
@@ -227,6 +242,14 @@ public class ActivateProductionAction implements Action{
 
         turnController.setStandardActionDoneToTrue();
 
+    }
+
+    private void initializeResourceMaps(Map<Resource, Integer> resourceToAdd, Map<Resource, Integer> resourceToRemove) {
+        List<Resource> realValues = Resource.realValues();
+        for(Resource r : realValues){
+            resourceToAdd.put(r, 0);
+            resourceToRemove.put(r, 0);
+        }
     }
 
     private int manageCost(Value value, Map<Resource, Integer> resourceToManage) {
@@ -261,6 +284,9 @@ public class ActivateProductionAction implements Action{
             if(dc.getID() == id){
                 return dc.getProduction().getProductionPower();
             }
+        }
+        if(id == 0){
+            return buildBasicProductionPower().getProductionPower();
         }
         return null;
     }

@@ -23,7 +23,10 @@ public class Market {
      * Construct a Market with random {@link Marble} on the Market Tray
      */
     public Market() {
-        ArrayList<Integer> marbles = new ArrayList<>(Arrays.asList(0,0,1,1,2,3,3,4,4,5,5,5,5));
+        ArrayList<Integer> marbles = new ArrayList<>(Arrays.asList(Marble.GREY.getValue(),Marble.GREY.getValue()
+                ,Marble.PURPLE.getValue(),Marble.PURPLE.getValue(),Marble.RED.getValue(),Marble.BLUE.getValue(),
+                Marble.BLUE.getValue(),Marble.YELLOW.getValue(),Marble.YELLOW.getValue(),Marble.WHITE.getValue(),
+                Marble.WHITE.getValue(),Marble.WHITE.getValue(),Marble.WHITE.getValue()));
         marketTray = new Marble[3][4];
         Random rand = new Random();
         for(int i = 0; i < ROW; i++){

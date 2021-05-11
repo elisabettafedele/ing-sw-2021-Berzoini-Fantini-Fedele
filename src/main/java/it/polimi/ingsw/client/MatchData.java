@@ -51,7 +51,7 @@ public class MatchData {
         this.lightDevelopmentCards = lightDevelopmentCards;
     }
 
-    public List<String> getDevelopmentCardByID(int ID){
+    public List<String> getDevelopmentCardByID(Integer ID){
         return lightDevelopmentCards.get(ID);
     }
 }

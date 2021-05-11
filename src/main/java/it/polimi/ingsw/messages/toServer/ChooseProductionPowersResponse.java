@@ -9,13 +9,23 @@ import java.util.List;
 public class ChooseProductionPowersResponse implements MessageToServer{
 
     List<Integer> productionPowersSelected;
+    List<Value> basicProductionPower;
 
     public List<Integer> getProductionPowersSelected() {
         return productionPowersSelected;
     }
 
+    public List<Value> getBasicProductionPower() {
+        return basicProductionPower;
+    }
+
     public ChooseProductionPowersResponse(List<Integer> productionPowersSelected) {
         this.productionPowersSelected = productionPowersSelected;
+    }
+
+    public ChooseProductionPowersResponse(List<Integer> productionPowersSelected, List<Value> basicProductionPower) {
+        this.productionPowersSelected = productionPowersSelected;
+        this.basicProductionPower = basicProductionPower;
     }
 
     @Override

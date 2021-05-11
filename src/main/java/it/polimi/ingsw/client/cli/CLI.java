@@ -11,6 +11,7 @@ import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.ValueNotPresentException;
 import it.polimi.ingsw.messages.toServer.*;
 import it.polimi.ingsw.model.cards.LeaderCard;
+import it.polimi.ingsw.model.cards.Production;
 import it.polimi.ingsw.model.cards.Value;
 
 import java.util.List;
@@ -338,7 +339,7 @@ public class CLI implements View {
                 if(IDs.size() > 0){
                     System.out.print("Insert the ID of the card with the production you want to activate: ");
                     Integer selection = InputParser.getInt(
-                            "Error: the ID provided is not available. Provide a valid ID", conditionOnInteger(IDs));
+                            "Error: the ID provided is not available. Provide a valid ID: ", conditionOnInteger(IDs));
                     if(selection == BASIC_PRODUCTION_POWER){
                         actualChosenProduction = manageBasicProductionPower(availableResources);
                     }else{
@@ -361,7 +362,7 @@ public class CLI implements View {
                 System.out.println(entry.getKey() + ", " + entry.getValue());
             }
             System.out.printf("What do you want to do:\n1. Select another production\n" +
-                    "2. Remove an already chosen production\n3. Confirm your list of production(s)");
+                    "2. Remove an already chosen production\n3. Confirm your list of production(s)\n");
             Integer selection = InputParser.getInt(
                     "Error: the ID provided is not available. Provide a valid ID", conditionOnIntegerRange(1, 3));
             if(selection == 3){
@@ -374,6 +375,9 @@ public class CLI implements View {
             }
         }while(!confirmed);
         List<Integer> productionPowersSelected= new ArrayList<>(selectedProductions.keySet());
+        if(productionPowersSelected.contains(BASIC_PRODUCTION_POWER)){
+            client.sendMessageToServer(new ChooseProductionPowersResponse(productionPowersSelected, selectedProductions.get(BASIC_PRODUCTION_POWER)));
+        }
         client.sendMessageToServer(new ChooseProductionPowersResponse(productionPowersSelected)); //If the player confirms with zero selections don't increment the actionDone variable!!!
     }
 
@@ -390,7 +394,23 @@ public class CLI implements View {
         Integer selection = InputParser.getInt(
                 "Error: the ID provided is not available. Provide a valid ID", conditionOnInteger(selectedIDs));
         //Re-adding the selected production to the available ones
-        availableProductionPowers.put(selection, selectedProductions.get(selection));
+        if(selection == BASIC_PRODUCTION_POWER){
+            Map<Resource, Integer> cost = new HashMap<>();
+            cost.put(Resource.ANY, 2);
+            Map<Resource, Integer> output = new HashMap<>();
+            output.put(Resource.ANY, 1);
+            List<Value> basic_production = new ArrayList<>();
+            try {
+                basic_production.add(new Value(null, cost, 0));
+                basic_production.add(new Value(null, output, 0));
+            } catch (InvalidArgumentException e) {
+                e.printStackTrace();
+            }
+            availableProductionPowers.put(BASIC_PRODUCTION_POWER, basic_production);
+        }else{
+            availableProductionPowers.put(selection, selectedProductions.get(selection));
+        }
+
         Map<Resource, Integer> activationCost = null;
         try {
             activationCost = selectedProductions.get(selection).get(0).getResourceValue();
@@ -425,7 +445,7 @@ public class CLI implements View {
                 System.out.println(" resource to be used in the basic production power");
                 //Displaying the usableResources for the basic production power
                 for(int i = 0; i < usableResources.size(); i++) {
-                    System.out.printf("%d. " + usableResources.get(i) + "\n", i+1);
+                    System.out.printf("%d. " + usableResources.get(i) + " \n", i+1);
                 }
                 //Selecting the resource to be used for the basic production power
                 Integer selection = InputParser.getInt(
@@ -435,7 +455,7 @@ public class CLI implements View {
                 chosenResources.add(usableResources.get(selection - 1));
                 //If that Resource type had quantity equal to 1 it is removed from the usableResources list
                 if(availableResources.get(usableResources.get(selection - 1)) <= 1){
-                    usableResources.remove(selection);
+                    usableResources.remove(usableResources.get(selection-1));
                 }
             }
 
@@ -443,7 +463,7 @@ public class CLI implements View {
             List<Resource> realValues = Resource.realValues();
             System.out.println("Choose the resource you want to produce");
             for(int k = 0; k < realValues.size(); k++){
-                System.out.printf("%d. " + realValues.get(k), k+1);
+                System.out.printf("%d. " + realValues.get(k) +"\n", k+1);
             }
             //Selecting the desired resource
             Integer selection = InputParser.getInt(
@@ -458,7 +478,12 @@ public class CLI implements View {
         List<Value> production= new ArrayList<>();
         Map<Resource, Integer> productionCost = new HashMap<>();
         productionCost.put(chosenResources.get(0), 1);
-        productionCost.put(chosenResources.get(1), 1);
+        if(chosenResources.get(0).equals(chosenResources.get(1))){
+            productionCost.put(chosenResources.get(0), 2);
+        }else{
+            productionCost.put(chosenResources.get(1), 1);
+        }
+
         Map<Resource, Integer> productionOutput = new HashMap<>();
         productionOutput.put(chosenResources.get(2), 1);
 
@@ -481,9 +506,9 @@ public class CLI implements View {
         }
         for(Map.Entry<Resource, Integer> entry : resourceToBeRemoved.entrySet()){
             availableResources.put(entry.getKey(), availableResources.get(entry.getKey()) - 1);
-            if(availableResources.get(entry.getKey()) == 0){
+            /*if(availableResources.get(entry.getKey()) == 0){
                 availableResources.remove(entry.getKey());
-            }
+            }*/
         }
     }
 
@@ -497,13 +522,13 @@ public class CLI implements View {
             } catch (ValueNotPresentException e) {
                 //skip
             }
-            if(hasResourcesForThisProduction(activationCost, availableResources)){
+            if(hasResourcesForThisProduction(activationCost, availableResources) && entry.getKey() != 0){
                 System.out.println(MatchData.getInstance().getDevelopmentCardByID(entry.getKey()).get(0));
                 availableProductionIDs.add(entry.getKey());
             }
         }
         if(availableResources.values().stream().mapToInt(Integer::intValue).sum() >= 2){
-            System.out.println("Basic Production Power: " + availableProductionPowers.get(0));
+            System.out.println("0. Basic Production Power: " + availableProductionPowers.get(0));
             availableProductionIDs.add(BASIC_PRODUCTION_POWER);
         }
         return availableProductionIDs;
