@@ -5,13 +5,12 @@ import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.client.View;
 import it.polimi.ingsw.client.utilities.InputParser;
-import it.polimi.ingsw.controller.actions.Action;
+import it.polimi.ingsw.client.utilities.UtilityPrinter;
 import it.polimi.ingsw.enumerations.*;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.ValueNotPresentException;
 import it.polimi.ingsw.messages.toServer.*;
 import it.polimi.ingsw.model.cards.LeaderCard;
-import it.polimi.ingsw.model.cards.Production;
 import it.polimi.ingsw.model.cards.Value;
 
 import java.util.List;
@@ -127,7 +126,7 @@ public class CLI implements View {
     @Override
     public void displayMarbleInsertionPositionRequest() {
         System.out.println("Insert a marble insertion position (from 1 to 7) to insert the marble in the market trace: ");
-        client.sendMessageToServer(new MarbleInsertionPositionResponse(InputParser.getInt("Invalid position: the position must be an integer from 1 to 8", conditionOnIntegerRange(1, 7))));
+        client.sendMessageToServer(new MarbleInsertionPositionResponse(InputParser.getInt("Invalid position: the position must be an integer from 1 to 7", conditionOnIntegerRange(1, 7))));
     }
 
     @Override
@@ -162,22 +161,21 @@ public class CLI implements View {
             System.out.println("There are no available depots for " + resource);
         else {
             System.out.println("Choose a depot for the " + resource + "\nAvailable depots for this resource type are:");
-            for (String depot : availableDepots)
-                System.out.println("- " + depot);
+            UtilityPrinter.printNumericList(availableDepots);
         }
-        List<String> acceptedValues = availableDepots;
+        List<String> textCommands = new ArrayList<>();
         if (!setUpPhase) {
             System.out.println("Type d if you want to discard the resource or r if you want to reorganize your depots");
-            acceptedValues.add(Command.DISCARD.command);
-            acceptedValues.add(Command.REORGANIZE.command);
+            textCommands.add(Command.DISCARD.command);
+            textCommands.add(Command.REORGANIZE.command);
         }
-        String choice = InputParser.getString("Insert a valid command", conditionOnString(acceptedValues));
-        if (choice.equals(Command.DISCARD.command))
+        String choiceString = InputParser.getCommandFromList(textCommands, availableDepots);
+        if (choiceString.equals(Command.DISCARD.command))
             client.sendMessageToServer(new DiscardResourceRequest(resource));
-        else if (choice.equals(Command.REORGANIZE.command))
+        else if (choiceString.equals(Command.REORGANIZE.command))
             client.sendMessageToServer(new ReorganizeDepotRequest());
         else
-            client.sendMessageToServer(new ChooseStorageTypeResponse(resource, choice, setUpPhase));
+            client.sendMessageToServer(new ChooseStorageTypeResponse(resource, choiceString, setUpPhase));
     }
 
 
@@ -215,7 +213,7 @@ public class CLI implements View {
             assert (quantity != null);
             if (availableLeaderResources.size() == 2 && originDepot.equals("LEADER_DEPOT")) {
                 System.out.print("Select the type of resource you want to remove from the leader depot: ");
-                resource = Resource.valueOf(InputParser.getString("Insert a valid resource type", conditionOnString(availableLeaderResources.stream().map(x -> x.name()).collect(Collectors.toList()))));
+                resource = Resource.valueOf(InputParser.getString("Insert a valid resource type", conditionOnString(availableLeaderResources.stream().map(Enum::name).collect(Collectors.toList()))));
             }
             client.sendMessageToServer(new MoveResourcesRequest(originDepot, destinationDepot, resource, quantity));
         }
@@ -254,9 +252,7 @@ public class CLI implements View {
             resourceString = InputParser.getLine();
             try {
                 resource = Resource.valueOf(resourceString.toUpperCase());
-                error = false;
-                if (!conversions.contains(resource))
-                    error = true;
+                error = !conversions.contains(resource);
             }catch (IllegalArgumentException e){
                 error = true;
                 System.out.println("Error: insert a valid resource type");
@@ -306,17 +302,18 @@ public class CLI implements View {
     @Override
     public void displayChooseResourceTypeRequest(List<Resource> resourceTypes, int quantity) {
         //TODO show choose resource type view
-
-        System.out.printf("You have to choose %d resource type. \nAvailable resource types are:\n", quantity);
-        System.out.println(Arrays.toString(resourceTypes.toArray()));
-
         List<String> resourcesToString = resourceTypes.stream().map(Enum::name).collect(Collectors.toList());
+        System.out.printf("You have to choose %d resource type. \nAvailable resource types are:\n", quantity);
+        UtilityPrinter.printNumericList(resourcesToString);
         List<Resource> selectedResources = new ArrayList<>();
-        for (int i = 0; i < quantity; i++)
-            selectedResources.add(Resource.valueOf(InputParser.getString("Please select a valid resource type", conditionOnString(resourcesToString))));
-
+        for (int i = 0; i < quantity; i++) {
+            if (quantity > 1)
+                System.out.print("Choice " + i+1 + ": ");
+            else
+                System.out.print("Your choice: ");
+            selectedResources.add(Resource.valueOf(InputParser.getCommandFromList(resourcesToString)));
+        }
         client.sendMessageToServer(new ChooseResourceTypeResponse(selectedResources));
-
     }
 
 
@@ -612,13 +609,15 @@ public class CLI implements View {
     @Override
     public void displayChooseActionRequest(Map<ActionType, Boolean> executableActions, boolean standardActionDone) {
         List<String> availableActions = executableActions.keySet().stream().filter(executableActions::get).map(Enum::name).collect(Collectors.toList());
-        System.out.println("Choose your next action! These are the ones available\n" + availableActions);
+        List<String> textCommands = new ArrayList<>();
+        System.out.println("Choose your next action: ");
+        UtilityPrinter.printNumericList(availableActions);
         if (standardActionDone)
             System.out.println("Otherwise, you can end your turn now, just typing \"end\"");
-        availableActions.add("end");
+        textCommands.add("end");
         //TODO gestire la possibilità di vedere gli altri giocatori la grid e il market prima di scegliere la action
         int selection=0;//per esempio, corrisponde al value della actionType (nella enum) scelta
-        String selectionString = InputParser.getString("Please insert a valid action name", conditionOnString(availableActions));
+        String selectionString = InputParser.getCommandFromList(textCommands, availableActions);
         if (selectionString.equals("end"))
             client.sendMessageToServer(new EndTurnRequest());
         else {

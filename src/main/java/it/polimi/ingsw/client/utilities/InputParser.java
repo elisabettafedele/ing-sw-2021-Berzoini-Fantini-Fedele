@@ -1,8 +1,11 @@
 package it.polimi.ingsw.client.utilities;
 
+import it.polimi.ingsw.client.cli.CLI;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
 import java.util.function.Predicate;
 
 public class InputParser {
@@ -102,6 +105,27 @@ public class InputParser {
             return null;
         }
         return num;
+    }
+
+    public static String getCommandFromList(List<String> commands){
+        return commands.get(getInt("Please insert a valid command", CLI.conditionOnIntegerRange(1, commands.size()))-1);
+    }
+
+    public static String getCommandFromList(List<String> textCommands, List<String> intCommands){
+        return getCommand(CLI.conditionOnIntegerRange(1, intCommands.size()), textCommands, intCommands, "Please insert a valid command");
+    }
+
+    public static String getCommand(Predicate integerPredicate, List<String> textCommands, List<String> intCommands, String errorMessage){
+        if (textCommands.isEmpty())
+            return getCommandFromList(intCommands);
+        String command = getLine();
+        while (true) {
+            if (textCommands.contains(command))
+                return command;
+            if (integerPredicate.test(Integer.parseInt(command)))
+                return intCommands.get(Integer.parseInt(command)-1);
+            System.out.println(errorMessage);
+        }
     }
 
 }

@@ -47,6 +47,13 @@ public class MatchData {
         return null;
     }
 
+    public List<LeaderCard> getLeaderCardsByID(List<Integer> ids){
+        List<LeaderCard> cards = new ArrayList<>();
+        for (Integer id : ids)
+            cards.add(getLeaderCardByID(id));
+        return cards;
+    }
+
     public void setAllDevelopmentCards(Map<Integer, List<String>> lightDevelopmentCards) {
         this.lightDevelopmentCards = lightDevelopmentCards;
     }
