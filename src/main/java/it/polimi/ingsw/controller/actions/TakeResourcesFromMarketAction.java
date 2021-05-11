@@ -59,6 +59,7 @@ public class TakeResourcesFromMarketAction implements Action {
 
     public void execute() {
         clientHandler.setCurrentAction(this);
+        clientHandler.sendMessageToClient(new SendMarketView(market.getMarketTray(), market.getSlideMarble()));
         clientHandler.sendMessageToClient(new MarbleInsertionPositionRequest());
     }
 

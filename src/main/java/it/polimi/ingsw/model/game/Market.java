@@ -71,4 +71,12 @@ public class Market {
         return marbles;
     }
 
+    public Marble[][] getMarketTray(){
+        return marketTray;
+    }
+
+    public Marble getSlideMarble(){
+        return slideMarble;
+    }
+
 }

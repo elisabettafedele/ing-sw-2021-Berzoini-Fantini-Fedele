@@ -4,6 +4,7 @@ package it.polimi.ingsw.client.cli;
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.client.View;
+import it.polimi.ingsw.client.cli.graphical.GraphicalMarket;
 import it.polimi.ingsw.client.utilities.InputParser;
 import it.polimi.ingsw.client.utilities.UtilityPrinter;
 import it.polimi.ingsw.enumerations.*;
@@ -143,10 +144,8 @@ public class CLI implements View {
 
     @Override
     public void displayMarblesTaken(List<Marble> marblesTaken, boolean needToChooseConversion) {
-        System.out.println("These are the colors of the marbles you took from the market:");
-        for (int i = 0; i < marblesTaken.size() - 1; i++)
-            System.out.println(marblesTaken.get(i) + ", ");
-        System.out.println(marblesTaken.get(marblesTaken.size()-1));
+        System.out.println("These are the marbles you took from the market:");
+        GraphicalMarket.printMarbleLine(marblesTaken);
         if (marblesTaken.contains(Marble.WHITE)){
             if (!needToChooseConversion)
                 System.out.println("White marbles will be automatically converted according to your leader card effects (if any)");
