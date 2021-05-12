@@ -1,8 +1,9 @@
 package it.polimi.ingsw.client.cli.graphical;
 
 import it.polimi.ingsw.enumerations.Marble;
+import it.polimi.ingsw.enumerations.Resource;
 
-public enum Colours {
+public enum Colour {
     ANSI_BLACK("\u001B[30m"),
     ANSI_RED  ("\u001B[31m"),
     ANSI_GREEN("\u001B[32m"),
@@ -18,13 +19,14 @@ public enum Colours {
     ANSI_BRIGHT_BLUE ("\u001B[94m"),
     ANSI_BRIGHT_PURPLE("\u001B[95m"),
     ANSI_BRIGHT_CYAN ("\u001B[96m"),
-    ANSI_BRIGHT_WHITE("\u001B[97m")
-    ,ANSI_RESET("\u001B[0m");
+    ANSI_BRIGHT_WHITE("\u001B[97m");
+
+    static final String ANSI_RESET = "\u001B[0m";
 
 
     private final String code;
 
-    Colours(String code){
+    Colour(String code){
         this.code = code;
     }
 
@@ -43,5 +45,16 @@ public enum Colours {
             return ANSI_RED.code;
         else
             return ANSI_WHITE.code;
+    }
+
+    public static String getResourceColour(Resource resource){
+        if (resource == Resource.COIN)
+            return ANSI_BRIGHT_YELLOW.code;
+        if (resource == Resource.STONE)
+            return ANSI_WHITE.code;
+        if (resource == Resource.SHIELD)
+            return ANSI_BRIGHT_BLUE.code;
+        else
+            return ANSI_BRIGHT_PURPLE.code;
     }
 }

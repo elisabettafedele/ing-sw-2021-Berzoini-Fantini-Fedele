@@ -181,6 +181,7 @@ public class TakeResourcesFromMarketAction implements Action {
      */
     private void handleReorganizeDepotsRequest(){
         availableDepotsForReorganization = new ArrayList<>();
+        //TODO correct it, I have to think about it...
         if (!player.getPersonalBoard().getWarehouse().getResourceTypes().isEmpty())
             availableDepotsForReorganization = ResourceStorageType.getWarehouseDepots();
         availableLeaderResources = new ArrayList<>();
