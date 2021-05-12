@@ -279,7 +279,7 @@ public class CLI implements View {
 
     @Override
     public void displaySelectCardRequest(List<Integer> CardsIDs,boolean leaderORdevelopment) {
-        System.out.println("Select a card");
+        System.out.println("Select a card:");
         for (Integer id : CardsIDs){
             if(leaderORdevelopment){
                 System.out.printf("%d. %s \n", id, MatchData.getInstance().getLeaderCardByID(id));
@@ -333,7 +333,7 @@ public class CLI implements View {
             if(!wantsToRemove){
                 List<Integer> IDs = displayAvailableProductions(availableProductionPowers, availableResources);
                 if(IDs.size() > 0){
-                    System.out.print("Insert the ID of the card with the production you want to activate: ");
+                    System.out.print("Insert the number of the production you want to activate: ");
                     Integer selection = InputParser.getInt(
                             "Error: the ID provided is not available. Provide a valid ID: ", conditionOnInteger(IDs));
                     if(selection == BASIC_PRODUCTION_POWER){
@@ -587,7 +587,7 @@ public class CLI implements View {
             if(isInLeaderDepot){
                 System.out.println("3-Leader Depot");
             }
-            System.out.println("Where would you like to remove it? Select the relative number");
+            System.out.println("Where would you like to remove it? Select the relative number:");
             int selection = InputParser.getInt("Error: write a number.");
             if (selection==1&&isInWarehouse){
                 client.sendMessageToServer( new SelectStorageResponse(resource,ResourceStorageType.WAREHOUSE));

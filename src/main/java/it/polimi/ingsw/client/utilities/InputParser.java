@@ -61,6 +61,7 @@ public class InputParser {
                 numString = input.readLine();
                 try {
                     num = Integer.parseInt(numString);
+                    done=true;
                 } catch (NumberFormatException e) {
                     System.out.print(errorMessage);
                 }

@@ -8,9 +8,7 @@ import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.InvalidMethodException;
 import it.polimi.ingsw.exceptions.ZeroPlayerException;
 import it.polimi.ingsw.messages.toClient.ChooseActionRequest;
-import it.polimi.ingsw.messages.toClient.ChooseProductionPowersRequest;
 import it.polimi.ingsw.messages.toClient.TextMessage;
-import it.polimi.ingsw.model.player.PersonalBoard;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.model.player.VaticanReportSection;
 
@@ -64,7 +62,6 @@ public class TurnController {
     }
 
     public void setNextAction(){
-        checkFaithTrack();
         checkExecutableActions();
         if(isInterruptible && (controller.getGame().getDevelopmentCardGrid().checkEmptyColumn() || endTrigger)){
             controller.endMatch();
@@ -75,6 +72,7 @@ public class TurnController {
 
     public void doAction(int actionChosen){
         possibleActions.get(actionChosen).execute();
+
     }
 
     private void reset(){
@@ -118,9 +116,9 @@ public class TurnController {
     }
 
     public void checkFaithTrack(){
-        if(controller.getGame().getFaithTrack().isVaticanReport(currentPlayer.getPersonalBoard().getMarkerPosition())){
+        if(controller.getGame().getFaithTrack().isVaticanReport(currentPlayer.getPersonalBoard().getMarkerPosition())||(isInterruptible&&controller.getGame().getFaithTrack().isVaticanReport(((SinglePlayerPlayPhase) getController().getGamePhase()).getBlackCrossPosition()))){
             VaticanReportSection vaticanReportSection=controller.getGame().getFaithTrack().getCurrentSection();
-            if(!isInterruptible){
+            if(!isInterruptible){// multiplayer
                 try {
                     for(Player p: controller.getGame().getPlayers()){
                         if(p.getPersonalBoard().getMarkerPosition()>= vaticanReportSection.getStart()){
@@ -135,9 +133,12 @@ public class TurnController {
                     e.printStackTrace();
                 }
             }
-            else{
+            else{ //singleplayer
                 try {
-                    currentPlayer.addVictoryPoints(vaticanReportSection.getPopeFavorPoints());
+                    if(currentPlayer.getPersonalBoard().getMarkerPosition()>=((SinglePlayerPlayPhase)controller.getGamePhase()).getBlackCrossPosition()){
+                        currentPlayer.addVictoryPoints(vaticanReportSection.getPopeFavorPoints());
+                    }
+
                 } catch (InvalidArgumentException e) {
                     e.printStackTrace();
                 }

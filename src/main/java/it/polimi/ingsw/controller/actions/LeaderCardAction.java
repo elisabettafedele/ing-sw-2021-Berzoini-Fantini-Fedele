@@ -2,7 +2,9 @@ package it.polimi.ingsw.controller.actions;
 
 import it.polimi.ingsw.Server.ClientHandler;
 import it.polimi.ingsw.controller.TurnController;
+import it.polimi.ingsw.enumerations.EffectType;
 import it.polimi.ingsw.enumerations.Level;
+import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.ValueNotPresentException;
 import it.polimi.ingsw.messages.toClient.SelectCardRequest;
@@ -40,8 +42,6 @@ public class LeaderCardAction implements Action{
     public void execute() {
         clientHandler.setCurrentAction(this);
         clientHandler.sendMessageToClient(new SelectCardRequest(leaderCardsIDs,true));
-        turnController.incrementNumberOfLeaderActionDone();
-        turnController.checkFaithTrack();
     }
 
     @Override
@@ -54,7 +54,7 @@ public class LeaderCardAction implements Action{
                         leaderCardsIDs.add(lc.getID());
                     }
                 }
-                else {
+                if(!activateORdiscard) {
                     leaderCardsIDs.add(lc.getID());
                 }
             }
@@ -68,10 +68,11 @@ public class LeaderCardAction implements Action{
             if(!lc.isActive()){
                 if(lc.getID()==((SelectCardResponse) message).getSelectedCard()){
                     if(activateORdiscard) {lc.activate();}
-                    else {
+                    if(!activateORdiscard){
                         player.getPersonalBoard().removeLeaderCard(lc.getID());
                         try {
                             player.getPersonalBoard().moveMarker(1);
+                            turnController.checkFaithTrack();
                         } catch (InvalidArgumentException e) {
                             //moveMarker's parameter is a constant so the exception won't be launched
                         }
@@ -80,6 +81,8 @@ public class LeaderCardAction implements Action{
                     }
                 }
             }
+            turnController.incrementNumberOfLeaderActionDone();
+            turnController.setNextAction();
         }
 
     /**
@@ -90,29 +93,43 @@ public class LeaderCardAction implements Action{
     private boolean isActivable(LeaderCard lc){
         try {
             int i=0;
-            HashMap<Flag,Integer> cost= (HashMap<Flag, Integer>) lc.getCost().getFlagValue();
-            HashMap<Flag,Integer> possessedByUser=new HashMap<>();
-            List<DevelopmentCard> developmentCards = player.getPersonalBoard().getDevelopmentCards();
-            for(Map.Entry<Flag, Integer> entry : cost.entrySet()){
-                i=0;
-                while(entry.getValue()>0){
-                    if(i>=developmentCards.size()){
-                    return false;
+            if(lc.getEffect().getEffectType()== EffectType.EXTRA_DEPOT){
+                HashMap<Resource,Integer> resourceCost= (HashMap<Resource, Integer>) lc.getCost().getResourceValue();
+                HashMap<Resource,Integer> possessedByUser=(HashMap<Resource, Integer>) player.getPersonalBoard().countResources();
+                for(Map.Entry<Resource,Integer> entry : resourceCost.entrySet()){
+                    if(possessedByUser.get(entry.getKey())< entry.getValue()){
+                        return false;
                     }
-                   if(developmentCards.get(i).getFlag().getFlagColor().equals(entry.getKey().getFlagColor())){
-                       if(entry.getKey().getFlagLevel().equals(Level.ANY)){
-                           entry.setValue(entry.getValue()-1);
-                       }
-                       else if(entry.getKey().getFlagLevel().equals(developmentCards.get(i).getFlag().getFlagLevel())){
-                           entry.setValue(entry.getValue()-1);
-                       }
-                   }
-                   i++;
                 }
+                return true;
             }
-        } catch (ValueNotPresentException e) {
-        }
-        return true;
+            else{
+                HashMap<Flag,Integer> cost= (HashMap<Flag, Integer>) lc.getCost().getFlagValue();
+                HashMap<Flag,Integer> possessedByUser=new HashMap<>();
+                List<DevelopmentCard> developmentCards = player.getPersonalBoard().getDevelopmentCards();
+                for(Map.Entry<Flag, Integer> entry : cost.entrySet()){
+                    i=0;
+                    while(entry.getValue()>0){
+                        if(i>=developmentCards.size()){
+                            return false;
+                        }
+                        if(developmentCards.get(i).getFlag().getFlagColor()==entry.getKey().getFlagColor()){
+                            if(entry.getKey().getFlagLevel()==Level.ANY){
+                                entry.setValue(entry.getValue()-1);
+                            }
+                            else if(entry.getKey().getFlagLevel()==developmentCards.get(i).getFlag().getFlagLevel()){
+                                entry.setValue(entry.getValue()-1);
+                            }
+                        }
+                        i++;
+                    }
+                }
+                return true;
+            }
 
+        } catch (ValueNotPresentException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }
