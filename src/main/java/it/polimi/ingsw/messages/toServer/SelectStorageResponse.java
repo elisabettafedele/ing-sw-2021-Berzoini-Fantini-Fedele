@@ -14,8 +14,16 @@ public class SelectStorageResponse implements MessageToServer{
         this.resourceStorageType=resourceStorageType;
     }
 
+    public ResourceStorageType getResourceStorageType() {
+        return resourceStorageType;
+    }
+
+    public Resource getResource() {
+        return resource;
+    }
+
     @Override
     public void handleMessage(ServerInterface server, ClientHandlerInterface clientHandler) {
-        RemoveResources.selectedStorage(resource, resourceStorageType);
+        clientHandler.getCurrentAction().handleMessage(this);
     }
 }

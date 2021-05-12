@@ -115,6 +115,10 @@ public class SinglePlayerPlayPhase extends PlayPhase implements GamePhase{
 
     }
 
+    public int getBlackCrossPosition() {
+        return blackCrossPosition;
+    }
+
     @Override
     public void handleEndTriggered() {
         controller.endMatch();

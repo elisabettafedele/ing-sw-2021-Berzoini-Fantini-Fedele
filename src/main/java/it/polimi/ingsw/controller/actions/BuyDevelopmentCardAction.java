@@ -10,6 +10,7 @@ import it.polimi.ingsw.messages.toClient.SelectDevelopmentCardSlotRequest;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
 import it.polimi.ingsw.messages.toServer.SelectCardResponse;
 import it.polimi.ingsw.messages.toServer.SelectDevelopmentCardSlotResponse;
+import it.polimi.ingsw.messages.toServer.SelectStorageResponse;
 import it.polimi.ingsw.model.cards.DevelopmentCard;
 import it.polimi.ingsw.model.cards.Effect;
 import it.polimi.ingsw.model.player.Player;
@@ -41,12 +42,6 @@ public class BuyDevelopmentCardAction implements Action{
     public void execute() {
         clientHandler.setCurrentAction(this);
         clientHandler.sendMessageToClient(new SelectCardRequest(buyableCardsIDs,false));
-        clientHandler.sendMessageToClient(new SelectDevelopmentCardSlotRequest(currentPlayer.getPersonalBoard().cardInsertionIsLegal(developmentCardChosen,0),currentPlayer.getPersonalBoard().cardInsertionIsLegal(developmentCardChosen,1),currentPlayer.getPersonalBoard().cardInsertionIsLegal(developmentCardChosen,2)));
-        turnController.setStandardActionDoneToTrue();
-        if(currentPlayer.getPersonalBoard().getNumOfDevelopmentCards()==7){
-            turnController.setEndTriggerToTrue();
-        }
-
     }
 
     @Override
@@ -112,10 +107,11 @@ public class BuyDevelopmentCardAction implements Action{
     public boolean isExecutable() {
         List<DevelopmentCard> availableCards = turnController.getController().getGame().getDevelopmentCardGrid().getAvailableCards();
         for (DevelopmentCard card : availableCards) {
-            if (enoughResourcesAvailable(card) && currentPlayer.getPersonalBoard().cardInsertionIsLegal(card));
+            if (enoughResourcesAvailable(card) && currentPlayer.getPersonalBoard().cardInsertionIsLegal(card)) {
                 buyableCardsIDs.add(card.getID());
-        }
-        return !availableCards.isEmpty();
+            }
+            }
+        return !buyableCardsIDs.isEmpty();
     }
 
     @Override
@@ -126,6 +122,7 @@ public class BuyDevelopmentCardAction implements Action{
                     developmentCardChosen = dc;
                 }
             }
+            clientHandler.sendMessageToClient(new SelectDevelopmentCardSlotRequest(currentPlayer.getPersonalBoard().cardInsertionIsLegal(developmentCardChosen,0),currentPlayer.getPersonalBoard().cardInsertionIsLegal(developmentCardChosen,1),currentPlayer.getPersonalBoard().cardInsertionIsLegal(developmentCardChosen,2)));
         }
         if(message instanceof SelectDevelopmentCardSlotResponse){
             try {
@@ -139,6 +136,14 @@ public class BuyDevelopmentCardAction implements Action{
             } catch (InvalidSlotException e) {
                 e.printStackTrace();
             }
+            turnController.setStandardActionDoneToTrue();
+            if(currentPlayer.getPersonalBoard().getNumOfDevelopmentCards()==7){
+                turnController.setEndTriggerToTrue();
+            }
+            turnController.setNextAction();
+        }
+        if(message instanceof SelectStorageResponse){
+            currentPlayer.getPersonalBoard().isResourceAvailableAndRemove( ((SelectStorageResponse) message).getResourceStorageType(),((SelectStorageResponse) message).getResource(),1,true);
         }
     }
 

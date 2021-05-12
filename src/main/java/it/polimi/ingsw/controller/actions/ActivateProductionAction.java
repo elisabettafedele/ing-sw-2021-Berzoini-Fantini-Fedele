@@ -9,6 +9,7 @@ import it.polimi.ingsw.exceptions.*;
 import it.polimi.ingsw.messages.toClient.ChooseProductionPowersRequest;
 import it.polimi.ingsw.messages.toServer.ChooseProductionPowersResponse;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
+import it.polimi.ingsw.messages.toServer.SelectStorageResponse;
 import it.polimi.ingsw.model.cards.*;
 import it.polimi.ingsw.model.player.PersonalBoard;
 import it.polimi.ingsw.model.player.Player;
@@ -185,54 +186,61 @@ public class ActivateProductionAction implements Action{
 
     @Override
     public void handleMessage(MessageToServer message) {
-        List<Integer> productionPowerSelected = ((ChooseProductionPowersResponse) message).getProductionPowersSelected();
-        List<Value> basicProductionPower;
+        if(message instanceof ChooseProductionPowersResponse){
+            List<Integer> productionPowerSelected = ((ChooseProductionPowersResponse) message).getProductionPowersSelected();
+            List<Value> basicProductionPower;
 
 
-        Map<Resource, Integer> resourceToRemove = new HashMap<>();
-        Map<Resource, Integer> resourceToAdd = new HashMap<>();
-        int faithPoints = 0;
+            Map<Resource, Integer> resourceToRemove = new HashMap<>();
+            Map<Resource, Integer> resourceToAdd = new HashMap<>();
+            int faithPoints = 0;
 
-        initializeResourceMaps(resourceToAdd, resourceToRemove);
+            initializeResourceMaps(resourceToAdd, resourceToRemove);
 
-        List<Value> productionPower;
+            List<Value> productionPower;
 
-        if(productionPowerSelected.size() < 1)
-            return;
+            if(productionPowerSelected.size() < 1)
+                return;
 
-        if(productionPowerSelected.contains(BASIC_PRODUCTION_POWER)){
-            basicProductionPower = ((ChooseProductionPowersResponse) message).getBasicProductionPower();
-            manageCost(basicProductionPower.get(0), resourceToRemove);
-            manageCost(basicProductionPower.get(0), resourceToAdd);
-            productionPowerSelected.remove(Integer.valueOf(BASIC_PRODUCTION_POWER));
-        }
+            if(productionPowerSelected.contains(BASIC_PRODUCTION_POWER)){
+                basicProductionPower = ((ChooseProductionPowersResponse) message).getBasicProductionPower();
+                manageCost(basicProductionPower.get(0), resourceToRemove);
+                manageCost(basicProductionPower.get(0), resourceToAdd);
+                productionPowerSelected.remove(Integer.valueOf(BASIC_PRODUCTION_POWER));
+            }
 
-        for (Integer id : productionPowerSelected){
-            productionPower = getProductionByID(id);
-            manageCost(productionPower.get(0), resourceToRemove);
-            faithPoints += manageCost(productionPower.get(1), resourceToAdd);
-        }
+            for (Integer id : productionPowerSelected){
+                productionPower = getProductionByID(id);
+                manageCost(productionPower.get(0), resourceToRemove);
+                faithPoints += manageCost(productionPower.get(1), resourceToAdd);
+            }
 
-        RemoveResources.removeResources(resourceToRemove, clientHandler, player);
+            RemoveResources.removeResources(resourceToRemove, clientHandler, player);
 
-        try {
-            personalBoard.addResourcesToStrongbox(resourceToAdd);
-        } catch (InvalidDepotException e) {
-            e.printStackTrace();
-        } catch (InvalidArgumentException e) {
-            e.printStackTrace();
-        }
-
-        if(faithPoints > 0){
             try {
-                personalBoard.moveMarker(faithPoints);
-                turnController.checkFaithTrack();
+                personalBoard.addResourcesToStrongbox(resourceToAdd);
+            } catch (InvalidDepotException e) {
+                e.printStackTrace();
             } catch (InvalidArgumentException e) {
                 e.printStackTrace();
             }
+
+            if(faithPoints > 0){
+                try {
+                    personalBoard.moveMarker(faithPoints);
+                    turnController.checkFaithTrack();
+                } catch (InvalidArgumentException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            turnController.setStandardActionDoneToTrue();
+            turnController.setNextAction();
         }
 
-        turnController.setStandardActionDoneToTrue();
+        if(message instanceof SelectStorageResponse){
+            player.getPersonalBoard().isResourceAvailableAndRemove( ((SelectStorageResponse) message).getResourceStorageType(),((SelectStorageResponse) message).getResource(),1,true);
+        }
 
     }
 

@@ -9,6 +9,7 @@ import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.messages.toClient.GameModeRequest;
 import it.polimi.ingsw.messages.toClient.TimeoutExpiredMessage;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
+import it.polimi.ingsw.messages.toServer.SelectStorageResponse;
 import it.polimi.ingsw.model.player.Player;
 
 
@@ -237,5 +238,32 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
 
     public void setController(Controller controller){
         this.controller = controller;
+    }
+
+    public void waitSpecificMessage(){
+        boolean stop=false;
+        while(!stop){
+            try {
+                Object messageFromClient = is.readObject();
+                if(messageFromClient != null && (messageFromClient instanceof SelectStorageResponse)) {
+                    //stopTimer();
+                    //if (!gameStarted)
+                    stop=true;
+                    ((MessageToServer) messageFromClient).handleMessage(server, this);
+
+
+                    //else
+                    // controller.getGameMessageManager().addMessage((MessageToServer) messageFromClient);
+                }
+
+            } catch (ClassNotFoundException messageIgnored) {
+            } catch (SocketTimeoutException e){ //when the timer has expired
+                sendMessageToClient(new TimeoutExpiredMessage());
+                handleSocketDisconnection();
+            } catch (IOException e){//when the client is no longer connected
+                handleSocketDisconnection();
+            }
+
+        }
     }
 }
