@@ -118,13 +118,17 @@ public class InputParser {
     public static String getCommand(Predicate integerPredicate, List<String> textCommands, List<String> intCommands, String errorMessage){
         if (textCommands.isEmpty())
             return getCommandFromList(intCommands);
-        String command = getLine();
         while (true) {
+            String command = getLine();
             if (textCommands.contains(command))
                 return command;
-            if (integerPredicate.test(Integer.parseInt(command)))
-                return intCommands.get(Integer.parseInt(command)-1);
-            System.out.println(errorMessage);
+            try {
+                if (integerPredicate.test(Integer.parseInt(command)))
+                    return intCommands.get(Integer.parseInt(command) - 1);
+            } catch (NumberFormatException e){ }
+            finally {
+                System.out.println(errorMessage);
+            }
         }
     }
 

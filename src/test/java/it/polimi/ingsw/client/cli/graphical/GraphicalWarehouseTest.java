@@ -19,7 +19,7 @@ public class GraphicalWarehouseTest extends TestCase {
         depots[0].add(Resource.STONE);
         depots[1].add(Resource.COIN);
         depots[1].add(Resource.SERVANT);
-        depots[2].add(Resource.STONE);
+        depots[2].add(Resource.SHIELD);
         depots[2].add(Resource.STONE);
         depots[2].add(Resource.STONE);
 

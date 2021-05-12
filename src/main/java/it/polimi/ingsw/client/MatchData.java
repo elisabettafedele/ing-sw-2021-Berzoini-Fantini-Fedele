@@ -8,9 +8,11 @@ import java.util.Map;
 
 public class MatchData {
     List<Integer> ownedLeaderCards;
+    List<Integer>[] personalBoardSlots;
     List<LeaderCard> allLeaderCards;
-
     Map<Integer, List<String>> lightDevelopmentCards;
+    int faithTrackPosition;
+
 
     private static MatchData instance;
 

@@ -9,11 +9,6 @@ import java.util.Map;
 public abstract class EndPhase implements GamePhase{
 
     private Controller controller;
-    private Map<Player, Integer> victoryPoints;
-
-    public EndPhase(){
-        victoryPoints = new HashMap<>();
-    }
 
     @Override
     public void executePhase(Controller controller) {
@@ -44,4 +39,7 @@ public abstract class EndPhase implements GamePhase{
 
     public abstract void notifyResults();
 
+    public Controller getController(){
+        return controller;
+    }
 }
