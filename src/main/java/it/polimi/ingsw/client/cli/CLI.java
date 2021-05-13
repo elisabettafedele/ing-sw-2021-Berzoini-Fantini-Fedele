@@ -4,6 +4,7 @@ import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.client.View;
 
+import it.polimi.ingsw.client.cli.graphical.GraphicalWarehouse;
 import it.polimi.ingsw.client.cli.specificCLI.*;
 import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.enumerations.*;
@@ -34,6 +35,10 @@ public class CLI implements View {
         client.closeSocket();
         // if (reconnect)
         // client.start();
+    }
+
+    public void displayDepotsStatus(List<Resource>[] warehouseDepots, List<Resource>[] strongboxDepots, List<List<Resource>> leaderDepots){
+        GraphicalWarehouse.printWarehouse(warehouseDepots);
     }
 
     @Override
