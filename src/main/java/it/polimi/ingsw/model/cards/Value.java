@@ -77,11 +77,28 @@ public class Value implements Serializable {
 
     @Override
     public String toString() {
-        return "Value{" +
-                "flagValue=" + flagValue +
-                ", resourceValue=" + resourceValue +
-                ", faithValue=" + faithValue +
-                '}';
+        String s = "Value{";
+        boolean previousElement = false;
+        if(flagValue != null){
+            s = s + "flagValue=" + flagValue;
+            previousElement = true;
+        }
+        if(resourceValue != null){
+            if(previousElement){
+                s = s + ", resourceValue=" + resourceValue;
+            }else{
+                s = s + "resourceValue=" + resourceValue;
+            }
+            previousElement = true;
+        }
+        if(faithValue != 0){
+            if(previousElement){
+                s = s + ", faithValue=" + faithValue;
+            }else{
+                s = s + "faithValue=" + faithValue;
+            }
+        }
+        return s;
     }
 
     @Override
