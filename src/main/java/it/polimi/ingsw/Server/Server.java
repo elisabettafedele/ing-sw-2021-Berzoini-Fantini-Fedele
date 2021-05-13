@@ -136,7 +136,7 @@ public class Server implements ServerInterface {
         try{
             if(numberOfPlayersForNextGame == -1 && clientsInLobby.get(0).getClientHandlerPhase() != ClientHandlerPhase.WAITING_NUMBER_OF_PLAYERS){
                 clientsInLobby.get(0).setClientHandlerPhase(ClientHandlerPhase.WAITING_NUMBER_OF_PLAYERS);
-                clientsInLobby.get(0).sendMessageToClient(new NumberOfPlayersRequest(false));
+                clientsInLobby.get(0).sendMessageToClient(new NumberOfPlayersRequest());
             }else if(numberOfPlayersForNextGame != -1 && clientsInLobby.size() >= numberOfPlayersForNextGame){
                 if(!duplicatesNicknameForNextMatch()){
                     startNewGame();
@@ -203,7 +203,7 @@ public class Server implements ServerInterface {
             numberOfPlayersForNextGame = -1;
             if (clientsInLobby.size() > 0) {
                 clientsInLobby.get(0).setClientHandlerPhase(ClientHandlerPhase.WAITING_NUMBER_OF_PLAYERS);
-                clientsInLobby.get(0).sendMessageToClient(new NumberOfPlayersRequest(false));
+                clientsInLobby.get(0).sendMessageToClient(new NumberOfPlayersRequest());
             }
         } finally {
             lockLobby.unlock();

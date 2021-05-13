@@ -15,7 +15,7 @@ public interface VirtualView {
     //LOBBY
     void displayGameModeRequest();
     void displayNicknameRequest(boolean isRetry, boolean alreadyTaken);
-    void displayNumberOfPlayersRequest(boolean isRetry);
+    void displayNumberOfPlayersRequest();
     void displayWaitingInTheLobbyMessage();
     void displayPlayersReadyToStartMessage(List<String> nicknames);
     //CONNECTION

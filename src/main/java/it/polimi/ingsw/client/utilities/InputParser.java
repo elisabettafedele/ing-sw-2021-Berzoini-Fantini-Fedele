@@ -63,7 +63,7 @@ public class InputParser {
                     num = Integer.parseInt(numString);
                     done=true;
                 } catch (NumberFormatException e) {
-                    System.out.print(errorMessage);
+                    System.out.println(errorMessage);
                 }
             }while(!done);
 
@@ -97,7 +97,7 @@ public class InputParser {
                         System.out.println(errorMessage);
                     }
                 } catch (NumberFormatException e) {
-                    System.out.print(errorMessage);
+                    System.out.println(errorMessage);
                 }
             }while(!done);
 

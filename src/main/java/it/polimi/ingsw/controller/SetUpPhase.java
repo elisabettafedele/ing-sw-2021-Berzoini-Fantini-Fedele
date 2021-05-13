@@ -47,6 +47,9 @@ public class SetUpPhase implements GamePhase {
             storeResource(((ChooseStorageTypeResponse) message).getResource(), ((ChooseStorageTypeResponse) message).getStorageType(), clientHandler);
     }
 
+    /**
+     * Method to assign 4 leader cards to each players and to randomly set the order in which the player will play
+     */
     private void setUpLeaderCards() {
         List<LeaderCard> leaderCards = LeaderCardParser.parseCards();
         Collections.shuffle(leaderCards);
@@ -75,6 +78,11 @@ public class SetUpPhase implements GamePhase {
 
     }
 
+    /**
+     * Method to remove the two discarded {@link LeaderCard} from the {@link it.polimi.ingsw.model.player.PersonalBoard} of the {@link Player}
+     * @param discardedCards the two cards to be removed
+     * @param clientHandler the connection of the player who provided the cards
+     */
     private void removeLeaderCards(List<Integer> discardedCards, ClientHandler clientHandler) {
         String nickname = clientHandler.getNickname();
         Player player = controller.getPlayerByNickname(nickname);
@@ -88,12 +96,21 @@ public class SetUpPhase implements GamePhase {
         }
     }
 
+    /**
+     * Method to assign the right number of resources to a specific player, depending on his position in the turn round
+     * @param clientHandler the player I want to assign the resources to
+     */
     private void assignResources(ClientHandler clientHandler) {
         List<Resource> resourceTypes = Resource.realValues();
         clientHandler.setClientHandlerPhase(ClientHandlerPhase.WAITING_CHOOSE_RESOURCE_TYPE);
         clientHandler.sendMessageToClient(new ChooseResourceTypeRequest(resourceTypes, getNumberOfInitialResourcesByNickname(clientHandler.getNickname())));
     }
 
+    /**
+     * Method to ask where a specific player wants to store the resources he has taken
+     * @param resources resources to store
+     * @param clientHandler the connection of the player
+     */
     private void setInitialResourcesByNickname(List<Resource> resources, ClientHandler clientHandler){
         resourcesToStoreByNickname.put(clientHandler.getNickname(), resources);
         List<String> availableDepots = ResourceStorageType.getWarehouseDepots();
@@ -103,6 +120,12 @@ public class SetUpPhase implements GamePhase {
         clientHandler.sendMessageToClient(new ChooseStorageTypeRequest(resources.get(0), availableDepots, true));
     }
 
+    /**
+     * Method to handle the response of the client, regarding the placement of his resources
+     * @param resource the {@link Resource} to be stored
+     * @param storageType where the {@link Resource} should be stored
+     * @param clientHandler the connection of the player who has asked to store his {@link Resource}
+     */
     private void storeResource(Resource resource, String storageType, ClientHandler clientHandler){
         Player player = controller.getPlayerByNickname(clientHandler.getNickname());
         resourcesToStoreByNickname.get(player.getNickname()).remove(resource);
@@ -122,10 +145,14 @@ public class SetUpPhase implements GamePhase {
 
     }
 
+    /**
+     * Method to inform the client that he has finished the setUp phase and that the game will start when all the other players will be ready
+     * @param clientHandler
+     */
     private void sendSetUpFinishedMessage(ClientHandler clientHandler) {
         //TODO send a message with his personal board view
         clientHandler.setClientHandlerPhase(ClientHandlerPhase.SET_UP_FINISHED);
-        clientHandler.sendMessageToClient(new TextMessage("The play phase will start in a while..."));
+        clientHandler.sendMessageToClient(new TextMessage("Waiting the other players, the game will start as soon as they all be ready..."));
         endPhaseManager();
     }
 

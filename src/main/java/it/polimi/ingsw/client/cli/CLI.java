@@ -1,36 +1,23 @@
 package it.polimi.ingsw.client.cli;
 
-
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.client.View;
-import it.polimi.ingsw.client.cli.graphical.GraphicalMarket;
 import it.polimi.ingsw.client.utilities.InputParser;
-import it.polimi.ingsw.client.utilities.UtilityPrinter;
 import it.polimi.ingsw.enumerations.*;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.ValueNotPresentException;
 import it.polimi.ingsw.messages.toServer.*;
 import it.polimi.ingsw.model.cards.LeaderCard;
 import it.polimi.ingsw.model.cards.Value;
-
 import java.util.List;
 import java.util.Map;
-
 import java.util.*;
-import java.util.function.BiPredicate;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class CLI implements View {
 
-    private static final String DEFAULT_ADDRESS = "127.0.0.1";
-    private static final int DEFAULT_PORT = 1234;
     private final int BASIC_PRODUCTION_POWER = 0;
-
-    private String IPAddress;
-    private int port;
-
     private Client client;
 
     public static void main(String[] args) {
@@ -39,80 +26,8 @@ public class CLI implements View {
     }
 
     private void init(){
-        askConnectionParameters();
-        client = new Client(IPAddress, port, this);
+        client = LobbyCLI.askConnectionParameters(this);
         client.start();
-    }
-
-    private void askConnectionParameters(){
-        int port;
-        String IPAddress;
-        boolean firstTry = true;
-        //Insert IP address
-        do{
-            if(firstTry)
-                System.out.println("Enter the server's IP address or d (default configuration): ");
-            else
-                System.out.println("Invalid IP address: enter x.x.x.x where x is called an octet and must be a decimal value between 0 and 255. Enter d for default configuration: ");
-            IPAddress = InputParser.getLine();
-            firstTry = false;
-            if (IPAddress.toLowerCase().equals("d")){
-                this.IPAddress = DEFAULT_ADDRESS;
-                this.port = DEFAULT_PORT;
-                return;
-            }
-        }while(!Utils.IPAddressIsValid(IPAddress));
-        firstTry = true;
-        this.IPAddress = IPAddress;
-        //Insert port number
-        do{
-            if(firstTry)
-                System.out.println("Enter the port you want to connect to: ");
-            else
-                System.out.println("Invalid port number: enter an integer between 1024 and 65535");
-            firstTry = false;
-            port = InputParser.getInt("Invalid port number: enter an integer between 1024 and 65535", conditionOnIntegerRange(1024, 65535));
-        }while (!Utils.portIsValid(port));
-        this.port = port;
-    }
-
-    @Override
-    public void displayNicknameRequest(boolean isRetry, boolean alreadyTaken) {
-        if (!isRetry)
-            System.out.println("Insert your nickname");
-        else if (!alreadyTaken)
-            System.out.println("Your nickname was invalid, be sure to insert only valid characters (A-Z, a-z, 0-9)");
-        else {
-            System.out.println("Your nickname has already been taken, insert another one");
-        }
-        client.sendMessageToServer(new NicknameResponse(InputParser.getLine()));
-    }
-
-    @Override
-    public void displayGameModeRequest() {
-        System.out.println("Insert a game mode, multiplayer or solo mode: m | s");
-        client.sendMessageToServer(new GameModeResponse(getGameMode()));
-    }
-
-    @Override
-    public void displayNumberOfPlayersRequest(boolean isRetry) {
-        if (isRetry)
-            System.out.println("Invalid number of players: games can be of 2, 3 or 4 players");
-        else {
-            System.out.println("Insert desired number of players: 2, 3 or 4");
-        }
-        client.sendMessageToServer(new NumberOfPlayersResponse(InputParser.getInt("Invalid number of players: please insert an integer number between 2 and 4", conditionOnIntegerRange(2, 4))));
-    }
-
-    @Override
-    public void displayWaitingInTheLobbyMessage() {
-        System.out.println("Waiting in the lobby...");
-    }
-
-    @Override
-    public void displayPlayersReadyToStartMessage(List<String> nicknames) {
-        //TODO print nicknames
-        System.out.println("All the players are ready to start, the game will start in a while...");
     }
 
     @Override
@@ -120,162 +35,105 @@ public class CLI implements View {
         System.out.println("Timeout expired");
         //boolean reconnect = getBoolean("Timeout expired, do you want to reconnect? y | n");
         client.closeSocket();
-       // if (reconnect)
-           // client.start();
+        // if (reconnect)
+        // client.start();
     }
 
-    @Override
-    public void displayMarbleInsertionPositionRequest() {
-        System.out.println("Insert a marble insertion position (from 1 to 7) to insert the marble in the market trace: ");
-        client.sendMessageToServer(new MarbleInsertionPositionResponse(InputParser.getInt("Invalid position: the position must be an integer from 1 to 7", conditionOnIntegerRange(1, 7))));
-    }
-
-    @Override
-    public void displayChooseWhiteMarbleConversionRequest(List<Resource> resources, int numberOfMarbles) {
-        System.out.println("You have these two possible white marble conversions: " + resources.get(0) + " | " + resources.get(1));
-        List<Resource> resourcesChosen = new LinkedList<>();
-        for (int i = 0; i < numberOfMarbles; i++){
-            if (numberOfMarbles > 1)
-                System.out.printf("White marble #%d\n", i+1);
-            resourcesChosen.add(getMarbleColor(resources));
-        }
-        client.sendMessageToServer(new ChooseWhiteMarbleConversionResponse(resourcesChosen));
-    }
-
-    @Override
-    public void displayMarblesTaken(List<Marble> marblesTaken, boolean needToChooseConversion) {
-        System.out.println("These are the marbles you took from the market:");
-        GraphicalMarket.printMarbleLine(marblesTaken);
-        if (marblesTaken.contains(Marble.WHITE)){
-            if (!needToChooseConversion)
-                System.out.println("White marbles will be automatically converted according to your leader card effects (if any)");
-            else
-                System.out.println("You have more than one White Marble Effect Active! You need to choose one white marble at a time how you want to convert it");
-        }
-    }
-
-    @Override
-    public void displayChooseStorageTypeRequest(Resource resource, List<String> availableDepots, boolean setUpPhase) {
-        if (availableDepots.isEmpty())
-            System.out.println("There are no available depots for " + resource);
-        else {
-            System.out.println("Choose a depot for the " + resource + "\nAvailable depots for this resource type are:");
-            UtilityPrinter.printNumericList(availableDepots);
-        }
-        List<String> textCommands = new ArrayList<>();
-        if (!setUpPhase) {
-            System.out.println("Type d if you want to discard the resource or r if you want to reorganize your depots");
-            textCommands.add(Command.DISCARD.command);
-            textCommands.add(Command.REORGANIZE.command);
-        }
-        String choiceString = InputParser.getCommandFromList(textCommands, availableDepots);
-        if (choiceString.equals(Command.DISCARD.command))
-            client.sendMessageToServer(new DiscardResourceRequest(resource));
-        else if (choiceString.equals(Command.REORGANIZE.command))
-            client.sendMessageToServer(new ReorganizeDepotRequest());
-        else
-            client.sendMessageToServer(new ChooseStorageTypeResponse(resource, choiceString, setUpPhase));
-    }
+    // *********************************************************************  //
+    //                             LOBBY CLI                                  //
+    // *********************************************************************  //
 
 
     @Override
-    public void displayReorganizeDepotsRequest(List<String> depots, boolean first, boolean failure, List<Resource> availableLeaderResources){
-        //Just temporary I want to make this check earlier
-        if (depots.isEmpty()){
-            System.out.println("You do not have any depot to reorganize");
-            client.sendMessageToServer(new NotifyEndDepotsReorganization());
-            return;
-        }
-        if (first)
-            System.out.println("You can now reorganize your depots with the command" + Command.SWAP.command + " or " + Command.MOVE.command + "- "+ Command.SWAP + ": realizes a swap of two depots which contain different resource types\n- " + Command.MOVE + ": move a certain number of resources from one depot to another (be careful because the leader depots have a fixed resource type!\nIf you have finished type " + Command.END_REORGANIZE_DEPOTS.command);
-        if (failure)
-            System.out.println("Invalid reorganization: check the capacity and the type of the depots before reorganizing.");
-        List<String> possibleCommands = Command.getReorganizeDepotsCommands();
-        possibleCommands.addAll(depots);
-        Resource resource = Resource.ANY;
-        System.out.println("Do you want to swap or move your resources? Type " + Command.END_REORGANIZE_DEPOTS.command + " if you want to end the reorganization of your depots");
-        System.out.println(Command.SWAP.command + " | " + Command.MOVE.command + " | " + Command.END_REORGANIZE_DEPOTS.command);
-        String commandType = InputParser.getString("Please insert a valid command", conditionOnString(possibleCommands));
-        if (commandType.equals(Command.END_REORGANIZE_DEPOTS.command)) {
-            client.sendMessageToServer(new NotifyEndDepotsReorganization());
-            return;
-        }
-        System.out.print("Select the origin depot: ");
-        String originDepot = InputParser.getString("Please insert a valid depot", conditionOnString(depots));
-        System.out.print("Select the destination depot: ");
-        String destinationDepot = InputParser.getString("Please insert a valid depot", conditionOnString(depots));
-        if (commandType.equals(Command.SWAP.command))
-            client.sendMessageToServer(new SwapWarehouseDepotsRequest(originDepot,destinationDepot));
-        else {
-            System.out.print("Select the quantity of the resources you want to move: ");
-            Integer quantity = InputParser.getInt("Please insert a valid resource quantity", conditionOnIntegerRange(1, 4));
-            assert (quantity != null);
-            if (availableLeaderResources.size() == 2 && originDepot.equals("LEADER_DEPOT")) {
-                System.out.print("Select the type of resource you want to remove from the leader depot: ");
-                resource = Resource.valueOf(InputParser.getString("Insert a valid resource type", conditionOnString(availableLeaderResources.stream().map(Enum::name).collect(Collectors.toList()))));
-            }
-            client.sendMessageToServer(new MoveResourcesRequest(originDepot, destinationDepot, resource, quantity));
-        }
+    public void displayNicknameRequest(boolean isRetry, boolean alreadyTaken) {
+        LobbyCLI.displayNicknameRequest(client, isRetry, alreadyTaken);
     }
 
-
-    private GameMode getGameMode(){
-        while(true) {
-            String gameModeString = InputParser.getLine();
-            if (gameModeString.equals("m"))
-                return GameMode.MULTI_PLAYER;
-            else if (gameModeString.equals("s"))
-                return GameMode.SINGLE_PLAYER;
-            else {
-                System.out.println("Invalid game mode: type m for multiplayer mode or s for solo mode");
-            }
-        }
+    @Override
+    public void displayGameModeRequest() {
+        LobbyCLI.displayGameModeRequest(client);
     }
 
-    private boolean getBoolean(String message){
-        String reconnectString;
-        do {
-            System.out.println(message);
-            reconnectString = InputParser.getLine();
-        } while (!reconnectString.equalsIgnoreCase("y")  && !reconnectString.equalsIgnoreCase("n"));
-        return reconnectString.equalsIgnoreCase("y");
-
+    @Override
+    public void displayNumberOfPlayersRequest() {
+        LobbyCLI.displayNumberOfPlayersRequest(client);
     }
 
-    private Resource getMarbleColor(List<Resource> conversions){
-        Resource resource = null;
-        String resourceString;
-        boolean error;
-        do {
-            System.out.println("Select one conversion: ");
-            resourceString = InputParser.getLine();
-            try {
-                resource = Resource.valueOf(resourceString.toUpperCase());
-                error = !conversions.contains(resource);
-            }catch (IllegalArgumentException e){
-                error = true;
-                System.out.println("Error: insert a valid resource type");
-            }
-        } while (error);
-        return resource;
+    @Override
+    public void displayWaitingInTheLobbyMessage() {
+        LobbyCLI.displayWaitingInTheLobbyMessage();
+    }
+
+    @Override
+    public void displayPlayersReadyToStartMessage(List<String> nicknames) {
+        LobbyCLI.displayPlayersReadyToStartMessage(nicknames);
+    }
+
+    // *********************************************************************  //
+    //                             SETUP CLI                                  //
+    // *********************************************************************  //
+
+    @Override
+    public void loadLeaderCards(List<LeaderCard> leaderCards){
+        MatchData.getInstance().setAllLeaderCards(leaderCards);
+    }
+
+    public void loadDevelopmentCards(Map<Integer, List<String>> lightDevelopmentCards) {
+        MatchData.getInstance().setAllDevelopmentCards(lightDevelopmentCards);
     }
 
     @Override
     public void displayChooseLeaderCardsRequest(List<Integer> leaderCardsIDs) {
-        System.out.println("Choose two Leader Cards to keep");
-        for (Integer id : leaderCardsIDs){
-            System.out.printf("%d. %s \n", id, MatchData.getInstance().getLeaderCardByID(id));
-        }
-        System.out.print("Insert the ID of the first leader card chosen: ");
-        Integer firstChoice = InputParser.getInt("Error: the ID provided is not available. Provide a valid ID", conditionOnInteger(leaderCardsIDs));
-        leaderCardsIDs.remove(firstChoice);
-        MatchData.getInstance().addChosenLeaderCard(firstChoice);
-        System.out.print("Insert the ID of the second leader card chosen: ");
-        Integer secondChoice = InputParser.getInt("Error: the ID provided is not available. Provide a valid ID", conditionOnInteger(leaderCardsIDs));
-        MatchData.getInstance().addChosenLeaderCard(secondChoice);
-        leaderCardsIDs.remove(secondChoice);
-        client.sendMessageToServer(new ChooseLeaderCardsResponse(leaderCardsIDs));
+        SetUpCLI.displayChooseLeaderCardsRequest(client, leaderCardsIDs);
     }
+
+    @Override
+    public void displayChooseResourceTypeRequest(List<Resource> resourceTypes, int quantity) {
+        SetUpCLI.displayChooseResourceTypeRequest(client, resourceTypes, quantity);
+    }
+
+    // *********************************************************************  //
+    //                          CHOOSE ACTION CLI                             //
+    // *********************************************************************  //
+
+    @Override
+    public void displayChooseActionRequest(Map<ActionType, Boolean> executableActions, boolean standardActionDone) {
+        ChooseActionCLI.displayChooseActionRequest(client, executableActions, standardActionDone);
+    }
+
+    // *********************************************************************  //
+    //                   TAKE RESOURCES FROM MARKET CLI                       //
+    // *********************************************************************  //
+
+    @Override
+    public void displayMarbleInsertionPositionRequest() {
+        TakeResourcesFromMarketCLI.displayMarbleInsertionPositionRequest(client);
+    }
+
+    @Override
+    public void displayChooseWhiteMarbleConversionRequest(List<Resource> resources, int numberOfMarbles) {
+        TakeResourcesFromMarketCLI.displayChooseWhiteMarbleConversionRequest(client, resources, numberOfMarbles);
+    }
+
+    @Override
+    public void displayMarblesTaken(List<Marble> marblesTaken, boolean needToChooseConversion) {
+        TakeResourcesFromMarketCLI.displayMarblesTaken(marblesTaken, needToChooseConversion);
+    }
+
+    // *********************************************************************  //
+    //                         ORGANIZE DEPOTS CLI                            //
+    // *********************************************************************  //
+
+    @Override
+    public void displayChooseStorageTypeRequest(Resource resource, List<String> availableDepots, boolean setUpPhase) {
+        OrganizeDepotsCLI.displayChooseStorageTypeRequest(client, resource, availableDepots, setUpPhase);
+    }
+    @Override
+    public void displayReorganizeDepotsRequest(List<String> depots, boolean first, boolean failure, List<Resource> availableLeaderResources){
+       OrganizeDepotsCLI.displayReorganizeDepotsRequest(client, depots, first, failure, availableLeaderResources);
+    }
+
+    //TODO finish organization of CLI!!
 
     @Override
     public void displaySelectCardRequest(List<Integer> CardsIDs,boolean leaderORdevelopment) {
@@ -291,35 +149,6 @@ public class CLI implements View {
         System.out.print("Insert the ID of the card you want to select: ");
         Integer selection = InputParser.getInt("Error: the ID provided is not available. Provide a valid ID", conditionOnInteger(CardsIDs));
         client.sendMessageToServer( new SelectCardResponse(selection));
-    }
-
-    @Override
-    public void loadLeaderCards(List<LeaderCard> leaderCards){
-        MatchData.getInstance().setAllLeaderCards(leaderCards);
-    }
-
-    @Override
-    public void displayChooseResourceTypeRequest(List<Resource> resourceTypes, int quantity) {
-        //TODO show choose resource type view
-        List<String> resourcesToString = resourceTypes.stream().map(Enum::name).collect(Collectors.toList());
-        System.out.printf("You have to choose %d resource type. \nAvailable resource types are:\n", quantity);
-        UtilityPrinter.printNumericList(resourcesToString);
-        List<Resource> selectedResources = new ArrayList<>();
-        for (int i = 0; i < quantity; i++) {
-            if (quantity > 1)
-                System.out.print("Choice " + i+1 + ": ");
-            else
-                System.out.print("Your choice: ");
-            selectedResources.add(Resource.valueOf(InputParser.getCommandFromList(resourcesToString)));
-        }
-        client.sendMessageToServer(new ChooseResourceTypeResponse(selectedResources));
-    }
-
-
-
-
-    public void loadDevelopmentCards(Map<Integer, List<String>> lightDevelopmentCards) {
-        MatchData.getInstance().setAllDevelopmentCards(lightDevelopmentCards);
     }
 
     @Override
@@ -605,26 +434,11 @@ public class CLI implements View {
         }
     }
 
-    @Override
-    public void displayChooseActionRequest(Map<ActionType, Boolean> executableActions, boolean standardActionDone) {
-        List<String> availableActions = executableActions.keySet().stream().filter(executableActions::get).map(Enum::name).collect(Collectors.toList());
-        List<String> textCommands = new ArrayList<>();
-        System.out.println("Choose your next action: ");
-        UtilityPrinter.printNumericList(availableActions);
-        if (standardActionDone)
-            System.out.println("Otherwise, you can end your turn now, just typing \"end\"");
-        textCommands.add("end");
-        //TODO gestire la possibilità di vedere gli altri giocatori la grid e il market prima di scegliere la action
-        int selection=0;//per esempio, corrisponde al value della actionType (nella enum) scelta
-        String selectionString = InputParser.getCommandFromList(textCommands, availableActions);
-        if (selectionString.equals("end"))
-            client.sendMessageToServer(new EndTurnRequest());
-        else {
-            selection = ActionType.valueOf(selectionString).getValue();
-            client.sendMessageToServer(new ChooseActionResponse(selection));
-        }
 
-    }
+
+    // *********************************************************************  //
+    //                               PREDICATES                               //
+    // *********************************************************************  //
 
     public static Predicate<Integer> conditionOnIntegerRange(int min, int max){
         return p -> p >= min && p <= max;
@@ -637,8 +451,4 @@ public class CLI implements View {
     public static Predicate<String> conditionOnString(List<String> lis){
         return lis::contains;
     }
-
-
-    public static BiPredicate<String, List<String>> conditionOnReorganizeDepotsCommand =
-            Utils::isACorrectReorganizeDepotCommand;
 }

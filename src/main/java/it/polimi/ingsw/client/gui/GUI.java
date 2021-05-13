@@ -93,7 +93,7 @@ public class GUI extends Application implements View {
     }
 
     @Override
-    public void displayNumberOfPlayersRequest(boolean isRetry) {
+    public void displayNumberOfPlayersRequest() {
         setupSceneController.displayNumberOfPlayersRequest();
     }
 
