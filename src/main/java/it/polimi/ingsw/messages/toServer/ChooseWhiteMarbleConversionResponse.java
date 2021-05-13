@@ -1,9 +1,8 @@
 package it.polimi.ingsw.messages.toServer;
 
-import it.polimi.ingsw.Server.Server;
+import it.polimi.ingsw.server.Server;
 import it.polimi.ingsw.common.ClientHandlerInterface;
 import it.polimi.ingsw.common.ServerInterface;
-import it.polimi.ingsw.enumerations.Marble;
 import it.polimi.ingsw.enumerations.Resource;
 
 import java.util.List;

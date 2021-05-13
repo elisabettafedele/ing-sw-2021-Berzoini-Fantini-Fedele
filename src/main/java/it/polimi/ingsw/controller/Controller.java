@@ -1,6 +1,7 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.Server.ClientHandler;
+import it.polimi.ingsw.controller.game_phases.*;
+import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.common.ClientHandlerInterface;
 import it.polimi.ingsw.controller.actions.SinglePlayerEndPhase;
 import it.polimi.ingsw.enumerations.GameMode;

@@ -1,4 +1,4 @@
-package it.polimi.ingsw.Server;
+package it.polimi.ingsw.server;
 
 import it.polimi.ingsw.common.ClientHandlerInterface;
 import it.polimi.ingsw.controller.Controller;

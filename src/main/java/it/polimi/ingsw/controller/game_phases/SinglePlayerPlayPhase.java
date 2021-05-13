@@ -1,8 +1,10 @@
-package it.polimi.ingsw.controller;
+package it.polimi.ingsw.controller.game_phases;
 
+import it.polimi.ingsw.controller.Controller;
+import it.polimi.ingsw.controller.TurnController;
 import it.polimi.ingsw.controller.actions.SoloActionToken;
 import it.polimi.ingsw.enumerations.FlagColor;
-import it.polimi.ingsw.Server.ClientHandler;
+import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.InvalidMethodException;
 import it.polimi.ingsw.exceptions.ZeroPlayerException;
@@ -16,7 +18,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.stream.Collectors;
 
-public class SinglePlayerPlayPhase extends PlayPhase implements GamePhase{
+public class SinglePlayerPlayPhase extends PlayPhase implements GamePhase {
     private Controller controller;
     private TurnController turnController;
     private Player player;

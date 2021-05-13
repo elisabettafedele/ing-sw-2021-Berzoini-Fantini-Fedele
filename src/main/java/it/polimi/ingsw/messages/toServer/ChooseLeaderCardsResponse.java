@@ -1,6 +1,6 @@
 package it.polimi.ingsw.messages.toServer;
 
-import it.polimi.ingsw.Server.Server;
+import it.polimi.ingsw.server.Server;
 import it.polimi.ingsw.common.ClientHandlerInterface;
 import it.polimi.ingsw.common.ServerInterface;
 

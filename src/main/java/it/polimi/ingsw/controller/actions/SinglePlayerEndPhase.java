@@ -1,6 +1,6 @@
 package it.polimi.ingsw.controller.actions;
 
-import it.polimi.ingsw.controller.EndPhase;
+import it.polimi.ingsw.controller.game_phases.EndPhase;
 import it.polimi.ingsw.messages.toClient.TextMessage;
 
 public class SinglePlayerEndPhase extends EndPhase {

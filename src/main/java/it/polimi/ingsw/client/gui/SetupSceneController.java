@@ -2,8 +2,7 @@ package it.polimi.ingsw.client.gui;
 
 
 import it.polimi.ingsw.client.Client;
-import it.polimi.ingsw.client.cli.Utils;
-import it.polimi.ingsw.client.utilities.InputParser;
+import it.polimi.ingsw.client.utilities.Utils;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.messages.toServer.GameModeResponse;
 import it.polimi.ingsw.messages.toServer.NicknameResponse;

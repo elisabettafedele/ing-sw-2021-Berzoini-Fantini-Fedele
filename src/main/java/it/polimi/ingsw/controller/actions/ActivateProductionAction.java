@@ -1,7 +1,7 @@
 package it.polimi.ingsw.controller.actions;
 
-import it.polimi.ingsw.Server.ClientHandler;
-import it.polimi.ingsw.Server.Server;
+import it.polimi.ingsw.server.ClientHandler;
+import it.polimi.ingsw.server.Server;
 import it.polimi.ingsw.controller.TurnController;
 import it.polimi.ingsw.enumerations.EffectType;
 import it.polimi.ingsw.enumerations.Resource;

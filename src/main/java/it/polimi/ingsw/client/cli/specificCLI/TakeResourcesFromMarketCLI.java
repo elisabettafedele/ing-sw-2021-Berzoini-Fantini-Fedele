@@ -1,6 +1,7 @@
-package it.polimi.ingsw.client.cli;
+package it.polimi.ingsw.client.cli.specificCLI;
 
 import it.polimi.ingsw.client.Client;
+import it.polimi.ingsw.client.cli.CLI;
 import it.polimi.ingsw.client.cli.graphical.GraphicalMarket;
 import it.polimi.ingsw.client.utilities.InputParser;
 import it.polimi.ingsw.enumerations.Marble;
