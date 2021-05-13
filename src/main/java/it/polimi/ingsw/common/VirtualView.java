@@ -36,7 +36,8 @@ public interface VirtualView {
     //SETUP
     void loadLeaderCards(List<LeaderCard> leaderCards);
     void displayChooseResourceTypeRequest(List<Resource> resourceTypes, int quantity);
-    void loadDevelopmentCards(Map<Integer, List<String>> lightDevelopmentCards);
+
+    void loadDevelopmentCards(List<LightDevelopmentCard> lightDevelopmentCards);
     void displayMessage(String message);
 
 

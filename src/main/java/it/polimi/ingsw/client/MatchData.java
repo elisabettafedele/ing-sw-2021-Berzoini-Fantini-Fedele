@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client;
 
+import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.model.cards.LeaderCard;
 
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ public class MatchData {
     List<Integer> ownedLeaderCards;
     List<Integer>[] personalBoardSlots;
     List<LeaderCard> allLeaderCards;
-    Map<Integer, List<String>> lightDevelopmentCards;
+    List<LightDevelopmentCard> lightDevelopmentCards;
     int faithTrackPosition;
 
 
@@ -56,11 +57,16 @@ public class MatchData {
         return cards;
     }
 
-    public void setAllDevelopmentCards(Map<Integer, List<String>> lightDevelopmentCards) {
+    public void setAllDevelopmentCards(List<LightDevelopmentCard> lightDevelopmentCards) {
         this.lightDevelopmentCards = lightDevelopmentCards;
     }
 
-    public List<String> getDevelopmentCardByID(Integer ID){
-        return lightDevelopmentCards.get(ID);
+    public LightDevelopmentCard getDevelopmentCardByID(Integer ID){
+        for (LightDevelopmentCard ldc : lightDevelopmentCards){
+            if(ldc.getID() == ID){
+                return ldc;
+            }
+        }
+        return null;
     }
 }

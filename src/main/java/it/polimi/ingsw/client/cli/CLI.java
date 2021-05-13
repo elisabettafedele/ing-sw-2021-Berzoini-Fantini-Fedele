@@ -3,7 +3,9 @@ package it.polimi.ingsw.client.cli;
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.client.View;
+
 import it.polimi.ingsw.client.cli.specificCLI.*;
+import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.enumerations.*;
 import it.polimi.ingsw.model.cards.LeaderCard;
 import it.polimi.ingsw.model.cards.Value;
@@ -78,7 +80,7 @@ public class CLI implements View {
         MatchData.getInstance().setAllLeaderCards(leaderCards);
     }
 
-    public void loadDevelopmentCards(Map<Integer, List<String>> lightDevelopmentCards) {
+    public void loadDevelopmentCards(List<LightDevelopmentCard> lightDevelopmentCards) {
         MatchData.getInstance().setAllDevelopmentCards(lightDevelopmentCards);
     }
 

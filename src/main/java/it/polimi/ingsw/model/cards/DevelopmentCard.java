@@ -74,7 +74,7 @@ public class DevelopmentCard extends Card {
     public String toString() {
         return "DevelopmentCard{" +
                 super.toString() +
-                "flag=" + flag +
+                ", flag=" + flag +
                 ", production=" + production +
                 '}';
     }
