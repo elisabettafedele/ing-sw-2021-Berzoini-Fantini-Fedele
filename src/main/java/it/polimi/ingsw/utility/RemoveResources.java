@@ -1,6 +1,6 @@
 package it.polimi.ingsw.utility;
 
-import it.polimi.ingsw.Server.ClientHandler;
+import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.enumerations.ResourceStorageType;
 import it.polimi.ingsw.messages.toClient.SelectStorageRequest;

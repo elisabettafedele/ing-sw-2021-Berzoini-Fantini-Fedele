@@ -1,6 +1,8 @@
-package it.polimi.ingsw.client.cli;
+package it.polimi.ingsw.client.cli.specificCLI;
 
 import it.polimi.ingsw.client.Client;
+import it.polimi.ingsw.client.cli.CLI;
+import it.polimi.ingsw.client.utilities.Utils;
 import it.polimi.ingsw.client.utilities.InputParser;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.messages.toServer.GameModeResponse;
