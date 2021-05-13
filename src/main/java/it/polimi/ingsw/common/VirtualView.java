@@ -31,7 +31,7 @@ public interface VirtualView {
     void displaySelectCardRequest(List<Integer> CardsIDs, boolean leaderORdevelopment);
     void loadLeaderCards(List<LeaderCard> leaderCards);
     void displayChooseResourceTypeRequest(List<Resource> resourceTypes, int quantity);
-    void loadDevelopmentCards(Map<Integer, List<String>> lightDevelopmentCards);
+    void loadDevelopmentCards(List<LightDevelopmentCard> lightDevelopmentCards);
     void displayChooseProductionPowersRequest(Map<Integer, List<Value>> availableProductionPowers, Map<Resource, Integer> availableResources);
     void displaySelectDevelopmentCardSlotRequest(boolean firstSlotAvailable, boolean secondSlotAvailable, boolean thirdSlotAvailable);
     void displayMessage(String message);

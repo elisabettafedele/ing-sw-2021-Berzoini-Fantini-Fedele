@@ -3,7 +3,7 @@ import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.client.View;
 import it.polimi.ingsw.common.FunctionInterface;
-import it.polimi.ingsw.controller.actions.Action;
+import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.enumerations.ActionType;
 import it.polimi.ingsw.enumerations.Marble;
 import it.polimi.ingsw.enumerations.Resource;
@@ -153,7 +153,7 @@ public class GUI extends Application implements View {
     public void displayChooseResourceTypeRequest(List<Resource> resourceTypes, int quantity) {
     }
 
-    public void loadDevelopmentCards(Map<Integer, List<String>> lightDevelopmentCards) {
+    public void loadDevelopmentCards(List<LightDevelopmentCard> lightDevelopmentCards) {
 
     }
 

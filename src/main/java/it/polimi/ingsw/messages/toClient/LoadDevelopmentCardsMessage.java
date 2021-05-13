@@ -1,20 +1,20 @@
 package it.polimi.ingsw.messages.toClient;
 
+import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.common.VirtualView;
 
 import java.util.List;
-import java.util.Map;
 
 public class LoadDevelopmentCardsMessage implements MessageToClient{
 
-    private Map<Integer, List<String>> lightDevelopmentCards;
+    private List<LightDevelopmentCard> lightDevCards;
 
-    public LoadDevelopmentCardsMessage(Map<Integer, List<String>> lightDevelopmentCards) {
-        this.lightDevelopmentCards = lightDevelopmentCards;
+    public LoadDevelopmentCardsMessage(List<LightDevelopmentCard> lightDevCards) {
+        this.lightDevCards = lightDevCards;
     }
 
     @Override
     public void handleMessage(VirtualView view) {
-        view.loadDevelopmentCards(lightDevelopmentCards);
+        view.loadDevelopmentCards(lightDevCards);
     }
 }

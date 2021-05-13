@@ -82,7 +82,7 @@ public class ProductionCLI {
                 //skip
             }
             if(hasResourcesForThisProduction(activationCost, availableResources) && entry.getKey() != 0){
-                System.out.println(MatchData.getInstance().getDevelopmentCardByID(entry.getKey()).get(0));
+                System.out.println(MatchData.getInstance().getDevelopmentCardByID(entry.getKey()));
                 availableProductionIDs.add(entry.getKey());
             }
         }
