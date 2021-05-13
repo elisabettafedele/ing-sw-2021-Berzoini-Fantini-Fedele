@@ -171,7 +171,6 @@ public class SetUpPhase implements GamePhase {
     private void sendLightCards() {
         for (String nickname : controller.getNicknames()) {
             ClientHandler connection = controller.getConnectionByNickname(nickname);
-            //connection.sendMessageToClient(new LoadDevelopmentCardsMessage(getLightCards(DevelopmentCardParser.parseCards())));
             connection.sendMessageToClient(new LoadDevelopmentCardsMessage(getLightDevelopmentCards(DevelopmentCardParser.parseCards())));
             connection.sendMessageToClient(new LoadLeaderCardsMessage(LeaderCardParser.parseCards()));
         }
