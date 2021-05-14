@@ -24,6 +24,7 @@ public class Player {
         this.personalBoard = new PersonalBoard(leaderCards);
         this.victoryPoints = 0;
         this.winner = false;
+        this.active = true;
     }
 
     /**

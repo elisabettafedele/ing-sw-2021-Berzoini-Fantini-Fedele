@@ -22,7 +22,7 @@ public class GraphicalMarket {
 
     public static void printMarbleLine(List<Marble> marbles){
         for (Marble marble : marbles)
-            System.out.print(Colour.getMarbleColour(marble) + " @ ");
+            System.out.print(Colour.getMarbleColour(marble) + " ● ");
         System.out.print(Colour.ANSI_RESET + "\n");
     }
 }

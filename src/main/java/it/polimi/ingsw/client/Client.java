@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client;
 
+import it.polimi.ingsw.client.cli.graphical.Colour;
 import it.polimi.ingsw.common.ClientInterface;
 import it.polimi.ingsw.messages.ConnectionMessage;
 import it.polimi.ingsw.messages.toClient.MessageToClient;
@@ -63,8 +64,10 @@ public class Client implements ClientInterface {
             socket.connect(new InetSocketAddress(IPAddress, port), SOCKET_TIMEOUT);
             os = new ObjectOutputStream(socket.getOutputStream());
             is = new ObjectInputStream(socket.getInputStream());
+
         } catch (IOException e) {
             closeSocket();
+            return;
         }
 
         connected.set(true);
@@ -124,20 +127,28 @@ public class Client implements ClientInterface {
         }
     }
 
-    public void closeSocket(){
+    public void closeSocket() {
         if (packetReceiver.isAlive())
             packetReceiver.interrupt();
-        connected.set(false);
-        //TODO message
-        try{
-            is.close();
-        } catch(IOException e){ }
-        try{
-            os.close();
-        } catch(IOException e){ }
-        try{
-            socket.close();
-        } catch(IOException e){ }
+        if (!connected.get()) {
+            System.out.println(Colour.ANSI_BRIGHT_CYAN.getCode() + "The server is not reachable at the moment. Try again later.");
+            return;
+        } else {
+            connected.set(false);
+            //TODO message
+            try {
+                is.close();
+            } catch (IOException e) {
+            }
+            try {
+                os.close();
+            } catch (IOException e) {
+            }
+            try {
+                socket.close();
+            } catch (IOException e) {
+            }
+        }
     }
 
 

@@ -50,5 +50,8 @@ public abstract class PlayPhase {
     }
 
     public abstract void handleEndTriggered();
+    public String toString(){
+        return "Play Phase";
+    }
 
 }

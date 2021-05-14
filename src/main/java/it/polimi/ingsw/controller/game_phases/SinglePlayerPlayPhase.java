@@ -27,36 +27,28 @@ public class SinglePlayerPlayPhase extends PlayPhase implements GamePhase {
 
     public SinglePlayerPlayPhase(Controller controller){
         this.controller = controller;
+        this.blackCrossPosition = 0;
         try {
            this.player=controller.getGame().getSinglePlayer();
-        } catch (InvalidMethodException e) {
-            e.printStackTrace();
-        } catch (ZeroPlayerException e) {
+        } catch (InvalidMethodException | ZeroPlayerException e) {
             e.printStackTrace();
         }
-        turnController= new TurnController(controller,player);
+        setPlayer(controller.getPlayers().get(0));
         this.tokens = SoloActionTokenParser.parseTokens();
         shuffleTokens();
     }
 
     @Override
     public void executePhase(Controller controller) {
-        while(!turnController.isEndTriggered()){ //TODO: check if only this is ok, should be
-            turnController.start(this.player);
-            if(!turnController.isEndTriggered()) {
-                useActionToken();//TODO: view communication.
-            }
-            else{
-                player.setWinner(true);
-            }
-        }
-        //nextPhase
+        setTurnController(new TurnController(controller,getPlayer()));
+        getTurnController().start(getPlayer());
     }
 
     private void useActionToken() {
         SoloActionToken token = tokens.remove(); //removing the first of the queue;
         tokens.add(token); //saving the used token at the end of the queue;
         token.useActionToken(this);
+        getTurnController().start(getPlayer());
     }
 
     public void shuffleTokens() {
@@ -103,7 +95,7 @@ public class SinglePlayerPlayPhase extends PlayPhase implements GamePhase {
 
     @Override
     public void nextTurn() {
-        //TODO
+        useActionToken();
     }
 
     @Override
@@ -111,11 +103,6 @@ public class SinglePlayerPlayPhase extends PlayPhase implements GamePhase {
         moveBlackCross(1);
     }
 
-    //TODO: check this
-    @Override
-    public void handleMessage(MessageToServer message, ClientHandler clientHandler) {
-
-    }
 
     public int getBlackCrossPosition() {
         return blackCrossPosition;
