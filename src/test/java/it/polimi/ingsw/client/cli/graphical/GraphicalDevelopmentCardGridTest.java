@@ -38,6 +38,8 @@ public class GraphicalDevelopmentCardGridTest {
         for(DevelopmentCard dc : list){
             IDs.add(dc.getID());
         }
+        //Uncomment to test missing cards displaying
+        //IDs.remove(6);
     }
 
     @Test
