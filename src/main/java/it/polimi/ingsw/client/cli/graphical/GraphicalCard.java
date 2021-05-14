@@ -88,7 +88,7 @@ public class GraphicalCard {
 
                     graphicalGrid.addPixel(x_coord + posix, y_coord + j + begin, c, r.symbol.charAt(0));
                 }catch(IllegalArgumentException e){
-                    graphicalGrid.addPixel(x_coord+posix, y_coord+j+begin, Colour.ANSI_RED, "†".charAt(0));
+                    graphicalGrid.addPixel(x_coord+posix, y_coord+j+begin, Colour.ANSI_RED, "\u2020".charAt(0));
                 }
             }
             if(posix == 3){
@@ -101,7 +101,7 @@ public class GraphicalCard {
         Colour flagColor = getColor(lightDevelopmentCard.getFlagColor());
         int level = getLevel(lightDevelopmentCard);
         for (int j = 0; j <= level; j++){
-            graphicalGrid.addPixel(x_coord+1+j, y_coord+2, flagColor,'●');
+            graphicalGrid.addPixel(x_coord+1+j, y_coord+2, flagColor,'\u25CF');
         }
     }
 

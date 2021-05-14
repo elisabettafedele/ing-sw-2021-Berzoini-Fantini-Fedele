@@ -9,7 +9,7 @@ import java.util.Map;
  * Enumeration representing all the possible resources available in the game
  */
 public enum Resource {
-    COIN(0, "©"),STONE(1, "۞"),SERVANT(2, "֏"),SHIELD(3, "⌂"),ANY(4, " ");
+    COIN(0, "\u00A9"),STONE(1, "\u06DE"),SERVANT(2, "\u2640"),SHIELD(3, "\u2302"),ANY(4, " ");
     private int value;
     public String symbol;
     private static Map<Integer, Resource> map= new HashMap<>();
