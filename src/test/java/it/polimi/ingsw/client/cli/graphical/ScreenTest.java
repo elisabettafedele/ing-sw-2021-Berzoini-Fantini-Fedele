@@ -15,46 +15,33 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+public class ScreenTest {
 
-public class GraphicalDevelopmentCardGridTest {
-
-    List<Integer> IDs;
-    GraphicalDevelopmentCardGrid gdc;
-
+    List<Integer> devCardGridCardsIDs;
+    Screen screen;
     @Before
     public void setUp() throws Exception {
-
+        screen = new Screen();
         MatchData.getInstance().setAllDevelopmentCards(getLightDevelopmentCards(DevelopmentCardParser.parseCards()));
 
-        gdc = new GraphicalDevelopmentCardGrid();
-
         DevelopmentCardGrid devGrid = new DevelopmentCardGrid();
-
         List<DevelopmentCard> list = devGrid.getAvailableCards();
 
-        IDs = new ArrayList<>();
+        devCardGridCardsIDs = new ArrayList<>();
 
         for(DevelopmentCard dc : list){
-            IDs.add(dc.getID());
+            devCardGridCardsIDs.add(dc.getID());
         }
-        //Uncomment to test missing cards displaying
-        //IDs.remove(6);
+
+        screen.updateInfo(devCardGridCardsIDs);
+
     }
 
     @Test
-    public void testDevelopmentCardGridPrint() {
-        gdc.drawDevelopmentCardGrid(IDs);
-        gdc.displayDevelopmentCardGrid();
+    public void displayStandardView() {
+        screen.displayStandardView();
     }
 
-    @Test
-    public void testGetters(){
-        int devCardGridWidth = gdc.getWidth();
-        int devCardGridHeight = gdc.getHeight();
-        assertTrue(devCardGridHeight == 8*3);
-        assertTrue(devCardGridWidth == 14*4+3);
-    }
 
     static List<LightDevelopmentCard> getLightDevelopmentCards(List<DevelopmentCard> cards){
         List<LightDevelopmentCard> lightCards = new ArrayList<>();

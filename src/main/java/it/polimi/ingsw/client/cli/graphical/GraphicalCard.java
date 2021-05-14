@@ -7,7 +7,7 @@ import it.polimi.ingsw.enumerations.Resource;
 import java.util.List;
 
 public class GraphicalCard {
-    public static final int CardWidth = 16;
+    public static final int CardWidth = 14;
     public static final int CardHeight = 8;
 
     private GraphicalDevelopmentCardGrid graphicalGrid;

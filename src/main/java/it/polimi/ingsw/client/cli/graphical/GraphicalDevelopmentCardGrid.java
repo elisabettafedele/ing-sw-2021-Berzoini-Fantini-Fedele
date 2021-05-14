@@ -9,15 +9,14 @@ import java.util.*;
 
 public class GraphicalDevelopmentCardGrid {
 
-
-    private final int h_space = 1; //horizontal_space beetween cards
-    private final int v_space = 0; //vertical_space beetween cards
+    private final int h_space = 1; //horizontal_space between cards
+    private final int v_space = 0; //vertical_space between cards
 
     private final int cardWidth = GraphicalCard.CardWidth;
     private final int cardHeight = GraphicalCard.CardHeight;
 
     private final int width = cardWidth*4 + h_space *3;
-    private final int height = cardHeight*4 + v_space *3;
+    private final int height = cardHeight*3 + v_space *3;
 
     List<LightDevelopmentCard> cardsToDisplay;
 
@@ -30,26 +29,25 @@ public class GraphicalDevelopmentCardGrid {
         colours[x][y] = colour;
     }
 
-    public void setCardsToDisplay(List<Integer> cardsToDisplay){
+    private void setCardsToDisplay(List<Integer> cardsToDisplay){
         this.cardsToDisplay = new ArrayList<>();
-        Collections.sort(cardsToDisplay, Collections.reverseOrder()); //the IDs of the cards are in order of level and color
         for(Integer ID : cardsToDisplay){
             this.cardsToDisplay.add(MatchData.getInstance().getDevelopmentCardByID(ID));
         }
     }
 
-    public void drawDevelopmentCardGrid(){
+    public void drawDevelopmentCardGrid(List<Integer> cardsToDisplay){
+        setCardsToDisplay(cardsToDisplay);
         reset();
         int x_coord = 0;
         int y_coord = 0;
-        for(LightDevelopmentCard ldc : cardsToDisplay){
+        for(LightDevelopmentCard ldc : this.cardsToDisplay){
             List<Integer> coordinates = retrieveCoordinates(ldc);
             x_coord = coordinates.get(0);
             y_coord = coordinates.get(1);
             GraphicalCard gc = new GraphicalCard(this, ldc);
             gc.drawOnScreen(x_coord, y_coord);
         }
-        displayGrid();
     }
 
     private List<Integer> retrieveCoordinates(LightDevelopmentCard ldc) {
@@ -62,10 +60,10 @@ public class GraphicalDevelopmentCardGrid {
         return new ArrayList<>(Arrays.asList(x, y));
     }
 
-    private void displayGrid() {
+    public void displayDevelopmentCardGrid() {
         for(int i = 0; i < height; i++){
             for(int j = 0; j < width; j++){
-               System.out.print(colours[i][j].getCode() + symbols[i][j] + Colour.ANSI_RESET);
+               System.out.print(colours[i][j].getCode() + symbols[i][j]); //+ Colour.ANSI_RESET
             }
             System.out.print("\n");
         }
@@ -80,12 +78,24 @@ public class GraphicalDevelopmentCardGrid {
         }
     }
 
-    /*private String flagColorParser(String s){
-
-    }*/
-
     private List<String> cardInfoParse(String s){
         int index = s.indexOf("flagColor");
         return null;
+    }
+
+    char[][] getSymbols() {
+        return symbols;
+    }
+
+    Colour[][] getColours() {
+        return colours;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 }
