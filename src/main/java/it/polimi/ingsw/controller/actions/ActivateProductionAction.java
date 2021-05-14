@@ -205,7 +205,7 @@ public class ActivateProductionAction implements Action{
             if(productionPowerSelected.contains(BASIC_PRODUCTION_POWER)){
                 basicProductionPower = ((ChooseProductionPowersResponse) message).getBasicProductionPower();
                 manageCost(basicProductionPower.get(0), resourceToRemove);
-                manageCost(basicProductionPower.get(0), resourceToAdd);
+                manageCost(basicProductionPower.get(1), resourceToAdd);
                 productionPowerSelected.remove(Integer.valueOf(BASIC_PRODUCTION_POWER));
             }
 
