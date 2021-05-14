@@ -9,16 +9,18 @@ import javax.swing.*;
 public class ChooseStorageTypeResponse implements MessageToServer{
     private Resource resource;
     private String storageType;
-    private boolean setUpPhase;
+    private boolean canDiscard;
+    private boolean canReorganize;
 
-    public ChooseStorageTypeResponse(Resource resource, String storageType, boolean setUpPhase){
+    public ChooseStorageTypeResponse(Resource resource, String storageType, boolean canDiscard, boolean canReorganize){
         this.resource = resource;
         this.storageType = storageType;
-        this.setUpPhase = setUpPhase;
+        this.canDiscard = canDiscard;
+        this.canReorganize = canReorganize;
     }
     @Override
     public void handleMessage(ServerInterface server, ClientHandlerInterface clientHandler) {
-        if (setUpPhase)
+        if (!canDiscard)
             clientHandler.getController().handleMessage(this,clientHandler);
         else
             clientHandler.getCurrentAction().handleMessage(this);

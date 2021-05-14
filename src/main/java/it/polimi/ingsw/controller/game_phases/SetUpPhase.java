@@ -121,7 +121,7 @@ public class SetUpPhase implements GamePhase {
         if (resources.size() == 2 && resources.get(0) == resources.get(1))
             availableDepots.remove(ResourceStorageType.WAREHOUSE_FIRST_DEPOT.name());
         clientHandler.setClientHandlerPhase(ClientHandlerPhase.WAITING_CHOOSE_STORAGE_TYPE);
-        clientHandler.sendMessageToClient(new ChooseStorageTypeRequest(resources.get(0), availableDepots, true));
+        clientHandler.sendMessageToClient(new ChooseStorageTypeRequest(resources.get(0), availableDepots, false, false));
     }
 
     /**
@@ -144,7 +144,7 @@ public class SetUpPhase implements GamePhase {
             Resource resourceType = resourcesToStoreByNickname.get(player.getNickname()).get(0);
             List<String> availableStorage = player.getPersonalBoard().getWarehouse().getAvailableWarehouseDepotsForResourceType(resourceType).stream().map(x -> x.name()).collect(Collectors.toList());
             clientHandler.setClientHandlerPhase(ClientHandlerPhase.WAITING_CHOOSE_STORAGE_TYPE);
-            clientHandler.sendMessageToClient(new ChooseStorageTypeRequest(resourceType, availableStorage, true));
+            clientHandler.sendMessageToClient(new ChooseStorageTypeRequest(resourceType, availableStorage, false, false));
         }
 
     }

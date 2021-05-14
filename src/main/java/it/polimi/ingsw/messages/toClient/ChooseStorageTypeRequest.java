@@ -11,16 +11,18 @@ import java.util.List;
 public class ChooseStorageTypeRequest implements MessageToClient {
     private Resource resource;
     private List<String> availableDepots;
-    private boolean setUpPhase;
+    private boolean canDiscard;
+    private boolean canReorganize;
 
-    public ChooseStorageTypeRequest(Resource resource, List<String> availableDepots, boolean setUpPhase){
+    public ChooseStorageTypeRequest(Resource resource, List<String> availableDepots, boolean canDiscard, boolean canReorganize){
         this.resource = resource;
         this.availableDepots = availableDepots;
-        this.setUpPhase = setUpPhase;
+        this.canDiscard = canDiscard;
+        this.canReorganize = canReorganize;
     }
 
     @Override
     public void handleMessage(VirtualView view) {
-        view.displayChooseStorageTypeRequest(resource, availableDepots, setUpPhase);
+        view.displayChooseStorageTypeRequest(resource, availableDepots, canDiscard, canReorganize);
     }
 }

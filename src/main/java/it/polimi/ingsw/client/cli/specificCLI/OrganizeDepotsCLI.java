@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 public class OrganizeDepotsCLI {
 
-    public static void displayChooseStorageTypeRequest(Client client, Resource resource, List<String> availableDepots, boolean setUpPhase) {
+    public static void displayChooseStorageTypeRequest(Client client, Resource resource, List<String> availableDepots, boolean canDiscard, boolean canReorganize) {
         if (availableDepots.isEmpty())
             System.out.println("There are no available depots for " + resource);
         else {
@@ -24,10 +24,11 @@ public class OrganizeDepotsCLI {
             UtilityPrinter.printNumericList(availableDepots);
         }
         List<String> textCommands = new ArrayList<>();
-        if (!setUpPhase) {
-            System.out.println("Type d if you want to discard the resource or r if you want to reorganize your depots");
+        if (canDiscard) {
+            System.out.println("Type d if you want to discard the resource" + (canReorganize ? " or r if you want to reorganize your depots" : ""));
             textCommands.add(Command.DISCARD.command);
-            textCommands.add(Command.REORGANIZE.command);
+            if (canReorganize)
+                textCommands.add(Command.REORGANIZE.command);
         }
         String choiceString = InputParser.getCommandFromList(textCommands, availableDepots);
         if (choiceString.equals(Command.DISCARD.command))
@@ -35,7 +36,7 @@ public class OrganizeDepotsCLI {
         else if (choiceString.equals(Command.REORGANIZE.command))
             client.sendMessageToServer(new ReorganizeDepotRequest());
         else
-            client.sendMessageToServer(new ChooseStorageTypeResponse(resource, choiceString, setUpPhase));
+            client.sendMessageToServer(new ChooseStorageTypeResponse(resource, choiceString, canDiscard, canReorganize));
     }
 
     public static void displaySelectStorageRequest(Client client, Resource resource, boolean isInWarehouse, boolean isInStrongbox, boolean isInLeaderDepot) {
@@ -70,14 +71,8 @@ public class OrganizeDepotsCLI {
 
 
     public static void displayReorganizeDepotsRequest(Client client, List<String> depots, boolean first, boolean failure, List<Resource> availableLeaderResources) {
-        //Just temporary I want to make this check earlier
-        if (depots.isEmpty()) {
-            System.out.println("You do not have any depot to reorganize");
-            client.sendMessageToServer(new NotifyEndDepotsReorganization());
-            return;
-        }
         if (first)
-            System.out.println("You can now reorganize your depots with the command" + Command.SWAP.command + " or " + Command.MOVE.command + "- " + Command.SWAP + ": realizes a swap of two depots which contain different resource types\n- " + Command.MOVE + ": move a certain number of resources from one depot to another (be careful because the leader depots have a fixed resource type!\nIf you have finished type " + Command.END_REORGANIZE_DEPOTS.command);
+            System.out.print("You can now reorganize your depots with the command" + Command.SWAP.command + " or " + Command.MOVE.command + "\n- " + Command.SWAP + ": realizes a swap of two depots of the warehouse which contain different resource types\n- " + Command.MOVE + ": move a certain number of resources from one depot to another (be careful because the leader depots have a fixed resource type)\nIf you have finished type " + Command.END_REORGANIZE_DEPOTS.command + "\n");
         if (failure)
             System.out.println("Invalid reorganization: check the capacity and the type of the depots before reorganizing.");
         List<String> possibleCommands = Command.getReorganizeDepotsCommands();
@@ -90,10 +85,10 @@ public class OrganizeDepotsCLI {
             client.sendMessageToServer(new NotifyEndDepotsReorganization());
             return;
         }
-        System.out.println("Select the origin depot:");
+        System.out.println("Select the " + (commandType.equals(Command.SWAP.command) ? "first" : "origin") + " depot:");
         UtilityPrinter.printNumericList(depots);
         String originDepot = InputParser.getCommandFromList(depots);
-        System.out.println("Select the destination depot:");
+        System.out.println("Select the " + (commandType.equals(Command.SWAP.command) ? "second" : "destination") + " depot:");
         UtilityPrinter.printNumericList(depots);
         String destinationDepot = InputParser.getCommandFromList(depots);
         if (commandType.equals(Command.SWAP.command))
@@ -109,7 +104,24 @@ public class OrganizeDepotsCLI {
             client.sendMessageToServer(new MoveResourcesRequest(originDepot, destinationDepot, resource, quantity));
         }
     }
+    /*
+    public static void displayMoveRequest(List<String> originDepots, List<Resource> destinationDepots){
 
+
+
+
+        List <String> origins = originDepots.stream().filter(x -> x != Resource.ANY).map(x -> ResourceStorageType.valueOf(x.getValue()).name()).collect(Collectors.toList());
+        System.out.println("Select the origin depot:");
+        UtilityPrinter.printNumericList(origins);
+        String originDepot = InputParser.getCommandFromList(origins);
+        Resource originResource = originDepots.get(ResourceStorageType.getIndexByString(originDepot));
+        List <String> destinations = destinationDepots.stream().filter(x -> x == Resource.ANY || x == originResource).map(x -> originDepots.indexOf(x) > 2 ? ResourceStorageType.LEADER_DEPOT.name() : ResourceStorageType.valueOf(x.getValue()).name()).collect(Collectors.toList());
+        System.out.println("Select the destination depot:");
+        UtilityPrinter.printNumericList(destinations);
+        String destinationDepot = InputParser.getCommandFromList(destinations);
+        client.sendMessageToServer(new MoveResourcesRequest(originDepot, destinationDepot, resource, quantity));
+    }
+*/
     public static void displayDepotStatus(List<Resource>[] warehouseDepots, List<Resource>[] strongboxDepots, List<List<Resource>> leaderDepots) {
         GraphicalWarehouse.printWarehouse(warehouseDepots);
     }

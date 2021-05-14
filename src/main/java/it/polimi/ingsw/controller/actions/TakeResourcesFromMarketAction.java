@@ -207,6 +207,12 @@ public class TakeResourcesFromMarketAction implements Action {
      */
     private void handleSwapRequest(String origin, String destination){
         //It is not possible to swap resources between leader depots and warehouse
+
+        //If the client want to swap two leader depots
+        if (origin.equals(destination) && origin.equals(ResourceStorageType.LEADER_DEPOT.name())){
+            clientHandler.sendMessageToClient(new SendReorganizeDepotsCommands(availableDepotsForReorganization, false, true, availableLeaderResources));
+            return;
+        }
         if (!ResourceStorageType.getWarehouseDepots().contains(origin) || !ResourceStorageType.getWarehouseDepots().contains(destination))
             clientHandler.sendMessageToClient(new SendReorganizeDepotsCommands(availableDepotsForReorganization, false, true, availableLeaderResources));
         else {
@@ -274,7 +280,7 @@ public class TakeResourcesFromMarketAction implements Action {
     private void handleChooseStorageTypeRequest() {
         Resource resource = resourcesToStore.get(0);
         List<String> availableDepots = getAvailableDepots(resource);
-        clientHandler.sendMessageToClient(new ChooseStorageTypeRequest(resource, availableDepots, false));
+        clientHandler.sendMessageToClient(new ChooseStorageTypeRequest(resource, availableDepots, true, player.getPersonalBoard().countResourceNumber() > 0));
     }
 
     /**
