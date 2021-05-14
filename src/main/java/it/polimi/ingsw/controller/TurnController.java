@@ -24,7 +24,6 @@ public class TurnController {
     private ClientHandler clientHandler;
     private int numberOfLeaderActionsDone=0;
     private boolean standardActionDone=false;
-    private Action nextAction;
     private Player currentPlayer;
     private Controller controller;
     private boolean isInterruptible;
@@ -32,7 +31,6 @@ public class TurnController {
     private boolean endTrigger=false;
     private List<Action> possibleActions;
     private Map<ActionType, Boolean> executableActions;
-    private int actionChosen= -1;
 
     public Controller getController() {
         return controller;
@@ -109,16 +107,34 @@ public class TurnController {
         }
     }
 
-    public void setActionChosen(int actionChosen){
-        this.actionChosen=actionChosen;
-    }
-
     public Player getCurrentPlayer() {
         return currentPlayer;
     }
 
     public void checkFaithTrack(){
-        if(controller.getGame().getFaithTrack().isVaticanReport(currentPlayer.getPersonalBoard().getMarkerPosition())||(isInterruptible&&controller.getGame().getFaithTrack().isVaticanReport(((SinglePlayerPlayPhase) getController().getGamePhase()).getBlackCrossPosition()))){
+        boolean isVaticanReport=false;
+        if (!isInterruptible) {
+            try {
+                for(Player p:controller.getGame().getPlayers()){
+                    if(controller.getGame().getFaithTrack().isVaticanReport(p.getPersonalBoard().getMarkerPosition())){
+                        isVaticanReport=true;
+                        break;
+                    }
+                }
+            } catch (InvalidMethodException e) {
+                e.printStackTrace();
+            } catch (ZeroPlayerException e) {
+                e.printStackTrace();
+            }
+        }
+        if(isInterruptible){
+            isVaticanReport=controller.getGame().getFaithTrack().isVaticanReport(getCurrentPlayer().getPersonalBoard().getMarkerPosition());
+            if(!isVaticanReport){
+                isVaticanReport=controller.getGame().getFaithTrack().isVaticanReport(((SinglePlayerPlayPhase) getController().getGamePhase()).getBlackCrossPosition());
+            }
+        }
+
+        if(isVaticanReport){
             VaticanReportSection vaticanReportSection=controller.getGame().getFaithTrack().getCurrentSection();
             if(!isInterruptible){// multiplayer
                 try {
@@ -145,7 +161,12 @@ public class TurnController {
                     e.printStackTrace();
                 }
             }
-            if(currentPlayer.getPersonalBoard().getMarkerPosition()>=controller.getGame().getFaithTrack().getLength()){
+            for(Player p: controller.getPlayers()){
+                if(p.getPersonalBoard().getMarkerPosition()>=controller.getGame().getFaithTrack().getLength()){
+                    ((PlayPhase) controller.getGamePhase()).handleEndTriggered();
+                }
+            }
+            if(isInterruptible&&((SinglePlayerPlayPhase)controller.getGamePhase()).getBlackCrossPosition()>=controller.getGame().getFaithTrack().getLength()){
                 ((PlayPhase) controller.getGamePhase()).handleEndTriggered();
             }
 
