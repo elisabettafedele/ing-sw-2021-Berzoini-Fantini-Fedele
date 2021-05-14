@@ -10,12 +10,14 @@ public class GraphicalMarket {
         int index = 1;
         for (int i = 0; i < marketTray.length; i++){
             for (int j = 0; j < marketTray[i].length; j++) {
-                System.out.print(Colour.getMarbleColour(marketTray[i][j]) + " @ ");
+                System.out.print(Colour.getMarbleColour(marketTray[i][j]) + " ● "+ Colour.ANSI_RESET);
             }
-            System.out.print(Colour.ANSI_BRIGHT_GREEN.getCode() + index + "\n");
+            System.out.print(index + " \n"+ Colour.ANSI_RESET);
             index++;
         }
-        System.out.println(" 7  6  5  4 " + Colour.getMarbleColour(slideMarble) + "@\n" + Colour.ANSI_RESET);
+        System.out.println(" 7  6  5  4 " + Colour.getMarbleColour(slideMarble) + "●" + Colour.ANSI_RESET);
+        //System.out.println(" ⇧  ⇧  ⇧  ⇧ " + Colour.ANSI_RESET);
+
     }
 
     public static void printMarbleLine(List<Marble> marbles){

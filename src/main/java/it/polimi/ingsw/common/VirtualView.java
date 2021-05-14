@@ -40,6 +40,9 @@ public interface VirtualView {
     void loadDevelopmentCards(List<LightDevelopmentCard> lightDevelopmentCards);
     void displayMessage(String message);
 
+    public void displayDepotStatus(List<Resource>[] warehouseDepots, List<Resource>[] strongboxDepots, List<List<Resource>> leaderDepots);
 
 
-}
+
+
+    }

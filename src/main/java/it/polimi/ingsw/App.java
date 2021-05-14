@@ -2,6 +2,7 @@ package it.polimi.ingsw;
 
 import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.client.cli.graphical.GraphicalDevelopmentCardGrid;
+import it.polimi.ingsw.client.cli.graphical.GraphicalLogo;
 import it.polimi.ingsw.client.cli.graphical.SubscriptNumbers;
 import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.enumerations.Resource;
@@ -42,6 +43,7 @@ public class App
 
         gdc.setCardsToDisplay(IDs);
         gdc.drawDevelopmentCardGrid();
+
 
 
     }

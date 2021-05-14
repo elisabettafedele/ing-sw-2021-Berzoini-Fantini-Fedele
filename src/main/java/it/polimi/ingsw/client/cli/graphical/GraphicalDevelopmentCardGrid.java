@@ -13,8 +13,8 @@ public class GraphicalDevelopmentCardGrid {
     private final int h_space = 3; //horizontal_space beetween cards
     private final int v_space = 0; //vertical_space beetween cards
 
-    private final int cardWidth = GraphicalCard.CardWidth;
-    private final int cardHeight = GraphicalCard.CardHeight;
+    private final int cardWidth = GraphicalCardBetti.CardWidth;
+    private final int cardHeight = GraphicalCardBetti.CardHeight;
 
     private final int width = cardWidth*4 + h_space *3;
     private final int height = cardHeight*4 + v_space *3;
@@ -48,7 +48,9 @@ public class GraphicalDevelopmentCardGrid {
             x_coord = coordinates.get(0);
             y_coord = coordinates.get(1);
             GraphicalCard gc = new GraphicalCard(this, ldc);
-            gc.drawOnScreen(x_coord, y_coord);
+            GraphicalCardBetti betti = new GraphicalCardBetti(this, ldc);
+            betti.drawOnScreen(x_coord, y_coord);
+            //gc.drawOnScreen(x_coord, y_coord);
             count ++;
         }
         displayGrid();
@@ -67,7 +69,7 @@ public class GraphicalDevelopmentCardGrid {
     private void displayGrid() {
         for(int i = 0; i < height; i++){
             for(int j = 0; j < width; j++){
-               System.out.print(colours[i][j].getCode() + symbols[i][j]);
+               System.out.print(colours[i][j].getCode() + symbols[i][j] + Colour.ANSI_RESET);
             }
             System.out.print("\n");
         }

@@ -13,7 +13,6 @@ public class GraphicalMarketTest extends TestCase {
         GraphicalMarket.printMarket(market.getMarketTray(), market.getSlideMarble());
         market.insertMarbleFromTheSlide(1);
         GraphicalMarket.printMarket(market.getMarketTray(), market.getSlideMarble());
-        System.out.println(Colour.ANSI_BRIGHT_PURPLE.getCode() + "♀︎\n");
 
     }
 

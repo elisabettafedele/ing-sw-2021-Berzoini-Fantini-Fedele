@@ -36,15 +36,15 @@ public enum Colour {
 
     public static String getMarbleColour(Marble marble){
         if (marble == Marble.YELLOW)
-            return ANSI_YELLOW.code;
+            return ANSI_BRIGHT_YELLOW.code;
         if (marble == Marble.GREY)
             return ANSI_WHITE.code;
         if (marble == Marble.PURPLE)
-            return ANSI_PURPLE.code;
+            return ANSI_BRIGHT_PURPLE.code;
         if (marble == Marble.BLUE)
-            return ANSI_BLUE.code;
+            return ANSI_BRIGHT_BLUE.code;
         if (marble == Marble.RED)
-            return ANSI_RED.code;
+            return ANSI_BRIGHT_RED.code;
         else
             return ANSI_BRIGHT_WHITE.code;
     }

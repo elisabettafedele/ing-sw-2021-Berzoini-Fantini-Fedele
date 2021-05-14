@@ -196,6 +196,7 @@ public class TakeResourcesFromMarketAction implements Action {
         }
         if (!player.getPersonalBoard().getAvailableEffects(EffectType.EXTRA_DEPOT).isEmpty())
             availableDepotsForReorganization.add(ResourceStorageType.LEADER_DEPOT.name());
+        clientHandler.sendMessageToClient(new SendDepotsStatus(player.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), new ArrayList[4], new ArrayList<>()));
         clientHandler.sendMessageToClient(new SendReorganizeDepotsCommands(availableDepotsForReorganization, true, false, availableLeaderResources));
     }
 

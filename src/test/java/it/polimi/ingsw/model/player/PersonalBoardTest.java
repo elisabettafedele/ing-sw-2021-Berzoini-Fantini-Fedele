@@ -372,4 +372,50 @@ public class PersonalBoardTest {
         pb.addResources(ResourceStorageType.LEADER_DEPOT, Resource.COIN, 2);
         assertFalse(pb.isLeaderDepotAvailable(Resource.COIN, 1));
     }
+
+    @Test
+    public void testRemoveResourcesWarehouse() throws InvalidArgumentException, InvalidDepotException, InvalidResourceTypeException, InsufficientSpaceException, InsufficientQuantityException {
+        List<LeaderCard> lcl = LeaderCardParser.parseCards();
+        lcl = lcl.stream().filter(x-> x.getEffect().getEffectType() == EffectType.EXTRA_DEPOT).collect(Collectors.toList());
+        lcl.forEach(LeaderCard::activate);
+        PersonalBoard pb = new PersonalBoard(lcl);
+        pb.addResources(ResourceStorageType.WAREHOUSE_FIRST_DEPOT, Resource.COIN, 1);
+        pb.addResources(ResourceStorageType.WAREHOUSE_SECOND_DEPOT, Resource.SHIELD, 2);
+        pb.addResources(ResourceStorageType.WAREHOUSE_THIRD_DEPOT, Resource.SERVANT, 3);
+        pb.removeResources(ResourceStorageType.WAREHOUSE_FIRST_DEPOT, Resource.ANY, 1);
+        pb.removeResources(ResourceStorageType.WAREHOUSE_SECOND_DEPOT, Resource.ANY, 2);
+        pb.removeResources(ResourceStorageType.WAREHOUSE_THIRD_DEPOT, Resource.ANY, 3);
+        assertEquals(0, pb.getWarehouse().getResourceQuantityOfDepot(0));
+        assertEquals(0, pb.getWarehouse().getResourceQuantityOfDepot(1));
+        assertEquals(0, pb.getWarehouse().getResourceQuantityOfDepot(2));
+    }
+
+    @Test
+    public void testRemoveResourcesStrongbox() throws InvalidDepotException, InvalidArgumentException, InvalidResourceTypeException, InsufficientSpaceException, InsufficientQuantityException {
+        List<LeaderCard> lcl = LeaderCardParser.parseCards();
+        lcl = lcl.stream().filter(x-> x.getEffect().getEffectType() == EffectType.EXTRA_DEPOT).collect(Collectors.toList());
+        lcl.forEach(LeaderCard::activate);
+        PersonalBoard pb = new PersonalBoard(lcl);
+        pb.addResources(ResourceStorageType.STRONGBOX, Resource.COIN, 1);
+        pb.addResources(ResourceStorageType.STRONGBOX, Resource.SHIELD, 2);
+        pb.addResources(ResourceStorageType.STRONGBOX, Resource.SERVANT, 3);
+        pb.removeResources(ResourceStorageType.STRONGBOX, Resource.COIN, 1);
+        pb.removeResources(ResourceStorageType.STRONGBOX, Resource.SHIELD, 2);
+        pb.removeResources(ResourceStorageType.STRONGBOX, Resource.SERVANT, 3);
+        for (int i = 0; i < pb.getStrongbox().length; i++)
+            assertEquals(0, pb.getStrongbox()[i].getResourceQuantity());
+    }
+
+    @Test
+    public void testRemoveResourcesLeader() throws InvalidDepotException, InvalidArgumentException, InvalidResourceTypeException, InsufficientSpaceException, InsufficientQuantityException {
+        List<LeaderCard> lcl = LeaderCardParser.parseCards();
+        lcl = lcl.stream().filter(x-> x.getEffect().getEffectType() == EffectType.EXTRA_DEPOT).collect(Collectors.toList());
+        lcl.forEach(LeaderCard::activate);
+        PersonalBoard pb = new PersonalBoard(lcl);
+        pb.addResources(ResourceStorageType.LEADER_DEPOT, Resource.COIN, 1);
+        pb.addResources(ResourceStorageType.LEADER_DEPOT, Resource.SHIELD, 2);
+        pb.removeResources(ResourceStorageType.LEADER_DEPOT, Resource.COIN, 1);
+        pb.removeResources(ResourceStorageType.LEADER_DEPOT, Resource.SHIELD, 2);
+        assertEquals(0, pb.countResourceNumber());
+    }
 }

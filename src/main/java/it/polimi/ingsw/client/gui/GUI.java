@@ -167,6 +167,11 @@ public class GUI extends Application implements View {
     }
 
     @Override
+    public void displayDepotStatus(List<Resource>[] warehouseDepots, List<Resource>[] strongboxDepots, List<List<Resource>> leaderDepots) {
+
+    }
+
+    @Override
     public void displaySelectStorageRequest(Resource resource, boolean isInWarehouse, boolean isInStrongbox, boolean isInLeaderDepot) {
 
     }
