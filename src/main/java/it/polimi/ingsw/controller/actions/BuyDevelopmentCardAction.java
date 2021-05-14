@@ -105,12 +105,13 @@ public class BuyDevelopmentCardAction implements Action{
      */
     @Override
     public boolean isExecutable() {
+        buyableCardsIDs=new ArrayList<>();
         List<DevelopmentCard> availableCards = turnController.getController().getGame().getDevelopmentCardGrid().getAvailableCards();
         for (DevelopmentCard card : availableCards) {
             if (enoughResourcesAvailable(card) && currentPlayer.getPersonalBoard().cardInsertionIsLegal(card)) {
                 buyableCardsIDs.add(card.getID());
             }
-            }
+        }
         return !buyableCardsIDs.isEmpty();
     }
 

@@ -12,6 +12,7 @@ public class SelectStorageResponse implements MessageToServer{
     Resource resource;
     public SelectStorageResponse(Resource resource, ResourceStorageType resourceStorageType) {
         this.resourceStorageType=resourceStorageType;
+        this.resource=resource;
     }
 
     public ResourceStorageType getResourceStorageType() {
