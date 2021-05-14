@@ -1,6 +1,8 @@
-package it.polimi.ingsw.controller;
+package it.polimi.ingsw.controller.game_phases;
 
-import it.polimi.ingsw.Server.ClientHandler;
+
+import it.polimi.ingsw.controller.Controller;
+import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.enumerations.ClientHandlerPhase;
 import it.polimi.ingsw.enumerations.GameMode;
@@ -201,19 +203,6 @@ public class SetUpPhase implements GamePhase {
         return index > 1 ? 1 : 0;
     }
 
-    private Map<Integer, List<String>> getLightCards(List<DevelopmentCard> cards) {
-        Map<Integer, List<String>> lightCards = new HashMap<>();
-
-        for (DevelopmentCard card : cards) {
-            List<String> description = new ArrayList<>();
-            description.add(card.toString());
-            description.add(card.getPathImageFront());
-            description.add(card.getPathImageBack());
-            lightCards.put(card.getID(), description);
-        }
-
-        return lightCards;
-    }
 
     private List<LightDevelopmentCard> getLightDevelopmentCards(List<DevelopmentCard> cards){
         List<LightDevelopmentCard> lightCards = new ArrayList<>();

@@ -26,22 +26,24 @@ public class Warehouse {
      * depots[1] can contain maximum two resources
      * depots[2] can contain maximum three resources
      * and each depot contains the same {@link Resource}, that cannot be placed in two different depots
+     *
      * @throws InvalidArgumentException
      */
     public Warehouse() throws InvalidArgumentException {
         depots = new WarehouseDepot[numberOfDepots];
-        for (int i = 0; i < numberOfDepots; i++){
-            depots[i] = new WarehouseDepot(i+1);
+        for (int i = 0; i < numberOfDepots; i++) {
+            depots[i] = new WarehouseDepot(i + 1);
         }
     }
 
     /**
      * Method used to get the {@link Resource} type of a certain depot of the warehouse
+     *
      * @param row identifies the specific depot of the warehouse to consider
      * @return the type of the resources contained in the depot
      * @throws InvalidArgumentException when the parameter row does not identify a depot of the warehouse
      */
-    public Resource getResourceTypeOfDepot(int row) throws InvalidArgumentException{
+    public Resource getResourceTypeOfDepot(int row) throws InvalidArgumentException {
         if (row < 0 || row >= numberOfDepots)
             throw new InvalidArgumentException();
         return depots[row].getResourceType();
@@ -49,16 +51,17 @@ public class Warehouse {
 
     /**
      * Method used to get the available {@link ResourceStorageType} of the {@link Warehouse} for a certain type of {@link Resource}
+     *
      * @param resource the {@link Resource} to store
      * @return a list of the available {@link ResourceStorageType} of the {@link Warehouse}
      */
-    public List<ResourceStorageType> getAvailableWarehouseDepotsForResourceType(Resource resource){
+    public List<ResourceStorageType> getAvailableWarehouseDepotsForResourceType(Resource resource) {
         int row;
-        List<ResourceStorageType> depots= new ArrayList<ResourceStorageType>();
+        List<ResourceStorageType> depots = new ArrayList<ResourceStorageType>();
         row = getRowIndexFromResource(resource);
 
         //If a depot is already used for the resource
-        if (row != -1){
+        if (row != -1) {
             if (this.depots[row].enoughSpace(1))
                 depots.add(ResourceStorageType.valueOf(row));
             return depots;
@@ -76,7 +79,7 @@ public class Warehouse {
     /**
      * @return the number of depot of the warehouse
      */
-    public int getNumberOfDepots(){
+    public int getNumberOfDepots() {
         return this.numberOfDepots;
     }
 
@@ -84,10 +87,10 @@ public class Warehouse {
     /**
      * @return the {@link Resource} type of resources contained in the depots
      */
-    public List<Resource> getResourceTypes(){
+    public List<Resource> getResourceTypes() {
         List<Resource> res;
         res = Arrays.stream(depots)
-                .filter(x->x.getResourceType()!=Resource.ANY)
+                .filter(x -> x.getResourceType() != Resource.ANY)
                 .map(Depot::getResourceType)
                 .collect(Collectors.toList());
         return res;
@@ -95,30 +98,32 @@ public class Warehouse {
 
     /**
      * Method used to get the {@link Resource} quantity of a certain depot of the warehouse
+     *
      * @param row identifies the specific depot of the warehouse to consider
      * @return the number of resources contained in the depot
      * @throws InvalidArgumentException
      */
-    public int getResourceQuantityOfDepot(int row) throws InvalidArgumentException{
+    public int getResourceQuantityOfDepot(int row) throws InvalidArgumentException {
         if (row < 0 || row >= numberOfDepots)
             throw new InvalidArgumentException();
         return depots[row].getResourceQuantity();
     }
 
-    public Depot getWarehouseDepot(int row){
+    public Depot getWarehouseDepot(int row) {
         return depots[row];
     }
 
     /**
      * Method used to find where a specific resource type is located in the Warehouse
+     *
      * @param res the type of the resource searched
      * @return the row of the depot which contains the {@link Resource} of type {@param res} if it is present, -1 otherwise
      */
     private int getRowIndexFromResource(Resource res) {
-        int i=0;
+        int i = 0;
         if (!this.getResourceTypes().contains(res))
             return -1;
-        while(depots[i].getResourceType()!=res){
+        while (depots[i].getResourceType() != res) {
             i++;
         }
         return i;
@@ -126,13 +131,14 @@ public class Warehouse {
 
     /**
      * Method to add a number of resources of a certain type to a specific {@link Depot} of the {@link Warehouse}
-     * @param row the row of the depot the resources should be added to
-     * @param type identifies the type of the resources to add
+     *
+     * @param row      the row of the depot the resources should be added to
+     * @param type     identifies the type of the resources to add
      * @param quantity identifies the quantity of the resources to add
-     * @throws InsufficientSpaceException when the depot has not a sufficient capacity to store the new resources
+     * @throws InsufficientSpaceException   when the depot has not a sufficient capacity to store the new resources
      * @throws InvalidResourceTypeException when another type of resource is stored in the depot identified by {@param row} or the type of resource is already stored
-     * @throws InvalidDepotException never thrown in this case
-     * @throws InvalidArgumentException when the {@param quantity} is null or negative
+     * @throws InvalidDepotException        never thrown in this case
+     * @throws InvalidArgumentException     when the {@param quantity} is null or negative
      */
 
     public void addResourcesToDepot(int row, Resource type, int quantity) throws InsufficientSpaceException, InvalidResourceTypeException, InvalidDepotException, InvalidArgumentException {
@@ -148,11 +154,12 @@ public class Warehouse {
 
     /**
      * Method to remove a number of {@link Resource} of a certain type from a specific depot of the warehouse
-     * @param type type of the resources to remove
+     *
+     * @param type     type of the resources to remove
      * @param quantity how many resources should be removed
-     * @throws InvalidResourceTypeException when another type of resource is stored in the depot identified by {@param row}
+     * @throws InvalidResourceTypeException  when another type of resource is stored in the depot identified by {@param row}
      * @throws InsufficientQuantityException when the number of {@link Resource} to remove exceed the number of those stored
-     * @throws InvalidArgumentException when the {@param quantity} is null or negative
+     * @throws InvalidArgumentException      when the {@param quantity} is null or negative
      */
     public void removeResourcesFromDepot(Resource type, int quantity) throws InvalidResourceTypeException, InsufficientQuantityException, InvalidArgumentException {
         if (getRowIndexFromResource(type) == -1)
@@ -162,10 +169,11 @@ public class Warehouse {
 
     /**
      * Method used to switch the {@link Resource} stored in two different {@link Depot}
-     * @param one row of one {@link Depot}
+     *
+     * @param one   row of one {@link Depot}
      * @param other row of the other {@link Depot}
      * @throws UnswitchableDepotsException when the switch is not allowed by the capacity of the smallest {@link Depot}
-     * @throws InsufficientSpaceException thrown when a depot cannot contain a certain number of {@link Resource}
+     * @throws InsufficientSpaceException  thrown when a depot cannot contain a certain number of {@link Resource}
      */
     public void switchRows(int one, int other) throws UnswitchableDepotsException, InsufficientSpaceException, InvalidArgumentException {
         Resource tmpType;
@@ -184,11 +192,26 @@ public class Warehouse {
 
     /**
      * Method that check whether two {@link Depot} are switchable
-     * @param one the row of one {@link Depot}
+     *
+     * @param one   the row of one {@link Depot}
      * @param other the row of the other {@link Depot}
      * @return true if two {@link Depot} are switchable
      */
-    private boolean switchable(int one, int other){
+    private boolean switchable(int one, int other) {
         return (depots[one].getResourceQuantity() <= depots[other].getMaxResourceQuantity()) && (depots[other].getResourceQuantity() <= depots[one].getMaxResourceQuantity());
+    }
+
+    //TODO to check
+    public List<Resource>[] getWarehouseDepotsStatus() {
+        List<Resource>[] depots = new ArrayList[3];
+        for (int i = 0; i < 3; i++)
+            depots[i] = new ArrayList<>();
+        for (int i = 0; i < this.depots.length; i++) {
+            if (this.depots[i].getResourceType() != Resource.ANY) {
+                for (int j = 0; j < this.depots[i].getResourceQuantity(); j++)
+                    depots[i].add(this.depots[i].getResourceType());
+            }
+        }
+        return depots;
     }
 }

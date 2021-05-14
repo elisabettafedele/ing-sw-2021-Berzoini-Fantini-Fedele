@@ -1,6 +1,9 @@
-package it.polimi.ingsw.client.cli;
+package it.polimi.ingsw.client.cli.specificCLI;
 
 import it.polimi.ingsw.client.Client;
+import it.polimi.ingsw.client.cli.CLI;
+import it.polimi.ingsw.client.cli.graphical.GraphicalWarehouse;
+import it.polimi.ingsw.client.utilities.Command;
 import it.polimi.ingsw.client.utilities.InputParser;
 import it.polimi.ingsw.client.utilities.UtilityPrinter;
 import it.polimi.ingsw.enumerations.Resource;
@@ -36,29 +39,29 @@ public class OrganizeDepotsCLI {
     }
 
     public static void displaySelectStorageRequest(Client client, Resource resource, boolean isInWarehouse, boolean isInStrongbox, boolean isInLeaderDepot) {
-        while(true){
+        while (true) {
             System.out.println("You can take a " + resource.toString() + " from:");
-            if(isInWarehouse){
+            if (isInWarehouse) {
                 System.out.println("1-Warehouse");
             }
-            if(isInStrongbox){
+            if (isInStrongbox) {
                 System.out.println("2-Strongbox");
             }
-            if(isInLeaderDepot){
+            if (isInLeaderDepot) {
                 System.out.println("3-Leader Depot");
             }
             System.out.println("Where would you like to remove it? Select the relative number:");
             int selection = InputParser.getInt("Error: write a number.");
-            if (selection==1&&isInWarehouse){
-                client.sendMessageToServer( new SelectStorageResponse(resource, ResourceStorageType.WAREHOUSE));
+            if (selection == 1 && isInWarehouse) {
+                client.sendMessageToServer(new SelectStorageResponse(resource, ResourceStorageType.WAREHOUSE));
                 return;
             }
-            if (selection==2&&isInStrongbox){
-                client.sendMessageToServer(new SelectStorageResponse(resource,ResourceStorageType.STRONGBOX));
+            if (selection == 2 && isInStrongbox) {
+                client.sendMessageToServer(new SelectStorageResponse(resource, ResourceStorageType.STRONGBOX));
                 return;
             }
-            if (selection==3&&isInLeaderDepot){
-                client.sendMessageToServer(new SelectStorageResponse(resource,ResourceStorageType.LEADER_DEPOT));
+            if (selection == 3 && isInLeaderDepot) {
+                client.sendMessageToServer(new SelectStorageResponse(resource, ResourceStorageType.LEADER_DEPOT));
                 return;
             }
             System.out.println("Incorrect choice");
@@ -66,16 +69,15 @@ public class OrganizeDepotsCLI {
     }
 
 
-
-    public static void displayReorganizeDepotsRequest(Client client, List<String> depots, boolean first, boolean failure, List<Resource> availableLeaderResources){
+    public static void displayReorganizeDepotsRequest(Client client, List<String> depots, boolean first, boolean failure, List<Resource> availableLeaderResources) {
         //Just temporary I want to make this check earlier
-        if (depots.isEmpty()){
+        if (depots.isEmpty()) {
             System.out.println("You do not have any depot to reorganize");
             client.sendMessageToServer(new NotifyEndDepotsReorganization());
             return;
         }
         if (first)
-            System.out.println("You can now reorganize your depots with the command" + Command.SWAP.command + " or " + Command.MOVE.command + "- "+ Command.SWAP + ": realizes a swap of two depots which contain different resource types\n- " + Command.MOVE + ": move a certain number of resources from one depot to another (be careful because the leader depots have a fixed resource type!\nIf you have finished type " + Command.END_REORGANIZE_DEPOTS.command);
+            System.out.println("You can now reorganize your depots with the command" + Command.SWAP.command + " or " + Command.MOVE.command + "- " + Command.SWAP + ": realizes a swap of two depots which contain different resource types\n- " + Command.MOVE + ": move a certain number of resources from one depot to another (be careful because the leader depots have a fixed resource type!\nIf you have finished type " + Command.END_REORGANIZE_DEPOTS.command);
         if (failure)
             System.out.println("Invalid reorganization: check the capacity and the type of the depots before reorganizing.");
         List<String> possibleCommands = Command.getReorganizeDepotsCommands();
@@ -88,12 +90,14 @@ public class OrganizeDepotsCLI {
             client.sendMessageToServer(new NotifyEndDepotsReorganization());
             return;
         }
-        System.out.print("Select the origin depot: ");
-        String originDepot = InputParser.getString("Please insert a valid depot", CLI.conditionOnString(depots));
-        System.out.print("Select the destination depot: ");
-        String destinationDepot = InputParser.getString("Please insert a valid depot", CLI.conditionOnString(depots));
+        System.out.println("Select the origin depot:");
+        UtilityPrinter.printNumericList(depots);
+        String originDepot = InputParser.getCommandFromList(depots);
+        System.out.println("Select the destination depot:");
+        UtilityPrinter.printNumericList(depots);
+        String destinationDepot = InputParser.getCommandFromList(depots);
         if (commandType.equals(Command.SWAP.command))
-            client.sendMessageToServer(new SwapWarehouseDepotsRequest(originDepot,destinationDepot));
+            client.sendMessageToServer(new SwapWarehouseDepotsRequest(originDepot, destinationDepot));
         else {
             System.out.print("Select the quantity of the resources you want to move: ");
             Integer quantity = InputParser.getInt("Please insert a valid resource quantity", CLI.conditionOnIntegerRange(1, 4));
@@ -104,5 +108,9 @@ public class OrganizeDepotsCLI {
             }
             client.sendMessageToServer(new MoveResourcesRequest(originDepot, destinationDepot, resource, quantity));
         }
+    }
+
+    public static void displayDepotStatus(List<Resource>[] warehouseDepots, List<Resource>[] strongboxDepots, List<List<Resource>> leaderDepots) {
+        GraphicalWarehouse.printWarehouse(warehouseDepots);
     }
 }

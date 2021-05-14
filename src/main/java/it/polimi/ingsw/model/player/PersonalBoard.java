@@ -397,6 +397,12 @@ public class PersonalBoard {
     public void removeResources(ResourceStorageType resourceStorageType, Resource resource, int quantity) throws InsufficientQuantityException, InvalidResourceTypeException {
         if (resourceStorageType.getValue() < 3) {
             try {
+                if (getWarehouse().getResourceTypeOfDepot(resourceStorageType.getValue()) == Resource.ANY)
+                    throw new InsufficientQuantityException(quantity, 0);
+            } catch (InvalidArgumentException e) {
+                e.printStackTrace();
+            }
+            try {
                 getWarehouse().removeResourcesFromDepot(getWarehouse().getResourceTypeOfDepot(resourceStorageType.getValue()), quantity);
             } catch (InvalidArgumentException e) {
                 e.printStackTrace();
@@ -413,6 +419,8 @@ public class PersonalBoard {
             }
         }
         else if (resourceStorageType == ResourceStorageType.STRONGBOX){
+            if (resource == Resource.ANY)
+                throw new InvalidResourceTypeException();
             try {
                 getStrongbox()[resource.getValue()].removeResources(quantity);
             } catch (InvalidArgumentException e) {
@@ -480,7 +488,7 @@ public class PersonalBoard {
         Map<Resource, Integer> resources = countResources();
         int quantity = 0;
         for (Resource resource : resources.keySet())
-            quantity += resource.getValue();
+            quantity += resources.get(resource);
         return quantity;
     }
 }

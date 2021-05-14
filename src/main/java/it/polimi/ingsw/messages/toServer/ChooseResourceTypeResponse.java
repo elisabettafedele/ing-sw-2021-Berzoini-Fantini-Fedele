@@ -1,12 +1,11 @@
 package it.polimi.ingsw.messages.toServer;
 
-import it.polimi.ingsw.Server.Server;
+import it.polimi.ingsw.server.Server;
 import it.polimi.ingsw.common.ClientHandlerInterface;
 import it.polimi.ingsw.common.ServerInterface;
 import it.polimi.ingsw.enumerations.Resource;
 
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 
 public class ChooseResourceTypeResponse implements MessageToServer{

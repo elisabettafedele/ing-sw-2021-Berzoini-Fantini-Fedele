@@ -1,6 +1,7 @@
 package it.polimi.ingsw.controller.actions;
 
-import it.polimi.ingsw.Server.ClientHandler;
+import it.polimi.ingsw.controller.game_phases.PlayPhase;
+import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.controller.*;
 import it.polimi.ingsw.enumerations.*;
 import it.polimi.ingsw.exceptions.*;
@@ -195,6 +196,7 @@ public class TakeResourcesFromMarketAction implements Action {
         }
         if (!player.getPersonalBoard().getAvailableEffects(EffectType.EXTRA_DEPOT).isEmpty())
             availableDepotsForReorganization.add(ResourceStorageType.LEADER_DEPOT.name());
+        clientHandler.sendMessageToClient(new SendDepotsStatus(player.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), new ArrayList[4], new ArrayList<>()));
         clientHandler.sendMessageToClient(new SendReorganizeDepotsCommands(availableDepotsForReorganization, true, false, availableLeaderResources));
     }
 

@@ -1,12 +1,10 @@
-package it.polimi.ingsw.controller;
+package it.polimi.ingsw.controller.game_phases;
 
+import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.model.player.Player;
 
-import java.util.HashMap;
-import java.util.Map;
-
-public abstract class EndPhase implements GamePhase{
+public abstract class EndPhase implements GamePhase {
 
     private Controller controller;
 

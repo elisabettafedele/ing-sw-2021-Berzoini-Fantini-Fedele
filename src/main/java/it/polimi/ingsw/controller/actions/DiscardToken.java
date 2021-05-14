@@ -1,6 +1,6 @@
 package it.polimi.ingsw.controller.actions;
 
-import it.polimi.ingsw.controller.SinglePlayerPlayPhase;
+import it.polimi.ingsw.controller.game_phases.SinglePlayerPlayPhase;
 import it.polimi.ingsw.enumerations.FlagColor;
 
 import java.util.Objects;
