@@ -19,9 +19,10 @@ public class ChooseActionCLI {
         List<String> textCommands = new ArrayList<>();
         System.out.println("Choose your next action: ");
         UtilityPrinter.printNumericList(availableActions);
-        if (standardActionDone)
+        if (standardActionDone) {
             System.out.println("Otherwise, you can end your turn now, just typing \"end\"");
-        textCommands.add("end");
+            textCommands.add("end");
+        }
         //TODO gestire la possibilità di vedere gli altri giocatori la grid e il market prima di scegliere la action
         int selection=0;//per esempio, corrisponde al value della actionType (nella enum) scelta
         String selectionString = InputParser.getCommandFromList(textCommands, availableActions);

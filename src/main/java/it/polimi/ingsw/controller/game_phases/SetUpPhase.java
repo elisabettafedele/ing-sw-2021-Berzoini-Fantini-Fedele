@@ -156,15 +156,16 @@ public class SetUpPhase implements GamePhase {
     private void sendSetUpFinishedMessage(ClientHandler clientHandler) {
         //TODO send a message with his personal board view
         clientHandler.setClientHandlerPhase(ClientHandlerPhase.SET_UP_FINISHED);
-        clientHandler.sendMessageToClient(new TextMessage("Waiting the other players, the game will start as soon as they all be ready..."));
-        endPhaseManager();
+        endPhaseManager(clientHandler);
     }
 
-    private void endPhaseManager() {
+    private void endPhaseManager(ClientHandler clientHandler) {
         List<String> nicknames = controller.getNicknames();
         for (String nickname : nicknames) {
-            if (controller.getConnectionByNickname(nickname).getClientHandlerPhase() != ClientHandlerPhase.SET_UP_FINISHED)
+            if (controller.getConnectionByNickname(nickname).getClientHandlerPhase() != ClientHandlerPhase.SET_UP_FINISHED) {
+                clientHandler.sendMessageToClient(new TextMessage("Waiting the other players, the game will start as soon as they all be ready..."));
                 return;
+            }
         }
         controller.setGamePhase(controller.getGame().getGameMode() == GameMode.MULTI_PLAYER ? new MultiplayerPlayPhase(controller) : new SinglePlayerPlayPhase(controller));
     }

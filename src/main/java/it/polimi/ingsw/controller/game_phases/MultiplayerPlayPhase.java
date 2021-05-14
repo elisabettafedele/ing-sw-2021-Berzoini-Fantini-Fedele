@@ -22,11 +22,18 @@ public class MultiplayerPlayPhase extends PlayPhase implements GamePhase {
 
     @Override
     public void nextTurn() {
-        turnIndex = turnIndex == getController().getPlayers().size() - 1 ? 0 : turnIndex + 1;
+        pickNextPlayer();
         if (endTrigger && getTurnController().getController().getPlayers().get(turnIndex).hasInkwell())
             getController().endMatch();
         else
             getTurnController().start(getController().getPlayers().get(turnIndex));
+    }
+
+    public void pickNextPlayer(){
+        do {
+            turnIndex = turnIndex == getController().getPlayers().size() - 1 ? 0 : turnIndex + 1;
+        } while (!getController().getPlayers().get(turnIndex).isActive());
+
     }
 
     @Override
@@ -46,6 +53,7 @@ public class MultiplayerPlayPhase extends PlayPhase implements GamePhase {
                 }
             }
         }
+        getTurnController().checkFaithTrack();
     }
 
     @Override
@@ -60,7 +68,4 @@ public class MultiplayerPlayPhase extends PlayPhase implements GamePhase {
         getTurnController().start(getPlayer());
     }
 
-    public String toString(){
-        return "Play Phase";
-    }
 }
