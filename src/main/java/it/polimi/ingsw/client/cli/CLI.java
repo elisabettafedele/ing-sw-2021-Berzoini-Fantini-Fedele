@@ -138,8 +138,8 @@ public class CLI implements View {
     // *********************************************************************  //
 
     @Override
-    public void displayChooseStorageTypeRequest(Resource resource, List<String> availableDepots, boolean setUpPhase) {
-        OrganizeDepotsCLI.displayChooseStorageTypeRequest(client, resource, availableDepots, setUpPhase);
+    public void displayChooseStorageTypeRequest(Resource resource, List<String> availableDepots, boolean canDiscard, boolean canReorganize) {
+        OrganizeDepotsCLI.displayChooseStorageTypeRequest(client, resource, availableDepots, canDiscard, canReorganize);
     }
 
     @Override

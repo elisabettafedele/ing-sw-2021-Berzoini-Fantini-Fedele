@@ -31,4 +31,10 @@ public enum ResourceStorageType {
             depots.add(valueOf(i).name());
         return depots;
     }
+
+    public static int getIndexByString(String depot){
+        if (ResourceStorageType.valueOf(depot).getValue() < 3)
+            return ResourceStorageType.valueOf(depot).getValue();
+        return LEADER_DEPOT.getValue();
+    }
 }

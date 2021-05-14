@@ -127,7 +127,7 @@ public class GUI extends Application implements View {
 
     }
     @Override
-    public void displayChooseStorageTypeRequest(Resource resource, List<String> availableDepots, boolean setUpPhase) {
+    public void displayChooseStorageTypeRequest(Resource resource, List<String> availableDepots, boolean canDiscard, boolean canReorganize) {
 
     }
 
