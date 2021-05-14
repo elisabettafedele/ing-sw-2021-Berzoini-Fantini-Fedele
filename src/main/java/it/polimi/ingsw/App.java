@@ -45,7 +45,6 @@ public class App
         gdc.drawDevelopmentCardGrid();
 
 
-
     }
 
     static List<LightDevelopmentCard> getLightDevelopmentCards(List<DevelopmentCard> cards){

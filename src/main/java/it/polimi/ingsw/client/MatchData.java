@@ -8,11 +8,13 @@ import java.util.List;
 import java.util.Map;
 
 public class MatchData {
-    List<Integer> ownedLeaderCards;
-    List<Integer>[] personalBoardSlots;
+
     List<LeaderCard> allLeaderCards;
     List<LightDevelopmentCard> lightDevelopmentCards;
+
     int faithTrackPosition;
+    List<Integer> ownedLeaderCards;
+    List<Integer>[] personalBoardSlots;
 
 
     private static MatchData instance;

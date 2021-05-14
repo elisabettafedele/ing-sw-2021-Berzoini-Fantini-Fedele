@@ -10,11 +10,11 @@ import java.util.*;
 public class GraphicalDevelopmentCardGrid {
 
 
-    private final int h_space = 3; //horizontal_space beetween cards
+    private final int h_space = 1; //horizontal_space beetween cards
     private final int v_space = 0; //vertical_space beetween cards
 
-    private final int cardWidth = GraphicalCardBetti.CardWidth;
-    private final int cardHeight = GraphicalCardBetti.CardHeight;
+    private final int cardWidth = GraphicalCard.CardWidth;
+    private final int cardHeight = GraphicalCard.CardHeight;
 
     private final int width = cardWidth*4 + h_space *3;
     private final int height = cardHeight*4 + v_space *3;
@@ -42,16 +42,12 @@ public class GraphicalDevelopmentCardGrid {
         reset();
         int x_coord = 0;
         int y_coord = 0;
-        int count = 0;
         for(LightDevelopmentCard ldc : cardsToDisplay){
             List<Integer> coordinates = retrieveCoordinates(ldc);
             x_coord = coordinates.get(0);
             y_coord = coordinates.get(1);
             GraphicalCard gc = new GraphicalCard(this, ldc);
-            GraphicalCardBetti betti = new GraphicalCardBetti(this, ldc);
-            betti.drawOnScreen(x_coord, y_coord);
-            //gc.drawOnScreen(x_coord, y_coord);
-            count ++;
+            gc.drawOnScreen(x_coord, y_coord);
         }
         displayGrid();
     }
