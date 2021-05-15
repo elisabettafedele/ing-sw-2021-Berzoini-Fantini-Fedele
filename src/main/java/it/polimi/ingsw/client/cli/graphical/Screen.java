@@ -20,11 +20,15 @@ public class Screen {
     GraphicalDevelopmentCardGrid graphicalDevelopmentCardGrid;
     List<Integer> developmentCardGridCardsToDisplay;
 
+    GraphicalFaithTrack graphicalFaithTrack;
+
     public Screen() {
         graphicalDevelopmentCardGrid = new GraphicalDevelopmentCardGrid();
         developmentCardGridCardsToDisplay = new ArrayList<>();
 
-        this.faith_track_x_anchor = 0;
+        graphicalFaithTrack = new GraphicalFaithTrack();
+
+        this.faith_track_x_anchor = 1;
         this.faith_track_y_anchor = graphicalDevelopmentCardGrid.getWidth() + 1;
 
         reset();
@@ -47,7 +51,10 @@ public class Screen {
 
     private void drawAllElements() {
         drawDevelopmentCardGrid();
+        drawFaithTrack();
     }
+
+
 
     private void reset(){
         for(int i = 0; i < screen_height; i++) {
@@ -67,10 +74,27 @@ public class Screen {
         Colour[][] colours = graphicalDevelopmentCardGrid.getColours();
         char[][] symbols = graphicalDevelopmentCardGrid.getSymbols();
 
-        for(int i = 0; i < devCardGridHeight; i++){
-            for(int j = 0; j < devCardGridWidth; j++){
-                this.screen[i + devCardGrid_x_anchor][j + devCardGrid_y_anchor] = symbols[i][j];
-                this.colours[i + devCardGrid_x_anchor][j + devCardGrid_y_anchor] = colours[i][j];
+        drawElement(devCardGridHeight, devCardGridWidth, colours, symbols, devCardGrid_x_anchor, devCardGrid_y_anchor);
+    }
+
+    private void drawFaithTrack() {
+        graphicalFaithTrack.drawFaithTrack();
+
+        int faithTrackWidth = graphicalFaithTrack.getWidth();
+        int faithTrackHeight = graphicalFaithTrack.getHeight();
+
+        Colour[][] colours = graphicalFaithTrack.getColours();
+        char[][] symbols = graphicalFaithTrack.getSymbols();
+
+        drawElement(faithTrackHeight, faithTrackWidth, colours, symbols, faith_track_x_anchor, faith_track_y_anchor);
+
+    }
+
+    private void drawElement(int height, int width, Colour[][] colours, char[][] symbols, int x_anchor, int y_anchor){
+        for(int i = 0; i < height; i++){
+            for(int j = 0; j < width; j++){
+                this.screen[i + x_anchor][j + y_anchor] = symbols[i][j];
+                this.colours[i + x_anchor][j + y_anchor] = colours[i][j];
             }
         }
     }

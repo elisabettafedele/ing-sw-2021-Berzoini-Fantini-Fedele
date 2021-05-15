@@ -88,7 +88,7 @@ public class GraphicalCard {
 
                     graphicalGrid.addPixel(x_coord + posix, y_coord + j + begin, c, r.symbol.charAt(0));
                 }catch(IllegalArgumentException e){
-                    graphicalGrid.addPixel(x_coord+posix, y_coord+j+begin, Colour.ANSI_RED, "\u2020".charAt(0));
+                    graphicalGrid.addPixel(x_coord+posix, y_coord+j+begin, Colour.ANSI_RED, '†');
                 }
             }
             if(posix == 3){
