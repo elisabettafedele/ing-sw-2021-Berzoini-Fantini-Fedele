@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.common.LightDevelopmentCard;
+import it.polimi.ingsw.common.LightLeaderCard;
 import it.polimi.ingsw.model.cards.LeaderCard;
 
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ public class MatchData {
 
     List<LeaderCard> allLeaderCards;
     List<LightDevelopmentCard> lightDevelopmentCards;
+    List<LightLeaderCard> lightLeaderCards;
 
     int faithTrackPosition;
     List<Integer> ownedLeaderCards;

@@ -1,23 +1,18 @@
 package it.polimi.ingsw.controller.game_phases;
 
 
+import it.polimi.ingsw.common.LightLeaderCard;
 import it.polimi.ingsw.controller.Controller;
+import it.polimi.ingsw.enumerations.*;
+import it.polimi.ingsw.model.cards.*;
 import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.common.LightDevelopmentCard;
-import it.polimi.ingsw.enumerations.ClientHandlerPhase;
-import it.polimi.ingsw.enumerations.GameMode;
-import it.polimi.ingsw.enumerations.Resource;
-import it.polimi.ingsw.enumerations.ResourceStorageType;
 import it.polimi.ingsw.exceptions.*;
 import it.polimi.ingsw.messages.toClient.*;
 import it.polimi.ingsw.messages.toServer.ChooseLeaderCardsResponse;
 import it.polimi.ingsw.messages.toServer.ChooseResourceTypeResponse;
 import it.polimi.ingsw.messages.toServer.ChooseStorageTypeResponse;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
-import it.polimi.ingsw.model.cards.Card;
-import it.polimi.ingsw.model.cards.DevelopmentCard;
-import it.polimi.ingsw.model.cards.LeaderCard;
-import it.polimi.ingsw.model.cards.Value;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.utility.DevelopmentCardParser;
 import it.polimi.ingsw.utility.LeaderCardParser;
@@ -204,6 +199,85 @@ public class SetUpPhase implements GamePhase {
         return index > 1 ? 1 : 0;
     }
 
+    private List<LightLeaderCard> getLightLeaderCards(List<LeaderCard> cards){
+        List<LightLeaderCard> lightCards = new ArrayList<>();
+        for(LeaderCard lc : cards){
+            List<String> stringCost = leaderCardResourceAndFlagCostConversion(lc.getCost());
+
+            List<String> effectDescription = new ArrayList<>();
+            List<String> effectDescription2 = new ArrayList<>();
+            String effectType = lc.getEffect().getEffectType().toString();
+            if(lc.getEffect().getEffectType() != EffectType.PRODUCTION)
+                effectDescription = leaderCardsEffectToStringParse(lc.getEffect());
+            else{
+                try {
+                    effectDescription = developmentCardResourceCostConversion(lc.getEffect().getProductionEffect().getProductionPower().get(0));
+                    effectDescription2 = developmentCardResourceCostConversion(lc.getEffect().getProductionEffect().getProductionPower().get(1));
+                } catch (DifferentEffectTypeException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    int faithPoints = lc.getEffect().getProductionEffect().getProductionPower().get(1).getFaithValue();
+                    effectDescription2.add(String.valueOf(faithPoints));
+                    effectDescription2.add("FaithPoints");
+                } catch (ValueNotPresentException | DifferentEffectTypeException e) {
+                    //skip
+                }
+            }
+
+            lightCards.add(new LightLeaderCard(stringCost, lc.getVictoryPoints(), lc.getUsed(), lc.getID(),
+                    effectType, effectDescription, effectDescription2));
+        }
+
+
+        return lightCards;
+    }
+
+    private List<String> leaderCardsEffectToStringParse(Effect effect) {
+        List<String> description = new ArrayList<>();
+        if(effect.getEffectType() == EffectType.WHITE_MARBLE){
+            try {
+                description.add(effect.getWhiteMarbleEffectResource().toString());
+            } catch (DifferentEffectTypeException e) {
+                e.printStackTrace();
+            }
+        }else if(effect.getEffectType() == EffectType.DISCOUNT){
+            try {
+                description.add(effect.getDiscountEffect().toString());
+            } catch (DifferentEffectTypeException e) {
+                e.printStackTrace();
+            }
+        }else if(effect.getEffectType() == EffectType.EXTRA_DEPOT) {
+            try {
+                description.add(effect.getExtraDepotEffect().getLeaderDepot().getResourceType().toString());
+            } catch (DifferentEffectTypeException e) {
+                e.printStackTrace();
+            }
+        }
+        return description;
+    }
+
+    private List<String> leaderCardResourceAndFlagCostConversion(Value cost) {
+        List<String> resourceCost = developmentCardResourceCostConversion(cost);
+        if (resourceCost.size()>0)
+            return resourceCost;
+
+        Map<Flag, Integer> flagActivationCost;
+
+        try {
+            flagActivationCost = cost.getFlagValue();
+            List<String> flagCost = new ArrayList<>();
+            for (Map.Entry<Flag, Integer> entry : flagActivationCost.entrySet()){
+                flagCost.add(entry.getValue().toString());
+                flagCost.add(entry.getKey().getFlagColor().toString());
+                flagCost.add(entry.getKey().getFlagLevel().toString());
+            }
+        } catch (ValueNotPresentException e) {
+            return new ArrayList<>();
+        }
+
+        return new ArrayList<>();
+    }
 
     private List<LightDevelopmentCard> getLightDevelopmentCards(List<DevelopmentCard> cards){
         List<LightDevelopmentCard> lightCards = new ArrayList<>();
@@ -220,7 +294,6 @@ public class SetUpPhase implements GamePhase {
             } catch (ValueNotPresentException e) {
                 //skip
             }
-
 
             lightCards.add(new LightDevelopmentCard(stringCost, dc.getVictoryPoints(), dc.getUsed(), dc.getID(),
                     dc.getFlag().getFlagColor().toString(), dc.getFlag().getFlagLevel().toString(), stringProductionCost,
