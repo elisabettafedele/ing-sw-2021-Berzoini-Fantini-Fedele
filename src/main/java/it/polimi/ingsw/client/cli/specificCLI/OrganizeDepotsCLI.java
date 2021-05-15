@@ -40,6 +40,15 @@ public class OrganizeDepotsCLI {
     }
 
     public static void displaySelectStorageRequest(Client client, Resource resource, boolean isInWarehouse, boolean isInStrongbox, boolean isInLeaderDepot) {
+        if (isInLeaderDepot ^ isInStrongbox ^ isInWarehouse){
+            if (isInWarehouse)
+                client.sendMessageToServer(new SelectStorageResponse(resource, ResourceStorageType.WAREHOUSE));
+            if (isInStrongbox)
+                client.sendMessageToServer(new SelectStorageResponse(resource, ResourceStorageType.STRONGBOX));
+            else
+                client.sendMessageToServer(new SelectStorageResponse(resource, ResourceStorageType.LEADER_DEPOT));
+            return;
+        }
         while (true) {
             System.out.println("You can take a " + resource.toString() + " from:");
             if (isInWarehouse) {
