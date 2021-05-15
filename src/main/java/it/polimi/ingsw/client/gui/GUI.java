@@ -4,10 +4,10 @@ import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.client.View;
 import it.polimi.ingsw.common.FunctionInterface;
 import it.polimi.ingsw.common.LightDevelopmentCard;
+import it.polimi.ingsw.common.LightLeaderCard;
 import it.polimi.ingsw.enumerations.ActionType;
 import it.polimi.ingsw.enumerations.Marble;
 import it.polimi.ingsw.enumerations.Resource;
-import it.polimi.ingsw.model.cards.LeaderCard;
 import it.polimi.ingsw.model.cards.Value;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -144,7 +144,7 @@ public class GUI extends Application implements View {
     }
 
     @Override
-    public void loadLeaderCards(List<LeaderCard> leaderCards){
+    public void loadLeaderCards(List<LightLeaderCard> leaderCards){
         MatchData.getInstance().setAllLeaderCards(leaderCards);
     }
 

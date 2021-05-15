@@ -8,8 +8,8 @@ import it.polimi.ingsw.client.cli.graphical.GraphicalLogo;
 import it.polimi.ingsw.client.cli.graphical.GraphicalWarehouse;
 import it.polimi.ingsw.client.cli.specificCLI.*;
 import it.polimi.ingsw.common.LightDevelopmentCard;
+import it.polimi.ingsw.common.LightLeaderCard;
 import it.polimi.ingsw.enumerations.*;
-import it.polimi.ingsw.model.cards.LeaderCard;
 import it.polimi.ingsw.model.cards.Value;
 import java.util.List;
 import java.util.Map;
@@ -87,7 +87,7 @@ public class CLI implements View {
     // *********************************************************************  //
 
     @Override
-    public void loadLeaderCards(List<LeaderCard> leaderCards){
+    public void loadLeaderCards(List<LightLeaderCard> leaderCards){
         MatchData.getInstance().setAllLeaderCards(leaderCards);
     }
 

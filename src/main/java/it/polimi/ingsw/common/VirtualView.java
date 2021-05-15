@@ -34,7 +34,7 @@ public interface VirtualView {
     void displaySelectStorageRequest(Resource resource, boolean isInWarehouse, boolean isInStrongbox, boolean isInLeaderDepot);
 
     //SETUP
-    void loadLeaderCards(List<LeaderCard> leaderCards);
+    void loadLeaderCards(List<LightLeaderCard> leaderCards);
     void displayChooseResourceTypeRequest(List<Resource> resourceTypes, int quantity);
 
     void loadDevelopmentCards(List<LightDevelopmentCard> lightDevelopmentCards);

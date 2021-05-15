@@ -10,7 +10,6 @@ import java.util.Map;
 
 public class MatchData {
 
-    List<LeaderCard> allLeaderCards;
     List<LightDevelopmentCard> lightDevelopmentCards;
     List<LightLeaderCard> lightLeaderCards;
 
@@ -30,35 +29,25 @@ public class MatchData {
 
     private MatchData(){
         this.ownedLeaderCards = new ArrayList<>();
-        this.allLeaderCards = new ArrayList<>();
+        this.lightLeaderCards = new ArrayList<>();
     }
 
     public void addChosenLeaderCard(Integer ID){
         ownedLeaderCards.add(ID);
     }
 
-    public void setAllLeaderCards(List<LeaderCard> allLeaderCards){
-        this.allLeaderCards = allLeaderCards;
+    public void setAllLeaderCards(List<LightLeaderCard> allLeaderCards){
+        this.lightLeaderCards = allLeaderCards;
     }
 
-    public List<Integer> getOwnedLeaderCards(){
-        return this.ownedLeaderCards;
-    }
 
-    public LeaderCard getLeaderCardByID(int ID){
-        for (LeaderCard lc : allLeaderCards){
+    public LightLeaderCard getLeaderCardByID(int ID){
+        for (LightLeaderCard lc : lightLeaderCards){
             if(lc.getID() == ID){
                 return lc;
             }
         }
         return null;
-    }
-
-    public List<LeaderCard> getLeaderCardsByID(List<Integer> ids){
-        List<LeaderCard> cards = new ArrayList<>();
-        for (Integer id : ids)
-            cards.add(getLeaderCardByID(id));
-        return cards;
     }
 
     public void setAllDevelopmentCards(List<LightDevelopmentCard> lightDevelopmentCards) {
