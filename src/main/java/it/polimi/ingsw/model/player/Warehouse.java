@@ -214,4 +214,15 @@ public class Warehouse {
         }
         return depots;
     }
+
+    public void removeAll(Resource resource){
+        int index = getRowIndexFromResource(resource);
+        if (index == -1)
+            return;
+        try {
+            depots[index].removeResources(depots[index].getMaxResourceQuantity());
+        } catch (InvalidArgumentException | InsufficientQuantityException e) {
+            e.printStackTrace();
+        }
+    }
 }
