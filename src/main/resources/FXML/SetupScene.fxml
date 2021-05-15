@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" styleClass="setup-pane" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.gui.SetupSceneController">
@@ -29,16 +31,21 @@
             <Button fx:id="sendNicknameButton" mnemonicParsing="false" onAction="#handleSendNicknameButton" text="Confirm" />
          </children>
       </VBox>
-      <VBox fx:id="vBoxNumOfPlayers" layoutX="153.0" layoutY="100.0" prefHeight="200.0" prefWidth="294.0">
+      <VBox fx:id="vBoxNumOfPlayers" layoutX="78.0" layoutY="100.0" prefHeight="200.0" prefWidth="443.0" visible="false">
          <children>
-            <Label text="Select number of players:" />
-            <ChoiceBox fx:id="numOfPlayersChoiceBox" prefWidth="150.0" />
+            <Label text="Select number of players:">
+               <VBox.margin>
+                  <Insets right="50.0" top="50.0" />
+               </VBox.margin></Label>
+            <ChoiceBox fx:id="numOfPlayersChoiceBox" prefWidth="150.0" value="2" />
             <Button fx:id="sendNumOfPlayerButton" mnemonicParsing="false" onAction="#onNumOfPlayersChoiceBoxChosen" text="Confirm" />
          </children>
       </VBox>
-      <VBox fx:id="vBoxWaiting" layoutX="193.0" layoutY="100.0" prefHeight="200.0" prefWidth="249.0" visible="false">
+      <VBox fx:id="vBoxWaiting" layoutX="30.0" layoutY="19.0" prefHeight="362.0" prefWidth="539.0">
          <children>
-            <Label text="Waiting in the Lobby" />
+            <Label fx:id="lastLabel" text="Waiting in the Lobby" />
+            <HBox fx:id="hbox" prefHeight="213.0" prefWidth="539.0" />
+            <Button fx:id="confirmSelectionButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="121.0" text="Confirm selection" />
          </children>
       </VBox>
    </children>

@@ -11,14 +11,21 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.effect.ColorAdjust;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.function.UnaryOperator;
 
 public class SetupSceneController {
-
+    List<Integer> selectedLeaderCard;
 
     private GUI gui=null;
     private Client client=null;
@@ -38,6 +45,8 @@ public class SetupSceneController {
 
     @FXML
     private Label nicknameInfoLabel;
+    @FXML
+    private Label lastLabel;
 
     @FXML
     private ChoiceBox numOfPlayersChoiceBox;
@@ -54,12 +63,17 @@ public class SetupSceneController {
     @FXML
     private Button sendNumOfPlayerButton;
     @FXML
+    private Button confirmSelectionButton;
+    @FXML
     private TextField ipTextField;
 
     @FXML
     private TextField portTextField;
     @FXML
     private TextField nicknameField;
+
+    @FXML
+    private HBox hbox;
 
 
 
@@ -72,6 +86,7 @@ public class SetupSceneController {
         vBoxNickname.setVisible(false);
         vBoxNumOfPlayers.setVisible(false);
         vBoxWaiting.setVisible(false);
+        hbox.setVisible(false);
     }
 
     UnaryOperator<TextFormatter.Change> integerFilter = change -> {
@@ -194,8 +209,93 @@ public class SetupSceneController {
                 vBoxNickname.setVisible(false);
                 vBoxNumOfPlayers.setVisible(false);
                 vBoxWaiting.setVisible(true);
+                lastLabel.setText("Waiting in the lobby..");
+                confirmSelectionButton.setVisible(false);
+
             }
         });
+    }
+
+    public void displayPlayersReadyToStartMessage(List<String> players) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                vBoxIPandPORT.setVisible(false);
+                vBoxGameMode.setVisible(false);
+                vBoxNickname.setVisible(false);
+                vBoxNumOfPlayers.setVisible(false);
+                vBoxWaiting.setVisible(true);
+                String playerNames;
+                String delim = "\n";
+                StringBuilder sb = new StringBuilder();
+                int i = 0;
+                while (i < players.size() - 1)
+                {
+                    sb.append(players.get(i));
+                    sb.append(delim);
+                    i++;
+                }
+                sb.append(players.get(i));
+
+                playerNames= sb.toString();
+                lastLabel.setText("All the players are ready to start, players in game are:\n" + playerNames + "\n" );
+                }
+        });
+    }
+
+    public void displayLeaderCardsRequest(List<Integer> leaderCards,Client cLient) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                lastLabel.setText(lastLabel.getText()+"\n Choose two out of the four following Leader cards:");
+                confirmSelectionButton.setVisible(true);
+                confirmSelectionButton.setDisable(true);
+                selectedLeaderCard=new ArrayList<>();
+                HashMap<Integer, ImageView> leaderCardsMap= buildCards(leaderCards);
+                for(ImageView lcImage: leaderCardsMap.values()){
+                    hbox.getChildren().add(lcImage);
+                }
+                hbox.setVisible(true);
+
+            }
+        });
+
+    }
+
+    private HashMap<Integer, ImageView> buildCards(List<Integer> leaderCards) {
+        HashMap<Integer,ImageView> leaderCardsMap=new HashMap<>();
+        leaderCards.forEach(lc->{
+            ImageView lcImage= new ImageView( new Image(SetupSceneController.class.getResource("/img/Cards/LeaderCards/front/" + lc + ".png").toString()));//check toclass meaning.
+            lcImage.setFitHeight(200);
+            lcImage.setPreserveRatio(true);
+            lcImage.setSmooth(true);
+            lcImage.getStyleClass().add("cards");
+            lcImage.addEventHandler(MouseEvent.MOUSE_PRESSED, mouseEvent -> {
+                if(selectedLeaderCard.contains(lc)){
+                    for(int i=0;i<selectedLeaderCard.size();i++){
+                        if(selectedLeaderCard.get(i)==lc){
+                            selectedLeaderCard.remove(i);
+                            lcImage.setEffect(null);
+                        }
+                    }
+                    confirmSelectionButton.setDisable(true);
+                }else if (selectedLeaderCard.size()<2){
+                    selectedLeaderCard.add(lc);
+                    ColorAdjust colorAdjust=new ColorAdjust();
+                    colorAdjust.setBrightness(0.4);
+                    lcImage.setEffect(colorAdjust);
+                    if(selectedLeaderCard.size()==2){
+                        confirmSelectionButton.setDisable(false);
+                    }
+                }
+            });
+            leaderCardsMap.put(lc,lcImage);
+        });
+        return leaderCardsMap;
+    }
+    @FXML
+    public void handleConfirmSelectionButton(){
+
     }
 
 /*   Use this to avoid Thread exception

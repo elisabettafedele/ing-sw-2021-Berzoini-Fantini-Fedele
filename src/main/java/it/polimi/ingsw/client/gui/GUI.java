@@ -38,7 +38,6 @@ public class GUI extends Application implements View {
 
         });
         askConnectionParameters();
-
     }
 
     private void createMainScene(String pathOfFxmlFile, FunctionInterface functionInterface) {
@@ -104,7 +103,7 @@ public class GUI extends Application implements View {
 
     @Override
     public void displayPlayersReadyToStartMessage(List<String> p) {
-
+        setupSceneController.displayPlayersReadyToStartMessage(p);
     }
 
     @Override
@@ -136,7 +135,9 @@ public class GUI extends Application implements View {
 
 
     @Override
-    public void displayChooseLeaderCardsRequest(List<Integer> leaderCards){}
+    public void displayChooseLeaderCardsRequest(List<Integer> leaderCards){
+        setupSceneController.displayLeaderCardsRequest(leaderCards, client);
+    }
 
     @Override
     public void displaySelectCardRequest(List<Integer> leaderCards, boolean leaderORdevelopment) {
