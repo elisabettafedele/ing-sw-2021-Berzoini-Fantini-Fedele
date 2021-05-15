@@ -172,4 +172,11 @@ public class GraphicalDevelopmentCard {
         return Colour.ANSI_BRIGHT_WHITE;
     }
 
+    char[][] getSymbols() {
+        return symbols;
+    }
+
+    Colour[][] getColours() {
+        return colours;
+    }
 }

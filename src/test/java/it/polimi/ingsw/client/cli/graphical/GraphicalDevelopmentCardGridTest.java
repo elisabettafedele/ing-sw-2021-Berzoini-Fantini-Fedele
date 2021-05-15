@@ -15,8 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
-
 public class GraphicalDevelopmentCardGridTest {
 
     List<Integer> IDs;
@@ -24,7 +22,6 @@ public class GraphicalDevelopmentCardGridTest {
 
     @Before
     public void setUp() throws Exception {
-
         MatchData.getInstance().setAllDevelopmentCards(getLightDevelopmentCards(DevelopmentCardParser.parseCards()));
 
         gdc = new GraphicalDevelopmentCardGrid();
@@ -38,22 +35,12 @@ public class GraphicalDevelopmentCardGridTest {
         for(DevelopmentCard dc : list){
             IDs.add(dc.getID());
         }
-        //Uncomment to test missing cards displaying
-        //IDs.remove(6);
     }
 
     @Test
-    public void testDevelopmentCardGridPrint() {
+    public void displayDevelopmentCardGrid() {
         gdc.drawDevelopmentCardGrid(IDs);
         gdc.displayDevelopmentCardGrid();
-    }
-
-    @Test
-    public void testGetters(){
-        int devCardGridWidth = gdc.getWidth();
-        int devCardGridHeight = gdc.getHeight();
-        assertTrue(devCardGridHeight == 8*3);
-        assertTrue(devCardGridWidth == 14*4+3);
     }
 
     static List<LightDevelopmentCard> getLightDevelopmentCards(List<DevelopmentCard> cards){

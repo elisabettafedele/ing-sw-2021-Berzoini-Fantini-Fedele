@@ -28,7 +28,7 @@ public class Screen {
 
         graphicalFaithTrack = new GraphicalFaithTrack();
 
-        this.faith_track_x_anchor = 1;
+        this.faith_track_x_anchor = 0;
         this.faith_track_y_anchor = graphicalDevelopmentCardGrid.getWidth() + 1;
 
         reset();
