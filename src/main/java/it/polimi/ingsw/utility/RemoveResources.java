@@ -16,9 +16,13 @@ public class RemoveResources {
         int i;
         Set<Resource> resourcesTypeToRemove = resourcesToRemove.keySet();
         for (Resource resource : resourcesTypeToRemove){
-            for(i=0;i<resourcesToRemove.get(resource);i++){
-                clientHandler.sendMessageToClient(new SelectStorageRequest(resource,currentPlayer.getPersonalBoard().isResourceAvailableAndRemove(ResourceStorageType.WAREHOUSE,resource,1,false),currentPlayer.getPersonalBoard().isResourceAvailableAndRemove(ResourceStorageType.STRONGBOX,resource,1,false),currentPlayer.getPersonalBoard().isResourceAvailableAndRemove(ResourceStorageType.LEADER_DEPOT,resource,1,false)));
-                clientHandler.waitSpecificMessage();
+            if (currentPlayer.getPersonalBoard().countResources().get(resource).equals(resourcesToRemove.get(resource)))
+                currentPlayer.getPersonalBoard().removeAll(resource);
+            else {
+                for (i = 0; i < resourcesToRemove.get(resource); i++) {
+                    clientHandler.sendMessageToClient(new SelectStorageRequest(resource, currentPlayer.getPersonalBoard().isResourceAvailableAndRemove(ResourceStorageType.WAREHOUSE, resource, 1, false), currentPlayer.getPersonalBoard().isResourceAvailableAndRemove(ResourceStorageType.STRONGBOX, resource, 1, false), currentPlayer.getPersonalBoard().isResourceAvailableAndRemove(ResourceStorageType.LEADER_DEPOT, resource, 1, false)));
+                    clientHandler.waitSpecificMessage();
+                }
             }
 
         }

@@ -119,7 +119,7 @@ public class Warehouse {
      * @param res the type of the resource searched
      * @return the row of the depot which contains the {@link Resource} of type {@param res} if it is present, -1 otherwise
      */
-    public int getRowIndexFromResource(Resource res) {
+    private int getRowIndexFromResource(Resource res) {
         int i = 0;
         if (!this.getResourceTypes().contains(res))
             return -1;
@@ -213,5 +213,16 @@ public class Warehouse {
             }
         }
         return depots;
+    }
+
+    public void removeAll(Resource resource){
+        int index = getRowIndexFromResource(resource);
+        if (index == -1)
+            return;
+        try {
+            depots[index].removeResources(depots[index].getMaxResourceQuantity());
+        } catch (InvalidArgumentException | InsufficientQuantityException e) {
+            e.printStackTrace();
+        }
     }
 }

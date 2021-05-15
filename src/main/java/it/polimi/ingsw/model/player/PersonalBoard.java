@@ -491,4 +491,36 @@ public class PersonalBoard {
             quantity += resources.get(resource);
         return quantity;
     }
+
+
+    public void removeAll(Resource resource){
+        if (countResources().get(resource) == 0)
+            return;
+        getWarehouse().removeAll(resource);
+        if (strongbox[resource.getValue()].getResourceQuantity() > 0) {
+            try {
+                strongbox[resource.getValue()].removeResources(strongbox[resource.getValue()].getResourceQuantity());
+            } catch (InsufficientQuantityException | InvalidArgumentException e) {
+                e.printStackTrace();
+            }
+        }
+        if (getAvailableEffects(EffectType.EXTRA_DEPOT).size() > 0){
+            List <LeaderCard> cards = new ArrayList<>();
+            for (LeaderCard card : availableLeaderCards()){
+                if (card.getEffect().getEffectType() == EffectType.EXTRA_DEPOT){
+                    try {
+                        if (card.getEffect().getExtraDepotEffect().getLeaderDepot().getResourceType() == resource && card.getEffect().getExtraDepotEffect().getLeaderDepot().getResourceQuantity() > 0) {
+                            try {
+                                card.getEffect().getExtraDepotEffect().getLeaderDepot().removeResources(card.getEffect().getExtraDepotEffect().getLeaderDepot().getResourceQuantity());
+                            } catch (InsufficientQuantityException | InvalidArgumentException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    } catch (DifferentEffectTypeException ignored){ }
+                }
+            }
+        }
+
+        assert countResources().get(resource) == 0;
+    }
 }

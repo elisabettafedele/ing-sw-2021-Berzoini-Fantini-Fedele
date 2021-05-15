@@ -418,4 +418,17 @@ public class PersonalBoardTest {
         pb.removeResources(ResourceStorageType.LEADER_DEPOT, Resource.SHIELD, 2);
         assertEquals(0, pb.countResourceNumber());
     }
+
+    @Test
+    public void testRemoveAll() throws InvalidArgumentException, InvalidDepotException, InvalidResourceTypeException, InsufficientSpaceException {
+        List<LeaderCard> lcl = LeaderCardParser.parseCards();
+        lcl = lcl.stream().filter(x-> x.getEffect().getEffectType() == EffectType.EXTRA_DEPOT).collect(Collectors.toList());
+        lcl.forEach(LeaderCard::activate);
+        PersonalBoard pb = new PersonalBoard(lcl);
+        pb.getWarehouse().addResourcesToDepot(1,Resource.SHIELD, 2);
+        pb.addResources(ResourceStorageType.STRONGBOX, Resource.SHIELD, 3);
+        pb.addResources(ResourceStorageType.LEADER_DEPOT, Resource.SHIELD, 2);
+        pb.removeAll(Resource.SHIELD);
+        assertTrue(pb.countResources().get(Resource.SHIELD) == 0);
+    }
 }
