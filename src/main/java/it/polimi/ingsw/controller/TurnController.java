@@ -164,8 +164,7 @@ public class TurnController {
             }
         }
         for(Player p: controller.getPlayers()){
-            if(p.getPersonalBoard().getMarkerPosition()>=3){
-                //if(p.getPersonalBoard().getMarkerPosition()>=controller.getGame().getFaithTrack().getLength()){
+            if(p.getPersonalBoard().getMarkerPosition()>=controller.getGame().getFaithTrack().getLength()){
                 ((PlayPhase) controller.getGamePhase()).handleEndTriggered();
             }
         }

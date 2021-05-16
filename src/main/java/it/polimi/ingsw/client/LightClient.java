@@ -1,25 +1,29 @@
 package it.polimi.ingsw.client;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
+import it.polimi.ingsw.enumerations.Resource;
+
+import java.util.*;
 
 public class LightClient {
 
     private int faithTrackPosition;
-    List<Integer> ownedLeaderCards;
-    Stack<Integer>[] ownedDevelopmentCards;
+    private List<Integer> ownedLeaderCards;
+    private Stack<Integer>[] ownedDevelopmentCards;
     private String nickname;
 
-
-    //TODO: warehouse and strongbox resources
+    List<Resource>[] warehouse;
+    Map<Resource, Integer> strongbox;
 
     public LightClient() {
         this.faithTrackPosition = 0;
         this.ownedLeaderCards = new ArrayList<>();
         this.ownedDevelopmentCards = new Stack[3];
-        for(int i = 0; i < 3; i++)
+        this.warehouse = new ArrayList[3];
+        for(int i = 0; i < 3; i++) {
             ownedDevelopmentCards[i] = new Stack<Integer>();
+            warehouse[i] = new ArrayList<>();
+        }
+        this.strongbox = new HashMap<>();
     }
 
     public void addChosenLeaderCard(Integer ID){

@@ -17,5 +17,7 @@ public class SendPlayerNicknamesMessage implements MessageToClient{
     @Override
     public void handleMessage(VirtualView view) {
         view.setNicknames(playerNickname, otherPlayersNicknames);
+        otherPlayersNicknames.add(playerNickname);
+        view.displayPlayersReadyToStartMessage(otherPlayersNicknames);
     }
 }

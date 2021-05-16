@@ -2,19 +2,19 @@ package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.common.LightLeaderCard;
-import it.polimi.ingsw.model.cards.LeaderCard;
+import it.polimi.ingsw.enumerations.Marble;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class MatchData {
 
     List<LightDevelopmentCard> lightDevelopmentCards;
     List<LightLeaderCard> lightLeaderCards;
-    List<Integer> ownedLeaderCards;
     LightClient thisClient;
     List<LightClient> otherClients;
+    private Marble[][] marketTray;
+    private Marble slideMarble;
 
     private static MatchData instance;
 
@@ -26,7 +26,6 @@ public class MatchData {
     }
 
     private MatchData(){
-        this.ownedLeaderCards = new ArrayList<>();
         this.lightLeaderCards = new ArrayList<>();
         this.thisClient = new LightClient();
         this.otherClients = new ArrayList<>();

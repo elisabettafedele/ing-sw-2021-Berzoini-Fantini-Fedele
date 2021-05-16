@@ -6,10 +6,7 @@ import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.enumerations.ClientHandlerPhase;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
-import it.polimi.ingsw.messages.toClient.NicknameRequest;
-import it.polimi.ingsw.messages.toClient.NumberOfPlayersRequest;
-import it.polimi.ingsw.messages.toClient.PlayersReadyToStartMessage;
-import it.polimi.ingsw.messages.toClient.WaitingInTheLobbyMessage;
+import it.polimi.ingsw.messages.toClient.*;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -186,7 +183,7 @@ public class Server implements ServerInterface {
             List <String> playersInGame = clientsInLobby.stream().filter(x -> clientsInLobby.indexOf(x) < numberOfPlayersForNextGame).map(x -> x.getNickname()).collect(Collectors.toList());
             for (int i = 0; i < numberOfPlayersForNextGame; i++) {
                 clientsInLobby.get(0).setClientHandlerPhase(ClientHandlerPhase.READY_TO_START);
-                clientsInLobby.get(0).sendMessageToClient(new PlayersReadyToStartMessage(playersInGame));
+                clientsInLobby.get(0).sendMessageToClient(new SendPlayerNicknamesMessage(clientsInLobby.get(0).getNickname(), playersInGame.stream().filter(x -> !x.equals(clientsInLobby.get(0).getNickname())).collect(Collectors.toList())));
                 clientsInLobby.get(0).setGameStarted(true);
                 controller.addConnection(clientsInLobby.get(0));
                 clientsInLobby.get(0).setController(controller);
