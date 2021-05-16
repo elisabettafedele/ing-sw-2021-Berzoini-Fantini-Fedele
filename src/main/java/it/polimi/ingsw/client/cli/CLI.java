@@ -43,6 +43,22 @@ public class CLI implements View {
         OrganizeDepotsCLI.displayDepotStatus(warehouseDepots, strongboxDepots, leaderDepots);
     }
 
+    @Override
+    public void displayResults(Map<String, Integer> results) {
+        int i = 1;
+        for (String name : results.keySet()){
+            System.out.println((results.keySet().size() > 1 ? (i++ + ". ") : "")+ name + ": " + results.get(name) + " victory points");
+        }
+        client.closeSocket();
+    }
+
+    @Override
+    public void displayResults(int victoryPoints) {
+        System.out.println("Game over, you got " + victoryPoints + " victory points!");
+        client.closeSocket();
+    }
+
+
     public void displayDepotsStatus(List<Resource>[] warehouseDepots, List<Resource>[] strongboxDepots, List<List<Resource>> leaderDepots){
         GraphicalWarehouse.printWarehouse(warehouseDepots);
     }

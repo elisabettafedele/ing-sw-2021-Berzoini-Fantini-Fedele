@@ -1,15 +1,21 @@
 package it.polimi.ingsw.controller.game_phases;
 
+import it.polimi.ingsw.messages.toClient.GameOverMessage;
 import it.polimi.ingsw.model.player.Player;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class MultiplayerEndPhase extends EndPhase {
     @Override
     public void notifyResults() {
-        List<Player> players = getController().getPlayers();
-        for (Player player : players){
+        List<Player> sortedPlayers = getController().getPlayers().stream().sorted(Comparator.comparingInt(Player::getVictoryPoints).reversed()).collect(Collectors.toList());
+        Map<String, Integer> results = new LinkedHashMap<>();
 
+
+        for (Player player : sortedPlayers){
+            results.put(player.getNickname(), player.getVictoryPoints());
         }
+        getController().sendMessageToAll(new GameOverMessage(results));
     }
 }

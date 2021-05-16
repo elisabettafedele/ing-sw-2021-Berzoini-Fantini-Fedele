@@ -12,6 +12,7 @@ public abstract class EndPhase implements GamePhase {
     public void executePhase(Controller controller) {
         this.controller = controller;
         countVictoryPoints();
+        notifyResults();
 
 
     }
@@ -39,5 +40,9 @@ public abstract class EndPhase implements GamePhase {
 
     public Controller getController(){
         return controller;
+    }
+
+    public String toString(){
+        return "End Phase";
     }
 }

@@ -62,6 +62,7 @@ public class TurnController {
     }
 
     public void setNextAction(){
+        checkFaithTrack();
         checkExecutableActions();
         if(isInterruptible && (controller.getGame().getDevelopmentCardGrid().checkEmptyColumn() || endTrigger)){
             controller.endMatch();
@@ -161,15 +162,15 @@ public class TurnController {
                     e.printStackTrace();
                 }
             }
-            for(Player p: controller.getPlayers()){
-                if(p.getPersonalBoard().getMarkerPosition()>=controller.getGame().getFaithTrack().getLength()){
-                    ((PlayPhase) controller.getGamePhase()).handleEndTriggered();
-                }
-            }
-            if(isInterruptible&&((SinglePlayerPlayPhase)controller.getGamePhase()).getBlackCrossPosition()>=controller.getGame().getFaithTrack().getLength()){
+        }
+        for(Player p: controller.getPlayers()){
+            if(p.getPersonalBoard().getMarkerPosition()>=3){
+                //if(p.getPersonalBoard().getMarkerPosition()>=controller.getGame().getFaithTrack().getLength()){
                 ((PlayPhase) controller.getGamePhase()).handleEndTriggered();
             }
-
+        }
+        if(isInterruptible&&((SinglePlayerPlayPhase)controller.getGamePhase()).getBlackCrossPosition()>=controller.getGame().getFaithTrack().getLength()){
+            ((PlayPhase) controller.getGamePhase()).handleEndTriggered();
         }
 
     }
