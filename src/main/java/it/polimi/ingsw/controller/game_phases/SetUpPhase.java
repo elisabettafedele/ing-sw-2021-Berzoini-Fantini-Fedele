@@ -32,6 +32,16 @@ public class SetUpPhase implements GamePhase {
         resourcesToStoreByNickname = new HashMap<>();
         sendLightCards();
         setUpLeaderCards();
+        setUpMatchDataLightClients();
+    }
+
+    private void setUpMatchDataLightClients() {
+        List<String> nicknames = controller.getNicknames();
+
+        for(String nickname : nicknames){
+            ClientHandler connection = controller.getConnectionByNickname(nickname);
+
+        }
     }
 
     public void handleMessage(MessageToServer message, ClientHandler clientHandler) {

@@ -42,7 +42,7 @@ public interface VirtualView {
 
     public void displayDepotStatus(List<Resource>[] warehouseDepots, List<Resource>[] strongboxDepots, List<List<Resource>> leaderDepots);
 
-
-
-
-    }
+    //Update MatchDataInfo
+    void updateFaithTrackInfo(String nickname, int steps);
+    void setNicknames(String playerNickname, List<String> otherPlayersNicknames);
+}

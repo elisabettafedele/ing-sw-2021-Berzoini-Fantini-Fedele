@@ -188,5 +188,17 @@ public class GUI extends Application implements View {
 
     }
 
+    @Override
+    public void updateFaithTrackInfo(String nickname, int steps){
+
+    }
+
+    public void setNicknames(String playerNickname, List<String> otherPlayersNicknames){
+        MatchData.getInstance().setThisClient(playerNickname);
+        for(String nickname : otherPlayersNicknames){
+            MatchData.getInstance().addLightClient(nickname);
+        }
+    }
+
 
 }

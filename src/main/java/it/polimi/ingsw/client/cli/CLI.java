@@ -176,6 +176,22 @@ public class CLI implements View {
     }
 
     // *********************************************************************  //
+    //                             MATCHDATA UPDATE                           //
+    // *********************************************************************  //
+
+    @Override
+    public void updateFaithTrackInfo(String nickname, int steps){
+        MatchData.getInstance().updateInfo(nickname, steps);
+    }
+
+    public void setNicknames(String playerNickname, List<String> otherPlayersNicknames){
+        MatchData.getInstance().setThisClient(playerNickname);
+        for(String nickname : otherPlayersNicknames){
+            MatchData.getInstance().addLightClient(nickname);
+        }
+    }
+
+    // *********************************************************************  //
     //                               PREDICATES                               //
     // *********************************************************************  //
 
