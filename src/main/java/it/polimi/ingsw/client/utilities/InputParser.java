@@ -126,10 +126,12 @@ public class InputParser {
             try {
                 if (integerPredicate.test(Integer.parseInt(command)))
                     return intCommands.get(Integer.parseInt(command) - 1);
-            } catch (NumberFormatException e){ }
-            finally {
-                System.out.println(errorMessage);
-            }
+                else
+                    System.out.println(errorMessage);
+            } catch (NumberFormatException e){ System.out.println(errorMessage);}
+            //finally {
+             //   System.out.println(errorMessage);
+            //}
         }
     }
 

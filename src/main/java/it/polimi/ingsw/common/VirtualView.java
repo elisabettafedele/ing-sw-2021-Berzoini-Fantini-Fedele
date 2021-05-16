@@ -40,9 +40,11 @@ public interface VirtualView {
     void loadDevelopmentCards(List<LightDevelopmentCard> lightDevelopmentCards);
     void displayMessage(String message);
 
-    public void displayDepotStatus(List<Resource>[] warehouseDepots, List<Resource>[] strongboxDepots, List<List<Resource>> leaderDepots);
+    void displayDepotStatus(List<Resource>[] warehouseDepots, List<Resource>[] strongboxDepots, List<List<Resource>> leaderDepots);
 
 
-
+    //END
+    void displayResults(Map<String, Integer> results);
+    void displayResults(int victoryPoints);
 
     }

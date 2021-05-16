@@ -220,7 +220,7 @@ public class Warehouse {
         if (index == -1)
             return;
         try {
-            depots[index].removeResources(depots[index].getMaxResourceQuantity());
+            depots[index].removeResources(depots[index].getResourceQuantity());
         } catch (InvalidArgumentException | InsufficientQuantityException e) {
             e.printStackTrace();
         }

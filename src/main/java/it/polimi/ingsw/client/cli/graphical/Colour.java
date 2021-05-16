@@ -21,7 +21,7 @@ public enum Colour {
     ANSI_BRIGHT_CYAN ("\u001B[96m"),
     ANSI_BRIGHT_WHITE("\u001B[97m");
 
-    static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_RESET = "\u001B[0m";
 
 
     private final String code;

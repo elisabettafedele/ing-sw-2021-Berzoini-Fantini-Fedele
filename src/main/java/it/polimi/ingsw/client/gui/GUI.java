@@ -173,6 +173,16 @@ public class GUI extends Application implements View {
     }
 
     @Override
+    public void displayResults(Map<String, Integer> results) {
+
+    }
+
+    @Override
+    public void displayResults(int victoryPoints) {
+
+    }
+
+    @Override
     public void displaySelectStorageRequest(Resource resource, boolean isInWarehouse, boolean isInStrongbox, boolean isInLeaderDepot) {
 
     }

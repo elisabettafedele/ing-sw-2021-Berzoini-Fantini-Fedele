@@ -72,8 +72,8 @@ public class Player {
      * @param points number of points to add
      */
     public void addVictoryPoints(int points) throws InvalidArgumentException {
-        if(points <= 0){
-            throw new InvalidArgumentException("null or negative points added");
+        if(points < 0){
+            throw new InvalidArgumentException("negative points added");
         }
         this.victoryPoints += points;
     }

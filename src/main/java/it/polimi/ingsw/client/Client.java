@@ -37,6 +37,8 @@ public class Client implements ClientInterface {
 
     private final Thread pinger;
 
+    private boolean connectionClosed = false;
+
     public Client(String IPAddress, int port, View view) {
         this.IPAddress = IPAddress;
         this.port = port;
@@ -128,14 +130,18 @@ public class Client implements ClientInterface {
     }
 
     public void closeSocket() {
+        if (connectionClosed)
+            return;
+        connectionClosed = true;
+        boolean wasConnected = connected.get();
         if (packetReceiver.isAlive())
             packetReceiver.interrupt();
-        if (!connected.get()) {
-            System.out.println(Colour.ANSI_BRIGHT_CYAN.getCode() + "The server is not reachable at the moment. Try again later.");
+        if (!wasConnected) {
+            System.out.println(Colour.ANSI_BRIGHT_CYAN.getCode() + "The server is not reachable at the moment. Try again later." + Colour.ANSI_RESET);
             return;
         } else {
             connected.set(false);
-            //TODO message
+            System.out.println(Colour.ANSI_BRIGHT_GREEN.getCode() + "Connection closed" + Colour.ANSI_RESET);
             try {
                 is.close();
             } catch (IOException e) {
