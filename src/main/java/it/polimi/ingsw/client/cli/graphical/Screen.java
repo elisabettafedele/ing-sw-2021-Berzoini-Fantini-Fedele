@@ -1,5 +1,8 @@
 package it.polimi.ingsw.client.cli.graphical;
 
+import it.polimi.ingsw.client.MatchData;
+import it.polimi.ingsw.common.LightLeaderCard;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +26,15 @@ public class Screen {
 
     GraphicalFaithTrack graphicalFaithTrack;
 
-    public Screen() {
+    private static Screen instance;
+
+    public static Screen getInstance(){
+        if(instance == null)
+            instance = new Screen();
+        return instance;
+    }
+
+    private Screen() {
         graphicalDevelopmentCardGrid = new GraphicalDevelopmentCardGrid();
         developmentCardGridCardsToDisplay = new ArrayList<>();
 
@@ -39,9 +50,14 @@ public class Screen {
         this.developmentCardGridCardsToDisplay = developmentCardGridCardsToDisplay;
     }
 
+    //TODO: la display è uguale in tutti gli elementi grafici
     public void displayStandardView(){
         reset();
         drawAllElements();
+        display();
+    }
+
+    private void display(){
         for(int i = 0; i < screen_height; i++){
             for(int j = 0; j < screen_width; j++){
                 System.out.print(backGroundColours[i][j].getCode() + colours[i][j].getCode() + screen[i][j]); //+ Colour.ANSI_RESET
@@ -60,7 +76,7 @@ public class Screen {
             for (int j = 0; j < screen_width; j++) {
                 screen[i][j] = ' ';
                 colours[i][j] = Colour.ANSI_DEFAULT;
-                backGroundColours[i][j] = BackColour.ANSI_BG_BLACK;
+                backGroundColours[i][j] = BackColour.ANSI_DEFAULT;
             }
         }
     }
@@ -73,8 +89,9 @@ public class Screen {
 
         Colour[][] colours = graphicalDevelopmentCardGrid.getColours();
         char[][] symbols = graphicalDevelopmentCardGrid.getSymbols();
+        BackColour[][] backColours = graphicalDevelopmentCardGrid.getBackGroundColours();
 
-        drawElement(devCardGridHeight, devCardGridWidth, colours, symbols, devCardGrid_x_anchor, devCardGrid_y_anchor);
+        drawElement(devCardGridHeight, devCardGridWidth, colours, symbols, backColours, devCardGrid_x_anchor, devCardGrid_y_anchor);
     }
 
     private void drawFaithTrack() {
@@ -85,17 +102,37 @@ public class Screen {
 
         Colour[][] colours = graphicalFaithTrack.getColours();
         char[][] symbols = graphicalFaithTrack.getSymbols();
+        BackColour[][] backColours = graphicalFaithTrack.getBackGroundColours();
 
-        drawElement(faithTrackHeight, faithTrackWidth, colours, symbols, faith_track_x_anchor, faith_track_y_anchor);
+        drawElement(faithTrackHeight, faithTrackWidth, colours, symbols, backColours, faith_track_x_anchor, faith_track_y_anchor);
 
     }
 
-    private void drawElement(int height, int width, Colour[][] colours, char[][] symbols, int x_anchor, int y_anchor){
+    private void drawElement(int height, int width, Colour[][] colours, char[][] symbols, BackColour[][] backColours, int x_anchor, int y_anchor){
         for(int i = 0; i < height; i++){
             for(int j = 0; j < width; j++){
                 this.screen[i + x_anchor][j + y_anchor] = symbols[i][j];
                 this.colours[i + x_anchor][j + y_anchor] = colours[i][j];
+                this.backGroundColours[i + x_anchor][j + y_anchor] = backColours[i][j];
             }
         }
+    }
+
+    public void displaySetUpLeaderCardSelection(List<Integer> IDs){
+        reset();
+        int x_anchor = screen_height - GraphicalCard.CardHeight;
+        int y_anchor = 0;
+        int y_step = GraphicalCard.CardWidth + 1;
+
+        for(Integer ID : IDs){
+            LightLeaderCard llc = MatchData.getInstance().getLeaderCardByID(ID);
+            GraphicalLeaderCard glc = new GraphicalLeaderCard(llc);
+            glc.drawCard();
+            drawElement(GraphicalCard.CardHeight, GraphicalCard.CardWidth, glc.getColours(), glc.getSymbols(),
+                    glc.getBackGroundColours(), x_anchor, y_anchor);
+
+            y_anchor += y_step;
+        }
+        display();
     }
 }

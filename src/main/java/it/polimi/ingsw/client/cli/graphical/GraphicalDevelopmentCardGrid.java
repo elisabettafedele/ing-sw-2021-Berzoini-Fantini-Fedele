@@ -107,4 +107,8 @@ public class GraphicalDevelopmentCardGrid {
     public int getHeight() {
         return height;
     }
+
+    public BackColour[][] getBackGroundColours() {
+        return backGroundColours;
+    }
 }

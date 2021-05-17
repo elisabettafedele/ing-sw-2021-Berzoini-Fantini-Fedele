@@ -1,6 +1,6 @@
 package it.polimi.ingsw.client.cli.graphical;
 
-import it.polimi.ingsw.common.LightCard;
+
 import it.polimi.ingsw.common.LightLeaderCard;
 import it.polimi.ingsw.enumerations.Level;
 import it.polimi.ingsw.enumerations.Resource;
@@ -29,7 +29,47 @@ public class GraphicalLeaderCard extends GraphicalCard{
             drawProductionOutput();
         }else if(lightCard.getEffectType().equals("DISCOUNT")){
             drawDiscountEffect();
+        }else if(lightCard.getEffectType().equals(("WHITE_MARBLE"))){
+            drawConversionEffect();
+        }else
+            drawExtraDepotEffect();
+    }
+
+    private void drawExtraDepotEffect() {
+        int center = CardWidth/2;
+        int begin = center - 4;
+        String s = "DEPOT";
+        for(int i = 0; i < s.length(); i++){
+            symbols[CardHeight-3][begin+i] = s.charAt(i);
+            colours[CardHeight-3][begin+i] = Colour.ANSI_BRIGHT_WHITE;
         }
+        symbols[CardHeight-3][begin+s.length()] = ':';
+        colours[CardHeight-3][begin+s.length()] = Colour.ANSI_BRIGHT_WHITE;
+        Resource r = Resource.valueOf(lightCard.getEffectDescription().get(0));
+        Colour c = getResourceColor(r);
+        symbols[CardHeight-3][begin+s.length()+2] = r.symbol.charAt(0);
+        colours[CardHeight-3][begin+s.length()+2] = c;
+
+        //TODO: do the empty/full slots of resources
+
+    }
+
+    private void drawConversionEffect() {
+        int center = CardWidth/2;
+        int begin = center - 5;
+        String s = "CONVERSION";
+        for(int i = 0; i < s.length(); i++){
+            symbols[CardHeight-3][begin+i] = s.charAt(i);
+            colours[CardHeight-3][begin+i] = Colour.ANSI_BRIGHT_WHITE;
+        }
+        symbols[CardHeight-2][center-2] = '\u25CF';
+        symbols[CardHeight-2][center] = '→';
+        colours[CardHeight-2][center] = Colour.ANSI_WHITE;
+
+        Resource r = Resource.valueOf(lightCard.getEffectDescription().get(0));
+        Colour c = getResourceColor(r);
+        symbols[CardHeight-2][center+2] = r.symbol.charAt(0);
+        colours[CardHeight-2][center+2] = c;
     }
 
     private void drawDiscountEffect() {
@@ -62,7 +102,7 @@ public class GraphicalLeaderCard extends GraphicalCard{
     private void drawFlagCost() {
         List<String> cost = lightCard.getCost();
 
-        //assert cost.size()%3 == 0;
+        assert cost.size()%3 == 0;
 
         for(int i = 0; i < cost.size()/3; i++){
             String quantity = cost.get(i*3);

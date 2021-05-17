@@ -31,8 +31,8 @@ public class GraphicalLeaderCardTest {
 
         Random rand = new Random();
 
-        //LightLeaderCard llc = MatchData.getInstance().getLeaderCardByID(rand.nextInt(16) + 49);
-        LightLeaderCard llc = MatchData.getInstance().getLeaderCardByID(51);
+        LightLeaderCard llc = MatchData.getInstance().getLeaderCardByID(rand.nextInt(16) + 49);
+        // LightLeaderCard llc = MatchData.getInstance().getLeaderCardByID(55);
         glc = new GraphicalLeaderCard(llc);
     }
 

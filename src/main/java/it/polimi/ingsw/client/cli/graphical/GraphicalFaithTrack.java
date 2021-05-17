@@ -21,7 +21,7 @@ public class GraphicalFaithTrack {
             for (int j = 0; j < width; j++) {
                 symbols[i][j] = ' ';
                 colours[i][j] = Colour.ANSI_BRIGHT_WHITE;
-                backGroundColours[i][j] = BackColour.ANSI_BG_BLACK;
+                backGroundColours[i][j] = BackColour.ANSI_DEFAULT;
             }
         }
     }

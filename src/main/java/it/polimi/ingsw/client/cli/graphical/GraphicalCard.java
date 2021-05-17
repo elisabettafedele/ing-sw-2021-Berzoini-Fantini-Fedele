@@ -139,13 +139,13 @@ public abstract class GraphicalCard {
     }
 
     protected Colour getColor(String flagColor) {
-        if(flagColor == "YELLOW"){
+        if(flagColor.equals("YELLOW")){
             return Colour.ANSI_BRIGHT_YELLOW;
-        }else if(flagColor == "BLUE"){
+        }else if(flagColor.equals("BLUE")){
             return Colour.ANSI_BRIGHT_BLUE;
-        }else if(flagColor == "PURPLE"){
+        }else if(flagColor.equals("PURPLE")){
             return Colour.ANSI_BRIGHT_PURPLE;
-        }else if(flagColor == "GREEN"){
+        }else if(flagColor.equals("GREEN")){
             return Colour.ANSI_BRIGHT_GREEN;
         }
         return Colour.ANSI_BRIGHT_WHITE;
