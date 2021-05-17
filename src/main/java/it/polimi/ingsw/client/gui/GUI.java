@@ -169,7 +169,7 @@ public class GUI extends Application implements View {
     }
 
     @Override
-    public void updateDepotStatus(String nickname, List<Resource>[] warehouseDepots, int[] strongboxDepots, Map<Integer, Integer> leaderDepots) {
+    public void loadDevelopmentCardGrid(List<Integer> availableCardsIds) {
 
     }
 
@@ -198,14 +198,8 @@ public class GUI extends Application implements View {
 
     }
 
-
     @Override
     public void displaySelectDevelopmentCardSlotRequest(boolean firstSlotAvailable, boolean secondSlotAvailable, boolean thirdSlotAvailable) {
-
-    }
-
-    @Override
-    public void updateFaithTrackInfo(String nickname, int steps){
 
     }
 

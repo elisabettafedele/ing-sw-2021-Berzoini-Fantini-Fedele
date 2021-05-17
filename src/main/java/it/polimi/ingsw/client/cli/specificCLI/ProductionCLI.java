@@ -9,7 +9,6 @@ import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.ValueNotPresentException;
 import it.polimi.ingsw.messages.toServer.game.ChooseProductionPowersResponse;
 import it.polimi.ingsw.model.cards.Value;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

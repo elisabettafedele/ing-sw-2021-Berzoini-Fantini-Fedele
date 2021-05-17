@@ -41,12 +41,6 @@ public class CLI implements View {
     }
 
     @Override
-    public void updateDepotStatus(String nickname, List<Resource>[] warehouseDepots, int[] strongboxDepots, Map<Integer, Integer> leaderDepots){
-        OrganizeDepotsCLI.updateDepotStatus(nickname, warehouseDepots, strongboxDepots, leaderDepots);
-        //MatchData.getInstance().updateDepotsStatus(nickname, warehouseDepots, strongboxDepots, leaderDepots);
-    }
-
-    @Override
     public void update(MatchDataMessage message) {
         MatchData.getInstance().update(message);
     }
@@ -66,14 +60,14 @@ public class CLI implements View {
         client.closeSocket();
     }
 
-
-    public void displayDepotsStatus(List<Resource>[] warehouseDepots, List<Resource>[] strongboxDepots, List<List<Resource>> leaderDepots){
-        GraphicalWarehouse.printWarehouse(warehouseDepots);
-    }
-
     @Override
     public void displayMessage(String message) {
         System.out.println(message);
+    }
+
+    @Override
+    public void loadDevelopmentCardGrid(List<Integer> availableCardsIds) {
+        MatchData.getInstance().loadDevelopmentCardGrid(availableCardsIds);
     }
 
     // *********************************************************************  //
@@ -203,10 +197,6 @@ public class CLI implements View {
     //                             MATCHDATA UPDATE                           //
     // *********************************************************************  //
 
-    @Override
-    public void updateFaithTrackInfo(String nickname, int steps){
-        MatchData.getInstance().updateInfo(nickname, steps);
-    }
 
     public void setNicknames(String playerNickname, List<String> otherPlayersNicknames){
         MatchData.getInstance().setThisClient(playerNickname);

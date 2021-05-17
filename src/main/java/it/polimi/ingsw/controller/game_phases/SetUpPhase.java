@@ -7,8 +7,10 @@ import it.polimi.ingsw.enumerations.*;
 import it.polimi.ingsw.messages.toClient.game.ChooseLeaderCardsRequest;
 import it.polimi.ingsw.messages.toClient.game.ChooseResourceTypeRequest;
 import it.polimi.ingsw.messages.toClient.game.ChooseStorageTypeRequest;
+import it.polimi.ingsw.messages.toClient.matchData.LoadDevelopmentCardGrid;
 import it.polimi.ingsw.messages.toClient.matchData.LoadDevelopmentCardsMessage;
 import it.polimi.ingsw.messages.toClient.matchData.LoadLeaderCardsMessage;
+import it.polimi.ingsw.messages.toClient.matchData.UpdateMarketView;
 import it.polimi.ingsw.model.cards.*;
 import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.common.LightDevelopmentCard;
@@ -37,6 +39,8 @@ public class SetUpPhase implements GamePhase {
         resourcesToStoreByNickname = new HashMap<>();
         sendLightCards();
         setUpLeaderCards();
+        controller.sendMessageToAll(new LoadDevelopmentCardGrid(controller.getGame().getDevelopmentCardGrid().getAvailableCards().stream().map(Card::getID).collect(Collectors.toList())));
+        controller.sendMessageToAll(new UpdateMarketView("SETUP", controller.getGame().getMarket().getMarketTray(), controller.getGame().getMarket().getSlideMarble()));
     }
 
     public void handleMessage(MessageToServer message, ClientHandler clientHandler) {

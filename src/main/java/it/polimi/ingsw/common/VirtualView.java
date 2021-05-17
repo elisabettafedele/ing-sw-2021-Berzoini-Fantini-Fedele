@@ -35,18 +35,12 @@ public interface VirtualView {
     //SETUP
     void loadLeaderCards(List<LightLeaderCard> leaderCards);
     void displayChooseResourceTypeRequest(List<Resource> resourceTypes, int quantity);
-
     void loadDevelopmentCards(List<LightDevelopmentCard> lightDevelopmentCards);
     void displayMessage(String message);
-
-
+    void loadDevelopmentCardGrid(List<Integer> availableCardsIds);
 
     //Update MatchDataInfo
-    void updateFaithTrackInfo(String nickname, int steps);
     void setNicknames(String playerNickname, List<String> otherPlayersNicknames);
-
-
-    void updateDepotStatus(String nickname, List<Resource>[] warehouseDepots, int[] strongboxDepots, Map<Integer, Integer> leaderDepots);
     void update(MatchDataMessage message);
 
     //END

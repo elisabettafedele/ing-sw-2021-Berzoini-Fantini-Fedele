@@ -48,11 +48,15 @@ public class DevelopmentCardGrid {
     /**
      * Remove the bought {@link DevelopmentCard} from the grid
      * @param card the card that a {@link Player} have bought
+     * @return null if there is no card under the one I have just removed
      */
-    public void removeCard(DevelopmentCard card) throws InvalidArgumentException {
+    public DevelopmentCard removeCard(DevelopmentCard card) throws InvalidArgumentException {
         if(!cardGrid[card.getFlag().getFlagLevel().getValue()*(-1)+2][card.getFlag().getFlagColor().getValue()].peek().equals(card))
             throw new InvalidArgumentException();
         this.cardGrid[card.getFlag().getFlagLevel().getValue()*(-1)+2][card.getFlag().getFlagColor().getValue()].pop();
+        if (cardGrid[card.getFlag().getFlagLevel().getValue()*(-1)+2][card.getFlag().getFlagColor().getValue()].isEmpty())
+            return null;
+        return cardGrid[card.getFlag().getFlagLevel().getValue()*(-1)+2][card.getFlag().getFlagColor().getValue()].peek();
     }
 
     /**

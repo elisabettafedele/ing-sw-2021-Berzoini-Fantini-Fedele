@@ -12,7 +12,6 @@ public class LightClient {
     private int[] ownedDevelopmentCards;
     private int[] victoryPointsDevelopmentCardSlots;
     private String nickname;
-    public static final int EMPTY_SLOT = -1;
 
     List<Resource>[] warehouse;
     int[] strongbox;
@@ -26,7 +25,7 @@ public class LightClient {
             warehouse[i] = new ArrayList<>();
         }
         this.strongbox = new int[4];
-        this.ownedDevelopmentCards = new int[]{EMPTY_SLOT, EMPTY_SLOT, EMPTY_SLOT};
+        this.ownedDevelopmentCards = new int[]{MatchData.EMPTY_SLOT, MatchData.EMPTY_SLOT, MatchData.EMPTY_SLOT};
         this.victoryPointsDevelopmentCardSlots = new int[3];
     }
 

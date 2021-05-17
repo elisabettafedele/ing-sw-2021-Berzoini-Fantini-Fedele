@@ -1,10 +1,7 @@
 package it.polimi.ingsw.client.cli.graphical;
 
 import it.polimi.ingsw.enumerations.Resource;
-
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 public class GraphicalWarehouse {
 
