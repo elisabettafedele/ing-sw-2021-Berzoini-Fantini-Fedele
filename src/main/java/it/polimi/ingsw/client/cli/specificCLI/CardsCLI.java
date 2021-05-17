@@ -4,8 +4,8 @@ import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.client.cli.CLI;
 import it.polimi.ingsw.client.utilities.InputParser;
-import it.polimi.ingsw.messages.toServer.SelectCardResponse;
-import it.polimi.ingsw.messages.toServer.SelectDevelopmentCardSlotResponse;
+import it.polimi.ingsw.messages.toServer.game.SelectCardResponse;
+import it.polimi.ingsw.messages.toServer.game.SelectDevelopmentCardSlotResponse;
 
 import java.util.List;
 

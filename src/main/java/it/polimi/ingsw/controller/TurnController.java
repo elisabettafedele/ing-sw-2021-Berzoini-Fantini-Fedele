@@ -9,7 +9,7 @@ import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.InvalidMethodException;
 import it.polimi.ingsw.exceptions.ZeroPlayerException;
-import it.polimi.ingsw.messages.toClient.ChooseActionRequest;
+import it.polimi.ingsw.messages.toClient.game.ChooseActionRequest;
 import it.polimi.ingsw.messages.toClient.TextMessage;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.model.player.VaticanReportSection;

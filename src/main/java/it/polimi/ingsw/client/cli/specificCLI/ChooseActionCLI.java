@@ -4,8 +4,8 @@ import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.utilities.InputParser;
 import it.polimi.ingsw.client.utilities.UtilityPrinter;
 import it.polimi.ingsw.enumerations.ActionType;
-import it.polimi.ingsw.messages.toServer.ChooseActionResponse;
-import it.polimi.ingsw.messages.toServer.EndTurnRequest;
+import it.polimi.ingsw.messages.toServer.game.ChooseActionResponse;
+import it.polimi.ingsw.messages.toServer.game.EndTurnRequest;
 
 import java.util.ArrayList;
 import java.util.List;

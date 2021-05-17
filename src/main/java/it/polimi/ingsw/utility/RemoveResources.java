@@ -3,7 +3,7 @@ package it.polimi.ingsw.utility;
 import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.enumerations.ResourceStorageType;
-import it.polimi.ingsw.messages.toClient.SelectStorageRequest;
+import it.polimi.ingsw.messages.toClient.game.SelectStorageRequest;
 import it.polimi.ingsw.model.player.Player;
 
 import java.util.Map;
