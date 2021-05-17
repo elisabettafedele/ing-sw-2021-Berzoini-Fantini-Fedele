@@ -5,6 +5,7 @@ import it.polimi.ingsw.controller.TurnController;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.InvalidMethodException;
 import it.polimi.ingsw.exceptions.ZeroPlayerException;
+import it.polimi.ingsw.messages.toClient.matchData.UpdateMarkerPosition;
 import it.polimi.ingsw.model.player.Player;
 
 import java.util.List;
@@ -48,6 +49,7 @@ public class MultiplayerPlayPhase extends PlayPhase implements GamePhase {
             if (!nickname.equals(player.getNickname())) {
                 try {
                     player.getPersonalBoard().moveMarker(1);
+                    getController().sendMessageToAll(new UpdateMarkerPosition(player.getNickname(), player.getPersonalBoard().getMarkerPosition()));
                 } catch (InvalidArgumentException e) {
                     e.printStackTrace();
                 }

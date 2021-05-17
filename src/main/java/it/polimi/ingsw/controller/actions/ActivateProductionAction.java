@@ -1,5 +1,6 @@
 package it.polimi.ingsw.controller.actions;
 
+import it.polimi.ingsw.messages.toClient.matchData.UpdateDepotsStatus;
 import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.server.Server;
 import it.polimi.ingsw.controller.TurnController;
@@ -233,7 +234,7 @@ public class ActivateProductionAction implements Action{
                     e.printStackTrace();
                 }
             }
-
+            turnController.getController().sendMessageToAll(new UpdateDepotsStatus(player.getNickname(), player.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), player.getPersonalBoard().getStrongboxStatus(), player.getPersonalBoard().getLeaderStatus()));
             turnController.setStandardActionDoneToTrue();
             turnController.setNextAction();
         }

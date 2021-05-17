@@ -2,6 +2,7 @@ package it.polimi.ingsw.controller.actions;
 
 import it.polimi.ingsw.controller.game_phases.PlayPhase;
 import it.polimi.ingsw.messages.toClient.game.*;
+import it.polimi.ingsw.messages.toClient.matchData.UpdateMarkerPosition;
 import it.polimi.ingsw.messages.toClient.matchData.UpdateMarketView;
 import it.polimi.ingsw.messages.toClient.matchData.UpdateDepotsStatus;
 import it.polimi.ingsw.messages.toServer.game.*;
@@ -97,6 +98,7 @@ public class TakeResourcesFromMarketAction implements Action {
         int whiteMarblesNumber = player.getPersonalBoard().getAvailableEffects(EffectType.WHITE_MARBLE).size();
         try {
             marblesToConvert = market.insertMarbleFromTheSlide(insertionPosition - 1);
+            controller.sendMessageToAll(new UpdateMarketView(clientHandler.getNickname(), controller.getGame().getMarket().getMarketTray(), controller.getGame().getMarket().getSlideMarble()));
             clientHandler.sendMessageToClient(new NotifyMarbleTaken(marblesToConvert, whiteMarblesNumber > 1));
         } catch (InvalidArgumentException e) {
         }
@@ -169,6 +171,7 @@ public class TakeResourcesFromMarketAction implements Action {
             if (marble == Marble.RED) {
                 try {
                     player.getPersonalBoard().moveMarker(1);
+                    controller.sendMessageToAll(new UpdateMarkerPosition(player.getNickname(), player.getPersonalBoard().getMarkerPosition()));
                 } catch (InvalidArgumentException ignored) { }
             } else if (marble != Marble.WHITE)
                 resourcesToStore.add(Resource.valueOf(marble.getValue()));
@@ -222,6 +225,7 @@ public class TakeResourcesFromMarketAction implements Action {
         else {
             try {
                 player.getPersonalBoard().getWarehouse().switchRows(ResourceStorageType.valueOf(origin).getValue(), ResourceStorageType.valueOf(destination).getValue());
+                controller.sendMessageToAll(new UpdateDepotsStatus(clientHandler.getNickname(), player.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), player.getPersonalBoard().getStrongboxStatus(), player.getPersonalBoard().getLeaderStatus()));
                 clientHandler.sendMessageToClient(new SendReorganizeDepotsCommands(availableDepotsForReorganization, false, false, availableLeaderResources));
             } catch (UnswitchableDepotsException | InsufficientSpaceException e) {
                 clientHandler.sendMessageToClient(new SendReorganizeDepotsCommands(availableDepotsForReorganization, false, true, availableLeaderResources));
@@ -251,11 +255,14 @@ public class TakeResourcesFromMarketAction implements Action {
             player.getPersonalBoard().removeResources(origin, originResourceType, quantity);
         } catch (InsufficientQuantityException e) {
             clientHandler.sendMessageToClient(new SendReorganizeDepotsCommands(availableDepotsForReorganization, false, true, availableLeaderResources));
+            return;
         } catch (InvalidResourceTypeException e) {
             e.printStackTrace();
+            return;
         }
         try {
             player.getPersonalBoard().addResources(destination, originResourceType, quantity);
+            controller.sendMessageToAll(new UpdateDepotsStatus(clientHandler.getNickname(), player.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), player.getPersonalBoard().getStrongboxStatus(), player.getPersonalBoard().getLeaderStatus()));
             clientHandler.sendMessageToClient(new SendReorganizeDepotsCommands(availableDepotsForReorganization, false, false, availableLeaderResources));
         } catch (InvalidDepotException | InvalidArgumentException | InvalidResourceTypeException e) {
             e.printStackTrace();
@@ -326,6 +333,7 @@ public class TakeResourcesFromMarketAction implements Action {
         resourcesToStore.remove(resource);
         try {
             player.getPersonalBoard().addResources(ResourceStorageType.valueOf(storageType), resource, 1);
+            controller.sendMessageToAll(new UpdateDepotsStatus(player.getNickname(), player.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), player.getPersonalBoard().getStrongboxStatus(), player.getPersonalBoard().getLeaderStatus()));
         } catch (InvalidDepotException | InsufficientSpaceException | InvalidResourceTypeException | InvalidArgumentException e) {
         }
         if (resourcesToStore.isEmpty())

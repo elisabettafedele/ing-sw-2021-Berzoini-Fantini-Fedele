@@ -1,6 +1,7 @@
 package it.polimi.ingsw.controller.actions;
 
 import it.polimi.ingsw.messages.toClient.matchData.NotifyDevelopmentCardBought;
+import it.polimi.ingsw.messages.toClient.matchData.UpdateDepotsStatus;
 import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.controller.TurnController;
 import it.polimi.ingsw.enumerations.EffectType;
@@ -144,11 +145,11 @@ public class BuyDevelopmentCardAction implements Action{
             if(currentPlayer.getPersonalBoard().getNumOfDevelopmentCards()==7){
                 turnController.setEndTriggerToTrue();
             }
+            turnController.getController().sendMessageToAll(new UpdateDepotsStatus(currentPlayer.getNickname(), currentPlayer.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), currentPlayer.getPersonalBoard().getStrongboxStatus(), currentPlayer.getPersonalBoard().getLeaderStatus()));
             turnController.setNextAction();
         }
         if(message instanceof SelectStorageResponse){
             currentPlayer.getPersonalBoard().isResourceAvailableAndRemove( ((SelectStorageResponse) message).getResourceStorageType(),((SelectStorageResponse) message).getResource(),1,true);
-            turnController.getController().sendMessageToAll(new NotifyDevelopmentCardBought(currentPlayer.getNickname(), developmentCardChosen.getID(), newCard != null ? newCard.getID() : -1, slot, developmentCardChosen.getVictoryPoints()));
         }
     }
 

@@ -1,5 +1,7 @@
 package it.polimi.ingsw.controller.actions;
 
+import it.polimi.ingsw.messages.toClient.matchData.NotifyLeaderAction;
+import it.polimi.ingsw.messages.toClient.matchData.UpdateMarkerPosition;
 import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.controller.TurnController;
 import it.polimi.ingsw.enumerations.EffectType;
@@ -72,6 +74,7 @@ public class LeaderCardAction implements Action{
                         player.getPersonalBoard().removeLeaderCard(lc.getID());
                         try {
                             player.getPersonalBoard().moveMarker(1);
+                            turnController.getController().sendMessageToAll(new UpdateMarkerPosition(player.getNickname(), player.getPersonalBoard().getMarkerPosition()));
                             turnController.checkFaithTrack();
                         } catch (InvalidArgumentException e) {
                             //moveMarker's parameter is a constant so the exception won't be launched
@@ -81,9 +84,10 @@ public class LeaderCardAction implements Action{
                     }
                 }
             }
-            turnController.incrementNumberOfLeaderActionDone();
-            turnController.setNextAction();
-        }
+        turnController.getController().sendMessageToAll(new NotifyLeaderAction(clientHandler.getNickname(), ((SelectCardResponse) message).getSelectedCard(), !activateORdiscard));
+        turnController.incrementNumberOfLeaderActionDone();
+        turnController.setNextAction();
+    }
 
     /**
      *
