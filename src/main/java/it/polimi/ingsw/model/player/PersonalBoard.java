@@ -523,4 +523,25 @@ public class PersonalBoard {
 
         assert countResources().get(resource) == 0;
     }
+
+    public int[] getStrongboxStatus(){
+        int[] strongbox = new int[numberOfStrongboxDepots];
+        for (int i = 0; i < this.strongbox.length; i++){
+            strongbox[i] = this.strongbox[i].getResourceQuantity();
+        }
+        return strongbox;
+    }
+
+    public Map<Integer, Integer> getLeaderStatus(){
+        Map<Integer, Integer> leaderStatus = new LinkedHashMap<>();
+        if (getAvailableEffects(EffectType.EXTRA_DEPOT).size() == 0)
+            return leaderStatus;
+        List<LeaderCard> cards = availableLeaderCards().stream().filter(x -> x.getEffect().getEffectType() == EffectType.EXTRA_DEPOT).collect(Collectors.toList());
+        for (LeaderCard card : cards){
+            try {
+                leaderStatus.put(card.getID(), card.getEffect().getExtraDepotEffect().getLeaderDepot().getResourceQuantity());
+            } catch (DifferentEffectTypeException ignored) { }
+        }
+        return leaderStatus;
+    }
 }

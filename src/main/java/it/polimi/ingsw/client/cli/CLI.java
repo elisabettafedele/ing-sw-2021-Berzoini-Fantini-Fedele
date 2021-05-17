@@ -10,6 +10,7 @@ import it.polimi.ingsw.client.cli.specificCLI.*;
 import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.common.LightLeaderCard;
 import it.polimi.ingsw.enumerations.*;
+import it.polimi.ingsw.messages.toClient.matchData.MatchDataMessage;
 import it.polimi.ingsw.model.cards.Value;
 import java.util.List;
 import java.util.Map;
@@ -39,8 +40,15 @@ public class CLI implements View {
         // client.start();
     }
 
-    public void displayDepotStatus(List<Resource>[] warehouseDepots, List<Resource>[] strongboxDepots, List<List<Resource>> leaderDepots){
-        OrganizeDepotsCLI.displayDepotStatus(warehouseDepots, strongboxDepots, leaderDepots);
+    @Override
+    public void updateDepotStatus(String nickname, List<Resource>[] warehouseDepots, int[] strongboxDepots, Map<Integer, Integer> leaderDepots){
+        OrganizeDepotsCLI.updateDepotStatus(nickname, warehouseDepots, strongboxDepots, leaderDepots);
+        //MatchData.getInstance().updateDepotsStatus(nickname, warehouseDepots, strongboxDepots, leaderDepots);
+    }
+
+    @Override
+    public void update(MatchDataMessage message) {
+        MatchData.getInstance().update(message);
     }
 
     @Override

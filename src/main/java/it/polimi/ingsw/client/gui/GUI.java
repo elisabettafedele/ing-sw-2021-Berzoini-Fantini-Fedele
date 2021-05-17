@@ -8,6 +8,7 @@ import it.polimi.ingsw.common.LightLeaderCard;
 import it.polimi.ingsw.enumerations.ActionType;
 import it.polimi.ingsw.enumerations.Marble;
 import it.polimi.ingsw.enumerations.Resource;
+import it.polimi.ingsw.messages.toClient.matchData.MatchDataMessage;
 import it.polimi.ingsw.model.cards.Value;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -168,7 +169,12 @@ public class GUI extends Application implements View {
     }
 
     @Override
-    public void displayDepotStatus(List<Resource>[] warehouseDepots, List<Resource>[] strongboxDepots, List<List<Resource>> leaderDepots) {
+    public void updateDepotStatus(String nickname, List<Resource>[] warehouseDepots, int[] strongboxDepots, Map<Integer, Integer> leaderDepots) {
+
+    }
+
+    @Override
+    public void update(MatchDataMessage message) {
 
     }
 

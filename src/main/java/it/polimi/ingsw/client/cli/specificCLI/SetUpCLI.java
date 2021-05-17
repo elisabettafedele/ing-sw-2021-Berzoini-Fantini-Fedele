@@ -23,10 +23,10 @@ public class SetUpCLI {
         System.out.print("Insert the ID of the first leader card chosen: ");
         Integer firstChoice = InputParser.getInt("Error: the ID provided is not available. Provide a valid ID", CLI.conditionOnInteger(leaderCardsIDs));
         leaderCardsIDs.remove(firstChoice);
-        MatchData.getInstance().addChosenLeaderCard(firstChoice);
+        MatchData.getInstance().addChosenLeaderCard(firstChoice, false);
         System.out.print("Insert the ID of the second leader card chosen: ");
         Integer secondChoice = InputParser.getInt("Error: the ID provided is not available. Provide a valid ID", CLI.conditionOnInteger(leaderCardsIDs));
-        MatchData.getInstance().addChosenLeaderCard(secondChoice);
+        MatchData.getInstance().addChosenLeaderCard(secondChoice, false);
         leaderCardsIDs.remove(secondChoice);
         client.sendMessageToServer(new ChooseLeaderCardsResponse(leaderCardsIDs));
     }

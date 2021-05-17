@@ -1,11 +1,12 @@
 package it.polimi.ingsw.client;
 
+import it.polimi.ingsw.client.cli.graphical.GraphicalMarket;
 import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.common.LightLeaderCard;
 import it.polimi.ingsw.enumerations.Marble;
+import it.polimi.ingsw.messages.toClient.matchData.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class MatchData {
 
@@ -15,6 +16,7 @@ public class MatchData {
     List<LightClient> otherClients;
     private Marble[][] marketTray;
     private Marble slideMarble;
+    private List<Integer> developmentCardGrid;
 
     private static MatchData instance;
 
@@ -55,8 +57,8 @@ public class MatchData {
         return thisClient;
     }
 
-    public void addChosenLeaderCard(Integer ID){
-        thisClient.addChosenLeaderCard(ID);
+    public void addChosenLeaderCard(Integer ID, boolean active){
+        thisClient.addLeaderCard(ID, active);
     }
 
     public void setAllLeaderCards(List<LightLeaderCard> allLeaderCards){
@@ -84,5 +86,31 @@ public class MatchData {
             }
         }
         return null;
+    }
+
+    public void update(MatchDataMessage message){
+
+        if (message instanceof UpdateDepotsStatus)
+            getLightClientByNickname(message.getNickname()).updateDepotStatus(((UpdateDepotsStatus) message).getWarehouseDepots(), ((UpdateDepotsStatus) message).getStrongboxDepots(), ((UpdateDepotsStatus) message).getLeaderDepots());
+
+        if (message instanceof UpdateMarkerPosition)
+            getLightClientByNickname(message.getNickname()).updateMarkerPosition(((UpdateMarkerPosition) message).getMarkerPosition());
+
+        if (message instanceof NotifyLeaderActivation)
+            getLightClientByNickname(message.getNickname()).activateLeader(((NotifyLeaderActivation) message).getId());
+
+        if (message instanceof UpdateOwnedDevelopmentCards)
+            getLightClientByNickname(message.getNickname()).updateOwnedDevelopmentCards(((UpdateOwnedDevelopmentCards) message).getIds(), ((UpdateOwnedDevelopmentCards) message).getVictoryPoints());
+
+        if (message instanceof NotifyDevelopmentCardBought){
+            Collections.replaceAll(developmentCardGrid, ((NotifyDevelopmentCardBought) message).getCardBought(), ((NotifyDevelopmentCardBought) message).getNewCardOnGrid());
+            getLightClientByNickname(message.getNickname()).addDevelopmentCard(((NotifyDevelopmentCardBought) message).getCardBought(), ((NotifyDevelopmentCardBought) message).getSlot(), ((NotifyDevelopmentCardBought) message).getVictoryPoints());
+        }
+        if (message instanceof UpdateMarketView){
+            marketTray = ((UpdateMarketView) message).getMarbles();
+            slideMarble = ((UpdateMarketView) message).getSideMarble();
+            //TODO just temporary, decide when to show
+            GraphicalMarket.printMarket(((UpdateMarketView) message).getMarbles(), ((UpdateMarketView) message).getSideMarble());
+        }
     }
 }

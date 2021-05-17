@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.cli.specificCLI;
 
 import it.polimi.ingsw.client.Client;
+import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.client.cli.CLI;
 import it.polimi.ingsw.client.cli.graphical.GraphicalWarehouse;
 import it.polimi.ingsw.client.utilities.Command;
@@ -12,6 +13,7 @@ import it.polimi.ingsw.messages.toServer.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class OrganizeDepotsCLI {
@@ -131,7 +133,7 @@ public class OrganizeDepotsCLI {
         client.sendMessageToServer(new MoveResourcesRequest(originDepot, destinationDepot, resource, quantity));
     }
 */
-    public static void displayDepotStatus(List<Resource>[] warehouseDepots, List<Resource>[] strongboxDepots, List<List<Resource>> leaderDepots) {
+    public static void updateDepotStatus(String nickname, List<Resource>[] warehouseDepots, int[] strongboxDepots, Map<Integer, Integer> leaderDepots) {
         GraphicalWarehouse.printWarehouse(warehouseDepots);
     }
 }
