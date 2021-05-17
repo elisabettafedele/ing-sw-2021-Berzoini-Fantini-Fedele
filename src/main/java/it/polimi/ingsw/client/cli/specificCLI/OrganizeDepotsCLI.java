@@ -1,7 +1,6 @@
 package it.polimi.ingsw.client.cli.specificCLI;
 
 import it.polimi.ingsw.client.Client;
-import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.client.cli.CLI;
 import it.polimi.ingsw.client.cli.graphical.GraphicalWarehouse;
 import it.polimi.ingsw.client.utilities.Command;
@@ -9,7 +8,7 @@ import it.polimi.ingsw.client.utilities.InputParser;
 import it.polimi.ingsw.client.utilities.UtilityPrinter;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.enumerations.ResourceStorageType;
-import it.polimi.ingsw.messages.toServer.*;
+import it.polimi.ingsw.messages.toServer.game.*;
 
 import java.util.ArrayList;
 import java.util.List;

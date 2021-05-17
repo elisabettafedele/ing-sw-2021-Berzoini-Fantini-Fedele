@@ -6,10 +6,10 @@ import it.polimi.ingsw.controller.actions.Action;
 import it.polimi.ingsw.enumerations.ClientHandlerPhase;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.messages.*;
-import it.polimi.ingsw.messages.toClient.GameModeRequest;
+import it.polimi.ingsw.messages.toClient.lobby.GameModeRequest;
 import it.polimi.ingsw.messages.toClient.TimeoutExpiredMessage;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
-import it.polimi.ingsw.messages.toServer.SelectStorageResponse;
+import it.polimi.ingsw.messages.toServer.game.SelectStorageResponse;
 import it.polimi.ingsw.model.player.Player;
 
 

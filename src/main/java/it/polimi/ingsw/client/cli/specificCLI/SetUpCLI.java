@@ -6,8 +6,8 @@ import it.polimi.ingsw.client.cli.CLI;
 import it.polimi.ingsw.client.utilities.InputParser;
 import it.polimi.ingsw.client.utilities.UtilityPrinter;
 import it.polimi.ingsw.enumerations.Resource;
-import it.polimi.ingsw.messages.toServer.ChooseLeaderCardsResponse;
-import it.polimi.ingsw.messages.toServer.ChooseResourceTypeResponse;
+import it.polimi.ingsw.messages.toServer.game.ChooseLeaderCardsResponse;
+import it.polimi.ingsw.messages.toServer.game.ChooseResourceTypeResponse;
 
 import java.util.ArrayList;
 import java.util.List;

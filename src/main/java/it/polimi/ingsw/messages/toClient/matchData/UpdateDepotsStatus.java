@@ -1,9 +1,6 @@
 package it.polimi.ingsw.messages.toClient.matchData;
 
-import it.polimi.ingsw.common.VirtualView;
 import it.polimi.ingsw.enumerations.Resource;
-import it.polimi.ingsw.messages.toClient.MessageToClient;
-
 import java.util.List;
 import java.util.Map;
 

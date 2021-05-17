@@ -1,9 +1,6 @@
 package it.polimi.ingsw.messages.toClient.matchData;
 
-import it.polimi.ingsw.client.cli.graphical.GraphicalMarket;
-import it.polimi.ingsw.common.VirtualView;
 import it.polimi.ingsw.enumerations.Marble;
-import it.polimi.ingsw.messages.toClient.MessageToClient;
 
 public class UpdateMarketView extends MatchDataMessage {
     private Marble[][] marbles;
