@@ -4,12 +4,10 @@ import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.controller.TurnController;
 import it.polimi.ingsw.controller.actions.SoloActionToken;
 import it.polimi.ingsw.enumerations.FlagColor;
-import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.InvalidMethodException;
 import it.polimi.ingsw.exceptions.ZeroPlayerException;
 import it.polimi.ingsw.model.cards.DevelopmentCard;
-import it.polimi.ingsw.messages.toServer.MessageToServer;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.utility.SoloActionTokenParser;
 
@@ -20,7 +18,6 @@ import java.util.stream.Collectors;
 
 public class SinglePlayerPlayPhase extends PlayPhase implements GamePhase {
     private Controller controller;
-    private TurnController turnController;
     private Player player;
     private int blackCrossPosition;
     private Queue<SoloActionToken> tokens;
@@ -68,7 +65,7 @@ public class SinglePlayerPlayPhase extends PlayPhase implements GamePhase {
                     e.printStackTrace();
                 }
             }else{
-                turnController.setEndTriggerToTrue();
+                getTurnController().setEndTriggerToTrue();
                 player.setWinner(false); //useless cause is false by default, leave here just to remember
                 //TODO: lost the game communication
                 break;
@@ -89,7 +86,7 @@ public class SinglePlayerPlayPhase extends PlayPhase implements GamePhase {
 
     public void moveBlackCross(int step){
         blackCrossPosition += step;
-        turnController.checkFaithTrack(); //TODO: need to be the checked for the black cross
+        getTurnController().checkFaithTrack(); //TODO: need to be the checked for the black cross
         //TODO, manage eventual Lorenzo's victory.
     }
 
