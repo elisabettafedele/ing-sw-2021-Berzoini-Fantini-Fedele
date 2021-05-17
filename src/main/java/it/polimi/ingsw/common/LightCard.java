@@ -38,4 +38,21 @@ public abstract class LightCard implements Serializable {
                 "ID=" + ID +
                 '}';
     }
+
+    public abstract List<String> getProductionCost();
+
+    public abstract List<String> getProductionOutput();
+
+    public abstract String getFlagColor();
+
+    public abstract String getFlagLevel();
+
+    public abstract String getEffectType();
+
+    public abstract String getCostType();
+
+    public abstract List<String> getEffectDescription();
+
+    public abstract List<String> getEffectDescription2();
+
 }

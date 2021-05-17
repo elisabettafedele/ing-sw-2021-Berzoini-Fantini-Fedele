@@ -16,6 +16,7 @@ public class Screen {
 
     private final char[][] screen = new char[screen_height][screen_width];
     private final Colour[][] colours = new Colour[screen_height][screen_width];
+    private final BackColour[][] backGroundColours = new BackColour[screen_height][screen_width];
 
     GraphicalDevelopmentCardGrid graphicalDevelopmentCardGrid;
     List<Integer> developmentCardGridCardsToDisplay;
@@ -43,7 +44,7 @@ public class Screen {
         drawAllElements();
         for(int i = 0; i < screen_height; i++){
             for(int j = 0; j < screen_width; j++){
-                System.out.print(colours[i][j].getCode() + screen[i][j]); //+ Colour.ANSI_RESET
+                System.out.print(backGroundColours[i][j].getCode() + colours[i][j].getCode() + screen[i][j]); //+ Colour.ANSI_RESET
             }
             System.out.print("\n");
         }
@@ -54,13 +55,12 @@ public class Screen {
         drawFaithTrack();
     }
 
-
-
     private void reset(){
         for(int i = 0; i < screen_height; i++) {
             for (int j = 0; j < screen_width; j++) {
                 screen[i][j] = ' ';
-                colours[i][j] = Colour.ANSI_BRIGHT_WHITE;
+                colours[i][j] = Colour.ANSI_DEFAULT;
+                backGroundColours[i][j] = BackColour.ANSI_BG_BLACK;
             }
         }
     }

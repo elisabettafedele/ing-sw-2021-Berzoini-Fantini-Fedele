@@ -16,8 +16,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
-
 public class GraphicalDevelopmentCardTest {
 
     List<Integer> IDs;
@@ -44,7 +42,7 @@ public class GraphicalDevelopmentCardTest {
     @Test
     public void displayDevelopmentCard() {
         gdc.drawCard();
-        gdc.displayDevelopmentCard();
+        gdc.displayCard();
     }
 
     static List<LightDevelopmentCard> getLightDevelopmentCards(List<DevelopmentCard> cards){

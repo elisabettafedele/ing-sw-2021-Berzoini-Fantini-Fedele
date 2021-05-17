@@ -27,6 +27,26 @@ public class LightDevelopmentCard extends LightCard{
         return flagLevel;
     }
 
+    @Override
+    public String getEffectType() {
+        return "PRODUCTION";
+    }
+
+    @Override
+    public String getCostType() {
+        return "FLAG";
+    }
+
+    @Override
+    public List<String> getEffectDescription() {
+        return productionCost;
+    }
+
+    @Override
+    public List<String> getEffectDescription2() {
+        return productionOutput;
+    }
+
     public List<String> getProductionCost() {
         return productionCost;
     }

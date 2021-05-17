@@ -202,6 +202,15 @@ public class SetUpPhase implements GamePhase {
     private List<LightLeaderCard> getLightLeaderCards(List<LeaderCard> cards){
         List<LightLeaderCard> lightCards = new ArrayList<>();
         for(LeaderCard lc : cards){
+
+            String costType;
+            try{
+                lc.getCost().getResourceValue();
+                costType = "RESOURCE";
+            } catch (ValueNotPresentException e) {
+                //e.printStackTrace();
+                costType = "FLAG";
+            }
             List<String> stringCost = leaderCardResourceAndFlagCostConversion(lc.getCost());
 
             List<String> effectDescription = new ArrayList<>();
@@ -226,7 +235,7 @@ public class SetUpPhase implements GamePhase {
             }
 
             lightCards.add(new LightLeaderCard(stringCost, lc.getVictoryPoints(), lc.getUsed(), lc.getID(),
-                    effectType, effectDescription, effectDescription2));
+                    effectType, effectDescription, effectDescription2, costType));
         }
 
 
@@ -272,11 +281,10 @@ public class SetUpPhase implements GamePhase {
                 flagCost.add(entry.getKey().getFlagColor().toString());
                 flagCost.add(entry.getKey().getFlagLevel().toString());
             }
+            return flagCost;
         } catch (ValueNotPresentException e) {
             return new ArrayList<>();
         }
-
-        return new ArrayList<>();
     }
 
     private List<LightDevelopmentCard> getLightDevelopmentCards(List<DevelopmentCard> cards){

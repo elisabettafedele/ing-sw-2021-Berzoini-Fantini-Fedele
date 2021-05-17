@@ -10,6 +10,7 @@ public class GraphicalFaithTrack {
 
     private final char[][] symbols = new char[height][width];
     private final Colour[][] colours = new Colour[height][width];
+    private final BackColour[][] backGroundColours = new BackColour[height][width];
 
     public GraphicalFaithTrack() {
         reset();
@@ -20,6 +21,7 @@ public class GraphicalFaithTrack {
             for (int j = 0; j < width; j++) {
                 symbols[i][j] = ' ';
                 colours[i][j] = Colour.ANSI_BRIGHT_WHITE;
+                backGroundColours[i][j] = BackColour.ANSI_BG_BLACK;
             }
         }
     }
@@ -27,7 +29,7 @@ public class GraphicalFaithTrack {
     public void displayFaithTrack() {
         for(int i = 0; i < height; i++){
             for(int j = 0; j < width; j++){
-                System.out.print(colours[i][j].getCode() + symbols[i][j]); //+ Colour.ANSI_RESET
+                System.out.print(backGroundColours[i][j].getCode() + colours[i][j].getCode() + symbols[i][j]); //+ Colour.ANSI_RESET
             }
             System.out.print("\n");
         }
@@ -238,5 +240,9 @@ public class GraphicalFaithTrack {
 
     Colour[][] getColours() {
         return colours;
+    }
+
+    public BackColour[][] getBackGroundColours() {
+        return backGroundColours;
     }
 }
