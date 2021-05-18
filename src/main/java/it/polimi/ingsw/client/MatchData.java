@@ -19,6 +19,7 @@ public class MatchData {
     private Marble slideMarble;
     private List<Integer> developmentCardGrid;
     public static final int EMPTY_SLOT = -1;
+    public static final String LORENZO = "Lorenzo";
 
     private static MatchData instance;
 
@@ -124,6 +125,10 @@ public class MatchData {
             //TODO just temporary, decide when to show...stesso discorso di prima
             if (message.getNickname().equals(thisClient.getNickname()) || message.getNickname().equals("SETUP"))
                 GraphicalMarket.printMarket(((UpdateMarketView) message).getMarbles(), ((UpdateMarketView) message).getSideMarble());
+        }
+
+        if (message instanceof NotifyTakenPopesFavorTile){
+            getLightClientByNickname(message.getNickname()).updatePopeFavorTilesStatus(((NotifyTakenPopesFavorTile) message).getNumber(), ((NotifyTakenPopesFavorTile) message).isTaken());
         }
     }
 
