@@ -1,11 +1,10 @@
 package it.polimi.ingsw.common;
 
 
-import it.polimi.ingsw.controller.actions.Action;
 import it.polimi.ingsw.enumerations.ActionType;
 import it.polimi.ingsw.enumerations.Marble;
 import it.polimi.ingsw.enumerations.Resource;
-import it.polimi.ingsw.model.cards.LeaderCard;
+import it.polimi.ingsw.messages.toClient.matchData.MatchDataMessage;
 import it.polimi.ingsw.model.cards.Value;
 
 import java.util.List;
@@ -36,19 +35,13 @@ public interface VirtualView {
     //SETUP
     void loadLeaderCards(List<LightLeaderCard> leaderCards);
     void displayChooseResourceTypeRequest(List<Resource> resourceTypes, int quantity);
-
     void loadDevelopmentCards(List<LightDevelopmentCard> lightDevelopmentCards);
     void displayMessage(String message);
-
-
+    void loadDevelopmentCardGrid(List<Integer> availableCardsIds);
 
     //Update MatchDataInfo
-    void updateFaithTrackInfo(String nickname, int steps);
     void setNicknames(String playerNickname, List<String> otherPlayersNicknames);
-
-
-    void displayDepotStatus(List<Resource>[] warehouseDepots, List<Resource>[] strongboxDepots, List<List<Resource>> leaderDepots);
-
+    void update(MatchDataMessage message);
 
     //END
     void displayResults(Map<String, Integer> results);

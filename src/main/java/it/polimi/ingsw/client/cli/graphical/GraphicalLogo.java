@@ -8,6 +8,7 @@ public class GraphicalLogo {
                 "██║╚██╔╝██║██╔══██║╚════██║   ██║   ██╔══╝  ██╔══██╗    ██║   ██║██╔══╝      ██╔══██╗██╔══╝  ██║╚██╗██║██╔══██║██║╚════██║╚════██║██╔══██║██║╚██╗██║██║     ██╔══╝      \n" +
                 "██║ ╚═╝ ██║██║  ██║███████║   ██║   ███████╗██║  ██║    ╚██████╔╝██║         ██║  ██║███████╗██║ ╚████║██║  ██║██║███████║███████║██║  ██║██║ ╚████║╚██████╗███████╗    \n" +
                 "╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝     ╚═════╝ ╚═╝         ╚═╝  ╚═╝╚══════╝╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝╚══════╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝╚══════╝    \n" +
-                "                                                                                                                                                                        " + Colour.ANSI_RESET);
+                "                                                                                                                                                                        " + Colour.ANSI_RESET + "\nWelcome to Master Of Renaissance, a game realized by Raffaele Berzoini, Elia Fantini and Elisabetta Fedele.\n" +
+                "Before starting playing you need to setup some things:\n" + Colour.ANSI_RESET );
     }
 }

@@ -1,17 +1,26 @@
 package it.polimi.ingsw.client.cli.graphical;
 
+import it.polimi.ingsw.client.LightClient;
+import it.polimi.ingsw.client.MatchData;
+
+import java.util.List;
+
 public class GraphicalFaithTrack {
 
-    private final int width = 58;
+    private final int width = 89;
     private final int height = 9;
+    private final int trackWidth = 58;
 
     private final int squareHeight = 3;
     private final int squareWidth = 4;
 
     private final char[][] symbols = new char[height][width];
     private final Colour[][] colours = new Colour[height][width];
+    private final BackColour[][] backGroundColours = new BackColour[height][width];
+    String nickname;
 
-    public GraphicalFaithTrack() {
+    public GraphicalFaithTrack(String nickname) {
+        this.nickname = nickname;
         reset();
     }
 
@@ -20,6 +29,7 @@ public class GraphicalFaithTrack {
             for (int j = 0; j < width; j++) {
                 symbols[i][j] = ' ';
                 colours[i][j] = Colour.ANSI_BRIGHT_WHITE;
+                backGroundColours[i][j] = BackColour.ANSI_DEFAULT;
             }
         }
     }
@@ -27,7 +37,7 @@ public class GraphicalFaithTrack {
     public void displayFaithTrack() {
         for(int i = 0; i < height; i++){
             for(int j = 0; j < width; j++){
-                System.out.print(colours[i][j].getCode() + symbols[i][j]); //+ Colour.ANSI_RESET
+                System.out.print(backGroundColours[i][j].getCode() + colours[i][j].getCode() + symbols[i][j]); //+ Colour.ANSI_RESET
             }
             System.out.print("\n");
         }
@@ -36,7 +46,7 @@ public class GraphicalFaithTrack {
     public void drawFaithTrack(){
         reset();
         int xStep = height/3 - 1;
-        int yStep = width/19;
+        int yStep = trackWidth/19;
         int cellNumber = 0;
         for(int i = 0; i < 3; i++){
             drawSquare(cellNumber++, xStep*2+1, i*yStep);
@@ -59,6 +69,111 @@ public class GraphicalFaithTrack {
         for(int i = 0; i < 7; i++){
             drawSquare(cellNumber++, 0+1, yStep*i+12*yStep);
         }
+        drawPopesFavorTiles();
+        drawPlayersPositions();
+    }
+
+    private void drawPlayersPositions() {
+        MatchData matchData = MatchData.getInstance();
+        List<String> nicknames = matchData.getAllNicknames();
+        int x_begin = 1;
+        int y_begin = trackWidth + 2;
+        int max_length = 0;
+        for(String nickname : nicknames){
+            if(nickname.length() > max_length)
+                max_length = nickname.length();
+        }
+        for(String nickname : nicknames){
+            for(int i = 0; i < nickname.length(); i++){
+                symbols[x_begin][y_begin + i] = nickname.charAt(i);
+            }
+            symbols[x_begin][y_begin + max_length + 2] = 'P';
+            symbols[x_begin][y_begin + max_length + 3] = 'O';
+            symbols[x_begin][y_begin + max_length + 4] = 'S';
+            symbols[x_begin][y_begin + max_length + 5] = ':';
+            int faithTrackPosition = matchData.getLightClientByNickname(nickname).getFaithTrackPosition();
+            if(faithTrackPosition > 9){
+                symbols[x_begin][y_begin + max_length + 7] = String.valueOf(faithTrackPosition/10).charAt(0);
+            }
+            symbols[x_begin][y_begin + max_length + 8] = String.valueOf(faithTrackPosition%10).charAt(0);
+            x_begin++;
+        }
+    }
+
+    private void drawPopesFavorTiles() {
+        int xStep = height/3 - 1;
+        int yStep = trackWidth/19;
+        int x_begin = xStep+2;
+        int y_begin = yStep*4;
+        LightClient lc = MatchData.getInstance().getLightClientByNickname(this.nickname);
+        boolean taken = lc.hasTakenPopesFavorTile(0);
+        drawLowerTiles(x_begin, y_begin, xStep, yStep, taken, 2);
+        taken = lc.hasTakenPopesFavorTile(2);
+        drawLowerTiles(x_begin, y_begin+yStep*11, xStep, yStep, taken, 4);
+        taken = lc.hasTakenPopesFavorTile(1);
+        drawUpperTile(x_begin - 1, y_begin+yStep*5, xStep, yStep, taken, 3);
+    }
+
+    private void drawUpperTile(int x_begin, int y_begin, int xStep, int yStep, boolean taken, int vps) {
+        for(int i = 0; i < xStep; i++) {
+            for (int j = 0; j < yStep * 2 + 1; j++) {
+                if(i==0 && j == 0){
+                    symbols[i + x_begin][j + y_begin] = '┌';
+                    colours[i + x_begin][j + y_begin] = taken ? Colour.ANSI_BRIGHT_GREEN : Colour.ANSI_BRIGHT_RED;
+                }else if(i == 0 && j == yStep*2){
+                    symbols[i + x_begin][j + y_begin] = '┐';
+                    colours[i + x_begin][j + y_begin] = taken ? Colour.ANSI_BRIGHT_GREEN : Colour.ANSI_BRIGHT_RED;
+                }else if(i == 0){
+                    symbols[i + x_begin][j + y_begin] = '─';
+                    colours[i + x_begin][j + y_begin] = taken  ? Colour.ANSI_BRIGHT_GREEN : Colour.ANSI_BRIGHT_RED;
+                }else if(j == 0 || j == yStep*2){
+                    symbols[i + x_begin][j + y_begin] = '│';
+                    colours[i + x_begin][j + y_begin] = taken  ? Colour.ANSI_BRIGHT_GREEN : Colour.ANSI_BRIGHT_RED;
+                }
+            }
+        }
+        symbols[x_begin + xStep][y_begin] = '┤';
+        symbols[x_begin + xStep][y_begin+yStep*2] = '├';
+
+        symbols[x_begin + 1][y_begin+2] = String.valueOf(vps).charAt(0);
+        symbols[x_begin + 1][y_begin+3] = 'V';
+        symbols[x_begin + 1][y_begin+4] = 'P';
+        colours[x_begin + 1][y_begin+2] = Colour.ANSI_BRIGHT_YELLOW;
+        colours[x_begin + 1][y_begin+3] = Colour.ANSI_BRIGHT_YELLOW;
+        colours[x_begin + 1][y_begin+4] = Colour.ANSI_BRIGHT_YELLOW;
+    }
+
+    private void drawLowerTiles(int x_begin, int y_begin, int xStep, int yStep, boolean taken, int vps) {
+        for(int i = 0; i < xStep; i++){
+            for(int j = 0; j < yStep*2+1; j++){
+                if(i == xStep - 1 && j == 0) {
+                    symbols[i + x_begin][j + y_begin] = '└';
+                    colours[i + x_begin][j + y_begin] = taken ? Colour.ANSI_BRIGHT_GREEN : Colour.ANSI_BRIGHT_RED;
+                }
+                else if(i == xStep - 1 && j == yStep * 2) {
+                    symbols[i + x_begin][j + y_begin] = '┘';
+                    colours[i + x_begin][j + y_begin] = taken ? Colour.ANSI_BRIGHT_GREEN : Colour.ANSI_BRIGHT_RED;
+                }
+                else if(j==0 || j == yStep*2) {
+                    symbols[i + x_begin][j + y_begin] = '│';
+                    colours[i + x_begin][j + y_begin] = taken ? Colour.ANSI_BRIGHT_GREEN : Colour.ANSI_BRIGHT_RED;
+                }
+                else if(i == xStep-1) {
+                    symbols[i + x_begin][j + y_begin] = '─';
+                    colours[i + x_begin][j + y_begin] = taken ? Colour.ANSI_BRIGHT_GREEN : Colour.ANSI_BRIGHT_RED;
+                }
+            }
+        }
+        symbols[x_begin - 1][y_begin] = '┤';
+        symbols[x_begin - 1][y_begin+yStep*2] = '├';
+
+        symbols[x_begin][y_begin+2] = String.valueOf(vps).charAt(0);
+        symbols[x_begin][y_begin+3] = 'V';
+        symbols[x_begin][y_begin+4] = 'P';
+        colours[x_begin][y_begin+2] = Colour.ANSI_BRIGHT_YELLOW;
+        colours[x_begin][y_begin+3] = Colour.ANSI_BRIGHT_YELLOW;
+        colours[x_begin][y_begin+4] = Colour.ANSI_BRIGHT_YELLOW;
+
     }
 
     private void drawSquare(int number, int x, int y) {
@@ -238,5 +353,9 @@ public class GraphicalFaithTrack {
 
     Colour[][] getColours() {
         return colours;
+    }
+
+    public BackColour[][] getBackGroundColours() {
+        return backGroundColours;
     }
 }

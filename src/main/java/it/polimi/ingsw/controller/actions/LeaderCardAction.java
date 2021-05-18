@@ -1,5 +1,7 @@
 package it.polimi.ingsw.controller.actions;
 
+import it.polimi.ingsw.messages.toClient.matchData.NotifyLeaderAction;
+import it.polimi.ingsw.messages.toClient.matchData.UpdateMarkerPosition;
 import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.controller.TurnController;
 import it.polimi.ingsw.enumerations.EffectType;
@@ -7,9 +9,9 @@ import it.polimi.ingsw.enumerations.Level;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.ValueNotPresentException;
-import it.polimi.ingsw.messages.toClient.SelectCardRequest;
+import it.polimi.ingsw.messages.toClient.game.SelectCardRequest;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
-import it.polimi.ingsw.messages.toServer.SelectCardResponse;
+import it.polimi.ingsw.messages.toServer.game.SelectCardResponse;
 import it.polimi.ingsw.model.cards.DevelopmentCard;
 import it.polimi.ingsw.model.cards.Flag;
 import it.polimi.ingsw.model.cards.LeaderCard;
@@ -72,6 +74,7 @@ public class LeaderCardAction implements Action{
                         player.getPersonalBoard().removeLeaderCard(lc.getID());
                         try {
                             player.getPersonalBoard().moveMarker(1);
+                            turnController.getController().sendMessageToAll(new UpdateMarkerPosition(player.getNickname(), player.getPersonalBoard().getMarkerPosition()));
                             turnController.checkFaithTrack();
                         } catch (InvalidArgumentException e) {
                             //moveMarker's parameter is a constant so the exception won't be launched
@@ -81,9 +84,10 @@ public class LeaderCardAction implements Action{
                     }
                 }
             }
-            turnController.incrementNumberOfLeaderActionDone();
-            turnController.setNextAction();
-        }
+        turnController.getController().sendMessageToAll(new NotifyLeaderAction(clientHandler.getNickname(), ((SelectCardResponse) message).getSelectedCard(), !activateORdiscard));
+        turnController.incrementNumberOfLeaderActionDone();
+        turnController.setNextAction();
+    }
 
     /**
      *

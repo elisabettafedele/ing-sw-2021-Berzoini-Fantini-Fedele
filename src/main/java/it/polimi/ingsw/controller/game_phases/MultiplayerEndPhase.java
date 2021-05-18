@@ -1,6 +1,6 @@
 package it.polimi.ingsw.controller.game_phases;
 
-import it.polimi.ingsw.messages.toClient.GameOverMessage;
+import it.polimi.ingsw.messages.toClient.game.GameOverMessage;
 import it.polimi.ingsw.model.player.Player;
 
 import java.util.*;

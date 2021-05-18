@@ -6,7 +6,10 @@ import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.enumerations.ClientHandlerPhase;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
-import it.polimi.ingsw.messages.toClient.*;
+import it.polimi.ingsw.messages.toClient.lobby.NicknameRequest;
+import it.polimi.ingsw.messages.toClient.lobby.NumberOfPlayersRequest;
+import it.polimi.ingsw.messages.toClient.lobby.SendPlayerNicknamesMessage;
+import it.polimi.ingsw.messages.toClient.lobby.WaitingInTheLobbyMessage;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;

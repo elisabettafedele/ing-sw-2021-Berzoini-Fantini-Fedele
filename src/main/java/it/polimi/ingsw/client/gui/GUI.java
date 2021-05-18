@@ -8,6 +8,7 @@ import it.polimi.ingsw.common.LightLeaderCard;
 import it.polimi.ingsw.enumerations.ActionType;
 import it.polimi.ingsw.enumerations.Marble;
 import it.polimi.ingsw.enumerations.Resource;
+import it.polimi.ingsw.messages.toClient.matchData.MatchDataMessage;
 import it.polimi.ingsw.model.cards.Value;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -169,7 +170,12 @@ public class GUI extends Application implements View {
     }
 
     @Override
-    public void displayDepotStatus(List<Resource>[] warehouseDepots, List<Resource>[] strongboxDepots, List<List<Resource>> leaderDepots) {
+    public void loadDevelopmentCardGrid(List<Integer> availableCardsIds) {
+
+    }
+
+    @Override
+    public void update(MatchDataMessage message) {
 
     }
 
@@ -193,14 +199,8 @@ public class GUI extends Application implements View {
 
     }
 
-
     @Override
     public void displaySelectDevelopmentCardSlotRequest(boolean firstSlotAvailable, boolean secondSlotAvailable, boolean thirdSlotAvailable) {
-
-    }
-
-    @Override
-    public void updateFaithTrackInfo(String nickname, int steps){
 
     }
 

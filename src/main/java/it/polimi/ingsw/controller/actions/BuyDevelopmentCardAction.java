@@ -1,16 +1,18 @@
 package it.polimi.ingsw.controller.actions;
 
+import it.polimi.ingsw.messages.toClient.matchData.NotifyDevelopmentCardBought;
+import it.polimi.ingsw.messages.toClient.matchData.UpdateDepotsStatus;
 import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.controller.TurnController;
 import it.polimi.ingsw.enumerations.EffectType;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.exceptions.*;
-import it.polimi.ingsw.messages.toClient.SelectCardRequest;
-import it.polimi.ingsw.messages.toClient.SelectDevelopmentCardSlotRequest;
+import it.polimi.ingsw.messages.toClient.game.SelectCardRequest;
+import it.polimi.ingsw.messages.toClient.game.SelectDevelopmentCardSlotRequest;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
-import it.polimi.ingsw.messages.toServer.SelectCardResponse;
-import it.polimi.ingsw.messages.toServer.SelectDevelopmentCardSlotResponse;
-import it.polimi.ingsw.messages.toServer.SelectStorageResponse;
+import it.polimi.ingsw.messages.toServer.game.SelectCardResponse;
+import it.polimi.ingsw.messages.toServer.game.SelectDevelopmentCardSlotResponse;
+import it.polimi.ingsw.messages.toServer.game.SelectStorageResponse;
 import it.polimi.ingsw.model.cards.DevelopmentCard;
 import it.polimi.ingsw.model.cards.Effect;
 import it.polimi.ingsw.model.player.Player;
@@ -26,6 +28,8 @@ public class BuyDevelopmentCardAction implements Action{
     private TurnController turnController;
     private List<Integer> buyableCardsIDs;
     private DevelopmentCard developmentCardChosen;
+    private DevelopmentCard newCard;
+    private int slot;
 
 
 
@@ -127,7 +131,7 @@ public class BuyDevelopmentCardAction implements Action{
         }
         if(message instanceof SelectDevelopmentCardSlotResponse){
             try {
-                turnController.getController().getGame().getDevelopmentCardGrid().removeCard(developmentCardChosen);
+                newCard = turnController.getController().getGame().getDevelopmentCardGrid().removeCard(developmentCardChosen);
                 Map<Resource, Integer> cost = developmentCardChosen.getDiscountedCost(this.getDiscountedResources());
                 RemoveResources.removeResources(cost,clientHandler,currentPlayer);
                 currentPlayer.getPersonalBoard().addDevelopmentCard(developmentCardChosen,((SelectDevelopmentCardSlotResponse) message).getSlotSelected());
@@ -141,6 +145,7 @@ public class BuyDevelopmentCardAction implements Action{
             if(currentPlayer.getPersonalBoard().getNumOfDevelopmentCards()==7){
                 turnController.setEndTriggerToTrue();
             }
+            turnController.getController().sendMessageToAll(new UpdateDepotsStatus(currentPlayer.getNickname(), currentPlayer.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), currentPlayer.getPersonalBoard().getStrongboxStatus(), currentPlayer.getPersonalBoard().getLeaderStatus()));
             turnController.setNextAction();
         }
         if(message instanceof SelectStorageResponse){

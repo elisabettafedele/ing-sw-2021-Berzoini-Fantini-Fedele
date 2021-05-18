@@ -8,10 +8,11 @@ import it.polimi.ingsw.client.utilities.InputParser;
 import it.polimi.ingsw.client.utilities.UtilityPrinter;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.enumerations.ResourceStorageType;
-import it.polimi.ingsw.messages.toServer.*;
+import it.polimi.ingsw.messages.toServer.game.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class OrganizeDepotsCLI {
@@ -131,7 +132,7 @@ public class OrganizeDepotsCLI {
         client.sendMessageToServer(new MoveResourcesRequest(originDepot, destinationDepot, resource, quantity));
     }
 */
-    public static void displayDepotStatus(List<Resource>[] warehouseDepots, List<Resource>[] strongboxDepots, List<List<Resource>> leaderDepots) {
+    public static void updateDepotStatus(String nickname, List<Resource>[] warehouseDepots, int[] strongboxDepots, Map<Integer, Integer> leaderDepots) {
         GraphicalWarehouse.printWarehouse(warehouseDepots);
     }
 }

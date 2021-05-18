@@ -16,9 +16,10 @@ public enum BackColour {
     ANSI_BRIGHT_BG_BLUE ( "\u001B[104m"),
     ANSI_BRIGHT_BG_PURPLE( "\u001B[105m"),
     ANSI_BRIGHT_BG_CYAN ( "\u001B[106m"),
-    ANSI_BRIGHT_BG_WHITE( "\u001B[107m");
+    ANSI_BRIGHT_BG_WHITE( "\u001B[107m"),
+    ANSI_DEFAULT("\u001B[0m");
 
-    static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_RESET = "\u001B[0m";
 
 
     private final String code;

@@ -6,8 +6,8 @@ import it.polimi.ingsw.client.cli.graphical.GraphicalMarket;
 import it.polimi.ingsw.client.utilities.InputParser;
 import it.polimi.ingsw.enumerations.Marble;
 import it.polimi.ingsw.enumerations.Resource;
-import it.polimi.ingsw.messages.toServer.ChooseWhiteMarbleConversionResponse;
-import it.polimi.ingsw.messages.toServer.MarbleInsertionPositionResponse;
+import it.polimi.ingsw.messages.toServer.game.ChooseWhiteMarbleConversionResponse;
+import it.polimi.ingsw.messages.toServer.game.MarbleInsertionPositionResponse;
 
 import java.util.LinkedList;
 import java.util.List;

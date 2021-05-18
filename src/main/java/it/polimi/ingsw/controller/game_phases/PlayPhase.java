@@ -3,8 +3,8 @@ package it.polimi.ingsw.controller.game_phases;
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.controller.TurnController;
 import it.polimi.ingsw.server.ClientHandler;
-import it.polimi.ingsw.messages.toServer.ChooseActionResponse;
-import it.polimi.ingsw.messages.toServer.EndTurnRequest;
+import it.polimi.ingsw.messages.toServer.game.ChooseActionResponse;
+import it.polimi.ingsw.messages.toServer.game.EndTurnRequest;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
 import it.polimi.ingsw.model.player.Player;
 

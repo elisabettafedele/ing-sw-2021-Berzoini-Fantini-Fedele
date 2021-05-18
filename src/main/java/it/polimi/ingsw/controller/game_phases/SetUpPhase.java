@@ -4,14 +4,18 @@ package it.polimi.ingsw.controller.game_phases;
 import it.polimi.ingsw.common.LightLeaderCard;
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.enumerations.*;
+import it.polimi.ingsw.messages.toClient.game.ChooseLeaderCardsRequest;
+import it.polimi.ingsw.messages.toClient.game.ChooseResourceTypeRequest;
+import it.polimi.ingsw.messages.toClient.game.ChooseStorageTypeRequest;
+import it.polimi.ingsw.messages.toClient.matchData.*;
 import it.polimi.ingsw.model.cards.*;
 import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.exceptions.*;
 import it.polimi.ingsw.messages.toClient.*;
-import it.polimi.ingsw.messages.toServer.ChooseLeaderCardsResponse;
-import it.polimi.ingsw.messages.toServer.ChooseResourceTypeResponse;
-import it.polimi.ingsw.messages.toServer.ChooseStorageTypeResponse;
+import it.polimi.ingsw.messages.toServer.game.ChooseLeaderCardsResponse;
+import it.polimi.ingsw.messages.toServer.game.ChooseResourceTypeResponse;
+import it.polimi.ingsw.messages.toServer.game.ChooseStorageTypeResponse;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.utility.DevelopmentCardParser;
@@ -32,6 +36,7 @@ public class SetUpPhase implements GamePhase {
         resourcesToStoreByNickname = new HashMap<>();
         sendLightCards();
         setUpLeaderCards();
+        controller.sendMessageToAll(new LoadDevelopmentCardGrid(controller.getGame().getDevelopmentCardGrid().getAvailableCards().stream().map(Card::getID).collect(Collectors.toList())));
     }
 
     public void handleMessage(MessageToServer message, ClientHandler clientHandler) {
@@ -89,6 +94,7 @@ public class SetUpPhase implements GamePhase {
             player.getPersonalBoard().removeLeaderCard(id);
 
         if (getNumberOfInitialResourcesByNickname(nickname) == 0) {
+            controller.sendMessageToAll(new UpdateDepotsStatus(player.getNickname(), player.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), player.getPersonalBoard().getStrongboxStatus(), player.getPersonalBoard().getLeaderStatus()));
             sendSetUpFinishedMessage(clientHandler);
         } else {
             assignResources(clientHandler);
@@ -134,6 +140,7 @@ public class SetUpPhase implements GamePhase {
             e.printStackTrace();
         }
         if (resourcesToStoreByNickname.get(player.getNickname()).isEmpty()) {
+            controller.sendMessageToAll(new UpdateDepotsStatus(player.getNickname(), player.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), player.getPersonalBoard().getStrongboxStatus(), player.getPersonalBoard().getLeaderStatus()));
             sendSetUpFinishedMessage(clientHandler);
         } else {
             Resource resourceType = resourcesToStoreByNickname.get(player.getNickname()).get(0);
@@ -202,6 +209,15 @@ public class SetUpPhase implements GamePhase {
     private List<LightLeaderCard> getLightLeaderCards(List<LeaderCard> cards){
         List<LightLeaderCard> lightCards = new ArrayList<>();
         for(LeaderCard lc : cards){
+
+            String costType;
+            try{
+                lc.getCost().getResourceValue();
+                costType = "RESOURCE";
+            } catch (ValueNotPresentException e) {
+                //e.printStackTrace();
+                costType = "FLAG";
+            }
             List<String> stringCost = leaderCardResourceAndFlagCostConversion(lc.getCost());
 
             List<String> effectDescription = new ArrayList<>();
@@ -226,7 +242,7 @@ public class SetUpPhase implements GamePhase {
             }
 
             lightCards.add(new LightLeaderCard(stringCost, lc.getVictoryPoints(), lc.getUsed(), lc.getID(),
-                    effectType, effectDescription, effectDescription2));
+                    effectType, effectDescription, effectDescription2, costType));
         }
 
 
@@ -272,11 +288,10 @@ public class SetUpPhase implements GamePhase {
                 flagCost.add(entry.getKey().getFlagColor().toString());
                 flagCost.add(entry.getKey().getFlagLevel().toString());
             }
+            return flagCost;
         } catch (ValueNotPresentException e) {
             return new ArrayList<>();
         }
-
-        return new ArrayList<>();
     }
 
     private List<LightDevelopmentCard> getLightDevelopmentCards(List<DevelopmentCard> cards){

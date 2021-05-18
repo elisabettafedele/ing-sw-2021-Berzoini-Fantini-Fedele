@@ -23,6 +23,7 @@ public class GraphicalDevelopmentCardGrid {
 
     private final char[][] symbols = new char[height][width];
     private final Colour[][] colours = new Colour[height][width];
+    private final BackColour[][] backGroundColours = new BackColour[height][width];
 
 
     private void setCardsToDisplay(List<Integer> cardsToDisplay){
@@ -41,7 +42,7 @@ public class GraphicalDevelopmentCardGrid {
             List<Integer> coordinates = retrieveCoordinates(ldc);
             x_coord = coordinates.get(0);
             y_coord = coordinates.get(1);
-            GraphicalDevelopmentCard gdc = new GraphicalDevelopmentCard(ldc);
+            GraphicalDevelopmentCard gdc = new GraphicalDevelopmentCard(ldc, null);
             gdc.drawCard();
             drawCard(gdc, x_coord, y_coord);
         }
@@ -51,11 +52,13 @@ public class GraphicalDevelopmentCardGrid {
 
         char[][] cardSymbols = gdc.getSymbols();
         Colour[][] cardColours = gdc.getColours();
+        BackColour[][] cardBackColours = gdc.getBackGroundColours();
 
         for(int i = 0; i < cardHeight; i++){
             for(int j = 0; j < cardWidth; j++){
                 symbols[x_coord+i][y_coord+j] = cardSymbols[i][j];
                 colours[x_coord+i][y_coord+j] = cardColours[i][j];
+                backGroundColours[x_coord+i][y_coord+j] = cardBackColours[i][j];
             }
         }
     }
@@ -73,7 +76,7 @@ public class GraphicalDevelopmentCardGrid {
     public void displayDevelopmentCardGrid() {
         for(int i = 0; i < height; i++){
             for(int j = 0; j < width; j++){
-                System.out.print(colours[i][j].getCode() + symbols[i][j]); //+ Colour.ANSI_RESET
+                System.out.print(backGroundColours[i][j].getCode() + colours[i][j].getCode() + symbols[i][j]); //+ Colour.ANSI_RESET
             }
             System.out.print("\n");
         }
@@ -83,7 +86,8 @@ public class GraphicalDevelopmentCardGrid {
         for(int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 symbols[i][j] = ' ';
-                colours[i][j] = Colour.ANSI_BRIGHT_WHITE;
+                colours[i][j] = Colour.ANSI_DEFAULT;
+                backGroundColours[i][j] = BackColour.ANSI_BG_BLACK;
             }
         }
     }
@@ -102,5 +106,9 @@ public class GraphicalDevelopmentCardGrid {
 
     public int getHeight() {
         return height;
+    }
+
+    public BackColour[][] getBackGroundColours() {
+        return backGroundColours;
     }
 }

@@ -16,8 +16,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
-
 public class GraphicalDevelopmentCardTest {
 
     List<Integer> IDs;
@@ -38,13 +36,13 @@ public class GraphicalDevelopmentCardTest {
         }
         Collections.shuffle(IDs);
 
-        gdc = new GraphicalDevelopmentCard(MatchData.getInstance().getDevelopmentCardByID(IDs.get(0)));
+        gdc = new GraphicalDevelopmentCard(MatchData.getInstance().getDevelopmentCardByID(IDs.get(0)), "Raffa");
     }
 
     @Test
     public void displayDevelopmentCard() {
         gdc.drawCard();
-        gdc.displayDevelopmentCard();
+        gdc.displayCard();
     }
 
     static List<LightDevelopmentCard> getLightDevelopmentCards(List<DevelopmentCard> cards){

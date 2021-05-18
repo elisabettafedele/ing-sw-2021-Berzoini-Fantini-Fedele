@@ -1,9 +1,6 @@
 package it.polimi.ingsw.controller.game_phases;
 
-import it.polimi.ingsw.controller.game_phases.EndPhase;
-import it.polimi.ingsw.messages.toClient.GameOverMessage;
-import it.polimi.ingsw.messages.toClient.NotifyPointsSinglePlayer;
-import it.polimi.ingsw.messages.toClient.TextMessage;
+import it.polimi.ingsw.messages.toClient.game.NotifyPointsSinglePlayer;
 
 public class SinglePlayerEndPhase extends EndPhase {
     @Override

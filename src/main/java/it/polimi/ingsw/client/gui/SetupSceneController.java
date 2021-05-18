@@ -261,7 +261,6 @@ public class SetupSceneController {
                 confirmSelectionButton.setVisible(true);
                 confirmSelectionButton.setDisable(true);
                 selectedLeaderCard=new ArrayList<>();
-                selectedResources=new ArrayList<>();
                 HashMap<Integer, ImageView> leaderCardsMap= buildCards(leaderCards);
                 for(ImageView lcImage: leaderCardsMap.values()){
                     hboxCards.getChildren().add(lcImage);

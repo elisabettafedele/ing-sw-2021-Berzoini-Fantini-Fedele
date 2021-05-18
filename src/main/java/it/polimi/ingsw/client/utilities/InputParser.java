@@ -48,7 +48,6 @@ public class InputParser {
         String numString;
         Integer num = null;
         boolean done = false;
-
         try {
             do {
                 //Reset buffer

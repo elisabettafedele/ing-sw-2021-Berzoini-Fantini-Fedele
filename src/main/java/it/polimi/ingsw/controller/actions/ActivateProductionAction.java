@@ -1,15 +1,16 @@
 package it.polimi.ingsw.controller.actions;
 
+import it.polimi.ingsw.messages.toClient.matchData.UpdateDepotsStatus;
 import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.server.Server;
 import it.polimi.ingsw.controller.TurnController;
 import it.polimi.ingsw.enumerations.EffectType;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.exceptions.*;
-import it.polimi.ingsw.messages.toClient.ChooseProductionPowersRequest;
-import it.polimi.ingsw.messages.toServer.ChooseProductionPowersResponse;
+import it.polimi.ingsw.messages.toClient.game.ChooseProductionPowersRequest;
+import it.polimi.ingsw.messages.toServer.game.ChooseProductionPowersResponse;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
-import it.polimi.ingsw.messages.toServer.SelectStorageResponse;
+import it.polimi.ingsw.messages.toServer.game.SelectStorageResponse;
 import it.polimi.ingsw.model.cards.*;
 import it.polimi.ingsw.model.player.PersonalBoard;
 import it.polimi.ingsw.model.player.Player;
@@ -233,7 +234,7 @@ public class ActivateProductionAction implements Action{
                     e.printStackTrace();
                 }
             }
-
+            turnController.getController().sendMessageToAll(new UpdateDepotsStatus(player.getNickname(), player.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), player.getPersonalBoard().getStrongboxStatus(), player.getPersonalBoard().getLeaderStatus()));
             turnController.setStandardActionDoneToTrue();
             turnController.setNextAction();
         }

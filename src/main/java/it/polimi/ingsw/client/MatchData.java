@@ -1,11 +1,13 @@
 package it.polimi.ingsw.client;
 
+import it.polimi.ingsw.client.cli.graphical.GraphicalMarket;
+import it.polimi.ingsw.client.cli.graphical.GraphicalWarehouse;
 import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.common.LightLeaderCard;
 import it.polimi.ingsw.enumerations.Marble;
+import it.polimi.ingsw.messages.toClient.matchData.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class MatchData {
 
@@ -15,6 +17,8 @@ public class MatchData {
     List<LightClient> otherClients;
     private Marble[][] marketTray;
     private Marble slideMarble;
+    private List<Integer> developmentCardGrid;
+    public static final int EMPTY_SLOT = -1;
 
     private static MatchData instance;
 
@@ -42,12 +46,7 @@ public class MatchData {
 
     }
 
-    public void updateInfo(String nickname, int steps){
-        LightClient lc = getLightClientByNickname(nickname);
-        lc.faithTrackAdvancement(steps);
-    }
-
-    private LightClient getLightClientByNickname(String nickname) {
+    public LightClient getLightClientByNickname(String nickname) {
         for(LightClient lc : otherClients){
             if(lc.getNickname().equals(nickname))
                 return lc;
@@ -55,8 +54,8 @@ public class MatchData {
         return thisClient;
     }
 
-    public void addChosenLeaderCard(Integer ID){
-        thisClient.addChosenLeaderCard(ID);
+    public void addChosenLeaderCard(Integer ID, boolean active){
+        thisClient.addLeaderCard(ID, active);
     }
 
     public void setAllLeaderCards(List<LightLeaderCard> allLeaderCards){
@@ -66,6 +65,10 @@ public class MatchData {
 
     public void setAllDevelopmentCards(List<LightDevelopmentCard> lightDevelopmentCards) {
         this.lightDevelopmentCards = lightDevelopmentCards;
+    }
+
+    public void loadDevelopmentCardGrid(List<Integer> developmentCardGrid){
+        this.developmentCardGrid = developmentCardGrid;
     }
 
     public LightDevelopmentCard getDevelopmentCardByID(Integer ID){
@@ -84,5 +87,52 @@ public class MatchData {
             }
         }
         return null;
+    }
+
+    public void update(MatchDataMessage message){
+
+        if (message instanceof UpdateDepotsStatus) {
+            getLightClientByNickname(message.getNickname()).updateDepotStatus(((UpdateDepotsStatus) message).getWarehouseDepots(), ((UpdateDepotsStatus) message).getStrongboxDepots(), ((UpdateDepotsStatus) message).getLeaderDepots());
+            //TODO just temporary, decide when to show. Qua sarà qualcosa del tipo "se è la view selezionata dal client, ristampala"
+            if (message.getNickname().equals(thisClient.getNickname()))
+                GraphicalWarehouse.printWarehouse(((UpdateDepotsStatus) message).getWarehouseDepots());
+        }
+        if (message instanceof UpdateMarkerPosition)
+            getLightClientByNickname(message.getNickname()).updateMarkerPosition(((UpdateMarkerPosition) message).getMarkerPosition());
+
+        if (message instanceof NotifyLeaderAction) {
+            //I remove the card only if it is my card
+            if (((NotifyLeaderAction) message).isDiscard() && thisClient.getNickname().equals(message.getNickname()))
+                thisClient.removeLeaderCard(((NotifyLeaderAction) message).getId());
+            else if (((NotifyLeaderAction) message).isDiscard() && !thisClient.getNickname().equals(message.getNickname())){
+                return; //TODO maybe we can show that a specific player has discarded a specific card...
+            }
+            else if (!((NotifyLeaderAction) message).isDiscard())
+                getLightClientByNickname(message.getNickname()).activateLeader(((NotifyLeaderAction) message).getId());
+        }
+
+        if (message instanceof UpdateOwnedDevelopmentCards)
+            getLightClientByNickname(message.getNickname()).updateOwnedDevelopmentCards(((UpdateOwnedDevelopmentCards) message).getIds(), ((UpdateOwnedDevelopmentCards) message).getVictoryPoints());
+
+        if (message instanceof NotifyDevelopmentCardBought){
+            Collections.replaceAll(developmentCardGrid, ((NotifyDevelopmentCardBought) message).getCardBought(), ((NotifyDevelopmentCardBought) message).getNewCardOnGrid());
+            getLightClientByNickname(message.getNickname()).addDevelopmentCard(((NotifyDevelopmentCardBought) message).getCardBought(), ((NotifyDevelopmentCardBought) message).getSlot(), ((NotifyDevelopmentCardBought) message).getVictoryPoints());
+        }
+        if (message instanceof UpdateMarketView){
+            marketTray = ((UpdateMarketView) message).getMarbles();
+            slideMarble = ((UpdateMarketView) message).getSideMarble();
+            //TODO just temporary, decide when to show...stesso discorso di prima
+            if (message.getNickname().equals(thisClient.getNickname()) || message.getNickname().equals("SETUP"))
+                GraphicalMarket.printMarket(((UpdateMarketView) message).getMarbles(), ((UpdateMarketView) message).getSideMarble());
+        }
+    }
+
+    public List<String> getAllNicknames(){
+        List<String> nicknames = new ArrayList<>();
+        nicknames.add(thisClient.getNickname());
+        for(LightClient lc : otherClients){
+            nicknames.add(lc.getNickname());
+        }
+        return nicknames;
     }
 }
