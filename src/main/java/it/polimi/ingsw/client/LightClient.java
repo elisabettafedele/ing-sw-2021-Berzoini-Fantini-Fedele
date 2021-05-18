@@ -17,6 +17,8 @@ public class LightClient {
     int[] strongbox;
     Map<Integer, Integer> leaderDepots;
 
+    private boolean[] hasTakenPopesTile;
+
     public LightClient() {
         this.faithTrackPosition = 0;
         this.ownedLeaderCards = new HashMap<>();
@@ -27,6 +29,7 @@ public class LightClient {
         this.strongbox = new int[4];
         this.ownedDevelopmentCards = new int[]{MatchData.EMPTY_SLOT, MatchData.EMPTY_SLOT, MatchData.EMPTY_SLOT};
         this.victoryPointsDevelopmentCardSlots = new int[3];
+        this.hasTakenPopesTile = new boolean[3];
     }
 
     public void addLeaderCard(Integer ID, boolean active) {
@@ -36,10 +39,6 @@ public class LightClient {
     //TODO: check that uses ID as Integer and not as int
     public void removeLeaderCard(Integer ID) {
         ownedLeaderCards.remove(ID);
-    }
-
-    public void faithTrackAdvancement(int steps) {
-        faithTrackPosition += steps;
     }
 
     public int getFaithTrackPosition() {
@@ -82,5 +81,13 @@ public class LightClient {
 
     public boolean leaderCardIsActive(int id){
         return ownedLeaderCards.get(id);
+    }
+
+    public void updateTakenPopesFavorTile(int number){
+        this.hasTakenPopesTile[number] = true;
+    }
+
+    public boolean hasTakenPopesFavorTile(int number){
+        return this.hasTakenPopesTile[number];
     }
 }

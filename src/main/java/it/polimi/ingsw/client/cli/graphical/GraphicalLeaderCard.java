@@ -21,8 +21,13 @@ public class GraphicalLeaderCard extends GraphicalCard{
         drawVictoryPoints();
         drawActivationCost();
         drawEffect();
-        boolean active = MatchData.getInstance().getLightClientByNickname(this.nickname).
-                leaderCardIsActive(this.lightCard.getID());
+        boolean active;
+        try {
+            active = MatchData.getInstance().getLightClientByNickname(this.nickname).
+                    leaderCardIsActive(this.lightCard.getID());
+        }catch(Exception e){
+            active = false;
+        }
         drawActive(active);
     }
 

@@ -26,6 +26,8 @@ public class Screen {
 
     GraphicalFaithTrack graphicalFaithTrack;
 
+    private String nickname;
+
     private static Screen instance;
 
     public static Screen getInstance(){
@@ -38,7 +40,7 @@ public class Screen {
         graphicalDevelopmentCardGrid = new GraphicalDevelopmentCardGrid();
         developmentCardGridCardsToDisplay = new ArrayList<>();
 
-        graphicalFaithTrack = new GraphicalFaithTrack();
+        //graphicalFaithTrack = new GraphicalFaithTrack();
 
         this.faith_track_x_anchor = 0;
         this.faith_track_y_anchor = graphicalDevelopmentCardGrid.getWidth() + 1;
@@ -50,13 +52,17 @@ public class Screen {
         this.developmentCardGridCardsToDisplay = developmentCardGridCardsToDisplay;
     }
 
-    //TODO: la display è uguale in tutti gli elementi grafici
+    public void setClientToDisplay(String nickname){
+        this.nickname = nickname;
+    }
+
     public void displayStandardView(){
         reset();
         drawAllElements();
         display();
     }
 
+    //TODO: la display è uguale in tutti gli elementi grafici
     private void display(){
         for(int i = 0; i < screen_height; i++){
             for(int j = 0; j < screen_width; j++){
@@ -95,6 +101,7 @@ public class Screen {
     }
 
     private void drawFaithTrack() {
+        this.graphicalFaithTrack = new GraphicalFaithTrack(this.nickname);
         graphicalFaithTrack.drawFaithTrack();
 
         int faithTrackWidth = graphicalFaithTrack.getWidth();
@@ -126,8 +133,7 @@ public class Screen {
 
         for(Integer ID : IDs){
             LightLeaderCard llc = MatchData.getInstance().getLeaderCardByID(ID);
-            //TODO: nicknames!
-            GraphicalLeaderCard glc = new GraphicalLeaderCard(llc, "raffa");
+            GraphicalLeaderCard glc = new GraphicalLeaderCard(llc, null);
             glc.drawCard();
             drawElement(GraphicalCard.CardHeight, GraphicalCard.CardWidth, glc.getColours(), glc.getSymbols(),
                     glc.getBackGroundColours(), x_anchor, y_anchor);

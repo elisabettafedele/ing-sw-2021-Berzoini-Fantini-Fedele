@@ -126,4 +126,13 @@ public class MatchData {
                 GraphicalMarket.printMarket(((UpdateMarketView) message).getMarbles(), ((UpdateMarketView) message).getSideMarble());
         }
     }
+
+    public List<String> getAllNicknames(){
+        List<String> nicknames = new ArrayList<>();
+        nicknames.add(thisClient.getNickname());
+        for(LightClient lc : otherClients){
+            nicknames.add(lc.getNickname());
+        }
+        return nicknames;
+    }
 }
