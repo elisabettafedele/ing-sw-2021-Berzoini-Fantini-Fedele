@@ -4,9 +4,8 @@ package it.polimi.ingsw.client.gui;
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.utilities.Utils;
 import it.polimi.ingsw.enumerations.GameMode;
-import it.polimi.ingsw.messages.toServer.GameModeResponse;
-import it.polimi.ingsw.messages.toServer.NicknameResponse;
-import it.polimi.ingsw.messages.toServer.NumberOfPlayersResponse;
+import it.polimi.ingsw.enumerations.Resource;
+import it.polimi.ingsw.messages.toServer.*;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -16,16 +15,19 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.UnaryOperator;
 
 public class SetupSceneController {
     List<Integer> selectedLeaderCard;
+    List<Resource> selectedResources;
 
     private GUI gui=null;
     private Client client=null;
@@ -73,7 +75,12 @@ public class SetupSceneController {
     private TextField nicknameField;
 
     @FXML
-    private HBox hbox;
+    private HBox hboxCards;
+
+    @FXML
+    private GridPane gridResources;
+
+
 
 
 
@@ -86,7 +93,8 @@ public class SetupSceneController {
         vBoxNickname.setVisible(false);
         vBoxNumOfPlayers.setVisible(false);
         vBoxWaiting.setVisible(false);
-        hbox.setVisible(false);
+        hboxCards.setVisible(false);
+        gridResources.setVisible(false);
     }
 
     UnaryOperator<TextFormatter.Change> integerFilter = change -> {
@@ -224,7 +232,7 @@ public class SetupSceneController {
                 vBoxGameMode.setVisible(false);
                 vBoxNickname.setVisible(false);
                 vBoxNumOfPlayers.setVisible(false);
-                vBoxWaiting.setVisible(true);
+
                 String playerNames;
                 String delim = "\n";
                 StringBuilder sb = new StringBuilder();
@@ -239,7 +247,9 @@ public class SetupSceneController {
 
                 playerNames= sb.toString();
                 lastLabel.setText("All the players are ready to start, players in game are:\n" + playerNames + "\n" );
+                vBoxWaiting.setVisible(true);
                 }
+
         });
     }
 
@@ -251,11 +261,12 @@ public class SetupSceneController {
                 confirmSelectionButton.setVisible(true);
                 confirmSelectionButton.setDisable(true);
                 selectedLeaderCard=new ArrayList<>();
+                selectedResources=new ArrayList<>();
                 HashMap<Integer, ImageView> leaderCardsMap= buildCards(leaderCards);
                 for(ImageView lcImage: leaderCardsMap.values()){
-                    hbox.getChildren().add(lcImage);
+                    hboxCards.getChildren().add(lcImage);
                 }
-                hbox.setVisible(true);
+                hboxCards.setVisible(true);
 
             }
         });
@@ -265,7 +276,7 @@ public class SetupSceneController {
     private HashMap<Integer, ImageView> buildCards(List<Integer> leaderCards) {
         HashMap<Integer,ImageView> leaderCardsMap=new HashMap<>();
         leaderCards.forEach(lc->{
-            ImageView lcImage= new ImageView( new Image(SetupSceneController.class.getResource("/img/Cards/LeaderCards/front/" + lc + ".png").toString()));//check toclass meaning.
+            ImageView lcImage= new ImageView( new Image(SetupSceneController.class.getResource("/img/Cards/LeaderCards/front/" + lc + ".png").toString()));
             lcImage.setFitHeight(200);
             lcImage.setPreserveRatio(true);
             lcImage.setSmooth(true);
@@ -295,7 +306,79 @@ public class SetupSceneController {
     }
     @FXML
     public void handleConfirmSelectionButton(){
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                if(selectedLeaderCard.size()==2){
+                    client.sendMessageToServer(new ChooseLeaderCardsResponse(selectedLeaderCard));
+                    selectedLeaderCard=new ArrayList<>();
+                    hboxCards.setVisible(false);
+                    confirmSelectionButton.setVisible(false);
+                    lastLabel.setText("Waiting the other players, the game will start as soon as they all be ready...");
+                }
+                if(selectedLeaderCard.size()==0&&selectedResources.size()>0){
+                    client.sendMessageToServer(new ChooseResourceTypeResponse(selectedResources));
+                    gridResources.setVisible(false);
+                    confirmSelectionButton.setVisible(false);
+                    lastLabel.setText("Waiting the other players, the game will start as soon as they all be ready...");
+                }
 
+            }
+        });
+
+
+    }
+
+    public void displayChooseResourceTypeRequest(List<Resource> resourceTypes, int quantity) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                confirmSelectionButton.setDisable(true);
+                confirmSelectionButton.setVisible(true);
+                lastLabel.setText("Choose " + quantity + (quantity>1?" resorces":" resource"));
+                List<ImageView> resourcesImages= buildResources(quantity);
+                for(int row=0;row<quantity;row++){
+                    for(int col=0;col<4;col++){
+                        gridResources.add(resourcesImages.get(col), row, col);
+                    }
+                }
+                gridResources.setVisible(true);
+            }
+        });
+
+
+    }
+
+    private List<ImageView> buildResources(int quantity) {
+        List<Resource> resources= Resource.realValues();
+        List<ImageView> resourcesImages=new ArrayList<>();
+        resources.forEach(resource->{
+            ImageView resourceImage= new ImageView( new Image(SetupSceneController.class.getResource("/img/punchboard/" + resource.toString().toLowerCase(Locale.ROOT) + ".png").toString()));
+            resourceImage.setFitHeight(40);
+            resourceImage.setPreserveRatio(true);
+            resourceImage.setSmooth(true);
+            resourceImage.addEventHandler(MouseEvent.MOUSE_PRESSED, mouseEvent -> {
+                if(selectedResources.contains(resource)){
+                    for(int i=0;i<selectedResources.size();i++){
+                        if(selectedResources.get(i)==resource){
+                            selectedResources.remove(i);
+                            resourceImage.setEffect(null);
+                        }
+                    }
+                    confirmSelectionButton.setDisable(true);
+                }else if (selectedResources.size()<quantity){
+                    selectedResources.add(resource);
+                    ColorAdjust colorAdjust=new ColorAdjust();
+                    colorAdjust.setBrightness(0.4);
+                    resourceImage.setEffect(colorAdjust);
+                    if(selectedResources.size()==quantity){
+                        confirmSelectionButton.setDisable(false);
+                    }
+                }
+            });
+            resourcesImages.add(resourceImage);
+        });
+        return resourcesImages;
     }
 
 /*   Use this to avoid Thread exception

@@ -152,6 +152,7 @@ public class GUI extends Application implements View {
     @Override
 
     public void displayChooseResourceTypeRequest(List<Resource> resourceTypes, int quantity) {
+        setupSceneController.displayChooseResourceTypeRequest(resourceTypes,quantity);
     }
 
     public void loadDevelopmentCards(List<LightDevelopmentCard> lightDevelopmentCards) {
