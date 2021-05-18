@@ -16,8 +16,10 @@ public class LightClient {
     List<Resource>[] warehouse;
     int[] strongbox;
     Map<Integer, Integer> leaderDepots;
-
+    //TODO Raffa non serve più, puoi anche rimuovere
     private boolean[] hasTakenPopesTile;
+
+    private PopesTileState[] popesTileStates;
 
     public LightClient() {
         this.faithTrackPosition = 0;
@@ -29,6 +31,9 @@ public class LightClient {
         this.strongbox = new int[4];
         this.ownedDevelopmentCards = new int[]{MatchData.EMPTY_SLOT, MatchData.EMPTY_SLOT, MatchData.EMPTY_SLOT};
         this.victoryPointsDevelopmentCardSlots = new int[3];
+        this.popesTileStates = new PopesTileState[]{PopesTileState.NOT_REACHED, PopesTileState.NOT_REACHED, PopesTileState.NOT_REACHED};
+
+        //TODO Raffa non serve più, puoi anche rimuovere
         this.hasTakenPopesTile = new boolean[3];
     }
 
@@ -83,8 +88,13 @@ public class LightClient {
         return ownedLeaderCards.get(id);
     }
 
+    //TODO Raffa non serve più, puoi anche rimuovere
     public void updateTakenPopesFavorTile(int number){
         this.hasTakenPopesTile[number] = true;
+    }
+
+    public void updatePopeFavorTilesStatus(int number, boolean taken){
+        this.popesTileStates[number] = taken ? PopesTileState.TAKEN : PopesTileState.NOT_TAKEN;
     }
 
     public boolean hasTakenPopesFavorTile(int number){

@@ -19,6 +19,7 @@ public class SetUpCLI {
     public static void displayChooseLeaderCardsRequest(Client client, List<Integer> leaderCardsIDs){
         Screen.getInstance().displaySetUpLeaderCardSelection(leaderCardsIDs);
         System.out.println("Choose two Leader Cards to keep");
+        //InputParser.flush();
         System.out.print("Insert the ID of the first leader card chosen: ");
         Integer firstChoice = InputParser.getInt("Error: the ID provided is not available. Provide a valid ID", CLI.conditionOnInteger(leaderCardsIDs));
         leaderCardsIDs.remove(firstChoice);

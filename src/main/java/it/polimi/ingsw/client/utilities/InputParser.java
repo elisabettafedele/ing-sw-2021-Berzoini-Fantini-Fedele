@@ -1,57 +1,83 @@
 package it.polimi.ingsw.client.utilities;
 
 import it.polimi.ingsw.client.cli.CLI;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.function.Predicate;
 
 public class InputParser {
-    private static final Scanner in = new Scanner(System.in);
+    private static BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+    private static boolean read = false;
+
+    /*
     public static String getLine() {
-        while (true) {
-            try {
-                return in.nextLine();
-            } catch (IllegalStateException | NoSuchElementException e) {
-                e.printStackTrace();
-            }
-        }
+        in = new Scanner(System.in);
+        while (!in.hasNextLine()){}
+        String input = in.nextLine();
+        in.close();
+        return input;
     }
 
     public static String getString(String errorMessage, Predicate<String> condition){
         String line;
+        in = new Scanner(System.in);
         do{
             line = in.nextLine();
-            if (condition.test(line))
+            if (condition.test(line)) {
+                in.close();
                 return line;
+            }
             else
                 System.out.println(errorMessage);
         } while (true);
+
     }
 
     public static Integer getInt(String errorMessage){
+        in = new Scanner(System.in);
         Integer num = null;
         while (!in.hasNextInt()) {
             System.out.println(errorMessage);
             in.next();
         }
         num = in.nextInt();
+        in.close();
         return num;
     }
 
-    public static Integer getInt(String errorMessage, Predicate<Integer> condition){
-        Integer num = null;
+    public static void flush(){
+        String input;
+        try{
+            input = in.nextLine();
+            if (input.equals(""))
+                return;
+            while (in.hasNext() && !in.nextLine().equals("")){}
+            in.next();
+        } catch (NoSuchElementException e){
+            return;
+        }
+    }
+
+    public static int getInt(String errorMessage, Predicate<Integer> condition){
+        int num;
+        in = new Scanner(System.in);
         boolean failure = false;
         do {
             if (failure)
                 System.out.println(errorMessage);
             while (!in.hasNextInt()) {
-                System.out.println(errorMessage);
+                System.out.println("Please insert an integer value");
                 in.next();
             }
             num = in.nextInt();
             failure = true;
         } while (!condition.test(num));
+        in.close();
         return num;
     }
 
@@ -87,8 +113,8 @@ public class InputParser {
 
 
 
+*/
 
-    /*
     private static final BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
 
     public static String getLine(){
@@ -101,14 +127,14 @@ public class InputParser {
                     InputParser.input.readLine(); //Flush
                 //Wait for user
                 while (!InputParser.input.ready()) {
-                    Thread.sleep(200);
+                    Thread.sleep(100);
                 }
                 line = InputParser.input.readLine();
             } catch (InterruptedException | IOException e) {
                 Thread.currentThread().interrupt();
                 return null;
             }
-        } while ("".equals(input));
+        } while ("".equals(line));
         return line;
     }
 
@@ -141,7 +167,7 @@ public class InputParser {
                     num = Integer.parseInt(numString);
                     done=true;
                 } catch (NumberFormatException e) {
-                    System.out.println(errorMessage);
+                    System.out.println("Error: please insert a number");
                 }
             }while(!done);
 
@@ -158,14 +184,15 @@ public class InputParser {
         boolean done = false;
 
         try {
-            do {
                 //Reset buffer
                 while(input.ready())
                     input.readLine(); //Flush
                 //Wait for user
                 while (!input.ready()) {
-                    Thread.sleep(200);
+                    Thread.sleep(100);
                 }
+
+            do {
                 numString = input.readLine();
                 try {
                     num = Integer.parseInt(numString);
@@ -175,7 +202,7 @@ public class InputParser {
                         System.out.println(errorMessage);
                     }
                 } catch (NumberFormatException e) {
-                    System.out.println(errorMessage);
+                    System.out.println("Error: please insert a number");
                 }
             }while(!done);
 
@@ -197,20 +224,40 @@ public class InputParser {
     public static String getCommand(Predicate integerPredicate, List<String> textCommands, List<String> intCommands, String errorMessage){
         if (textCommands.isEmpty())
             return getCommandFromList(intCommands);
-        while (true) {
-            String command = getLine();
-            if (textCommands.contains(command))
-                return command;
+        String command;
+
             try {
-                if (integerPredicate.test(Integer.parseInt(command)))
-                    return intCommands.get(Integer.parseInt(command) - 1);
-                else
-                    System.out.println(errorMessage);
-            } catch (NumberFormatException e){ System.out.println(errorMessage);}
-            //finally {
-             //   System.out.println(errorMessage);
-            //}
-        }
+                //Reset buffer
+                while (InputParser.input.ready())
+                    InputParser.input.readLine(); //Flush
+                //Wait for user
+                while (!InputParser.input.ready()) {
+                    Thread.sleep(100);
+
+                }
+            }catch (InterruptedException | IOException e) {
+                Thread.currentThread().interrupt();
+                return null;
+            }
+
+            do {
+                try{
+                    command = InputParser.input.readLine();
+                    if (textCommands.contains(command))
+                        return command;
+                    try {
+                        if (integerPredicate.test(Integer.parseInt(command)))
+                            return intCommands.get(Integer.parseInt(command) - 1);
+                        else
+                            System.out.println(errorMessage);
+                    } catch (NumberFormatException e) {
+                        System.out.println(errorMessage);
+                    }
+            } catch (IOException e) {
+                Thread.currentThread().interrupt();
+                return null;
+            }
+        } while (true);
     }
-*/
+
 }

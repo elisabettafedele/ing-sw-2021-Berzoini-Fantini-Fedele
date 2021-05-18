@@ -2,6 +2,8 @@ package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.controller.game_phases.PlayPhase;
 import it.polimi.ingsw.controller.game_phases.SinglePlayerPlayPhase;
+import it.polimi.ingsw.messages.toClient.game.NotifyMarbleTaken;
+import it.polimi.ingsw.messages.toClient.matchData.NotifyTakenPopesFavorTile;
 import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.controller.actions.*;
 import it.polimi.ingsw.enumerations.ActionType;
@@ -143,9 +145,12 @@ public class TurnController {
                         if(p.getPersonalBoard().getMarkerPosition()>= vaticanReportSection.getStart()){
                             try {
                                 p.addVictoryPoints(vaticanReportSection.getPopeFavorPoints());
+                                controller.sendMessageToAll(new NotifyTakenPopesFavorTile(p.getNickname(), vaticanReportSection.getStart(), true));
                             } catch (InvalidArgumentException e) {
                                 e.printStackTrace();
                             }
+                        } else {
+                            controller.sendMessageToAll(new NotifyTakenPopesFavorTile(p.getNickname(), vaticanReportSection.getStart(), false));
                         }
                     }
                 } catch (InvalidMethodException | ZeroPlayerException e) {
@@ -154,7 +159,7 @@ public class TurnController {
             }
             else{ //singleplayer
                 try {
-                    if(currentPlayer.getPersonalBoard().getMarkerPosition()>=((SinglePlayerPlayPhase)controller.getGamePhase()).getBlackCrossPosition()){
+                    if(currentPlayer.getPersonalBoard().getMarkerPosition()>=vaticanReportSection.getStart()){
                         currentPlayer.addVictoryPoints(vaticanReportSection.getPopeFavorPoints());
                     }
 
