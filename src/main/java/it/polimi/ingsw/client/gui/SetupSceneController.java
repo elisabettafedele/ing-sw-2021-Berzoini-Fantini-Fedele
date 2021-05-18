@@ -5,7 +5,11 @@ import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.utilities.Utils;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.enumerations.Resource;
-import it.polimi.ingsw.messages.toServer.*;
+import it.polimi.ingsw.messages.toServer.game.ChooseLeaderCardsResponse;
+import it.polimi.ingsw.messages.toServer.game.ChooseResourceTypeResponse;
+import it.polimi.ingsw.messages.toServer.lobby.GameModeResponse;
+import it.polimi.ingsw.messages.toServer.lobby.NicknameResponse;
+import it.polimi.ingsw.messages.toServer.lobby.NumberOfPlayersResponse;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -23,11 +27,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.UnaryOperator;
 
 public class SetupSceneController {
     List<Integer> selectedLeaderCard;
     List<Resource> selectedResources;
+    boolean[] selectedResourcesBooleans;
+    boolean selectionStarted;
 
     private GUI gui=null;
     private Client client=null;
@@ -95,6 +102,11 @@ public class SetupSceneController {
         vBoxWaiting.setVisible(false);
         hboxCards.setVisible(false);
         gridResources.setVisible(false);
+        selectedResources=new ArrayList<>();
+        selectedLeaderCard=new ArrayList<>();
+        selectionStarted=false;
+        hboxCards.managedProperty().bind(hboxCards.visibleProperty());
+        gridResources.managedProperty().bind(gridResources.visibleProperty());
     }
 
     UnaryOperator<TextFormatter.Change> integerFilter = change -> {
@@ -197,7 +209,7 @@ public class SetupSceneController {
         });
     }
     @FXML
-    public void onNumOfPlayersChoiceBoxChosen(ActionEvent actionEvent) {
+    public void onNumOfPlayersChoiceBoxChosenButton(ActionEvent actionEvent) {
         String value =(String) numOfPlayersChoiceBox.getValue();
         client.sendMessageToServer(new NumberOfPlayersResponse(Integer.parseInt(value)));
     }
@@ -212,13 +224,16 @@ public class SetupSceneController {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                vBoxIPandPORT.setVisible(false);
-                vBoxGameMode.setVisible(false);
-                vBoxNickname.setVisible(false);
-                vBoxNumOfPlayers.setVisible(false);
-                vBoxWaiting.setVisible(true);
-                lastLabel.setText("Waiting in the lobby..");
-                confirmSelectionButton.setVisible(false);
+                if(!selectionStarted){
+                    vBoxIPandPORT.setVisible(false);
+                    vBoxGameMode.setVisible(false);
+                    vBoxNickname.setVisible(false);
+                    vBoxNumOfPlayers.setVisible(false);
+                    vBoxWaiting.setVisible(true);
+                    lastLabel.setText("Waiting in the lobby..");
+                    confirmSelectionButton.setVisible(false);
+                }
+
 
             }
         });
@@ -254,12 +269,14 @@ public class SetupSceneController {
     }
 
     public void displayLeaderCardsRequest(List<Integer> leaderCards,Client cLient) {
+        selectionStarted=true;
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 lastLabel.setText(lastLabel.getText()+"\n Choose two out of the four following Leader cards:");
                 confirmSelectionButton.setVisible(true);
                 confirmSelectionButton.setDisable(true);
+                selectedResources=new ArrayList<>();
                 selectedLeaderCard=new ArrayList<>();
                 HashMap<Integer, ImageView> leaderCardsMap= buildCards(leaderCards);
                 for(ImageView lcImage: leaderCardsMap.values()){
@@ -332,13 +349,16 @@ public class SetupSceneController {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+                selectedResourcesBooleans=new boolean[4*quantity];
                 confirmSelectionButton.setDisable(true);
                 confirmSelectionButton.setVisible(true);
                 lastLabel.setText("Choose " + quantity + (quantity>1?" resorces":" resource"));
                 List<ImageView> resourcesImages= buildResources(quantity);
+                int resCounter=0;
                 for(int row=0;row<quantity;row++){
                     for(int col=0;col<4;col++){
-                        gridResources.add(resourcesImages.get(col), row, col);
+                        gridResources.add(resourcesImages.get(resCounter), col, row);
+                        resCounter++;
                     }
                 }
                 gridResources.setVisible(true);
@@ -351,32 +371,37 @@ public class SetupSceneController {
     private List<ImageView> buildResources(int quantity) {
         List<Resource> resources= Resource.realValues();
         List<ImageView> resourcesImages=new ArrayList<>();
-        resources.forEach(resource->{
-            ImageView resourceImage= new ImageView( new Image(SetupSceneController.class.getResource("/img/punchboard/" + resource.toString().toLowerCase(Locale.ROOT) + ".png").toString()));
-            resourceImage.setFitHeight(40);
-            resourceImage.setPreserveRatio(true);
-            resourceImage.setSmooth(true);
-            resourceImage.addEventHandler(MouseEvent.MOUSE_PRESSED, mouseEvent -> {
-                if(selectedResources.contains(resource)){
-                    for(int i=0;i<selectedResources.size();i++){
-                        if(selectedResources.get(i)==resource){
-                            selectedResources.remove(i);
-                            resourceImage.setEffect(null);
+        AtomicInteger resCounter= new AtomicInteger();
+        for(int ii=0; ii<quantity;ii++){
+            resources.forEach(resource->{
+                ImageView resourceImage= new ImageView( new Image(SetupSceneController.class.getResource("/img/punchboard/" + resource.toString().toLowerCase(Locale.ROOT) + ".png").toString()));
+                resourceImage.setFitHeight(40);
+                resourceImage.setPreserveRatio(true);
+                resourceImage.setSmooth(true);
+                resourceImage.setId(resCounter.toString());
+                resourceImage.addEventHandler(MouseEvent.MOUSE_PRESSED, mouseEvent -> {
+
+                    if(selectedResourcesBooleans[Integer.parseInt(resourceImage.getId())]){
+                        selectedResources.remove(resource);
+                        selectedResourcesBooleans[Integer.parseInt(resourceImage.getId())]=false;
+                        resourceImage.setEffect(null);
+                        confirmSelectionButton.setDisable(true);
+                    }else if (selectedResources.size()<quantity){
+                        selectedResources.add(resource);
+                        selectedResourcesBooleans[Integer.parseInt(resourceImage.getId())]=true;
+                        ColorAdjust colorAdjust=new ColorAdjust();
+                        colorAdjust.setBrightness(0.4);
+                        resourceImage.setEffect(colorAdjust);
+                        if(selectedResources.size()==quantity){
+                            confirmSelectionButton.setDisable(false);
                         }
                     }
-                    confirmSelectionButton.setDisable(true);
-                }else if (selectedResources.size()<quantity){
-                    selectedResources.add(resource);
-                    ColorAdjust colorAdjust=new ColorAdjust();
-                    colorAdjust.setBrightness(0.4);
-                    resourceImage.setEffect(colorAdjust);
-                    if(selectedResources.size()==quantity){
-                        confirmSelectionButton.setDisable(false);
-                    }
-                }
+                });
+                resourcesImages.add(resourceImage);
+                resCounter.getAndIncrement();
             });
-            resourcesImages.add(resourceImage);
-        });
+        }
+
         return resourcesImages;
     }
 

@@ -41,14 +41,13 @@
                   <Insets right="50.0" top="50.0" />
                </VBox.margin></Label>
             <ChoiceBox fx:id="numOfPlayersChoiceBox" prefWidth="150.0" value="2" />
-            <Button fx:id="sendNumOfPlayerButton" mnemonicParsing="false" onAction="#onNumOfPlayersChoiceBoxChosen" text="Confirm" />
+            <Button fx:id="sendNumOfPlayerButton" mnemonicParsing="false" onAction="#onNumOfPlayersChoiceBoxChosenButton" text="Confirm" />
          </children>
       </VBox>
       <VBox fx:id="vBoxWaiting" layoutX="30.0" layoutY="19.0" prefHeight="362.0" prefWidth="539.0">
          <children>
             <Label fx:id="lastLabel" text="Waiting in the Lobby" />
             <HBox fx:id="hboxCards" prefHeight="203.0" prefWidth="539.0" />
-            <Button fx:id="confirmSelectionButton" mnemonicParsing="false" onAction="#handleConfirmSelectionButton" prefHeight="25.0" prefWidth="121.0" text="Confirm selection" />
             <GridPane fx:id="gridResources" prefHeight="114.0" prefWidth="316.0">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -61,6 +60,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
             </GridPane>
+            <Button fx:id="confirmSelectionButton" mnemonicParsing="false" onAction="#handleConfirmSelectionButton" prefHeight="25.0" prefWidth="121.0" text="Confirm selection" />
          </children>
       </VBox>
    </children>
