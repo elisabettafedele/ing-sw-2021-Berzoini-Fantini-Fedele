@@ -27,6 +27,15 @@ public class ScreenTest {
         MatchData.getInstance().setAllDevelopmentCards(getLightDevelopmentCards(DevelopmentCardParser.parseCards()));
         MatchData.getInstance().setAllLeaderCards(getLightLeaderCards(LeaderCardParser.parseCards()));
 
+        String playerOne = "Raffa";
+        String playerTwo = "abcdefghij";
+        screen.setClientToDisplay(playerOne);
+        MatchData.getInstance().setThisClient(playerOne);
+        MatchData.getInstance().addLightClient(playerTwo);
+        MatchData.getInstance().getLightClientByNickname(playerOne).updateMarkerPosition(5);
+        MatchData.getInstance().getLightClientByNickname(playerTwo).updateMarkerPosition(9);
+        MatchData.getInstance().getLightClientByNickname(playerTwo).updateTakenPopesFavorTile(0);
+
         DevelopmentCardGrid devGrid = new DevelopmentCardGrid();
         List<DevelopmentCard> list = devGrid.getAvailableCards();
 

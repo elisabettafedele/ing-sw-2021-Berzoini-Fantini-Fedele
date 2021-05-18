@@ -46,7 +46,7 @@ public class MatchData {
 
     }
 
-    private LightClient getLightClientByNickname(String nickname) {
+    public LightClient getLightClientByNickname(String nickname) {
         for(LightClient lc : otherClients){
             if(lc.getNickname().equals(nickname))
                 return lc;
@@ -125,5 +125,14 @@ public class MatchData {
             if (message.getNickname().equals(thisClient.getNickname()) || message.getNickname().equals("SETUP"))
                 GraphicalMarket.printMarket(((UpdateMarketView) message).getMarbles(), ((UpdateMarketView) message).getSideMarble());
         }
+    }
+
+    public List<String> getAllNicknames(){
+        List<String> nicknames = new ArrayList<>();
+        nicknames.add(thisClient.getNickname());
+        for(LightClient lc : otherClients){
+            nicknames.add(lc.getNickname());
+        }
+        return nicknames;
     }
 }

@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.cli.graphical;
 
 
+import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.common.LightLeaderCard;
 import it.polimi.ingsw.enumerations.Level;
 import it.polimi.ingsw.enumerations.Resource;
@@ -9,8 +10,8 @@ import java.util.List;
 
 public class GraphicalLeaderCard extends GraphicalCard{
 
-    public GraphicalLeaderCard(LightLeaderCard ldc) {
-        super(ldc);
+    public GraphicalLeaderCard(LightLeaderCard ldc, String nickname) {
+        super(ldc, nickname);
     }
 
     public void drawCard(){
@@ -20,7 +21,25 @@ public class GraphicalLeaderCard extends GraphicalCard{
         drawVictoryPoints();
         drawActivationCost();
         drawEffect();
-        //TODO: draw active/inactive
+        boolean active;
+        try {
+            active = MatchData.getInstance().getLightClientByNickname(this.nickname).
+                    leaderCardIsActive(this.lightCard.getID());
+        }catch(Exception e){
+            active = false;
+        }
+        drawActive(active);
+    }
+
+    private void drawActive(boolean active) {
+        if(active){
+            colours[1][CardWidth - 4] = Colour.ANSI_BRIGHT_GREEN;
+            colours[1][CardWidth - 3] = Colour.ANSI_BRIGHT_GREEN;
+        }else{
+            colours[1][CardWidth - 4] = Colour.ANSI_BRIGHT_RED;
+            colours[1][CardWidth - 3] = Colour.ANSI_BRIGHT_RED;
+        }
+
     }
 
     private void drawEffect() {
