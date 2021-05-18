@@ -352,7 +352,7 @@ public class SetupSceneController {
                 selectedResourcesBooleans=new boolean[4*quantity];
                 confirmSelectionButton.setDisable(true);
                 confirmSelectionButton.setVisible(true);
-                lastLabel.setText("Choose " + quantity + (quantity>1?" resorces":" resource"));
+                lastLabel.setText("Choose " + quantity + (quantity>1?" resources":" resource"));
                 List<ImageView> resourcesImages= buildResources(quantity);
                 int resCounter=0;
                 for(int row=0;row<quantity;row++){
