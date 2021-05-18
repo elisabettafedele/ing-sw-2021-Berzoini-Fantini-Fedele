@@ -2,7 +2,7 @@ package it.polimi.ingsw.client.cli.specificCLI;
 
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.cli.CLI;
-import it.polimi.ingsw.client.cli.graphical.GraphicalWarehouse;
+import it.polimi.ingsw.client.cli.graphical.GraphicalWarehouse2;
 import it.polimi.ingsw.client.utilities.Command;
 import it.polimi.ingsw.client.utilities.InputParser;
 import it.polimi.ingsw.client.utilities.UtilityPrinter;
@@ -133,6 +133,6 @@ public class OrganizeDepotsCLI {
     }
 */
     public static void updateDepotStatus(String nickname, List<Resource>[] warehouseDepots, int[] strongboxDepots, Map<Integer, Integer> leaderDepots) {
-        GraphicalWarehouse.printWarehouse(warehouseDepots);
+        GraphicalWarehouse2.printWarehouse(warehouseDepots);
     }
 }

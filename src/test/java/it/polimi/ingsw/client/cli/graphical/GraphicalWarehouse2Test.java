@@ -1,15 +1,13 @@
 package it.polimi.ingsw.client.cli.graphical;
 
 import it.polimi.ingsw.enumerations.Resource;
-import it.polimi.ingsw.model.player.Warehouse;
 import junit.framework.TestCase;
 import org.junit.Test;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GraphicalWarehouseTest extends TestCase {
+public class GraphicalWarehouse2Test extends TestCase {
 
     @Test
     public void testWarehousePrint(){
@@ -23,7 +21,7 @@ public class GraphicalWarehouseTest extends TestCase {
         depots[2].add(Resource.STONE);
         depots[2].add(Resource.STONE);
 
-        GraphicalWarehouse.printWarehouse(depots);
+        GraphicalWarehouse2.printWarehouse(depots);
 
     }
 

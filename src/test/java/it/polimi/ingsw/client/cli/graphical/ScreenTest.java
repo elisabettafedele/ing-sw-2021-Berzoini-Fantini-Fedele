@@ -7,10 +7,17 @@ import it.polimi.ingsw.enumerations.EffectType;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.exceptions.DifferentEffectTypeException;
 import it.polimi.ingsw.exceptions.ValueNotPresentException;
+import it.polimi.ingsw.messages.toClient.matchData.UpdateDepotsStatus;
+import it.polimi.ingsw.messages.toClient.matchData.UpdateMarketView;
 import it.polimi.ingsw.model.cards.*;
+import it.polimi.ingsw.model.depot.StrongboxDepot;
 import it.polimi.ingsw.model.game.DevelopmentCardGrid;
+import it.polimi.ingsw.model.game.Market;
+import it.polimi.ingsw.model.player.PersonalBoard;
+import it.polimi.ingsw.model.player.Warehouse;
 import it.polimi.ingsw.utility.DevelopmentCardParser;
 import it.polimi.ingsw.utility.LeaderCardParser;
+import javafx.css.Match;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -28,13 +35,37 @@ public class ScreenTest {
         MatchData.getInstance().setAllLeaderCards(getLightLeaderCards(LeaderCardParser.parseCards()));
 
         String playerOne = "Raffa";
-        String playerTwo = "abcdefghij";
+        String playerTwo = "abcdefghijjklmnopqrs";
         screen.setClientToDisplay(playerOne);
+
         MatchData.getInstance().setThisClient(playerOne);
         MatchData.getInstance().addLightClient(playerTwo);
         MatchData.getInstance().getLightClientByNickname(playerOne).updateMarkerPosition(5);
         MatchData.getInstance().getLightClientByNickname(playerTwo).updateMarkerPosition(9);
         MatchData.getInstance().getLightClientByNickname(playerTwo).updateTakenPopesFavorTile(0);
+        MatchData.getInstance().getLightClientByNickname(playerOne).addDevelopmentCard(5, 0, 3);
+        MatchData.getInstance().getLightClientByNickname(playerOne).addDevelopmentCard(32, 2, 3);
+        MatchData.getInstance().getLightClientByNickname(playerOne).addLeaderCard(55, false);
+        MatchData.getInstance().getLightClientByNickname(playerOne).addLeaderCard(49, true);
+
+        Market market = new Market();
+        MatchData.getInstance().update(new UpdateMarketView(playerOne, market.getMarketTray(), market.getSlideMarble()));
+
+        Warehouse w = new Warehouse();
+        w.addResourcesToDepot(0, Resource.COIN, 1);
+        w.addResourcesToDepot(1, Resource.STONE, 1);
+        w.addResourcesToDepot(2, Resource.SERVANT, 2);
+
+        List<LeaderCard> lcs = LeaderCardParser.parseCards();
+        PersonalBoard p = new PersonalBoard(lcs.subList(0, 4));
+        Map<Resource, Integer> strongBoxResources = new HashMap<>();
+        strongBoxResources.put(Resource.COIN, 3);
+        strongBoxResources.put(Resource.SERVANT, 9);
+        strongBoxResources.put(Resource.SHIELD, 5);
+        p.addResourcesToStrongbox(strongBoxResources);
+
+
+        MatchData.getInstance().update(new UpdateDepotsStatus(playerOne, w.getWarehouseDepotsStatus(), p.getStrongboxStatus(), null));
 
         DevelopmentCardGrid devGrid = new DevelopmentCardGrid();
         List<DevelopmentCard> list = devGrid.getAvailableCards();

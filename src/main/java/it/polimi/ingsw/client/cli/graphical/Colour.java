@@ -50,6 +50,32 @@ public enum Colour {
             return ANSI_BRIGHT_WHITE.code;
     }
 
+    public static Colour getColourByMarble(Marble marble){
+        if (marble == Marble.YELLOW)
+            return ANSI_BRIGHT_YELLOW;
+        if (marble == Marble.GREY)
+            return ANSI_WHITE;
+        if (marble == Marble.PURPLE)
+            return ANSI_BRIGHT_PURPLE;
+        if (marble == Marble.BLUE)
+            return ANSI_BRIGHT_BLUE;
+        if (marble == Marble.RED)
+            return ANSI_BRIGHT_RED;
+        else
+            return ANSI_BRIGHT_WHITE;
+    }
+
+    public static Colour getColourByResource(Resource resource){
+        if (resource == Resource.COIN)
+            return ANSI_BRIGHT_YELLOW;
+        if (resource == Resource.STONE)
+            return ANSI_WHITE;
+        if (resource == Resource.SHIELD)
+            return ANSI_BRIGHT_BLUE;
+        else
+            return ANSI_BRIGHT_PURPLE;
+    }
+
     public static String getResourceColour(Resource resource){
         if (resource == Resource.COIN)
             return ANSI_BRIGHT_YELLOW.code;

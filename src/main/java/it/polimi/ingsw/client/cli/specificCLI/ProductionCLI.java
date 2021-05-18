@@ -86,7 +86,7 @@ public class ProductionCLI {
                 availableProductionIDs.add(entry.getKey());
             }
         }
-        if(availableResources.values().stream().mapToInt(Integer::intValue).sum() >= 2){
+        if(availableResources.values().stream().mapToInt(Integer::intValue).sum() >= 2 && availableProductionPowers.containsKey(0)){
             System.out.println("0. Basic Production Power: " + availableProductionPowers.get(0));
             availableProductionIDs.add(BASIC_PRODUCTION_POWER);
         }

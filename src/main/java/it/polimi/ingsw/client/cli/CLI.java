@@ -5,7 +5,6 @@ import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.client.View;
 
 import it.polimi.ingsw.client.cli.graphical.GraphicalLogo;
-import it.polimi.ingsw.client.cli.graphical.GraphicalWarehouse;
 import it.polimi.ingsw.client.cli.specificCLI.*;
 import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.common.LightLeaderCard;

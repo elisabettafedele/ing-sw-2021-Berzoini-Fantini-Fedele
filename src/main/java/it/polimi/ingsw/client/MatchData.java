@@ -1,7 +1,7 @@
 package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.client.cli.graphical.GraphicalMarket;
-import it.polimi.ingsw.client.cli.graphical.GraphicalWarehouse;
+import it.polimi.ingsw.client.cli.graphical.GraphicalWarehouse2;
 import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.common.LightLeaderCard;
 import it.polimi.ingsw.enumerations.Marble;
@@ -95,7 +95,7 @@ public class MatchData {
             getLightClientByNickname(message.getNickname()).updateDepotStatus(((UpdateDepotsStatus) message).getWarehouseDepots(), ((UpdateDepotsStatus) message).getStrongboxDepots(), ((UpdateDepotsStatus) message).getLeaderDepots());
             //TODO just temporary, decide when to show. Qua sarà qualcosa del tipo "se è la view selezionata dal client, ristampala"
             if (message.getNickname().equals(thisClient.getNickname()))
-                GraphicalWarehouse.printWarehouse(((UpdateDepotsStatus) message).getWarehouseDepots());
+                GraphicalWarehouse2.printWarehouse(((UpdateDepotsStatus) message).getWarehouseDepots());
         }
         if (message instanceof UpdateMarkerPosition)
             getLightClientByNickname(message.getNickname()).updateMarkerPosition(((UpdateMarkerPosition) message).getMarkerPosition());
@@ -134,5 +134,13 @@ public class MatchData {
             nicknames.add(lc.getNickname());
         }
         return nicknames;
+    }
+
+    public Marble[][] getMarketTray() {
+        return marketTray;
+    }
+
+    public Marble getSlideMarble() {
+        return slideMarble;
     }
 }

@@ -19,8 +19,12 @@ public class LightClient {
 
     private boolean[] hasTakenPopesTile;
 
+    int victoryPoints;
+
+
     public LightClient() {
         this.faithTrackPosition = 0;
+        this.victoryPoints = 0;
         this.ownedLeaderCards = new HashMap<>();
         this.warehouse = new ArrayList[3];
         for (int i = 0; i < 3; i++) {
@@ -83,11 +87,36 @@ public class LightClient {
         return ownedLeaderCards.get(id);
     }
 
+    public List<Integer> getOwnedLeaderCards() {
+        return new ArrayList<Integer>(ownedLeaderCards.keySet());
+    }
+
     public void updateTakenPopesFavorTile(int number){
         this.hasTakenPopesTile[number] = true;
     }
 
     public boolean hasTakenPopesFavorTile(int number){
         return this.hasTakenPopesTile[number];
+    }
+
+    public int[] getOwnedDevelopmentCards() {
+        return ownedDevelopmentCards;
+    }
+
+    //TODO: victoryPointsMessage
+    public void setVictoryPoints(int victoryPoints) {
+        this.victoryPoints = victoryPoints;
+    }
+
+    public int getVictoryPoints() {
+        return victoryPoints;
+    }
+
+    public List<Resource>[] getWarehouse() {
+        return warehouse;
+    }
+
+    public int[] getStrongbox() {
+        return strongbox;
     }
 }
