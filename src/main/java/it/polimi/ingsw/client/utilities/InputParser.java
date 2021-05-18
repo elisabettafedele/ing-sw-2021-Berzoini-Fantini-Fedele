@@ -1,15 +1,94 @@
 package it.polimi.ingsw.client.utilities;
 
 import it.polimi.ingsw.client.cli.CLI;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
 import java.util.function.Predicate;
 
 public class InputParser {
+    private static final Scanner in = new Scanner(System.in);
+    public static String getLine() {
+        while (true) {
+            try {
+                return in.nextLine();
+            } catch (IllegalStateException | NoSuchElementException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
+    public static String getString(String errorMessage, Predicate<String> condition){
+        String line;
+        do{
+            line = in.nextLine();
+            if (condition.test(line))
+                return line;
+            else
+                System.out.println(errorMessage);
+        } while (true);
+    }
+
+    public static Integer getInt(String errorMessage){
+        Integer num = null;
+        while (!in.hasNextInt()) {
+            System.out.println(errorMessage);
+            in.next();
+        }
+        num = in.nextInt();
+        return num;
+    }
+
+    public static Integer getInt(String errorMessage, Predicate<Integer> condition){
+        Integer num = null;
+        boolean failure = false;
+        do {
+            if (failure)
+                System.out.println(errorMessage);
+            while (!in.hasNextInt()) {
+                System.out.println(errorMessage);
+                in.next();
+            }
+            num = in.nextInt();
+            failure = true;
+        } while (!condition.test(num));
+        return num;
+    }
+
+    public static String getCommandFromList(List<String> commands){
+        return commands.get(getInt("Please insert a valid command", CLI.conditionOnIntegerRange(1, commands.size()))-1);
+    }
+
+    public static String getCommandFromList(List<String> textCommands, List<String> intCommands){
+        return getCommand(CLI.conditionOnIntegerRange(1, intCommands.size()), textCommands, intCommands, "Please insert a valid command");
+    }
+
+    public static String getCommand(Predicate integerPredicate, List<String> textCommands, List<String> intCommands, String errorMessage){
+        if (textCommands.isEmpty())
+            return getCommandFromList(intCommands);
+        while (true) {
+            String command = getLine();
+            if (textCommands.contains(command))
+                return command;
+            try {
+                if (integerPredicate.test(Integer.parseInt(command)))
+                    return intCommands.get(Integer.parseInt(command) - 1);
+                else
+                    System.out.println(errorMessage);
+            } catch (NumberFormatException e){ System.out.println(errorMessage);}
+            //finally {
+            //   System.out.println(errorMessage);
+            //}
+        }
+    }
+
+
+
+
+
+
+
+    /*
     private static final BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
 
     public static String getLine(){
@@ -133,5 +212,5 @@ public class InputParser {
             //}
         }
     }
-
+*/
 }
