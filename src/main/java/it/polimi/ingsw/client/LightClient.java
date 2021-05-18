@@ -12,10 +12,12 @@ public class LightClient {
     private int[] ownedDevelopmentCards;
     private int[] victoryPointsDevelopmentCardSlots;
     private String nickname;
+    private List<String>[] hiddenDevelopmentCardColours;
 
     List<Resource>[] warehouse;
     int[] strongbox;
     Map<Integer, Integer> leaderDepots;
+
     //TODO Raffa non serve più, puoi anche rimuovere
     private boolean[] hasTakenPopesTile;
 
@@ -38,7 +40,9 @@ public class LightClient {
         this.ownedDevelopmentCards = new int[]{MatchData.EMPTY_SLOT, MatchData.EMPTY_SLOT, MatchData.EMPTY_SLOT};
         this.victoryPointsDevelopmentCardSlots = new int[3];
         this.popesTileStates = new PopesTileState[]{PopesTileState.NOT_REACHED, PopesTileState.NOT_REACHED, PopesTileState.NOT_REACHED};
-
+        this.hiddenDevelopmentCardColours = new ArrayList[3];
+        for (int i = 0; i < hiddenDevelopmentCardColours.length; i++)
+            hiddenDevelopmentCardColours[i] = new ArrayList();
         //TODO Raffa non serve più, puoi anche rimuovere
         this.hasTakenPopesTile = new boolean[3];
     }
@@ -65,6 +69,8 @@ public class LightClient {
     }
 
     public void addDevelopmentCard(int id, int slot, int victoryPoints){
+        if (ownedDevelopmentCards[slot] != MatchData.EMPTY_SLOT)
+            hiddenDevelopmentCardColours[slot].add(MatchData.getInstance().getDevelopmentCardByID(ownedDevelopmentCards[slot]).getFlagColor());
         ownedDevelopmentCards[slot] = id;
         victoryPointsDevelopmentCardSlots[slot] += victoryPoints;
     }
