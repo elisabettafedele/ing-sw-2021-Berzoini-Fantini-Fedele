@@ -10,8 +10,8 @@ import java.util.List;
 public class GraphicalDevelopmentCard extends GraphicalCard{
 
 
-    public GraphicalDevelopmentCard(LightDevelopmentCard ldc) {
-        super(ldc);
+    public GraphicalDevelopmentCard(LightDevelopmentCard ldc, String nickname) {
+        super(ldc, nickname);
     }
 
     //draw itsSelf

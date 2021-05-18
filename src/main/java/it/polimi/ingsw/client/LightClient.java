@@ -7,7 +7,7 @@ import java.util.*;
 public class LightClient {
 
     private int faithTrackPosition;
-    private Map<Integer, Boolean> ownedLeaderCards;
+    private Map<Integer, Boolean> ownedLeaderCards; //<ID, active>
     //Slot number is the key, the id is the value...if the slot number is not present, it is empty
     private int[] ownedDevelopmentCards;
     private int[] victoryPointsDevelopmentCardSlots;
@@ -78,5 +78,9 @@ public class LightClient {
 
     public void updateOwnedDevelopmentCards(Map<Integer, Integer> ids, Map<Integer, Integer> victoryPoints){
 
+    }
+
+    public boolean leaderCardIsActive(int id){
+        return ownedLeaderCards.get(id);
     }
 }

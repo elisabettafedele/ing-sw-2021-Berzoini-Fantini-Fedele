@@ -126,7 +126,8 @@ public class Screen {
 
         for(Integer ID : IDs){
             LightLeaderCard llc = MatchData.getInstance().getLeaderCardByID(ID);
-            GraphicalLeaderCard glc = new GraphicalLeaderCard(llc);
+            //TODO: nicknames!
+            GraphicalLeaderCard glc = new GraphicalLeaderCard(llc, "raffa");
             glc.drawCard();
             drawElement(GraphicalCard.CardHeight, GraphicalCard.CardWidth, glc.getColours(), glc.getSymbols(),
                     glc.getBackGroundColours(), x_anchor, y_anchor);

@@ -36,7 +36,7 @@ public class GraphicalDevelopmentCardTest {
         }
         Collections.shuffle(IDs);
 
-        gdc = new GraphicalDevelopmentCard(MatchData.getInstance().getDevelopmentCardByID(IDs.get(0)));
+        gdc = new GraphicalDevelopmentCard(MatchData.getInstance().getDevelopmentCardByID(IDs.get(0)), "Raffa");
     }
 
     @Test

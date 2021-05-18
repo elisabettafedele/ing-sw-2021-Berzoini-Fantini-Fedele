@@ -42,7 +42,7 @@ public class GraphicalDevelopmentCardGrid {
             List<Integer> coordinates = retrieveCoordinates(ldc);
             x_coord = coordinates.get(0);
             y_coord = coordinates.get(1);
-            GraphicalDevelopmentCard gdc = new GraphicalDevelopmentCard(ldc);
+            GraphicalDevelopmentCard gdc = new GraphicalDevelopmentCard(ldc, null);
             gdc.drawCard();
             drawCard(gdc, x_coord, y_coord);
         }

@@ -16,9 +16,12 @@ public abstract class GraphicalCard {
     protected final Colour[][] colours = new Colour[CardHeight][CardWidth];
     protected final BackColour[][] backGroundColours = new BackColour[CardHeight][CardWidth];
 
-    public GraphicalCard(LightCard ldc) {
+    String nickname;
+
+    public GraphicalCard(LightCard ldc, String nickname) {
         reset();
         this.lightCard = ldc;
+        this.nickname = nickname;
     }
 
     public void displayCard(){

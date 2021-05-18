@@ -11,6 +11,7 @@ import it.polimi.ingsw.model.cards.Flag;
 import it.polimi.ingsw.model.cards.LeaderCard;
 import it.polimi.ingsw.model.cards.Value;
 import it.polimi.ingsw.utility.LeaderCardParser;
+import javafx.css.Match;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -28,12 +29,19 @@ public class GraphicalLeaderCardTest {
     @Before
     public void setUp() throws Exception {
         MatchData.getInstance().setAllLeaderCards(getLightLeaderCards(LeaderCardParser.parseCards()));
-
+        MatchData.getInstance().setThisClient("Raffa");
         Random rand = new Random();
+        int ID_1 =  rand.nextInt(16) + 49;
+        int ID_2 = rand.nextInt(16) + 49;
+        MatchData.getInstance().addChosenLeaderCard(ID_1, true);
+        MatchData.getInstance().addChosenLeaderCard(ID_2, false);
+        // MatchData.getInstance().addLightClient("Pluto");
 
-        LightLeaderCard llc = MatchData.getInstance().getLeaderCardByID(rand.nextInt(16) + 49);
-        // LightLeaderCard llc = MatchData.getInstance().getLeaderCardByID(55);
-        glc = new GraphicalLeaderCard(llc);
+
+
+
+        LightLeaderCard llc = MatchData.getInstance().getLeaderCardByID(ID_2);
+        glc = new GraphicalLeaderCard(llc, "Raffa");
     }
 
     @Test

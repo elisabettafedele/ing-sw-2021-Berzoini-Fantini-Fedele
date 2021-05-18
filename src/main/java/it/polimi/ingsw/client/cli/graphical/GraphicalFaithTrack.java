@@ -61,6 +61,79 @@ public class GraphicalFaithTrack {
         for(int i = 0; i < 7; i++){
             drawSquare(cellNumber++, 0+1, yStep*i+12*yStep);
         }
+        drawPopesFavorTiles();
+    }
+
+    private void drawPopesFavorTiles() {
+        int xStep = height/3 - 1;
+        int yStep = width/19;
+        int x_begin = xStep+2;
+        int y_begin = yStep*4;
+        drawLowerTiles(x_begin, y_begin, xStep, yStep, false, 2);
+        drawLowerTiles(x_begin, y_begin+yStep*11, xStep, yStep, false, 4);
+        drawUpperTile(x_begin - 1, y_begin+yStep*5, xStep, yStep, false, 3);
+    }
+
+    private void drawUpperTile(int x_begin, int y_begin, int xStep, int yStep, boolean taken, int vps) {
+        for(int i = 0; i < xStep; i++) {
+            for (int j = 0; j < yStep * 2 + 1; j++) {
+                if(i==0 && j == 0){
+                    symbols[i + x_begin][j + y_begin] = '┌';
+                    colours[i + x_begin][j + y_begin] = taken ? Colour.ANSI_BRIGHT_GREEN : Colour.ANSI_BRIGHT_RED;
+                }else if(i == 0 && j == yStep*2){
+                    symbols[i + x_begin][j + y_begin] = '┐';
+                    colours[i + x_begin][j + y_begin] = taken ? Colour.ANSI_BRIGHT_GREEN : Colour.ANSI_BRIGHT_RED;
+                }else if(i == 0){
+                    symbols[i + x_begin][j + y_begin] = '─';
+                    colours[i + x_begin][j + y_begin] = taken  ? Colour.ANSI_BRIGHT_GREEN : Colour.ANSI_BRIGHT_RED;
+                }else if(j == 0 || j == yStep*2){
+                    symbols[i + x_begin][j + y_begin] = '│';
+                    colours[i + x_begin][j + y_begin] = taken  ? Colour.ANSI_BRIGHT_GREEN : Colour.ANSI_BRIGHT_RED;
+                }
+            }
+        }
+        symbols[x_begin + xStep][y_begin] = '┤';
+        symbols[x_begin + xStep][y_begin+yStep*2] = '├';
+
+        symbols[x_begin + 1][y_begin+2] = String.valueOf(vps).charAt(0);
+        symbols[x_begin + 1][y_begin+3] = 'V';
+        symbols[x_begin + 1][y_begin+4] = 'P';
+        colours[x_begin + 1][y_begin+2] = Colour.ANSI_BRIGHT_YELLOW;
+        colours[x_begin + 1][y_begin+3] = Colour.ANSI_BRIGHT_YELLOW;
+        colours[x_begin + 1][y_begin+4] = Colour.ANSI_BRIGHT_YELLOW;
+    }
+
+    private void drawLowerTiles(int x_begin, int y_begin, int xStep, int yStep, boolean taken, int vps) {
+        for(int i = 0; i < xStep; i++){
+            for(int j = 0; j < yStep*2+1; j++){
+                if(i == xStep - 1 && j == 0) {
+                    symbols[i + x_begin][j + y_begin] = '└';
+                    colours[i + x_begin][j + y_begin] = taken ? Colour.ANSI_BRIGHT_GREEN : Colour.ANSI_BRIGHT_RED;
+                }
+                else if(i == xStep - 1 && j == yStep * 2) {
+                    symbols[i + x_begin][j + y_begin] = '┘';
+                    colours[i + x_begin][j + y_begin] = taken ? Colour.ANSI_BRIGHT_GREEN : Colour.ANSI_BRIGHT_RED;
+                }
+                else if(j==0 || j == yStep*2) {
+                    symbols[i + x_begin][j + y_begin] = '│';
+                    colours[i + x_begin][j + y_begin] = taken ? Colour.ANSI_BRIGHT_GREEN : Colour.ANSI_BRIGHT_RED;
+                }
+                else if(i == xStep-1) {
+                    symbols[i + x_begin][j + y_begin] = '─';
+                    colours[i + x_begin][j + y_begin] = taken ? Colour.ANSI_BRIGHT_GREEN : Colour.ANSI_BRIGHT_RED;
+                }
+            }
+        }
+        symbols[x_begin - 1][y_begin] = '┤';
+        symbols[x_begin - 1][y_begin+yStep*2] = '├';
+
+        symbols[x_begin][y_begin+2] = String.valueOf(vps).charAt(0);
+        symbols[x_begin][y_begin+3] = 'V';
+        symbols[x_begin][y_begin+4] = 'P';
+        colours[x_begin][y_begin+2] = Colour.ANSI_BRIGHT_YELLOW;
+        colours[x_begin][y_begin+3] = Colour.ANSI_BRIGHT_YELLOW;
+        colours[x_begin][y_begin+4] = Colour.ANSI_BRIGHT_YELLOW;
+
     }
 
     private void drawSquare(int number, int x, int y) {

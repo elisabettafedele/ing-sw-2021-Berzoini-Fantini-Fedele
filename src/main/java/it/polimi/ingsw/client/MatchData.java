@@ -46,7 +46,7 @@ public class MatchData {
 
     }
 
-    private LightClient getLightClientByNickname(String nickname) {
+    public LightClient getLightClientByNickname(String nickname) {
         for(LightClient lc : otherClients){
             if(lc.getNickname().equals(nickname))
                 return lc;
