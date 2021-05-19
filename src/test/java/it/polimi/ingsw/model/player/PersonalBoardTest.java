@@ -4,8 +4,7 @@ import it.polimi.ingsw.enumerations.*;
 import it.polimi.ingsw.exceptions.*;
 import it.polimi.ingsw.model.cards.*;
 import it.polimi.ingsw.model.depot.LeaderDepot;
-import it.polimi.ingsw.model.game.FaithTrack;
-import it.polimi.ingsw.utility.LeaderCardParser;
+import it.polimi.ingsw.jsonParsers.LeaderCardParser;
 import org.junit.Before;
 import org.junit.Test;
 

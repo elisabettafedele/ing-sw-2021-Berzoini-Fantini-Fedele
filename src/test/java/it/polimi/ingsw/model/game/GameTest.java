@@ -4,7 +4,7 @@ import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.exceptions.*;
 import it.polimi.ingsw.model.cards.LeaderCard;
 import it.polimi.ingsw.model.player.Player;
-import it.polimi.ingsw.utility.LeaderCardParser;
+import it.polimi.ingsw.jsonParsers.LeaderCardParser;
 import org.junit.Before;
 import org.junit.Test;
 

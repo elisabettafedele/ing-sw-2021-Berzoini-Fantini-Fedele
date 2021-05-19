@@ -2,7 +2,7 @@ package it.polimi.ingsw.model.game;
 
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.model.cards.DevelopmentCard;
-import it.polimi.ingsw.utility.DevelopmentCardParser;
+import it.polimi.ingsw.jsonParsers.DevelopmentCardParser;
 import it.polimi.ingsw.model.cards.Flag;
 import it.polimi.ingsw.model.player.Player;
 

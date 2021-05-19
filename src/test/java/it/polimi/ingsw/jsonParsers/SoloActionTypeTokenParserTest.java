@@ -1,4 +1,4 @@
-package it.polimi.ingsw.utility;
+package it.polimi.ingsw.jsonParsers;
 
 import it.polimi.ingsw.controller.actions.BlackCrossMoveToken;
 import it.polimi.ingsw.controller.actions.DiscardToken;
@@ -6,7 +6,6 @@ import it.polimi.ingsw.controller.actions.SoloActionToken;
 import it.polimi.ingsw.enumerations.FlagColor;
 import org.junit.Test;
 
-import java.util.List;
 import java.util.Queue;
 
 import static org.junit.Assert.*;

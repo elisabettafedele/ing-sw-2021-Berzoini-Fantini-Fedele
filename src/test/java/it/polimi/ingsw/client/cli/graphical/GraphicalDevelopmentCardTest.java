@@ -7,7 +7,7 @@ import it.polimi.ingsw.exceptions.ValueNotPresentException;
 import it.polimi.ingsw.model.cards.DevelopmentCard;
 import it.polimi.ingsw.model.cards.Value;
 import it.polimi.ingsw.model.game.DevelopmentCardGrid;
-import it.polimi.ingsw.utility.DevelopmentCardParser;
+import it.polimi.ingsw.jsonParsers.DevelopmentCardParser;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -1,7 +1,6 @@
 package it.polimi.ingsw.controller.actions;
 
 import it.polimi.ingsw.messages.toClient.matchData.NotifyDevelopmentCardBought;
-import it.polimi.ingsw.messages.toClient.matchData.UpdateDepotsStatus;
 import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.controller.TurnController;
 import it.polimi.ingsw.enumerations.EffectType;
@@ -16,7 +15,6 @@ import it.polimi.ingsw.messages.toServer.game.SelectStorageResponse;
 import it.polimi.ingsw.model.cards.DevelopmentCard;
 import it.polimi.ingsw.model.cards.Effect;
 import it.polimi.ingsw.model.player.Player;
-import it.polimi.ingsw.utility.RemoveResources;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -132,24 +130,21 @@ public class BuyDevelopmentCardAction implements Action{
         if(message instanceof SelectDevelopmentCardSlotResponse){
             try {
                 newCard = turnController.getController().getGame().getDevelopmentCardGrid().removeCard(developmentCardChosen);
-                Map<Resource, Integer> cost = developmentCardChosen.getDiscountedCost(this.getDiscountedResources());
-                RemoveResources.removeResources(cost,clientHandler,currentPlayer);
                 currentPlayer.getPersonalBoard().addDevelopmentCard(developmentCardChosen,((SelectDevelopmentCardSlotResponse) message).getSlotSelected());
+                turnController.getController().sendMessageToAll(new NotifyDevelopmentCardBought(currentPlayer.getNickname(), developmentCardChosen.getID(), newCard.getID(), ((SelectDevelopmentCardSlotResponse) message).getSlotSelected(), developmentCardChosen.getVictoryPoints()));
+                Map<Resource, Integer> cost = developmentCardChosen.getDiscountedCost(this.getDiscountedResources());
+                if(currentPlayer.getPersonalBoard().getNumOfDevelopmentCards()==7){
+                    turnController.setEndTriggerToTrue();
+                }
 
-            } catch (InvalidArgumentException e) {
-                e.printStackTrace();
-            } catch (InvalidSlotException e) {
+                turnController.removeResources(cost);
+
+            } catch (InvalidArgumentException | InvalidSlotException e) {
                 e.printStackTrace();
             }
-            turnController.setStandardActionDoneToTrue();
-            if(currentPlayer.getPersonalBoard().getNumOfDevelopmentCards()==7){
-                turnController.setEndTriggerToTrue();
-            }
-            turnController.getController().sendMessageToAll(new UpdateDepotsStatus(currentPlayer.getNickname(), currentPlayer.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), currentPlayer.getPersonalBoard().getStrongboxStatus(), currentPlayer.getPersonalBoard().getLeaderStatus()));
-            turnController.setNextAction();
         }
         if(message instanceof SelectStorageResponse){
-            currentPlayer.getPersonalBoard().isResourceAvailableAndRemove( ((SelectStorageResponse) message).getResourceStorageType(),((SelectStorageResponse) message).getResource(),1,true);
+            turnController.removeResource(((SelectStorageResponse) message).getResourceStorageType(), ((SelectStorageResponse) message).getResource());
         }
     }
 

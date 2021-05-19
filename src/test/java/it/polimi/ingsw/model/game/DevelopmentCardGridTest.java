@@ -7,9 +7,7 @@ import it.polimi.ingsw.model.cards.DevelopmentCard;
 import it.polimi.ingsw.model.cards.Flag;
 import it.polimi.ingsw.model.cards.Production;
 import it.polimi.ingsw.model.cards.Value;
-import it.polimi.ingsw.utility.DevelopmentCardParser;
-import org.junit.After;
-import org.junit.Before;
+import it.polimi.ingsw.jsonParsers.DevelopmentCardParser;
 import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;

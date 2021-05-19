@@ -9,7 +9,7 @@ import it.polimi.ingsw.exceptions.InvalidMethodException;
 import it.polimi.ingsw.exceptions.ZeroPlayerException;
 import it.polimi.ingsw.model.cards.DevelopmentCard;
 import it.polimi.ingsw.model.player.Player;
-import it.polimi.ingsw.utility.SoloActionTokenParser;
+import it.polimi.ingsw.jsonParsers.SoloActionTokenParser;
 
 import java.util.Collections;
 import java.util.List;

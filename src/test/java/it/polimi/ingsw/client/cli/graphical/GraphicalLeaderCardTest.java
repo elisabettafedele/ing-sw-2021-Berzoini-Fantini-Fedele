@@ -10,8 +10,7 @@ import it.polimi.ingsw.model.cards.Effect;
 import it.polimi.ingsw.model.cards.Flag;
 import it.polimi.ingsw.model.cards.LeaderCard;
 import it.polimi.ingsw.model.cards.Value;
-import it.polimi.ingsw.utility.LeaderCardParser;
-import javafx.css.Match;
+import it.polimi.ingsw.jsonParsers.LeaderCardParser;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,8 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
-import static org.junit.Assert.*;
 
 public class GraphicalLeaderCardTest {
 

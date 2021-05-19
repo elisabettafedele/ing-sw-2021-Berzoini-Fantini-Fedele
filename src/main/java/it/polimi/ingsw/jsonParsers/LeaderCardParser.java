@@ -1,4 +1,4 @@
-package it.polimi.ingsw.utility;
+package it.polimi.ingsw.jsonParsers;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;

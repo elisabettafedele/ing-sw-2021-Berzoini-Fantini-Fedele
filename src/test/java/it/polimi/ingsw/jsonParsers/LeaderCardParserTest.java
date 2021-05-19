@@ -1,4 +1,4 @@
-package it.polimi.ingsw.utility;
+package it.polimi.ingsw.jsonParsers;
 
 import it.polimi.ingsw.enumerations.FlagColor;
 import it.polimi.ingsw.enumerations.Level;

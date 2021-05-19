@@ -240,30 +240,4 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
         this.controller = controller;
     }
 
-    public void waitSpecificMessage(){
-        boolean stop=false;
-        while(!stop){
-            try {
-                Object messageFromClient = is.readObject();
-                if(messageFromClient != null && (messageFromClient instanceof SelectStorageResponse)) {
-                    //stopTimer();
-                    //if (!gameStarted)
-                    stop=true;
-                    ((MessageToServer) messageFromClient).handleMessage(server, this);
-
-
-                    //else
-                    // controller.getGameMessageManager().addMessage((MessageToServer) messageFromClient);
-                }
-
-            } catch (ClassNotFoundException messageIgnored) {
-            } catch (SocketTimeoutException e){ //when the timer has expired
-                sendMessageToClient(new TimeoutExpiredMessage());
-                handleSocketDisconnection();
-            } catch (IOException e){//when the client is no longer connected
-                handleSocketDisconnection();
-            }
-
-        }
-    }
 }

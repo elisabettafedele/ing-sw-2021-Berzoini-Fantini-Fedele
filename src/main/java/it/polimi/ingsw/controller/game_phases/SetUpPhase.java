@@ -18,8 +18,8 @@ import it.polimi.ingsw.messages.toServer.game.ChooseResourceTypeResponse;
 import it.polimi.ingsw.messages.toServer.game.ChooseStorageTypeResponse;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
 import it.polimi.ingsw.model.player.Player;
-import it.polimi.ingsw.utility.DevelopmentCardParser;
-import it.polimi.ingsw.utility.LeaderCardParser;
+import it.polimi.ingsw.jsonParsers.DevelopmentCardParser;
+import it.polimi.ingsw.jsonParsers.LeaderCardParser;
 
 import java.util.*;
 import java.util.stream.Collectors;

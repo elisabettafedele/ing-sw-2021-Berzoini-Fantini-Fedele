@@ -3,7 +3,7 @@ package it.polimi.ingsw.model.player;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.JsonFileNotFoundException;
 import it.polimi.ingsw.model.cards.LeaderCard;
-import it.polimi.ingsw.utility.LeaderCardParser;
+import it.polimi.ingsw.jsonParsers.LeaderCardParser;
 import org.junit.Before;
 import org.junit.Test;
 
