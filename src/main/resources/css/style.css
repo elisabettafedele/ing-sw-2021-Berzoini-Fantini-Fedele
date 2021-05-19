@@ -6,3 +6,9 @@
 .cards{
     -fx-border-radius: 30;
 }
+.game-pane{
+    -fx-background-image: url("../img/gameBackground.png");
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: cover, auto;
+    -fx-background-position: center center;
+}

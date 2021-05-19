@@ -129,6 +129,7 @@ public class GUI extends Application implements View {
     @Override
     public void displayChooseStorageTypeRequest(Resource resource, List<String> availableDepots, boolean canDiscard, boolean canReorganize) {
 
+
     }
 
     @Override
@@ -153,7 +154,7 @@ public class GUI extends Application implements View {
     @Override
 
     public void displayChooseResourceTypeRequest(List<Resource> resourceTypes, int quantity) {
-        setupSceneController.displayChooseResourceTypeRequest(resourceTypes,quantity);
+        setupSceneController.displayChooseResourceTypeRequest(quantity);
     }
 
     public void loadDevelopmentCards(List<LightDevelopmentCard> lightDevelopmentCards) {

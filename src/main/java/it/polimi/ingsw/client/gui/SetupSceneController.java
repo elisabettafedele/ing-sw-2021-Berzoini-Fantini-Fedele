@@ -345,7 +345,7 @@ public class SetupSceneController {
 
     }
 
-    public void displayChooseResourceTypeRequest(List<Resource> resourceTypes, int quantity) {
+    public void displayChooseResourceTypeRequest( int quantity) {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
