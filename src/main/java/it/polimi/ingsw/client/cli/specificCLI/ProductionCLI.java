@@ -67,8 +67,9 @@ public class ProductionCLI {
         List<Integer> productionPowersSelected= new ArrayList<>(selectedProductions.keySet());
         if(productionPowersSelected.contains(BASIC_PRODUCTION_POWER)){
             client.sendMessageToServer(new ChooseProductionPowersResponse(productionPowersSelected, selectedProductions.get(BASIC_PRODUCTION_POWER)));
+        } else {
+            client.sendMessageToServer(new ChooseProductionPowersResponse(productionPowersSelected)); //If the player confirms with zero selections don't increment the actionDone variable!!!
         }
-        client.sendMessageToServer(new ChooseProductionPowersResponse(productionPowersSelected)); //If the player confirms with zero selections don't increment the actionDone variable!!!
     }
 
     //check

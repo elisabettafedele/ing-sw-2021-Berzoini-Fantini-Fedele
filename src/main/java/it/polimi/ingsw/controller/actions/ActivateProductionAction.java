@@ -14,7 +14,6 @@ import it.polimi.ingsw.messages.toServer.game.SelectStorageResponse;
 import it.polimi.ingsw.model.cards.*;
 import it.polimi.ingsw.model.player.PersonalBoard;
 import it.polimi.ingsw.model.player.Player;
-import it.polimi.ingsw.utility.RemoveResources;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -190,18 +189,16 @@ public class ActivateProductionAction implements Action{
         if(message instanceof ChooseProductionPowersResponse){
             List<Integer> productionPowerSelected = ((ChooseProductionPowersResponse) message).getProductionPowersSelected();
             List<Value> basicProductionPower;
-
-
             Map<Resource, Integer> resourceToRemove = new HashMap<>();
             Map<Resource, Integer> resourceToAdd = new HashMap<>();
             int faithPoints = 0;
-
             initializeResourceMaps(resourceToAdd, resourceToRemove);
-
             List<Value> productionPower;
 
-            if(productionPowerSelected.size() < 1)
+            if(productionPowerSelected.size() < 1){
+                turnController.setNextAction();
                 return;
+            }
 
             if(productionPowerSelected.contains(BASIC_PRODUCTION_POWER)){
                 basicProductionPower = ((ChooseProductionPowersResponse) message).getBasicProductionPower();
@@ -216,13 +213,11 @@ public class ActivateProductionAction implements Action{
                 faithPoints += manageCost(productionPower.get(1), resourceToAdd);
             }
 
-            RemoveResources.removeResources(resourceToRemove, clientHandler, player);
+            turnController.removeResources(resourceToRemove);
 
             try {
                 personalBoard.addResourcesToStrongbox(resourceToAdd);
-            } catch (InvalidDepotException e) {
-                e.printStackTrace();
-            } catch (InvalidArgumentException e) {
+            } catch (InvalidDepotException | InvalidArgumentException e) {
                 e.printStackTrace();
             }
 
@@ -234,13 +229,11 @@ public class ActivateProductionAction implements Action{
                     e.printStackTrace();
                 }
             }
-            turnController.getController().sendMessageToAll(new UpdateDepotsStatus(player.getNickname(), player.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), player.getPersonalBoard().getStrongboxStatus(), player.getPersonalBoard().getLeaderStatus()));
-            turnController.setStandardActionDoneToTrue();
-            turnController.setNextAction();
+
         }
 
         if(message instanceof SelectStorageResponse){
-            player.getPersonalBoard().isResourceAvailableAndRemove( ((SelectStorageResponse) message).getResourceStorageType(),((SelectStorageResponse) message).getResource(),1,true);
+            turnController.removeResource(((SelectStorageResponse) message).getResourceStorageType(), ((SelectStorageResponse) message).getResource());
         }
 
     }
