@@ -31,10 +31,7 @@ public class MultiplayerPlayPhase extends PlayPhase implements GamePhase {
     }
 
     public void pickNextPlayer(){
-        do {
-            turnIndex = turnIndex == getController().getPlayers().size() - 1 ? 0 : turnIndex + 1;
-        } while (!getController().getPlayers().get(turnIndex).isActive());
-
+        turnIndex = turnIndex == getController().getPlayers().size() - 1 ? 0 : turnIndex + 1;
     }
 
     @Override

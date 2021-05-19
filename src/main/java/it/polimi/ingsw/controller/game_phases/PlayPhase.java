@@ -39,9 +39,8 @@ public abstract class PlayPhase {
 
     public abstract void nextTurn();
 
-    public void handleResourceDiscard(String nickname){
+    public abstract void handleResourceDiscard(String nickname);
 
-    }
     public void handleMessage(MessageToServer message, ClientHandler clientHandler) {
         if (message instanceof ChooseActionResponse)
             getTurnController().doAction(((ChooseActionResponse) message).getActionChosen());

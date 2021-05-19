@@ -60,6 +60,8 @@ public class TurnController {
 
     public void start(Player currentPlayer){
         this.currentPlayer=currentPlayer;
+        if (!currentPlayer.isActive())
+            ((PlayPhase) controller.getGamePhase()).nextTurn();
         this.clientHandler= controller.getConnectionByNickname(currentPlayer.getNickname());
         reset();
         setNextAction();
