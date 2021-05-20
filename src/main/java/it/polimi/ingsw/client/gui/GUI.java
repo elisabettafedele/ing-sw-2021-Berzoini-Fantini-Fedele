@@ -1,4 +1,5 @@
 package it.polimi.ingsw.client.gui;
+
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.client.View;
@@ -18,6 +19,7 @@ import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +30,10 @@ public class GUI extends Application implements View {
     private Client client;
     private FXMLLoader fxmlLoader;
     private SetupSceneController setupSceneController;
+    private GameSceneController gameSceneController;
+    private int screenEight;
+    private double screenPercentageTakenByWindow=0.4;//if changed has to be changed also in GameSceneController initialize(),for int screenEight
+    private double ratioBaseHeight=1.961452095808383;//base fratto altezza
 
 
     @Override
@@ -38,7 +44,10 @@ public class GUI extends Application implements View {
             System.exit(0);
 
         });
-        askConnectionParameters();
+        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        screenEight = gd.getDisplayMode().getHeight();
+        displayChooseStorageTypeRequest(null,null,true,true);
+        //askConnectionParameters();
     }
 
     private void createMainScene(String pathOfFxmlFile, FunctionInterface functionInterface) {
@@ -53,10 +62,17 @@ public class GUI extends Application implements View {
                 scene = new Scene(new Label("Error loading the scene"));
             }
             stage.setScene(scene);
+            //stage.setHeight(screenEight*screenPercentageTakenByWindow+30);
+            //stage.setWidth(screenEight*screenPercentageTakenByWindow*ratioBaseHeight);
             stage.setResizable(false);
             functionInterface.executeFunction();
         });
     }
+
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
     private void askConnectionParameters(){
         resetControllers();
         createMainScene("/FXML/SetupScene.fxml", () -> {
@@ -65,12 +81,6 @@ public class GUI extends Application implements View {
             stage.show();
             setupSceneController = fxmlLoader.getController();
             setupSceneController.setGUI(this);
-            // just for testing
-            //if (mockingConnection) {
-                //setupScreenController.mockSendConnect();
-            //}
-
-            //if (isLogged) setupScreenController.displayUserForm();
         });
 
 
@@ -80,6 +90,8 @@ public class GUI extends Application implements View {
 
     private void resetControllers() {
         setupSceneController = null;
+        gameSceneController=null;
+
     }
 
     @Override
@@ -128,6 +140,15 @@ public class GUI extends Application implements View {
     }
     @Override
     public void displayChooseStorageTypeRequest(Resource resource, List<String> availableDepots, boolean canDiscard, boolean canReorganize) {
+        resetControllers();
+        createMainScene("/FXML/GameScene.fxml", () -> {
+            stage.setTitle("Maestri del Rinascimento");
+            stage.setResizable(false);
+            stage.show();
+            gameSceneController = fxmlLoader.getController();
+            gameSceneController.setGUI(this);
+            gameSceneController.setClient(client);
+        });
 
 
     }
@@ -192,6 +213,7 @@ public class GUI extends Application implements View {
 
     @Override
     public void displaySelectStorageRequest(Resource resource, boolean isInWarehouse, boolean isInStrongbox, boolean isInLeaderDepot) {
+
 
     }
 

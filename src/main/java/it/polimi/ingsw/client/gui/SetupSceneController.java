@@ -124,6 +124,7 @@ public class SetupSceneController {
     @FXML
     public void handleConnectButton(ActionEvent actionEvent) {
         client=new Client(ipTextField.getText(), Integer.parseInt(portTextField.getText()),gui);
+        gui.setClient(client);
         client.start();
     }
 
