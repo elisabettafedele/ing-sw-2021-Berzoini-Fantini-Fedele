@@ -347,6 +347,7 @@ public class TakeResourcesFromMarketAction implements Action {
      */
     private void manageEndAction() {
         turnController.setStandardActionDoneToTrue();
+        clientHandler.sendMessageToClient(new DisplayStandardView());
         turnController.setNextAction();
     }
 
