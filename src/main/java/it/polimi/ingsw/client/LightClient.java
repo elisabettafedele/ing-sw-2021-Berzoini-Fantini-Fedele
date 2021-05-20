@@ -10,6 +10,7 @@ public class LightClient {
     private Map<Integer, Boolean> ownedLeaderCards; //<ID, active>
     //Slot number is the key, the id is the value...if the slot number is not present, it is empty
     private int[] ownedDevelopmentCards;
+    //TODO Message
     private int[] victoryPointsDevelopmentCardSlots;
     private String nickname;
     private List<String>[] hiddenDevelopmentCardColours;

@@ -108,4 +108,11 @@ public abstract class PlayPhase {
         controller.sendMessageToAll(new ReloadMatchData(false, disconnection));
     }
 
+    public Game getLastTurnGameCopy() {
+        return lastTurnGameCopy;
+    }
+
+    public void setLastTurnGameCopy(Game lastTurnGameCopy) {
+        this.lastTurnGameCopy = lastTurnGameCopy;
+    }
 }

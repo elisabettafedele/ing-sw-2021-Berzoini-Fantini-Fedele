@@ -159,7 +159,10 @@ public class PersonalBoard implements Serializable {
     public int[] getDevelopmentCardIdFirstRow(){
         int[] developmentCardIdFirstRow = new int[numberOfDevelopmentCardSlots];
         for (int i = 0; i < developmentCardSlots.length; i++){
-            developmentCardIdFirstRow[i] = developmentCardSlots[i].peek().getID();
+            if (!developmentCardSlots[i].isEmpty())
+                developmentCardIdFirstRow[i] = developmentCardSlots[i].peek().getID();
+            else
+                developmentCardIdFirstRow[i] = -1;
         }
         return developmentCardIdFirstRow;
     }

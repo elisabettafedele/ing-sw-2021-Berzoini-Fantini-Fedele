@@ -95,8 +95,8 @@ public class MatchData {
         if (message instanceof UpdateDepotsStatus) {
             getLightClientByNickname(message.getNickname()).updateDepotStatus(((UpdateDepotsStatus) message).getWarehouseDepots(), ((UpdateDepotsStatus) message).getStrongboxDepots(), ((UpdateDepotsStatus) message).getLeaderDepots());
             //TODO just temporary, decide when to show. Qua sarà qualcosa del tipo "se è la view selezionata dal client, ristampala"
-            if (message.getNickname().equals(thisClient.getNickname()))
-                GraphicalWarehouse2.printWarehouse(((UpdateDepotsStatus) message).getWarehouseDepots());
+            //if (message.getNickname().equals(thisClient.getNickname()))
+            //    GraphicalWarehouse2.printWarehouse(((UpdateDepotsStatus) message).getWarehouseDepots());
         }
         if (message instanceof UpdateMarkerPosition)
             getLightClientByNickname(message.getNickname()).updateMarkerPosition(((UpdateMarkerPosition) message).getMarkerPosition());
@@ -123,8 +123,8 @@ public class MatchData {
             marketTray = ((UpdateMarketView) message).getMarbles();
             slideMarble = ((UpdateMarketView) message).getSideMarble();
             //TODO just temporary, decide when to show...stesso discorso di prima
-            if (message.getNickname().equals(thisClient.getNickname()) || message.getNickname().equals("SETUP"))
-                GraphicalMarket.printMarket(((UpdateMarketView) message).getMarbles(), ((UpdateMarketView) message).getSideMarble());
+            //if (message.getNickname().equals(thisClient.getNickname()) || message.getNickname().equals("SETUP"))
+            //    GraphicalMarket.printMarket(((UpdateMarketView) message).getMarbles(), ((UpdateMarketView) message).getSideMarble());
         }
 
         if (message instanceof NotifyTakenPopesFavorTile){

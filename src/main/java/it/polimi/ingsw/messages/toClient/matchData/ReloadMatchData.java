@@ -13,6 +13,7 @@ public class ReloadMatchData implements MessageToClient {
 
     @Override
     public void handleMessage(VirtualView view) {
-
+        if (!start)
+            view.displayStandardView();
     }
 }

@@ -64,6 +64,8 @@ public class MultiplayerPlayPhase extends PlayPhase implements GamePhase {
     @Override
     public void executePhase(Controller controller) {
         setTurnController(new TurnController(controller,getPlayer()));
+        setLastTurnGameCopy(controller.getGame());
+        reloadGameCopy(false);
         getTurnController().start(getPlayer());
     }
 
