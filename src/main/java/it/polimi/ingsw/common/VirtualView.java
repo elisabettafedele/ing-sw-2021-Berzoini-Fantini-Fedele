@@ -42,6 +42,7 @@ public interface VirtualView {
     //Update MatchDataInfo
     void setNicknames(String playerNickname, List<String> otherPlayersNicknames);
     void update(MatchDataMessage message);
+    void displayStandardView();
 
     //END
     void displayResults(Map<String, Integer> results);

@@ -63,9 +63,6 @@ public class GraphicalWarehouse {
                 coord++;
             }
         }
-
-        colours[1][3] = Colour.getColourByResource(depots[0].get(0));
-
     }
 
     private void drawDepots() {

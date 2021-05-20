@@ -148,4 +148,8 @@ public class MatchData {
     public Marble getSlideMarble() {
         return slideMarble;
     }
+
+    public List<Integer> getDevelopmentCardGrid() {
+        return developmentCardGrid;
+    }
 }

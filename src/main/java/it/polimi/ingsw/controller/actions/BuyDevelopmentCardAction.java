@@ -1,5 +1,6 @@
 package it.polimi.ingsw.controller.actions;
 
+import it.polimi.ingsw.messages.toClient.game.DisplayStandardView;
 import it.polimi.ingsw.messages.toClient.matchData.NotifyDevelopmentCardBought;
 import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.controller.TurnController;
@@ -146,6 +147,7 @@ public class BuyDevelopmentCardAction implements Action{
         if(message instanceof SelectStorageResponse){
             turnController.removeResource(((SelectStorageResponse) message).getResourceStorageType(), ((SelectStorageResponse) message).getResource());
         }
+        clientHandler.sendMessageToClient(new DisplayStandardView());
     }
 
 }

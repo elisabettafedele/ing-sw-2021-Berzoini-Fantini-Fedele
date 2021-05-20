@@ -1,5 +1,6 @@
 package it.polimi.ingsw.controller.actions;
 
+import it.polimi.ingsw.messages.toClient.game.DisplayStandardView;
 import it.polimi.ingsw.messages.toClient.matchData.UpdateDepotsStatus;
 import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.server.Server;
@@ -197,6 +198,7 @@ public class ActivateProductionAction implements Action{
 
             if(productionPowerSelected.size() < 1){
                 turnController.setNextAction();
+                clientHandler.sendMessageToClient(new DisplayStandardView());
                 return;
             }
 
@@ -235,7 +237,7 @@ public class ActivateProductionAction implements Action{
         if(message instanceof SelectStorageResponse){
             turnController.removeResource(((SelectStorageResponse) message).getResourceStorageType(), ((SelectStorageResponse) message).getResource());
         }
-
+        clientHandler.sendMessageToClient(new DisplayStandardView());
     }
 
     private void initializeResourceMaps(Map<Resource, Integer> resourceToAdd, Map<Resource, Integer> resourceToRemove) {

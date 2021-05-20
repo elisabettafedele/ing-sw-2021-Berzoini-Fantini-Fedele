@@ -16,6 +16,7 @@ import it.polimi.ingsw.model.player.PersonalBoard;
 import it.polimi.ingsw.model.player.Warehouse;
 import it.polimi.ingsw.jsonParsers.DevelopmentCardParser;
 import it.polimi.ingsw.jsonParsers.LeaderCardParser;
+import javafx.css.Match;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,6 +35,7 @@ public class ScreenTest {
 
         String playerOne = "Raffa";
         String playerTwo = "abcdefghijjklmnopqrs";
+
         screen.setClientToDisplay(playerOne);
 
         MatchData.getInstance().setThisClient(playerOne);
@@ -74,7 +76,8 @@ public class ScreenTest {
             devCardGridCardsIDs.add(dc.getID());
         }
 
-        screen.updateInfo(devCardGridCardsIDs);
+        MatchData.getInstance().loadDevelopmentCardGrid(devCardGridCardsIDs);
+        //screen.updateInfo(devCardGridCardsIDs);
 
     }
 
