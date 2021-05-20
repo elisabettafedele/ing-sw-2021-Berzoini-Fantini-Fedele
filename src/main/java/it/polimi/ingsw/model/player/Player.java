@@ -3,9 +3,10 @@ package it.polimi.ingsw.model.player;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.model.cards.LeaderCard;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Player {
+public class Player implements Serializable {
     private String nickname;
     private PersonalBoard personalBoard;
     private int victoryPoints;

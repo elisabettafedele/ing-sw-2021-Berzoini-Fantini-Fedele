@@ -4,6 +4,7 @@ import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.ValueNotPresentException;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +13,7 @@ import java.util.Objects;
 /**
  * A development card that can be used to produce resources and faith points
  */
-public class DevelopmentCard extends Card {
+public class DevelopmentCard extends Card implements Serializable {
 
     private static final long serialVersionUID = -7585665187979106207L;
     private Flag flag;

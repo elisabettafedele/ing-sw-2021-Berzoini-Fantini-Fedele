@@ -139,4 +139,13 @@ public class LightClient {
     public int[] getStrongbox() {
         return strongbox;
     }
+
+    public void reloadLeaderCards(Map<Integer, Boolean> cards){
+        this.ownedLeaderCards = cards;
+    }
+
+    public void reloadDevelopmentCards(List<String>[] hiddenDevelopmentCardColours, int[] ownedDevelopmentCards){
+        this.hiddenDevelopmentCardColours = hiddenDevelopmentCardColours;
+        this.ownedDevelopmentCards = ownedDevelopmentCards;
+    }
 }

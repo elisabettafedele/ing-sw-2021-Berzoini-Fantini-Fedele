@@ -130,6 +130,13 @@ public class MatchData {
         if (message instanceof NotifyTakenPopesFavorTile){
             getLightClientByNickname(message.getNickname()).updatePopeFavorTilesStatus(((NotifyTakenPopesFavorTile) message).getNumber(), ((NotifyTakenPopesFavorTile) message).isTaken());
         }
+
+        if (message instanceof ReloadLeaderCardsOwned)
+            getLightClientByNickname(message.getNickname()).reloadLeaderCards(((ReloadLeaderCardsOwned) message).getCards());
+
+        if (message instanceof ReloadDevelopmentCardOwned)
+            getLightClientByNickname(message.getNickname()).reloadDevelopmentCards(((ReloadDevelopmentCardOwned) message).getHiddenDevelopmentCardColours(), ((ReloadDevelopmentCardOwned) message).getOwnedDevelopmentCards());
+
     }
 
     public List<String> getAllNicknames(){

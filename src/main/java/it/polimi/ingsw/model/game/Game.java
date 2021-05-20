@@ -8,12 +8,13 @@ import it.polimi.ingsw.exceptions.ZeroPlayerException;
 import it.polimi.ingsw.model.cards.LeaderCard;
 import it.polimi.ingsw.model.player.Player;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Game {
+public class Game implements Serializable {
     private DevelopmentCardGrid developmentCardGrid;
     private Market market;
     private GameMode gameMode;

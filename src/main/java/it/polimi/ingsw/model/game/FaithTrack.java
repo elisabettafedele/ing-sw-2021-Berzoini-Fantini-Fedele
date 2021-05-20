@@ -3,13 +3,14 @@ package it.polimi.ingsw.model.game;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.model.player.VaticanReportSection;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * The class represents the Game's FaithTrack. It includes all the attributes that FaithTrack has.
  */
 
-public class FaithTrack {
+public class FaithTrack implements Serializable {
     private Iterator<VaticanReportSection> vaticanReportSectionIterator;
     private final int length;
     private LinkedHashMap< Integer , Integer > trackVictoryPoints;

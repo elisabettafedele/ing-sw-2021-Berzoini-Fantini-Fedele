@@ -109,14 +109,15 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
                 } catch (ClassNotFoundException messageIgnored) {
                 } catch (SocketTimeoutException e){ //when the timer has expired
                     sendMessageToClient(new TimeoutExpiredMessage());
-                    handleSocketDisconnection();
+                    handleSocketDisconnection(true);
                 } catch (IOException e){//when the client is no longer connected
-                    handleSocketDisconnection();
+                    handleSocketDisconnection(false);
                 }
 
             }
         }catch (IOException e){
-            handleSocketDisconnection();
+            boolean timeout = e instanceof SocketTimeoutException;
+            handleSocketDisconnection(timeout);
         }
     }
 
@@ -126,7 +127,7 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
             try{
                 Thread.sleep(TIMEOUT_FOR_RESPONSE);
                 Server.SERVER_LOGGER.log(Level.SEVERE, "Timer has expired, you have been disconnected.");
-                handleSocketDisconnection();
+                handleSocketDisconnection(true);
             } catch (InterruptedException e){ }
         });
         timer.start();
@@ -147,7 +148,7 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
             os.reset();
             //startTimer();
         } catch (IOException e) {
-            handleSocketDisconnection();
+            handleSocketDisconnection(e instanceof SocketTimeoutException);
         }
     }
 
@@ -155,7 +156,7 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
      * Method to handle client's disconnection
      */
     //If the timer is expired or the ping message cannot be sent due to disconnection of the client (it throws IO Exception) I tell the client that he has been disconnected
-    private void handleSocketDisconnection(){
+    private void handleSocketDisconnection(boolean timeout){
         //The connection is not active anymore
         this.active = false;
         Server.SERVER_LOGGER.log(Level.SEVERE, "Client disconnected");

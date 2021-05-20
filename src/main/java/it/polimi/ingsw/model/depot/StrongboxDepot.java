@@ -5,7 +5,9 @@ import it.polimi.ingsw.exceptions.InsufficientSpaceException;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.InvalidDepotException;
 
-public class StrongboxDepot extends Depot{
+import java.io.Serializable;
+
+public class StrongboxDepot extends Depot implements Serializable {
     public StrongboxDepot(Resource res) {
         super(res);
     }

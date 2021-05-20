@@ -6,6 +6,7 @@ import it.polimi.ingsw.jsonParsers.DevelopmentCardParser;
 import it.polimi.ingsw.model.cards.Flag;
 import it.polimi.ingsw.model.player.Player;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -13,7 +14,7 @@ import java.util.stream.Collectors;
 /**
  * Class to represent the disposition of the {@link DevelopmentCard} purchasable in the game
  */
-public class DevelopmentCardGrid {
+public class DevelopmentCardGrid implements Serializable {
 
     private Stack<DevelopmentCard>[][] cardGrid;
     private final static int LEVEL = 3, COLOR = 4;

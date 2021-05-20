@@ -59,13 +59,14 @@ public class TurnController {
     }
 
     public void start(Player currentPlayer){
-        this.currentPlayer=currentPlayer;
-        if (!currentPlayer.isActive())
+        this.currentPlayer = currentPlayer;
+        if (!currentPlayer.isActive()) {
             ((PlayPhase) controller.getGamePhase()).nextTurn();
-        this.clientHandler= controller.getConnectionByNickname(currentPlayer.getNickname());
-        reset();
-        setNextAction();
-
+        } else {
+            this.clientHandler = controller.getConnectionByNickname(currentPlayer.getNickname());
+            reset();
+            setNextAction();
+        }
     }
 
     public void setNextAction(){

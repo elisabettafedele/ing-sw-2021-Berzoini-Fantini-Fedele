@@ -3,11 +3,13 @@ package it.polimi.ingsw.model.player;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.model.game.FaithTrack;
 
+import java.io.Serializable;
+
 /**
  * The class represents a Vatican Report Section of the {@link FaithTrack}
  */
 
-public class VaticanReportSection {
+public class VaticanReportSection implements Serializable {
 
     private final int  start;
     private final int  end;

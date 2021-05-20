@@ -6,11 +6,13 @@ import it.polimi.ingsw.exceptions.InsufficientSpaceException;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.InvalidDepotException;
 
+import java.io.Serializable;
+
 /**
  * Abstract class extended by all the possible kind of depots in the game, that are: WarehouseDepot, StrongboxDepot and LeaderDepot
  */
 
-public abstract class Depot {
+public abstract class Depot implements Serializable {
     
     protected Resource resourceType;
     protected int resourceQuantity;

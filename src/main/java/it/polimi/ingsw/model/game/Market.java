@@ -3,6 +3,7 @@ package it.polimi.ingsw.model.game;
 import it.polimi.ingsw.enumerations.Marble;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.Random;
  * The class represents the Market Tray with the {@link Marble} that can be taken during the {@link TakeResourceFromMarket}
  * action
  */
-public class Market {
+public class Market implements Serializable {
 
     private static final int ROW = 3;
     private static final int COL = 4;

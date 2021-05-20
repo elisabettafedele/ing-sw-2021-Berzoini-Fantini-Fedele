@@ -6,6 +6,7 @@ import it.polimi.ingsw.exceptions.*;
 import it.polimi.ingsw.model.depot.Depot;
 import it.polimi.ingsw.model.depot.WarehouseDepot;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.stream.Collectors;
  * The smallest depot has index 0
  */
 
-public class Warehouse {
+public class Warehouse implements Serializable {
     private final WarehouseDepot[] depots;
     private final int numberOfDepots = 3;
 

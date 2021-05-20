@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.player;
 
 import it.polimi.ingsw.enumerations.*;
 import it.polimi.ingsw.exceptions.*;
+import it.polimi.ingsw.jsonParsers.DevelopmentCardParser;
 import it.polimi.ingsw.model.cards.*;
 import it.polimi.ingsw.model.depot.LeaderDepot;
 import it.polimi.ingsw.jsonParsers.LeaderCardParser;
@@ -450,5 +451,16 @@ public class PersonalBoardTest {
         pb.addResources(ResourceStorageType.LEADER_DEPOT, Resource.SHIELD, 2);
         pb.removeAll(Resource.SHIELD);
         assertTrue(pb.countResources().get(Resource.SERVANT) == 0);
+    }
+
+    @Test
+    public void testGetHiddenDevelopmentCards() throws InvalidArgumentException, InvalidSlotException {
+        List<LeaderCard> lcl = LeaderCardParser.parseCards();
+        lcl = lcl.stream().filter(x-> x.getEffect().getEffectType() == EffectType.EXTRA_DEPOT).collect(Collectors.toList());
+        lcl.forEach(LeaderCard::activate);
+        PersonalBoard pb = new PersonalBoard(lcl);
+        List<DevelopmentCard> developmentCards = DevelopmentCardParser.parseCards();
+        for (int i = 0; i < 8; i++)
+            pb.addDevelopmentCard(developmentCards.get(i), i % 3);
     }
 }

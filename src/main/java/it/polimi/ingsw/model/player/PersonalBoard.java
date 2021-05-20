@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model.player;
 
+import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.enumerations.*;
 import it.polimi.ingsw.exceptions.*;
 import it.polimi.ingsw.model.cards.*;
@@ -7,13 +8,14 @@ import it.polimi.ingsw.model.depot.Depot;
 import it.polimi.ingsw.model.depot.LeaderDepot;
 import it.polimi.ingsw.model.depot.StrongboxDepot;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
 /**
  * The class represents the {@link Player}'s Personal Board.It includes all the attributes and that PersonalBoard has.
  */
-public class PersonalBoard {
+public class PersonalBoard implements Serializable {
     private StrongboxDepot[] strongbox;
     private Warehouse warehouse;
     private int markerPosition;
@@ -152,6 +154,28 @@ public class PersonalBoard {
             }
         }
         return developmentCards;
+    }
+
+    public int[] getDevelopmentCardIdFirstRow(){
+        int[] developmentCardIdFirstRow = new int[numberOfDevelopmentCardSlots];
+        for (int i = 0; i < developmentCardSlots.length; i++){
+            developmentCardIdFirstRow[i] = developmentCardSlots[i].peek().getID();
+        }
+        return developmentCardIdFirstRow;
+    }
+
+    public List<String>[] getHiddenDevelopmentCardColours(){
+        List<String>[] hiddenDevelopmentCardColours= new ArrayList[numberOfDevelopmentCardSlots];
+        for (int i = 0; i < developmentCardSlots.length; i++){
+            hiddenDevelopmentCardColours[i] = new ArrayList<>();
+            if (developmentCardSlots[i].size() > 1){
+                //get the covered cards
+                for (int j = 0; j < developmentCardSlots[i].size() - 1; j++){
+                    hiddenDevelopmentCardColours[i].add(developmentCardSlots[i].get(j).getFlag().getFlagColor().toString());
+                }
+            }
+        }
+        return hiddenDevelopmentCardColours;
     }
 
     /**

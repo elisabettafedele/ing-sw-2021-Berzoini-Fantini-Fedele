@@ -2,12 +2,13 @@ package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * The class represents the Leader Cards of the game
  */
-public class LeaderCard extends Card {
+public class LeaderCard extends Card implements Serializable {
 
     private static final long serialVersionUID = -5121414682747056044L;
     private boolean active;
