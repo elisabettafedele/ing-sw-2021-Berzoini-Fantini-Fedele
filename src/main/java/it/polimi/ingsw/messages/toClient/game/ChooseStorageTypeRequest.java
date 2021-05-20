@@ -21,7 +21,7 @@ public class ChooseStorageTypeRequest implements MessageToClient {
 
     @Override
     public void handleMessage(VirtualView view) {
-        System.out.println(this.toString());
+        //System.out.println(this.toString());
         view.displayChooseStorageTypeRequest(resource, availableDepots, canDiscard, canReorganize);
     }
 }

@@ -9,29 +9,32 @@ import java.util.List;
 
 public class Screen {
 
-    private final static int screen_width = 160;
+    private final static int screen_width = 188;
     private final static int screen_height = 25;
 
     private final int devCardGrid_x_anchor = 0;
     private final int devCardGrid_y_anchor = 0;
 
     private final int faith_track_x_anchor = 0;
-    private final int faith_track_y_anchor = 60;
+    private final int faith_track_y_anchor = 62;
 
     private final int devCardSlots_x_anchor = 16;
-    private final int devCardSlots_y_anchor = 82;
+    private final int devCardSlots_y_anchor = 62;
 
-    private final int market_x_anchor = 8;
-    private final int market_y_anchor = 120;
+    private final int ownedLeader_x_anchor = 16;
+    private final int ownedLeader_y_anchor = 122;
+
+    private final int market_x_anchor = 1;
+    private final int market_y_anchor = 129;
 
     private final int scoreBoard_x_anchor = 1;
-    private final int scoreBoard_y_anchor = 122;
+    private final int scoreBoard_y_anchor = 152;
 
-    private final int warehouse_x_anchor = 17;
-    private final int warehouse_y_anchor = 72;
+    private final int warehouse_x_anchor = 9;
+    private final int warehouse_y_anchor = 131;
 
-    private final int strongbox_x_anchor = 15;
-    private final int strongbox_y_anchor = 62;
+    private final int strongbox_x_anchor = 7;
+    private final int strongbox_y_anchor = 122;
 
     private final char[][] screen = new char[screen_height][screen_width];
     private final Colour[][] colours = new Colour[screen_height][screen_width];
@@ -57,10 +60,6 @@ public class Screen {
         graphicalDevelopmentCardGrid = new GraphicalDevelopmentCardGrid();
         developmentCardGridCardsToDisplay = new ArrayList<>();
         reset();
-    }
-
-    public void updateInfo(List<Integer> developmentCardGridCardsToDisplay){
-        this.developmentCardGridCardsToDisplay = developmentCardGridCardsToDisplay;
     }
 
     public void setClientToDisplay(String nickname){
@@ -146,7 +145,7 @@ public class Screen {
             GraphicalLeaderCard glc = new GraphicalLeaderCard(llc, this.nickname);
             glc.drawCard();
             drawElement(GraphicalCard.CardHeight, GraphicalCard.CardWidth, glc.getColours(), glc.getSymbols(),
-                    glc.getBackGroundColours(), this.devCardSlots_x_anchor, this.devCardSlots_y_anchor + (i+3)*yStep);
+                    glc.getBackGroundColours(), this.ownedLeader_x_anchor, this.ownedLeader_y_anchor + i*yStep);
         }
 
     }
@@ -162,7 +161,7 @@ public class Screen {
     }
 
     private void drawDevelopmentCardGrid(){
-        graphicalDevelopmentCardGrid.drawDevelopmentCardGrid(developmentCardGridCardsToDisplay);
+        graphicalDevelopmentCardGrid.drawDevelopmentCardGrid(MatchData.getInstance().getDevelopmentCardGrid());
 
         int devCardGridWidth = graphicalDevelopmentCardGrid.getWidth();
         int devCardGridHeight = graphicalDevelopmentCardGrid.getHeight();

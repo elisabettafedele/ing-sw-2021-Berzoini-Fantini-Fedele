@@ -5,6 +5,7 @@ import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.client.View;
 
 import it.polimi.ingsw.client.cli.graphical.GraphicalLogo;
+import it.polimi.ingsw.client.cli.graphical.Screen;
 import it.polimi.ingsw.client.cli.specificCLI.*;
 import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.common.LightLeaderCard;
@@ -202,6 +203,11 @@ public class CLI implements View {
         for(String nickname : otherPlayersNicknames){
             MatchData.getInstance().addLightClient(nickname);
         }
+    }
+
+    @Override
+    public void displayStandardView() {
+        Screen.getInstance().displayStandardView();
     }
 
     // *********************************************************************  //

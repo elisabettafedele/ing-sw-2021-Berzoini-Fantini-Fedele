@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.cli.specificCLI;
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.client.cli.CLI;
+import it.polimi.ingsw.client.cli.graphical.Screen;
 import it.polimi.ingsw.client.utilities.InputParser;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
@@ -18,6 +19,7 @@ public class ProductionCLI {
     private static final int BASIC_PRODUCTION_POWER = 0;
 
     public static void displayChooseProductionPowersRequest(Client client, Map<Integer, List<Value>> availableProductionPowers, Map<Resource, Integer> availableResources) {
+        Screen.getInstance().displayStandardView();
         boolean confirmed = false;
         boolean wantsToRemove = false;
         Map<Integer, List<Value>> selectedProductions = new HashMap<>();
@@ -83,7 +85,7 @@ public class ProductionCLI {
                 //skip
             }
             if(hasResourcesForThisProduction(activationCost, availableResources) && entry.getKey() != 0){
-                System.out.println(MatchData.getInstance().getDevelopmentCardByID(entry.getKey()));
+                System.out.println(entry.getKey());
                 availableProductionIDs.add(entry.getKey());
             }
         }
