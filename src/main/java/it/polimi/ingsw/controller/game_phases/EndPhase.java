@@ -42,6 +42,10 @@ public abstract class EndPhase implements GamePhase {
         return controller;
     }
 
+    public void removeControllerFromActiveGames(){
+
+    }
+
     public String toString(){
         return "End Phase";
     }

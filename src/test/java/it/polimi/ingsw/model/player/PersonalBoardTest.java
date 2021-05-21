@@ -460,7 +460,12 @@ public class PersonalBoardTest {
         lcl.forEach(LeaderCard::activate);
         PersonalBoard pb = new PersonalBoard(lcl);
         List<DevelopmentCard> developmentCards = DevelopmentCardParser.parseCards();
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 3; i++) {
             pb.addDevelopmentCard(developmentCards.get(i), i % 3);
+            pb.addDevelopmentCard(developmentCards.get(i + 16), i % 3);
+            pb.addDevelopmentCard(developmentCards.get(i + 32), i % 3);
+        }
+        //TODO finish
+
     }
 }

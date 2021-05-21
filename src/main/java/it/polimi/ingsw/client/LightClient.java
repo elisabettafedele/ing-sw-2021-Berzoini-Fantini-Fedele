@@ -9,12 +9,14 @@ public class LightClient {
     private int faithTrackPosition;
     private Map<Integer, Boolean> ownedLeaderCards; //<ID, active>
     //Slot number is the key, the id is the value...if the slot number is not present, it is empty
-    private int[] ownedDevelopmentCards;
     //TODO Message
     private int[] victoryPointsDevelopmentCardSlots;
     private String nickname;
+    //TODO Raffa non serve più, puoi anche rimuovere ( anche tutte le altre cose correlate) ->inizio
     private List<String>[] hiddenDevelopmentCardColours;
-
+    private int[] ownedDevelopmentCards;
+    //TODO Raffa non serve più, puoi anche rimuovere ->fine
+    private Stack<Integer>[] developmentCardSlots;
     List<Resource>[] warehouse;
     int[] strongbox;
     Map<Integer, Integer> leaderDepots;
@@ -25,8 +27,6 @@ public class LightClient {
 
     //TODO Raffa non serve più, puoi anche rimuovere
     private boolean[] hasTakenPopesTile;
-
-
     int victoryPoints;
 
 
@@ -46,6 +46,9 @@ public class LightClient {
         this.victoryPointsDevelopmentCardSlots = new int[3];
         this.popesTileStates = new PopesTileState[]{PopesTileState.NOT_REACHED, PopesTileState.NOT_REACHED, PopesTileState.NOT_REACHED};
         this.hiddenDevelopmentCardColours = new ArrayList[3];
+        this.developmentCardSlots = new Stack[3];
+        for (int i = 0; i < developmentCardSlots.length; i++)
+            developmentCardSlots[i] = new Stack<>();
         for (int i = 0; i < hiddenDevelopmentCardColours.length; i++)
             hiddenDevelopmentCardColours[i] = new ArrayList();
         //TODO Raffa non serve più, puoi anche rimuovere
@@ -97,8 +100,8 @@ public class LightClient {
             ownedLeaderCards.put(id, true);
     }
 
-    public void updateOwnedDevelopmentCards(Map<Integer, Integer> ids, Map<Integer, Integer> victoryPoints){
-
+    public void setDevelopmentCardSlots(Stack[] developmentCardSlots){
+        this.developmentCardSlots = developmentCardSlots;
     }
 
     public boolean leaderCardIsActive(int id){
@@ -152,5 +155,13 @@ public class LightClient {
     public void reloadDevelopmentCards(List<String>[] hiddenDevelopmentCardColours, int[] ownedDevelopmentCards){
         this.hiddenDevelopmentCardColours = hiddenDevelopmentCardColours;
         this.ownedDevelopmentCards = ownedDevelopmentCards;
+    }
+
+    public void setPopesTileStates(PopesTileState[] popesTileStates){
+        this.popesTileStates = popesTileStates;
+    }
+
+    public void setVictoryPointsDevelopmentCardSlots(int[] victoryPointsDevelopmentCardSlots){
+        this.victoryPointsDevelopmentCardSlots = victoryPointsDevelopmentCardSlots;
     }
 }

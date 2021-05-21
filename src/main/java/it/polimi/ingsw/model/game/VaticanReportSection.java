@@ -1,7 +1,7 @@
-package it.polimi.ingsw.model.player;
+package it.polimi.ingsw.model.game;
 
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
-import it.polimi.ingsw.model.game.FaithTrack;
+import it.polimi.ingsw.model.player.Player;
 
 import java.io.Serializable;
 

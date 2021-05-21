@@ -20,6 +20,8 @@ public class MatchData {
     private List<Integer> developmentCardGrid;
     public static final int EMPTY_SLOT = -1;
     public static final String LORENZO = "Lorenzo";
+    private String currentViewNickname;
+    private View view;
 
     private static MatchData instance;
 
@@ -38,6 +40,12 @@ public class MatchData {
 
     public void setThisClient(String nickname){
         thisClient.setNickname(nickname);
+        //Just temporary, later the user will be able to choose which view he wants to see
+        currentViewNickname = nickname;
+    }
+
+    public void setView(View view){
+        this.view = view;
     }
 
     public void addLightClient(String nickname){
@@ -94,9 +102,10 @@ public class MatchData {
 
         if (message instanceof UpdateDepotsStatus) {
             getLightClientByNickname(message.getNickname()).updateDepotStatus(((UpdateDepotsStatus) message).getWarehouseDepots(), ((UpdateDepotsStatus) message).getStrongboxDepots(), ((UpdateDepotsStatus) message).getLeaderDepots());
+            //if (message.getNickname().equals(currentViewNickname))
+                //view.displayStandardView();
+
             //TODO just temporary, decide when to show. Qua sarà qualcosa del tipo "se è la view selezionata dal client, ristampala"
-            //if (message.getNickname().equals(thisClient.getNickname()))
-            //    GraphicalWarehouse2.printWarehouse(((UpdateDepotsStatus) message).getWarehouseDepots());
         }
         if (message instanceof UpdateMarkerPosition)
             getLightClientByNickname(message.getNickname()).updateMarkerPosition(((UpdateMarkerPosition) message).getMarkerPosition());
@@ -112,9 +121,6 @@ public class MatchData {
                 getLightClientByNickname(message.getNickname()).activateLeader(((NotifyLeaderAction) message).getId());
         }
 
-        if (message instanceof UpdateOwnedDevelopmentCards)
-            getLightClientByNickname(message.getNickname()).updateOwnedDevelopmentCards(((UpdateOwnedDevelopmentCards) message).getIds(), ((UpdateOwnedDevelopmentCards) message).getVictoryPoints());
-
         if (message instanceof NotifyDevelopmentCardBought){
             Collections.replaceAll(developmentCardGrid, ((NotifyDevelopmentCardBought) message).getCardBought(), ((NotifyDevelopmentCardBought) message).getNewCardOnGrid());
             getLightClientByNickname(message.getNickname()).addDevelopmentCard(((NotifyDevelopmentCardBought) message).getCardBought(), ((NotifyDevelopmentCardBought) message).getSlot(), ((NotifyDevelopmentCardBought) message).getVictoryPoints());
@@ -127,9 +133,8 @@ public class MatchData {
             //    GraphicalMarket.printMarket(((UpdateMarketView) message).getMarbles(), ((UpdateMarketView) message).getSideMarble());
         }
 
-        if (message instanceof NotifyTakenPopesFavorTile){
+        if (message instanceof NotifyTakenPopesFavorTile)
             getLightClientByNickname(message.getNickname()).updatePopeFavorTilesStatus(((NotifyTakenPopesFavorTile) message).getNumber(), ((NotifyTakenPopesFavorTile) message).isTaken());
-        }
 
         if (message instanceof ReloadLeaderCardsOwned)
             getLightClientByNickname(message.getNickname()).reloadLeaderCards(((ReloadLeaderCardsOwned) message).getCards());
@@ -137,6 +142,15 @@ public class MatchData {
         if (message instanceof ReloadDevelopmentCardOwned)
             getLightClientByNickname(message.getNickname()).reloadDevelopmentCards(((ReloadDevelopmentCardOwned) message).getHiddenDevelopmentCardColours(), ((ReloadDevelopmentCardOwned) message).getOwnedDevelopmentCards());
 
+        if (message instanceof ReloadPopesFavorTiles)
+            getLightClientByNickname(message.getNickname()).setPopesTileStates(((ReloadPopesFavorTiles) message).getPopesTileStates());
+
+        if (message instanceof ReloadDevelopmentCardsVictoryPoints)
+            getLightClientByNickname(message.getNickname()).setVictoryPointsDevelopmentCardSlots(((ReloadDevelopmentCardsVictoryPoints) message).getDevelopmentCardsVictoryPoints());
+
+        if (message instanceof LoadDevelopmentCardSlots){
+            getLightClientByNickname(message.getNickname()).setDevelopmentCardSlots(((LoadDevelopmentCardSlots) message).getSlots());
+        }
     }
 
     public List<String> getAllNicknames(){

@@ -73,12 +73,18 @@ public class SetUpPhase implements GamePhase {
 
             // 2. I set the number of resources for each player
             initialResourceByNickname.put(nicknames.get(i), getNumberOfInitialResourcesByIndex(i));
+        }
 
-            // 3. I send to the client the cards and the leader cards and the card chosen
+        //I send to everyone the view with the leader Cards to choose
+        controller.sendMatchData(controller.getGame(), false);
+
+        for (int i = 0; i < nicknames.size(); i++) {
+            // 3. I send to the client the leader cards assigned
             ClientHandler connection = controller.getConnectionByNickname(nicknames.get(i));
             connection.setClientHandlerPhase(ClientHandlerPhase.WAITING_DISCARDED_LEADER_CARDS);
-            connection.sendMessageToClient(new ChooseLeaderCardsRequest(leaderCardsAssigned.stream().map(Card::getID).collect(Collectors.toList())));
+            connection.sendMessageToClient(new ChooseLeaderCardsRequest(controller.getPlayerByNickname(nicknames.get(i)).getPersonalBoard().getLeaderCards().stream().map(Card::getID).collect(Collectors.toList())));
         }
+
 
     }
 
