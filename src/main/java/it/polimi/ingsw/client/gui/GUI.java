@@ -19,7 +19,6 @@ import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
-import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -31,9 +30,6 @@ public class GUI extends Application implements View {
     private FXMLLoader fxmlLoader;
     private SetupSceneController setupSceneController;
     private GameSceneController gameSceneController;
-    private int screenEight;
-    private double screenPercentageTakenByWindow=0.4;//if changed has to be changed also in GameSceneController initialize(),for int screenEight
-    private double ratioBaseHeight=1.961452095808383;//base fratto altezza
 
 
     @Override
@@ -44,8 +40,6 @@ public class GUI extends Application implements View {
             System.exit(0);
 
         });
-        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-        screenEight = gd.getDisplayMode().getHeight();
         displayChooseStorageTypeRequest(null,null,true,true);
         //askConnectionParameters();
     }
@@ -62,8 +56,6 @@ public class GUI extends Application implements View {
                 scene = new Scene(new Label("Error loading the scene"));
             }
             stage.setScene(scene);
-            //stage.setHeight(screenEight*screenPercentageTakenByWindow+30);
-            //stage.setWidth(screenEight*screenPercentageTakenByWindow*ratioBaseHeight);
             stage.setResizable(false);
             functionInterface.executeFunction();
         });
