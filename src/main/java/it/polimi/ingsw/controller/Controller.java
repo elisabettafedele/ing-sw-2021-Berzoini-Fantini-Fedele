@@ -1,6 +1,9 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.controller.game_phases.*;
+import it.polimi.ingsw.messages.toClient.matchData.*;
+import it.polimi.ingsw.model.cards.Card;
+import it.polimi.ingsw.model.cards.LeaderCard;
 import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.common.ClientHandlerInterface;
 import it.polimi.ingsw.controller.game_phases.SinglePlayerEndPhase;
@@ -13,8 +16,10 @@ import it.polimi.ingsw.model.game.Game;
 import it.polimi.ingsw.model.player.Player;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
@@ -24,11 +29,11 @@ public class Controller {
     private List<ClientHandler> clientHandlers;
     private ReentrantLock lockPlayers = new ReentrantLock(true);
     private ReentrantLock lockConnections = new ReentrantLock(true);
+    private final String RELOAD = "RELOAD";
+
     public Controller(GameMode gameMode) throws InvalidArgumentException, UnsupportedEncodingException {
         this.game = new Game(gameMode);
         this.clientHandlers = new LinkedList<>();
-        //TODO this.gamePhase = new GamePhase() link the setup phase
-
     }
 
     /**
@@ -66,7 +71,6 @@ public class Controller {
     }
 
     public synchronized void handleMessage(MessageToServer message, ClientHandlerInterface clientHandler){
-        String nickname = clientHandler.getNickname();
 
         //SETUP MESSAGES
         if (gamePhase instanceof SetUpPhase) {
@@ -84,7 +88,7 @@ public class Controller {
     }
 
     public List<String> getNicknames(){
-        return clientHandlers.stream().map(x -> x.getNickname()).collect(Collectors.toList());
+        return clientHandlers.stream().map(ClientHandler::getNickname).collect(Collectors.toList());
     }
 
     public ClientHandler getConnectionByNickname(String nickname){
@@ -140,6 +144,52 @@ public class Controller {
             lockConnections.unlock();
         }
     }
+
+    public void sendMatchData(Game game, boolean disconnection){
+        assert game!=null;
+        //Inform all the clients that a previous game status is being restored
+        sendMessageToAll(new ReloadMatchData(true, disconnection));
+        if (!disconnection){
+            //Resend all the cards
+        }
+        sendMessageToAll(new LoadDevelopmentCardGrid(game.getDevelopmentCardGrid().getAvailableCards().stream().map(Card::getID).collect(Collectors.toList())));
+        sendMessageToAll(new UpdateMarketView(RELOAD, game.getMarket().getMarketTray(), game.getMarket().getSlideMarble()));
+        for (Player player : getPlayers()){
+            if (player.isActive()) {
+                for (Player gamePlayer : getPlayers()) {
+
+                    // 1. I create a map with the leader cards of the gamePlayer I am analyzing
+                    Map<Integer, Boolean> leaderCards = new HashMap<>();
+                    for (LeaderCard card : gamePlayer.getPersonalBoard().getLeaderCards()){
+                        if (card.isActive())
+                            leaderCards.put (card.getID(), true);
+                        else{
+                            if (gamePlayer.getNickname().equals(player.getNickname()))
+                                leaderCards.put(card.getID(), false);
+                        }
+                    }
+                    getConnectionByNickname(player.getNickname()).sendMessageToClient(new ReloadLeaderCardsOwned(gamePlayer.getNickname(), leaderCards));
+
+                    //2. Development cards
+                    //TODO remove next row when raffa has finished
+                    getConnectionByNickname(player.getNickname()).sendMessageToClient(new ReloadDevelopmentCardOwned(gamePlayer.getNickname(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getHiddenDevelopmentCardColours(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getDevelopmentCardIdFirstRow()));
+                    getConnectionByNickname(player.getNickname()).sendMessageToClient(new LoadDevelopmentCardSlots(gamePlayer.getNickname(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getDevelopmentCardIdSlots()));
+                    getConnectionByNickname(player.getNickname()).sendMessageToClient(new ReloadDevelopmentCardsVictoryPoints(gamePlayer.getNickname(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getVictoryPointsDevelopmentCardSlots()));
+
+                    //3. Marker position
+                    getConnectionByNickname(player.getNickname()).sendMessageToClient(new UpdateMarkerPosition(gamePlayer.getNickname(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getMarkerPosition()));
+
+                    //4. Depots status
+                    getConnectionByNickname(player.getNickname()).sendMessageToClient(new UpdateDepotsStatus(gamePlayer.getNickname(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getStrongboxStatus(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getLeaderStatus()));
+
+                    //5. Pope tiles
+                    getConnectionByNickname(player.getNickname()).sendMessageToClient(new ReloadPopesFavorTiles(gamePlayer.getNickname(), gamePlayer.getPersonalBoard().getPopesTileStates()));
+                }
+            }
+        }
+        sendMessageToAll(new ReloadMatchData(false, disconnection));
+    }
+
 
     public void endMatch(){
         setGamePhase(gamePhase instanceof MultiplayerPlayPhase ? new MultiplayerEndPhase() : new SinglePlayerEndPhase());

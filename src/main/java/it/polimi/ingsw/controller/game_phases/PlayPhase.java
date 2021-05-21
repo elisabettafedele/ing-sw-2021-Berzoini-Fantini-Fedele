@@ -22,7 +22,6 @@ public abstract class PlayPhase {
     private TurnController turnController;
     private Player player;
     private Game lastTurnGameCopy;
-    private final String RELOAD = "RELOAD";
 
     public void setController(Controller controller) {
         this.controller = controller;
@@ -69,43 +68,7 @@ public abstract class PlayPhase {
     }
 
     public void reloadGameCopy(boolean disconnection){
-        assert lastTurnGameCopy!=null;
-        //Inform all the clients that a previous game status is being restored
-        controller.sendMessageToAll(new ReloadMatchData(true, disconnection));
-        if (!disconnection){
-            //Resend all the cards
-        }
-        controller.sendMessageToAll(new LoadDevelopmentCardGrid(lastTurnGameCopy.getDevelopmentCardGrid().getAvailableCards().stream().map(Card::getID).collect(Collectors.toList())));
-        controller.sendMessageToAll(new UpdateMarketView(RELOAD, lastTurnGameCopy.getMarket().getMarketTray(), lastTurnGameCopy.getMarket().getSlideMarble()));
-        for (Player player : controller.getPlayers()){
-            if (player.isActive()) {
-                for (Player gamePlayer : controller.getPlayers()) {
-
-                    // 1. I create a map with the leader cards of the gamePlayer I am analyzing
-                    Map<Integer, Boolean> leaderCards = new HashMap<>();
-                    for (LeaderCard card : gamePlayer.getPersonalBoard().getLeaderCards()){
-                        if (card.isActive())
-                            leaderCards.put (card.getID(), true);
-                        else{
-                            if (gamePlayer.getNickname().equals(player.getNickname()))
-                                leaderCards.put(card.getID(), false);
-                        }
-                    }
-                    controller.getConnectionByNickname(player.getNickname()).sendMessageToClient(new ReloadLeaderCardsOwned(gamePlayer.getNickname(), leaderCards));
-
-                    //2. Development cards
-                    controller.getConnectionByNickname(player.getNickname()).sendMessageToClient(new ReloadDevelopmentCardOwned(gamePlayer.getNickname(), lastTurnGameCopy.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getHiddenDevelopmentCardColours(), lastTurnGameCopy.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getDevelopmentCardIdFirstRow()));
-
-                    //3. Marker position
-                    controller.getConnectionByNickname(player.getNickname()).sendMessageToClient(new UpdateMarkerPosition(gamePlayer.getNickname(), lastTurnGameCopy.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getMarkerPosition()));
-
-                    //4. Depots status
-                    controller.getConnectionByNickname(player.getNickname()).sendMessageToClient(new UpdateDepotsStatus(gamePlayer.getNickname(), lastTurnGameCopy.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), lastTurnGameCopy.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getStrongboxStatus(), lastTurnGameCopy.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getLeaderStatus()));
-
-                }
-            }
-        }
-        controller.sendMessageToAll(new ReloadMatchData(false, disconnection));
+        controller.sendMatchData(lastTurnGameCopy, disconnection);
     }
 
     public Game getLastTurnGameCopy() {

@@ -6,6 +6,6 @@ import it.polimi.ingsw.messages.toClient.MessageToClient;
 public class DisplayStandardView implements MessageToClient {
     @Override
     public void handleMessage(VirtualView view) {
-        view.displayStandardView();
+        //view.displayStandardView();
     }
 }

@@ -27,6 +27,7 @@ public class CLI implements View {
 
     private void init(){
         GraphicalLogo.printLogo();
+        MatchData.getInstance().setView(this);
         client = LobbyCLI.askConnectionParameters(this);
         client.start();
     }

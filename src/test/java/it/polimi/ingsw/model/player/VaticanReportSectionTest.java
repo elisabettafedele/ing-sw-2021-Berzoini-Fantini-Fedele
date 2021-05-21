@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model.player;
 
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
-import it.polimi.ingsw.model.player.VaticanReportSection;
+import it.polimi.ingsw.model.game.VaticanReportSection;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

@@ -1,7 +1,6 @@
 package it.polimi.ingsw.model.game;
 
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
-import it.polimi.ingsw.model.player.VaticanReportSection;
 
 import java.io.Serializable;
 import java.util.*;
@@ -88,5 +87,14 @@ public class FaithTrack implements Serializable {
             }
         }
         return victoryPoints;
+    }
+
+    public int getVaticanReportSectionNumberByStart(int start){
+        assert (start == 5 || start == 12 || start == 19);
+        if (start == 5)
+            return 0;
+        if (start == 12)
+            return 1;
+        return 2;
     }
 }

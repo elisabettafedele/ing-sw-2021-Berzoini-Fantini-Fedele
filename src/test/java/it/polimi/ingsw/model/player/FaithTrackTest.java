@@ -2,11 +2,9 @@ package it.polimi.ingsw.model.player;
 
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.model.game.FaithTrack;
+import it.polimi.ingsw.model.game.VaticanReportSection;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 import static org.junit.Assert.*;
 

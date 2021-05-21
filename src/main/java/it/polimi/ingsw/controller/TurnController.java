@@ -4,11 +4,9 @@ import it.polimi.ingsw.controller.game_phases.PlayPhase;
 import it.polimi.ingsw.controller.game_phases.SinglePlayerPlayPhase;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.enumerations.ResourceStorageType;
-import it.polimi.ingsw.messages.toClient.game.NotifyMarbleTaken;
 import it.polimi.ingsw.messages.toClient.game.SelectStorageRequest;
 import it.polimi.ingsw.messages.toClient.matchData.NotifyTakenPopesFavorTile;
 import it.polimi.ingsw.messages.toClient.matchData.UpdateDepotsStatus;
-import it.polimi.ingsw.messages.toServer.game.SelectStorageResponse;
 import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.controller.actions.*;
 import it.polimi.ingsw.enumerations.ActionType;
@@ -19,7 +17,7 @@ import it.polimi.ingsw.exceptions.ZeroPlayerException;
 import it.polimi.ingsw.messages.toClient.game.ChooseActionRequest;
 import it.polimi.ingsw.messages.toClient.TextMessage;
 import it.polimi.ingsw.model.player.Player;
-import it.polimi.ingsw.model.player.VaticanReportSection;
+import it.polimi.ingsw.model.game.VaticanReportSection;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -151,12 +149,14 @@ public class TurnController {
                         if(p.getPersonalBoard().getMarkerPosition()>= vaticanReportSection.getStart()){
                             try {
                                 p.addVictoryPoints(vaticanReportSection.getPopeFavorPoints());
-                                controller.sendMessageToAll(new NotifyTakenPopesFavorTile(p.getNickname(), vaticanReportSection.getStart(), true));
+                                p.getPersonalBoard().setPopesTileStates(controller.getGame().getFaithTrack().getVaticanReportSectionNumberByStart(vaticanReportSection.getStart()), true);
+                                controller.sendMessageToAll(new NotifyTakenPopesFavorTile(p.getNickname(), controller.getGame().getFaithTrack().getVaticanReportSectionNumberByStart(vaticanReportSection.getStart()), true));
                             } catch (InvalidArgumentException e) {
                                 e.printStackTrace();
                             }
                         } else {
-                            controller.sendMessageToAll(new NotifyTakenPopesFavorTile(p.getNickname(), vaticanReportSection.getStart(), false));
+                            p.getPersonalBoard().setPopesTileStates(controller.getGame().getFaithTrack().getVaticanReportSectionNumberByStart(vaticanReportSection.getStart()), false);
+                            controller.sendMessageToAll(new NotifyTakenPopesFavorTile(p.getNickname(), controller.getGame().getFaithTrack().getVaticanReportSectionNumberByStart(vaticanReportSection.getStart()), false));
                         }
                     }
                 } catch (InvalidMethodException | ZeroPlayerException e) {
@@ -166,7 +166,13 @@ public class TurnController {
             else{ //singleplayer
                 try {
                     if(currentPlayer.getPersonalBoard().getMarkerPosition()>=vaticanReportSection.getStart()){
+                        currentPlayer.getPersonalBoard().setPopesTileStates(controller.getGame().getFaithTrack().getVaticanReportSectionNumberByStart(vaticanReportSection.getStart()), true);
                         currentPlayer.addVictoryPoints(vaticanReportSection.getPopeFavorPoints());
+                        controller.sendMessageToAll(new NotifyTakenPopesFavorTile(currentPlayer.getNickname(), controller.getGame().getFaithTrack().getVaticanReportSectionNumberByStart(vaticanReportSection.getStart()), true));
+                    }
+                    else{
+                        currentPlayer.getPersonalBoard().setPopesTileStates(controller.getGame().getFaithTrack().getVaticanReportSectionNumberByStart(vaticanReportSection.getStart()), false);
+                        controller.sendMessageToAll(new NotifyTakenPopesFavorTile(currentPlayer.getNickname(), controller.getGame().getFaithTrack().getVaticanReportSectionNumberByStart(vaticanReportSection.getStart()), false));
                     }
 
                 } catch (InvalidArgumentException e) {

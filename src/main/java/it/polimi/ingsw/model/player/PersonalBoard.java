@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model.player;
 
+import it.polimi.ingsw.client.PopesTileState;
 import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.enumerations.*;
 import it.polimi.ingsw.exceptions.*;
@@ -25,6 +26,7 @@ public class PersonalBoard implements Serializable {
     private final int numberOfStrongboxDepots = 4;
     private final int numberOfDevelopmentCardSlots = 3;
     private final int numberOfInitialLeaderCards = 4;
+    private PopesTileState[] popesTileStates;
 
     /**
      * @param leaderCards The list of maximum two {@link LeaderCard} to be assigned to the Personal Board
@@ -39,6 +41,7 @@ public class PersonalBoard implements Serializable {
         strongbox[1]= new StrongboxDepot(Resource.STONE);
         strongbox[2]= new StrongboxDepot(Resource.SERVANT);
         strongbox[3]= new StrongboxDepot(Resource.SHIELD);
+        popesTileStates = new PopesTileState[]{PopesTileState.NOT_REACHED, PopesTileState.NOT_REACHED, PopesTileState.NOT_REACHED};
         warehouse = new Warehouse();
         markerPosition = 0;
         developmentCardSlots = new Stack[numberOfDevelopmentCardSlots];
@@ -75,6 +78,14 @@ public class PersonalBoard implements Serializable {
      */
     public int getMarkerPosition() {
         return markerPosition;
+    }
+
+    public void setPopesTileStates(int number, boolean taken){
+        popesTileStates[number] = taken ? PopesTileState.TAKEN : PopesTileState.NOT_TAKEN;
+    }
+
+    public PopesTileState[] getPopesTileStates(){
+        return popesTileStates;
     }
 
     public boolean isResourceAvailableAndRemove(ResourceStorageType depot, Resource resource, int quantity, boolean wantToRemove){
@@ -570,5 +581,24 @@ public class PersonalBoard implements Serializable {
             } catch (DifferentEffectTypeException ignored) { }
         }
         return leaderStatus;
+    }
+
+    public int[] getVictoryPointsDevelopmentCardSlots(){
+        int[] victoryPointsDevelopmentCardSlots = new int[3];
+        for (int i = 0; i < developmentCardSlots.length; i++){
+            if (!developmentCardSlots[i].isEmpty())
+                victoryPointsDevelopmentCardSlots[i] = developmentCardSlots[i].stream().map(Card::getVictoryPoints).mapToInt(Integer::intValue).sum();
+        }
+        return victoryPointsDevelopmentCardSlots;
+    }
+
+    public Stack<Integer>[] getDevelopmentCardIdSlots(){
+        Stack<Integer>[] slots = new Stack[3];
+        for (int i = 0; i < developmentCardSlots.length; i++){
+            slots[i] = new Stack<>();
+            for (int j = 0; j < developmentCardSlots[i].size(); j++)
+                slots[i].push(developmentCardSlots[i].get(j).getID());
+        }
+        return slots;
     }
 }
