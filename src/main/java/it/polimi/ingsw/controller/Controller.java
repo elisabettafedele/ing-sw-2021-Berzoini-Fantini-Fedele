@@ -1,6 +1,7 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.controller.game_phases.*;
+import it.polimi.ingsw.enumerations.ClientHandlerPhase;
 import it.polimi.ingsw.messages.toClient.matchData.*;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.LeaderCard;
@@ -14,6 +15,7 @@ import it.polimi.ingsw.messages.toClient.TextMessage;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
 import it.polimi.ingsw.model.game.Game;
 import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.server.Server;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
@@ -29,11 +31,47 @@ public class Controller {
     private List<ClientHandler> clientHandlers;
     private ReentrantLock lockPlayers = new ReentrantLock(true);
     private ReentrantLock lockConnections = new ReentrantLock(true);
+    private Server server;
     private final String RELOAD = "RELOAD";
 
     public Controller(GameMode gameMode) throws InvalidArgumentException, UnsupportedEncodingException {
         this.game = new Game(gameMode);
         this.clientHandlers = new LinkedList<>();
+    }
+
+    public void setServer (Server server){
+        this.server = server;
+    }
+
+    public void handleClientDisconnection(String nickname){
+        ClientHandler connection = getConnectionByNickname(nickname);
+        //SINGLE PLAYER
+        if (connection.getGameMode() == GameMode.SINGLE_PLAYER){
+            connection.getServer().removeConnectionGame(connection);
+            return;
+        }
+
+        //DISCONNECTION DURING SETUP PHASE
+        if (gamePhase instanceof SetUpPhase){
+
+            if (getConnectionByNickname(nickname).getClientHandlerPhase() == ClientHandlerPhase.SET_UP_FINISHED){
+                //CASE 1: THE CLIENT HAS ALREADY FINISHED THE SETUP PHASE: the game starts and the player is set as inactive
+                getPlayerByNickname(nickname).setActive(false);
+            } else {
+                //CASE 2: THE CLIENT HAS NOT FINISHED THE SETUP PHASE YET
+                //CASE 2a: THERE WERE ONLY 2 PLAYERS IN THE GAME -> THE OTHER PLAYER IN GAME IS NOTIFIED AND REINSERTED IN THE MAIN LOBBY TO FIND ANOTHER MATCH
+                if (clientHandlers.size() == 2){
+                    lockConnections.lock();
+                    ClientHandler other = clientHandlers.get(0).getNickname().equals(nickname) ? clientHandlers.get(1) : clientHandlers.get(0);
+                    lockConnections.unlock();
+                    //TODO send message to notify
+                    other.getServer().handleNicknameChoice(other);
+                } else {
+
+                }
+
+            }
+        }
     }
 
     /**
@@ -145,6 +183,18 @@ public class Controller {
         }
     }
 
+    public void sendMessageToAllExcept(MessageToClient message, String nickname){
+        lockConnections.lock();
+        try{
+            for (ClientHandler clientHandler : clientHandlers) {
+                if (!clientHandler.getNickname().equals(nickname))
+                    clientHandler.sendMessageToClient(message);
+            }
+        } finally {
+            lockConnections.unlock();
+        }
+    }
+
     public void sendMatchData(Game game, boolean disconnection){
         assert game!=null;
         //Inform all the clients that a previous game status is being restored
@@ -193,5 +243,13 @@ public class Controller {
 
     public void endMatch(){
         setGamePhase(gamePhase instanceof MultiplayerPlayPhase ? new MultiplayerEndPhase() : new SinglePlayerEndPhase());
+    }
+
+    public List<ClientHandler> getClientHandlers() {
+        return clientHandlers;
+    }
+
+    public Server getServer() {
+        return server;
     }
 }

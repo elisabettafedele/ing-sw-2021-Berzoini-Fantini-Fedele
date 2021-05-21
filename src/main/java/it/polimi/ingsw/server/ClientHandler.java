@@ -9,7 +9,6 @@ import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.messages.toClient.lobby.GameModeRequest;
 import it.polimi.ingsw.messages.toClient.TimeoutExpiredMessage;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
-import it.polimi.ingsw.messages.toServer.game.SelectStorageResponse;
 import it.polimi.ingsw.model.player.Player;
 
 
@@ -162,7 +161,7 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
         Server.SERVER_LOGGER.log(Level.SEVERE, "Client disconnected");
         //If the game is started, I mark the player as disconnected and the turn controller will not handle its turn
         if (gameStarted){
-            //TODO
+            controller.handleClientDisconnection(nickname);
         } else {
             //If the game is not started yet, I simply remove the player from the list of waiting players
             try {
@@ -170,7 +169,7 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
                 os.flush();
                 os.reset();
             } catch (IOException e) { }
-            server.removeConnection(this);
+            server.removeConnectionLobby(this);
             try {
                 is.close();
             } catch (IOException e) {
@@ -239,6 +238,10 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
 
     public void setController(Controller controller){
         this.controller = controller;
+    }
+
+    public Server getServer(){
+        return server;
     }
 
 }

@@ -6,10 +6,13 @@ import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.enumerations.ClientHandlerPhase;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
+import it.polimi.ingsw.messages.toClient.MessageToClient;
+import it.polimi.ingsw.messages.toClient.game.GameOverMessage;
 import it.polimi.ingsw.messages.toClient.lobby.NicknameRequest;
 import it.polimi.ingsw.messages.toClient.lobby.NumberOfPlayersRequest;
 import it.polimi.ingsw.messages.toClient.lobby.SendPlayerNicknamesMessage;
 import it.polimi.ingsw.messages.toClient.lobby.WaitingInTheLobbyMessage;
+import it.polimi.ingsw.model.player.Player;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -38,6 +41,8 @@ public class Server implements ServerInterface {
 
     private List<ClientHandler> clientsInLobby;
     private Map<String, Controller> clientsDisconnected;
+    private Map<String, GameOverMessage> clientsDisconnectedGameFinished;
+
 
     private List<Controller> activeGames;
 
@@ -176,6 +181,7 @@ public class Server implements ServerInterface {
         Controller controller = null;
         try {
             controller = new Controller(GameMode.MULTI_PLAYER);
+            controller.setServer(this);
         } catch (InvalidArgumentException e) {
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
@@ -214,6 +220,7 @@ public class Server implements ServerInterface {
         Controller controller = null;
         try {
             controller = new Controller(GameMode.SINGLE_PLAYER);
+            controller.setServer(this);
         } catch (InvalidArgumentException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -254,8 +261,11 @@ public class Server implements ServerInterface {
     }
 
 
-    //TODO still testing but should work
-    public void removeConnection(ClientHandler connection){
+    /**
+     * Method to handle disconnection of clients that has not been added to a game
+     * @param connection
+     */
+    public void removeConnectionLobby(ClientHandler connection){
         int position = -1;
         try{
             lockLobby.lock();
@@ -273,6 +283,22 @@ public class Server implements ServerInterface {
         }
     }
 
+    /**
+     * Method to remove a connection when the game is already started.
+     * If it is the last connection, also the controller is deleted from the list of active games
+     * @param connection the {@link ClientHandler} to be removed from the controller
+     */
+    public void removeConnectionGame(ClientHandler connection){
+        //If it was the last player remained in the game, I delete the game and I remove all the players from disconnectedPlayers -> the game is not finished, but is not playable anymore
+        if (connection.getController().getClientHandlers().size() == 1) {
+            for (String nickname : connection.getController().getPlayers().stream().map(Player::getNickname).collect(Collectors.toList()))
+                clientsDisconnected.remove(nickname);
+            activeGames.remove(connection.getController());
+        }
+        else
+            connection.getController().removeConnection(connection);
+    }
+
 
     @Override
     public void setNumberOfPlayersForNextGame(ClientHandlerInterface clientHandler, int numberOfPlayersForNextGame){
@@ -285,11 +311,27 @@ public class Server implements ServerInterface {
         if (clientHandler.isGameStarted())
             clientsDisconnected.put(clientHandler.getNickname(), clientHandler.getController());
         else
-            removeConnection(clientHandler);
+            removeConnectionLobby(clientHandler);
     }
 
     public void handleReconnection(ClientHandler clientHandler){
 
+    }
+
+    /**
+     * Method to handle the end of a game. In particular:
+     * - If the game had some clients disconnected: they are moved from clientDisconnected to clientsDisconnectedGameFinished and the results of the game are saved in the GameOver message
+     * - Anyhow, the game is removed from activeGames, since it is no longer active
+     * @param controller
+     * @param gameOverMessage
+     */
+    public void gameEnded(Controller controller, GameOverMessage gameOverMessage){
+        List<String> disconnectedClientsNicknames = controller.getPlayers().stream().filter(x -> !x.isActive()).map(x -> x.getNickname()).collect(Collectors.toList());
+        for (String nickname : disconnectedClientsNicknames) {
+            clientsDisconnected.remove(nickname);
+            clientsDisconnectedGameFinished.put(nickname, gameOverMessage);
+        }
+        activeGames.remove(controller);
     }
 
     private boolean knownClient(String nickname) {

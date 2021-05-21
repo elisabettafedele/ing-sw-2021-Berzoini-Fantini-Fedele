@@ -73,7 +73,9 @@ public class TurnController {
         if(isInterruptible && (controller.getGame().getDevelopmentCardGrid().checkEmptyColumn() || endTrigger)){
             controller.endMatch();
         }
-        if (!((endTrigger && isInterruptible) || endTurnImmediately || executableActions.values().stream().filter(x->x==true).collect(Collectors.toList()).isEmpty()))
+        if (executableActions.values().stream().noneMatch(x -> x))
+            endTurn();
+        else
             clientHandler.sendMessageToClient(new ChooseActionRequest(executableActions, standardActionDone));
     }
 
@@ -265,6 +267,8 @@ public class TurnController {
     }
 
     public void endTurn(){
+        //I set a copy of the game at the end of each turn
+        ((PlayPhase) controller.getGamePhase()).setLastTurnGameCopy(controller.getGame());
         clientHandler.sendMessageToClient(new TextMessage("Turn ended"));
         ((PlayPhase) controller.getGamePhase()).nextTurn();
     }
