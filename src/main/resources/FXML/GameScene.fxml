@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -520,7 +520,7 @@
                   </Pane>
                </children>
             </Pane>
-            <TextArea fx:id="textArea" layoutX="230.0" layoutY="24.0" prefHeight="87.0" prefWidth="163.0" />
+            <Label fx:id="mainLabel" layoutX="230.0" layoutY="24.0" prefHeight="87.0" prefWidth="163.0" />
          </children>
       </AnchorPane>
    </children>

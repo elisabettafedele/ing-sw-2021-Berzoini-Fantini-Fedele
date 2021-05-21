@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.gui;
 import it.polimi.ingsw.client.Client;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -51,7 +52,7 @@ public class GameSceneController {
     @FXML
     private ImageView rightLeaderCard;
     @FXML
-    private TextArea textArea;
+    private Label mainLabel;
 
 
 
@@ -60,7 +61,6 @@ public class GameSceneController {
     public void initialize() {
         GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         System.out.println(gd.getDisplayMode().getHeight());
-        double scaleRatio = (0.4*gd.getDisplayMode().getHeight())/2672;// 2672 is the gameBackground.png original height
         List<Node> nodeChildren= rightPane.getChildren();
         for(Node node : nodeChildren){
             hideNodeChildren(((Pane) node).getChildren());
