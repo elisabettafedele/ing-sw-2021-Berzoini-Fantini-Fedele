@@ -58,9 +58,6 @@ public class GameSceneController {
 
     @FXML
     public void initialize() {
-        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-        System.out.println(gd.getDisplayMode().getHeight());
-        double scaleRatio = (0.4*gd.getDisplayMode().getHeight())/2672;// 2672 is the gameBackground.png original height
         List<Node> nodeChildren= rightPane.getChildren();
         for(Node node : nodeChildren){
             hideNodeChildren(((Pane) node).getChildren());
