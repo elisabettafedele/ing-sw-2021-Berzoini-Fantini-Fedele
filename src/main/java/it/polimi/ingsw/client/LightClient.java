@@ -19,6 +19,10 @@ public class LightClient {
     int[] strongbox;
     Map<Integer, Integer> leaderDepots;
 
+    public Map<Integer, Integer> getLeaderDepots() {
+        return leaderDepots;
+    }
+
     //TODO Raffa non serve più, puoi anche rimuovere
     private boolean[] hasTakenPopesTile;
 

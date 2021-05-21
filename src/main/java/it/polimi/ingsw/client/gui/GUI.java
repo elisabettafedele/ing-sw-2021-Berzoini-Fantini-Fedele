@@ -40,8 +40,8 @@ public class GUI extends Application implements View {
             System.exit(0);
 
         });
-        displayChooseStorageTypeRequest(null,null,true,true);
-        //askConnectionParameters();
+        //displayChooseStorageTypeRequest(null,null,true,true);
+        askConnectionParameters();
     }
 
     private void createMainScene(String pathOfFxmlFile, FunctionInterface functionInterface) {
