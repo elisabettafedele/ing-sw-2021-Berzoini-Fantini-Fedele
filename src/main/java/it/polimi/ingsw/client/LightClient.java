@@ -21,14 +21,11 @@ public class LightClient {
     int[] strongbox;
     Map<Integer, Integer> leaderDepots;
 
-    public Map<Integer, Integer> getLeaderDepots() {
-        return leaderDepots;
-    }
+
 
     //TODO Raffa non serve più, puoi anche rimuovere
     private boolean[] hasTakenPopesTile;
     int victoryPoints;
-
 
     private PopesTileState[] popesTileStates;
 
@@ -68,6 +65,9 @@ public class LightClient {
         return faithTrackPosition;
     }
 
+    public PopesTileState[] getPopesTileStates() {
+        return popesTileStates;
+    }
     public String getNickname() {
         return nickname;
     }
@@ -135,7 +135,13 @@ public class LightClient {
     public void setVictoryPoints(int victoryPoints) {
         this.victoryPoints = victoryPoints;
     }
+    public Stack<Integer>[] getDevelopmentCardSlots() {
+        return developmentCardSlots;
+    }
 
+    public Map<Integer, Integer> getLeaderDepots() {
+        return leaderDepots;
+    }
     public int getVictoryPoints() {
         return victoryPoints;
     }
