@@ -19,8 +19,7 @@ public class LightClient {
     private Stack<Integer>[] developmentCardSlots;
     List<Resource>[] warehouse;
     int[] strongbox;
-    Map<Integer, Integer> leaderDepots;
-
+    Map<Integer, Integer> leaderDepots; //ID, Qty
 
 
     //TODO Raffa non serve più, puoi anche rimuovere
@@ -50,6 +49,7 @@ public class LightClient {
             hiddenDevelopmentCardColours[i] = new ArrayList();
         //TODO Raffa non serve più, puoi anche rimuovere
         this.hasTakenPopesTile = new boolean[3];
+        this.leaderDepots = new HashMap<>();
     }
 
     public void addLeaderCard(Integer ID, boolean active) {

@@ -7,6 +7,7 @@ import it.polimi.ingsw.enumerations.Level;
 import it.polimi.ingsw.enumerations.Resource;
 
 import java.util.List;
+import java.util.Map;
 
 public class GraphicalLeaderCard extends GraphicalCard{
 
@@ -69,8 +70,27 @@ public class GraphicalLeaderCard extends GraphicalCard{
         symbols[CardHeight-3][begin+s.length()+2] = r.symbol.charAt(0);
         colours[CardHeight-3][begin+s.length()+2] = c;
 
-        //TODO: do the empty/full slots of resources
+        drawResourceSlots(r, c);
+    }
 
+    private void drawResourceSlots(Resource r, Colour c) {
+        int center = CardWidth/2;
+        Map<Integer, Integer> leaderDepots = MatchData.getInstance().getLightClientByNickname(this.nickname).getLeaderDepots();
+        int quantity;
+        try {
+            quantity = leaderDepots.get(this.lightCard.getID());
+        }catch(NullPointerException e){
+            quantity = 0;
+        }
+        symbols[CardHeight-2][center-1] = '□';
+        symbols[CardHeight-2][center+1] = '□';
+        if(quantity > 0)
+            symbols[CardHeight-2][center-1] = '■';
+        if(quantity > 1)
+            symbols[CardHeight-2][center+1] = '■';
+
+        colours[CardHeight-2][center-1] = c;
+        colours[CardHeight-2][center+1] = c;
     }
 
     private void drawConversionEffect() {
@@ -100,7 +120,6 @@ public class GraphicalLeaderCard extends GraphicalCard{
             colours[CardHeight-3][begin+i] = Colour.ANSI_BRIGHT_WHITE;
         }
 
-        center = CardWidth/2;
         begin = center;
 
         Resource r = Resource.valueOf(lightCard.getEffectDescription().get(0));

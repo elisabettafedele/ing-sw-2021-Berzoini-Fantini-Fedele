@@ -64,8 +64,10 @@ public class ScreenTest {
         strongBoxResources.put(Resource.SHIELD, 5);
         p.addResourcesToStrongbox(strongBoxResources);
 
+        Map<Integer, Integer> leaderDepots = new HashMap<>();
+        leaderDepots.put(55, 1);
 
-        MatchData.getInstance().update(new UpdateDepotsStatus(playerOne, w.getWarehouseDepotsStatus(), p.getStrongboxStatus(), null));
+        MatchData.getInstance().update(new UpdateDepotsStatus(playerOne, w.getWarehouseDepotsStatus(), p.getStrongboxStatus(), leaderDepots));
 
         DevelopmentCardGrid devGrid = new DevelopmentCardGrid();
         List<DevelopmentCard> list = devGrid.getAvailableCards();
