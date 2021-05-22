@@ -2,8 +2,11 @@ package it.polimi.ingsw.controller.game_phases;
 
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.controller.TurnController;
+import it.polimi.ingsw.enumerations.GameMode;
+import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.jsonParsers.GameCloneThroughJson;
 import it.polimi.ingsw.messages.toClient.matchData.*;
+import it.polimi.ingsw.model.PersistentGame;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.LeaderCard;
 import it.polimi.ingsw.model.game.Game;
@@ -13,6 +16,7 @@ import it.polimi.ingsw.messages.toServer.game.EndTurnRequest;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
 import it.polimi.ingsw.model.player.Player;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -21,7 +25,7 @@ public abstract class PlayPhase {
     private Controller controller;
     private TurnController turnController;
     private Player player;
-    private Game lastTurnGameCopy;
+    private PersistentGame lastTurnGameCopy;
 
     public void setController(Controller controller) {
         this.controller = controller;
@@ -52,9 +56,9 @@ public abstract class PlayPhase {
     public abstract void handleResourceDiscard(String nickname);
 
     public void handleMessage(MessageToServer message, ClientHandler clientHandler) {
-        if (message instanceof ChooseActionResponse)
+        if (message instanceof ChooseActionResponse && (clientHandler.getNickname().equals(getTurnController().getCurrentPlayer().getNickname())))
             getTurnController().doAction(((ChooseActionResponse) message).getActionChosen());
-        if (message instanceof EndTurnRequest)
+        if (message instanceof EndTurnRequest && (clientHandler.getNickname().equals(getTurnController().getCurrentPlayer().getNickname())))
             getTurnController().endTurn();
     }
 
@@ -64,18 +68,18 @@ public abstract class PlayPhase {
     }
 
     public void saveGameCopy(Game game){
-        lastTurnGameCopy = GameCloneThroughJson.clone(game);
+        lastTurnGameCopy = new PersistentGame(game);
     }
 
     public void reloadGameCopy(boolean disconnection){
-        controller.sendMatchData(lastTurnGameCopy, disconnection);
+        controller.sendMatchData(controller.getGame(), disconnection);
     }
 
-    public Game getLastTurnGameCopy() {
+    public PersistentGame getLastTurnGameCopy() {
         return lastTurnGameCopy;
     }
 
-    public void setLastTurnGameCopy(Game lastTurnGameCopy) {
+    public void setLastTurnGameCopy(PersistentGame lastTurnGameCopy) {
         this.lastTurnGameCopy = lastTurnGameCopy;
     }
 }

@@ -2,6 +2,7 @@ package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.controller.game_phases.*;
 import it.polimi.ingsw.enumerations.ClientHandlerPhase;
+import it.polimi.ingsw.messages.toClient.NotifyClientDisconnection;
 import it.polimi.ingsw.messages.toClient.matchData.*;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.LeaderCard;
@@ -18,10 +19,7 @@ import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.server.Server;
 
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
@@ -46,30 +44,49 @@ public class Controller {
     public void handleClientDisconnection(String nickname){
         ClientHandler connection = getConnectionByNickname(nickname);
         //SINGLE PLAYER
-        if (connection.getGameMode() == GameMode.SINGLE_PLAYER){
+        /*if (connection.getGameMode() == GameMode.SINGLE_PLAYER){
             connection.getServer().removeConnectionGame(connection);
             return;
         }
+        */
+        connection.getServer().removeConnectionGame(connection);
+        removeConnection(connection);
 
         //DISCONNECTION DURING SETUP PHASE
         if (gamePhase instanceof SetUpPhase){
 
-            if (getConnectionByNickname(nickname).getClientHandlerPhase() == ClientHandlerPhase.SET_UP_FINISHED){
+            if (connection.getClientHandlerPhase() == ClientHandlerPhase.SET_UP_FINISHED){
                 //CASE 1: THE CLIENT HAS ALREADY FINISHED THE SETUP PHASE: the game starts and the player is set as inactive
                 getPlayerByNickname(nickname).setActive(false);
             } else {
                 //CASE 2: THE CLIENT HAS NOT FINISHED THE SETUP PHASE YET
-                //CASE 2a: THERE WERE ONLY 2 PLAYERS IN THE GAME -> THE OTHER PLAYER IN GAME IS NOTIFIED AND REINSERTED IN THE MAIN LOBBY TO FIND ANOTHER MATCH
-                if (clientHandlers.size() == 2){
-                    lockConnections.lock();
-                    ClientHandler other = clientHandlers.get(0).getNickname().equals(nickname) ? clientHandlers.get(1) : clientHandlers.get(0);
-                    lockConnections.unlock();
-                    //TODO send message to notify
+                lockConnections.lock();
+                for (ClientHandler other : getClientHandlers()) {
+                    other.sendMessageToClient(new NotifyClientDisconnection(nickname, true, true));
+                    connection.getServer().removeConnectionGame(other);
+                    other.setGameStarted(false);
+                    other.setClientHandlerPhase(ClientHandlerPhase.WAITING_NICKNAME);
                     other.getServer().handleNicknameChoice(other);
-                } else {
-
                 }
+                lockConnections.unlock();
+                connection.setController(null);
+            }
+        }
 
+        if (gamePhase instanceof MultiplayerPlayPhase){
+            getPlayerByNickname(nickname).setActive(false);
+            sendMessageToAll(new NotifyClientDisconnection(nickname, false, false));
+
+
+            //THE PLAYER DISCONNECTED WAS THE TURN'S OWNER -> I check if he has already done his standard action
+            if (((MultiplayerPlayPhase) gamePhase).getTurnController().getCurrentPlayer().getNickname().equals(nickname)){
+                if (!((MultiplayerPlayPhase) gamePhase).getTurnController().isStandardActionDone()){
+                    //IF HE HAS NOT DONE THE STANDARD ACTION YET -> INVALID TURN! UNDO OF THE TURN
+                    game = new Game(((MultiplayerPlayPhase) gamePhase).getLastTurnGameCopy());
+                    game.getPlayerByNickname(nickname).setActive(false);
+                    sendMatchData(game, true);
+                }
+                ((MultiplayerPlayPhase) gamePhase).nextTurn();
             }
         }
     }
@@ -204,8 +221,8 @@ public class Controller {
         }
         sendMessageToAll(new LoadDevelopmentCardGrid(game.getDevelopmentCardGrid().getAvailableCards().stream().map(Card::getID).collect(Collectors.toList())));
         sendMessageToAll(new UpdateMarketView(RELOAD, game.getMarket().getMarketTray(), game.getMarket().getSlideMarble()));
-        for (Player player : getPlayers()){
-            if (player.isActive()) {
+        lockConnections.lock();
+        for (ClientHandler player : clientHandlers){
                 for (Player gamePlayer : getPlayers()) {
 
                     // 1. I create a map with the leader cards of the gamePlayer I am analyzing
@@ -218,25 +235,26 @@ public class Controller {
                                 leaderCards.put(card.getID(), false);
                         }
                     }
-                    getConnectionByNickname(player.getNickname()).sendMessageToClient(new ReloadLeaderCardsOwned(gamePlayer.getNickname(), leaderCards));
+                    player.sendMessageToClient(new ReloadLeaderCardsOwned(gamePlayer.getNickname(), leaderCards));
 
                     //2. Development cards
                     //TODO remove next row when raffa has finished
-                    getConnectionByNickname(player.getNickname()).sendMessageToClient(new ReloadDevelopmentCardOwned(gamePlayer.getNickname(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getHiddenDevelopmentCardColours(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getDevelopmentCardIdFirstRow()));
-                    getConnectionByNickname(player.getNickname()).sendMessageToClient(new LoadDevelopmentCardSlots(gamePlayer.getNickname(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getDevelopmentCardIdSlots()));
-                    getConnectionByNickname(player.getNickname()).sendMessageToClient(new ReloadDevelopmentCardsVictoryPoints(gamePlayer.getNickname(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getVictoryPointsDevelopmentCardSlots()));
+                    player.sendMessageToClient(new ReloadDevelopmentCardOwned(gamePlayer.getNickname(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getHiddenDevelopmentCardColours(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getDevelopmentCardIdFirstRow()));
+                    player.sendMessageToClient(new LoadDevelopmentCardSlots(gamePlayer.getNickname(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getDevelopmentCardIdSlots()));
+                    player.sendMessageToClient(new ReloadDevelopmentCardsVictoryPoints(gamePlayer.getNickname(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getVictoryPointsDevelopmentCardSlots()));
 
                     //3. Marker position
-                    getConnectionByNickname(player.getNickname()).sendMessageToClient(new UpdateMarkerPosition(gamePlayer.getNickname(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getMarkerPosition()));
+                    player.sendMessageToClient(new UpdateMarkerPosition(gamePlayer.getNickname(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getMarkerPosition()));
 
                     //4. Depots status
-                    getConnectionByNickname(player.getNickname()).sendMessageToClient(new UpdateDepotsStatus(gamePlayer.getNickname(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getStrongboxStatus(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getLeaderStatus()));
+                    player.sendMessageToClient(new UpdateDepotsStatus(gamePlayer.getNickname(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getStrongboxStatus(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getLeaderStatus()));
 
                     //5. Pope tiles
-                    getConnectionByNickname(player.getNickname()).sendMessageToClient(new ReloadPopesFavorTiles(gamePlayer.getNickname(), gamePlayer.getPersonalBoard().getPopesTileStates()));
+                    player.sendMessageToClient(new ReloadPopesFavorTiles(gamePlayer.getNickname(), gamePlayer.getPersonalBoard().getPopesTileStates()));
                 }
-            }
+
         }
+        lockConnections.unlock();
         sendMessageToAll(new ReloadMatchData(false, disconnection));
     }
 

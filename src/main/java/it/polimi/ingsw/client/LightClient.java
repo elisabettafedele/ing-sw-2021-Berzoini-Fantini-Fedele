@@ -24,7 +24,7 @@ public class LightClient {
 
     //TODO Raffa non serve più, puoi anche rimuovere
     private boolean[] hasTakenPopesTile;
-    int victoryPoints;
+    private int victoryPoints;
 
     private PopesTileState[] popesTileStates;
 

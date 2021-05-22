@@ -46,6 +46,22 @@ public class DevelopmentCardGrid implements Serializable {
         }
     }
 
+    public DevelopmentCardGrid(Stack<Integer>[][] oldCardsGrid){
+        cardGrid = new Stack[LEVEL][COLOR];
+        List<DevelopmentCard> cards = DevelopmentCardParser.parseCards();
+        for (int i = 0; i < LEVEL; i++){
+            for (int j = 0; j < COLOR; j++){
+                cardGrid[i][j] = new Stack<>();
+                for (int k = 0; k < oldCardsGrid[i][j].size(); k++) {
+                    int finalI = i;
+                    int finalJ = j;
+                    int finalK = k;
+                    cardGrid[i][j].push(cards.stream().filter(x -> x.getID() == oldCardsGrid[finalI][finalJ].get(finalK)).collect(Collectors.toList()).get(0));
+                }
+            }
+        }
+    }
+
     /**
      * Remove the bought {@link DevelopmentCard} from the grid
      * @param card the card that a {@link Player} have bought
@@ -85,5 +101,9 @@ public class DevelopmentCardGrid implements Serializable {
                 return true;
         }
         return false;
+    }
+
+    public Stack<DevelopmentCard>[][] getCardGrid() {
+        return cardGrid;
     }
 }

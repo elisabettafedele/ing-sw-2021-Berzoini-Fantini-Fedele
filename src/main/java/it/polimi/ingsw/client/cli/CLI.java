@@ -4,6 +4,7 @@ import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.client.View;
 
+import it.polimi.ingsw.client.cli.graphical.Colour;
 import it.polimi.ingsw.client.cli.graphical.GraphicalLogo;
 import it.polimi.ingsw.client.cli.graphical.Screen;
 import it.polimi.ingsw.client.cli.specificCLI.*;
@@ -62,6 +63,17 @@ public class CLI implements View {
     }
 
     @Override
+    public void displayDisconnection(String nickname, boolean setUp, boolean gameCancelled) {
+        System.out.println(Colour.ANSI_BRIGHT_GREEN.getCode() + "We are sorry to inform you that " + nickname + " has left the game." );
+        System.out.println("The game" + (gameCancelled? " has been cancelled." : " will go on skipping the turns of that player."+ Colour.ANSI_RESET));
+        if (setUp && gameCancelled){
+            System.out.println(Colour.ANSI_BRIGHT_GREEN.getCode() + "You have been reconnected to the main lobby...\nBe ready to start another game!\n" + Colour.ANSI_RESET);
+        }
+        if (setUp && !gameCancelled)
+            System.out.println("We are sorry, but since the game's size has been reduced, a part of the set up phase will be repeated. \nHowever, you will not be asked your leader cards' choices again");
+    }
+
+    @Override
     public void displayMessage(String message) {
         System.out.println(message);
     }
@@ -100,6 +112,8 @@ public class CLI implements View {
     public void displayPlayersReadyToStartMessage(List<String> nicknames) {
         LobbyCLI.displayPlayersReadyToStartMessage(nicknames);
     }
+
+
 
     // *********************************************************************  //
     //                             SETUP CLI                                  //

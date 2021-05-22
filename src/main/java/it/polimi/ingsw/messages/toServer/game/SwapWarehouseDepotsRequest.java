@@ -3,6 +3,9 @@ package it.polimi.ingsw.messages.toServer.game;
 import it.polimi.ingsw.common.ClientHandlerInterface;
 import it.polimi.ingsw.common.ServerInterface;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
+import it.polimi.ingsw.server.Server;
+
+import java.util.logging.Level;
 
 public class SwapWarehouseDepotsRequest implements MessageToServer {
     private String originDepot;
@@ -15,6 +18,7 @@ public class SwapWarehouseDepotsRequest implements MessageToServer {
 
     @Override
     public void handleMessage(ServerInterface server, ClientHandlerInterface clientHandler) {
+        Server.SERVER_LOGGER.log(Level.INFO, "New message from " + clientHandler.getNickname() + " that has requested to swap " + originDepot + " and " + destinationDepot);
         clientHandler.getCurrentAction().handleMessage(this);
     }
 

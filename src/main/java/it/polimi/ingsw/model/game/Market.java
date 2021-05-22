@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * The class represents the Market Tray with the {@link Marble} that can be taken during the {@link TakeResourceFromMarket}
+ * The class represents the Market Tray with the {@link Marble} that can be taken during the {@link it.polimi.ingsw.controller.actions.TakeResourcesFromMarketAction}
  * action
  */
 public class Market implements Serializable {
@@ -37,6 +37,11 @@ public class Market implements Serializable {
             }
         }
         slideMarble = Marble.valueOf(marbles.get(0));
+    }
+
+    public Market (Marble[][] marketTray, Marble slideMarble){
+        this.marketTray = marketTray;
+        this.slideMarble = slideMarble;
     }
 
     /**

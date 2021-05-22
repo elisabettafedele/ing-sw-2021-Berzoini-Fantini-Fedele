@@ -15,7 +15,7 @@ import java.util.Objects;
 public class Value implements Serializable {
 
     private static final long serialVersionUID = 3910562105507540474L;
-    private Map<Flag, Integer> flagValue;
+    private transient Map<Flag, Integer> flagValue;
     private Map<Resource, Integer> resourceValue;
     private int faithValue;
 

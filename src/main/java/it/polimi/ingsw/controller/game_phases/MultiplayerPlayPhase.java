@@ -24,6 +24,12 @@ public class MultiplayerPlayPhase extends PlayPhase implements GamePhase {
     @Override
     public void nextTurn() {
         pickNextPlayer();
+        if (getTurnController().getController().getClientHandlers().size() == 0){
+            return;
+        }
+        //TODO cancel match
+        while(!getController().getPlayers().get(turnIndex).isActive())
+            pickNextPlayer();
         if (endTrigger && getTurnController().getController().getPlayers().get(turnIndex).hasInkwell())
             getController().endMatch();
         else
@@ -64,7 +70,6 @@ public class MultiplayerPlayPhase extends PlayPhase implements GamePhase {
     @Override
     public void executePhase(Controller controller) {
         setTurnController(new TurnController(controller,getPlayer()));
-        setLastTurnGameCopy(controller.getGame());
         reloadGameCopy(false);
         getTurnController().start(getPlayer());
     }

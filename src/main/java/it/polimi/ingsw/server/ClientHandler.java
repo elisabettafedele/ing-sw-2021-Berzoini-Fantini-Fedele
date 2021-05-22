@@ -92,7 +92,6 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
             sendMessageToClient(new GameModeRequest());
             //startTimer();
 
-
             while(active){
                 try {
                     Object messageFromClient = is.readObject();
@@ -105,7 +104,7 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
                            // controller.getGameMessageManager().addMessage((MessageToServer) messageFromClient);
                     }
 
-                } catch (ClassNotFoundException messageIgnored) {
+                } catch (ClassNotFoundException ignored) {
                 } catch (SocketTimeoutException e){ //when the timer has expired
                     sendMessageToClient(new TimeoutExpiredMessage());
                     handleSocketDisconnection(true);
@@ -156,32 +155,34 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
      */
     //If the timer is expired or the ping message cannot be sent due to disconnection of the client (it throws IO Exception) I tell the client that he has been disconnected
     private void handleSocketDisconnection(boolean timeout){
+        if (!active)
+            return;
         //The connection is not active anymore
         this.active = false;
         Server.SERVER_LOGGER.log(Level.SEVERE, "Client disconnected");
-        //If the game is started, I mark the player as disconnected and the turn controller will not handle its turn
+        //If the game is started, the controller will handle his disconnection
         if (gameStarted){
             controller.handleClientDisconnection(nickname);
         } else {
             //If the game is not started yet, I simply remove the player from the list of waiting players
-            try {
-                os.writeObject(ConnectionMessage.CONNECTION_CLOSED);
-                os.flush();
-                os.reset();
-            } catch (IOException e) { }
             server.removeConnectionLobby(this);
-            try {
-                is.close();
-            } catch (IOException e) {
-            }
-            try {
-                os.close();
-            } catch (IOException e) {
-            }
-            try {
-                socket.close();
-            } catch (IOException e) {
-            }
+        }
+        try {
+            os.writeObject(ConnectionMessage.CONNECTION_CLOSED);
+            os.flush();
+            os.reset();
+        } catch (IOException e) { }
+        try {
+            is.close();
+        } catch (IOException e) {
+        }
+        try {
+            os.close();
+        } catch (IOException e) {
+        }
+        try {
+            socket.close();
+        } catch (IOException e) {
         }
     }
     @Override

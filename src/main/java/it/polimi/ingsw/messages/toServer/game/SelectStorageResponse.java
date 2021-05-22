@@ -5,6 +5,9 @@ import it.polimi.ingsw.common.ServerInterface;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.enumerations.ResourceStorageType;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
+import it.polimi.ingsw.server.Server;
+
+import java.util.logging.Level;
 
 public class SelectStorageResponse implements MessageToServer {
     ResourceStorageType resourceStorageType;
@@ -24,6 +27,7 @@ public class SelectStorageResponse implements MessageToServer {
 
     @Override
     public void handleMessage(ServerInterface server, ClientHandlerInterface clientHandler) {
+        Server.SERVER_LOGGER.log(Level.INFO, "New message from " + clientHandler.getNickname() + " that has decided to store one" + resource + "in " + resourceStorageType);
         clientHandler.getCurrentAction().handleMessage(this);
     }
 }

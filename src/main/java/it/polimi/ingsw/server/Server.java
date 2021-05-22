@@ -105,6 +105,7 @@ public class Server implements ServerInterface {
             startNewGame(connection);
             return;
         }
+
         if(knownClient(connection.getNickname())){
             clientsDisconnected.get(connection.getNickname()).getPlayerByNickname(connection.getNickname()).setActive(true);
             clientsDisconnected.get(connection.getNickname()).addConnection(connection);
@@ -274,7 +275,7 @@ public class Server implements ServerInterface {
                 clientsInLobby.remove(connection);
                 if (position == 0)
                     numberOfPlayersForNextGame = -1;
-                if(position < numberOfPlayersForNextGame)
+                if(position < numberOfPlayersForNextGame || numberOfPlayersForNextGame == -1)
                     NewGameManager();
             }
         }

@@ -40,14 +40,14 @@ public class SetUpPhase implements GamePhase {
     }
 
     public void handleMessage(MessageToServer message, ClientHandler clientHandler) {
-        if (message instanceof ChooseLeaderCardsResponse) {
+        if (message instanceof ChooseLeaderCardsResponse && clientHandler.getClientHandlerPhase() == ClientHandlerPhase.WAITING_DISCARDED_LEADER_CARDS) {
             removeLeaderCards(((ChooseLeaderCardsResponse) message).getDiscardedLeaderCards(), clientHandler);
         }
 
-        if (message instanceof ChooseResourceTypeResponse)
+        if (message instanceof ChooseResourceTypeResponse && clientHandler.getClientHandlerPhase() == ClientHandlerPhase.WAITING_CHOOSE_RESOURCE_TYPE)
             setInitialResourcesByNickname(((ChooseResourceTypeResponse) message).getResources(), clientHandler);
 
-        if (message instanceof ChooseStorageTypeResponse)
+        if (message instanceof ChooseStorageTypeResponse && clientHandler.getClientHandlerPhase() == ClientHandlerPhase.WAITING_CHOOSE_STORAGE_TYPE)
             storeResource(((ChooseStorageTypeResponse) message).getResource(), ((ChooseStorageTypeResponse) message).getStorageType(), clientHandler);
     }
 
@@ -111,7 +111,7 @@ public class SetUpPhase implements GamePhase {
      * Method to assign the right number of resources to a specific player, depending on his position in the turn round
      * @param clientHandler the player I want to assign the resources to
      */
-    private void assignResources(ClientHandler clientHandler) {
+    public void assignResources(ClientHandler clientHandler) {
         List<Resource> resourceTypes = Resource.realValues();
         clientHandler.setClientHandlerPhase(ClientHandlerPhase.WAITING_CHOOSE_RESOURCE_TYPE);
         clientHandler.sendMessageToClient(new ChooseResourceTypeRequest(resourceTypes, getNumberOfInitialResourcesByNickname(clientHandler.getNickname())));
@@ -162,13 +162,12 @@ public class SetUpPhase implements GamePhase {
      * @param clientHandler
      */
     private void sendSetUpFinishedMessage(ClientHandler clientHandler) {
-        //TODO send a message with his personal board view
         clientHandler.setClientHandlerPhase(ClientHandlerPhase.SET_UP_FINISHED);
         endPhaseManager(clientHandler);
     }
 
     private void endPhaseManager(ClientHandler clientHandler) {
-        List<String> nicknames = controller.getNicknames();
+        List<String> nicknames = controller.getClientHandlers().stream().map(ClientHandler::getNickname).collect(Collectors.toList());
         for (String nickname : nicknames) {
             if (controller.getConnectionByNickname(nickname).getClientHandlerPhase() != ClientHandlerPhase.SET_UP_FINISHED) {
                 clientHandler.sendMessageToClient(new TextMessage("Waiting the other players, the game will start as soon as they all be ready..."));

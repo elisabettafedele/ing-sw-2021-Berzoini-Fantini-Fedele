@@ -10,10 +10,11 @@ import java.util.*;
  */
 
 public class FaithTrack implements Serializable {
-    private Iterator<VaticanReportSection> vaticanReportSectionIterator;
+    private transient Iterator<VaticanReportSection> vaticanReportSectionIterator;
     private final int length;
     private LinkedHashMap< Integer , Integer > trackVictoryPoints;
     private VaticanReportSection currentSection;
+    private List<VaticanReportSection> vaticanReportSectionList;
 
     /**
      * Constructs the FaithTrack and automatically assigns to currentSection the first next element of the vaticanReportSectionIterator
@@ -21,13 +22,13 @@ public class FaithTrack implements Serializable {
      */
     public FaithTrack() {
         length = 24;
-        List<VaticanReportSection> tempList= new ArrayList<>();
+        vaticanReportSectionList= new ArrayList<>();
         try {
-            tempList.add(new VaticanReportSection(5, 8, 2));
-            tempList.add(new VaticanReportSection(12, 16, 3));
-            tempList.add(new VaticanReportSection(19, 24, 4));
+            vaticanReportSectionList.add(new VaticanReportSection(5, 8, 2));
+            vaticanReportSectionList.add(new VaticanReportSection(12, 16, 3));
+            vaticanReportSectionList.add(new VaticanReportSection(19, 24, 4));
         } catch (InvalidArgumentException e){}
-        vaticanReportSectionIterator=tempList.iterator();
+        vaticanReportSectionIterator=vaticanReportSectionList.iterator();
         currentSection= vaticanReportSectionIterator.next();
         trackVictoryPoints=new LinkedHashMap<>();
         trackVictoryPoints.put(3,1);
@@ -96,5 +97,11 @@ public class FaithTrack implements Serializable {
         if (start == 12)
             return 1;
         return 2;
+    }
+
+    public void setVaticanReportSectionIterator(VaticanReportSection currentSection) {
+        while (this.currentSection.getStart() != currentSection.getStart()){
+            this.currentSection = vaticanReportSectionIterator.next();
+        }
     }
 }
