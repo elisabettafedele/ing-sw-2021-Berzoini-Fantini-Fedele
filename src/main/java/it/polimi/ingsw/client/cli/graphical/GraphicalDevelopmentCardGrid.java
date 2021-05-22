@@ -9,22 +9,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class GraphicalDevelopmentCardGrid {
-    private final int h_space = 1; //horizontal_space between cards
-    private final int v_space = 0; //vertical_space between cards
+public class GraphicalDevelopmentCardGrid extends GraphicalElement{
 
-    private final int cardWidth = GraphicalDevelopmentCard.CardWidth;
-    private final int cardHeight = GraphicalDevelopmentCard.CardHeight;
+    private static final int h_space = 1; //horizontal_space between cards
+    private static final int v_space = 0; //vertical_space between cards
 
-    private final int width = cardWidth*4 + h_space *3;
-    private final int height = cardHeight*3 + v_space *3;
+    public static final int cardWidth = 14;
+    public static final int cardHeight = 8;
 
     List<LightDevelopmentCard> cardsToDisplay;
 
-    private final char[][] symbols = new char[height][width];
-    private final Colour[][] colours = new Colour[height][width];
-    private final BackColour[][] backGroundColours = new BackColour[height][width];
-
+    public GraphicalDevelopmentCardGrid() {
+        super(cardWidth*4 + h_space*3, cardHeight*3 + v_space*3);
+    }
 
     private void setCardsToDisplay(List<Integer> cardsToDisplay){
         this.cardsToDisplay = new ArrayList<>();
@@ -71,44 +68,5 @@ public class GraphicalDevelopmentCardGrid {
         x = x*(cardHeight + v_space);
         y = y*(cardWidth + h_space);
         return new ArrayList<>(Arrays.asList(x, y));
-    }
-
-    public void displayDevelopmentCardGrid() {
-        for(int i = 0; i < height; i++){
-            for(int j = 0; j < width; j++){
-                System.out.print(backGroundColours[i][j].getCode() + colours[i][j].getCode() + symbols[i][j]); //+ Colour.ANSI_RESET
-            }
-            System.out.print("\n");
-        }
-    }
-
-    private void reset(){
-        for(int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                symbols[i][j] = ' ';
-                colours[i][j] = Colour.ANSI_DEFAULT;
-                backGroundColours[i][j] = BackColour.ANSI_BG_BLACK;
-            }
-        }
-    }
-
-    char[][] getSymbols() {
-        return symbols;
-    }
-
-    Colour[][] getColours() {
-        return colours;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public BackColour[][] getBackGroundColours() {
-        return backGroundColours;
     }
 }

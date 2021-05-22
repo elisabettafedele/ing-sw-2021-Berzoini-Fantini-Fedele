@@ -40,7 +40,7 @@ public class GraphicalDevelopmentCardGridTest {
     @Test
     public void displayDevelopmentCardGrid() {
         gdc.drawDevelopmentCardGrid(IDs);
-        gdc.displayDevelopmentCardGrid();
+        gdc.display();
     }
 
     static List<LightDevelopmentCard> getLightDevelopmentCards(List<DevelopmentCard> cards){

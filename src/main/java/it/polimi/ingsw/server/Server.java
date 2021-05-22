@@ -18,10 +18,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.locks.ReentrantLock;
@@ -236,8 +233,8 @@ public class Server implements ServerInterface {
             lockGames.unlock();
         }
         assert controller != null;
+        connection.sendMessageToClient(new SendPlayerNicknamesMessage(connection.getNickname(), new ArrayList<String>()));
         controller.start();
-
     }
 
     /**

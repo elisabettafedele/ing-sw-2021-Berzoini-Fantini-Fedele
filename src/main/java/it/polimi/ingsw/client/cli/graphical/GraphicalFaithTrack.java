@@ -3,50 +3,23 @@ package it.polimi.ingsw.client.cli.graphical;
 import it.polimi.ingsw.client.LightClient;
 import it.polimi.ingsw.client.MatchData;
 
-import java.util.List;
-
-public class GraphicalFaithTrack {
-
-    private final int width = 58;
-    private final int height = 9;
-    private final int trackWidth = 58;
+public class GraphicalFaithTrack extends GraphicalElement{
 
     private final int squareHeight = 3;
     private final int squareWidth = 4;
 
-    private final char[][] symbols = new char[height][width];
-    private final Colour[][] colours = new Colour[height][width];
-    private final BackColour[][] backGroundColours = new BackColour[height][width];
     String nickname;
 
     public GraphicalFaithTrack(String nickname) {
+        super(58, 9);
         this.nickname = nickname;
         reset();
-    }
-
-    private void reset(){
-        for(int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                symbols[i][j] = ' ';
-                colours[i][j] = Colour.ANSI_BRIGHT_WHITE;
-                backGroundColours[i][j] = BackColour.ANSI_DEFAULT;
-            }
-        }
-    }
-
-    public void displayFaithTrack() {
-        for(int i = 0; i < height; i++){
-            for(int j = 0; j < width; j++){
-                System.out.print(backGroundColours[i][j].getCode() + colours[i][j].getCode() + symbols[i][j]); //+ Colour.ANSI_RESET
-            }
-            System.out.print("\n");
-        }
     }
 
     public void drawFaithTrack(){
         reset();
         int xStep = height/3 - 1;
-        int yStep = trackWidth/19;
+        int yStep = width /19;
         int cellNumber = 0;
         for(int i = 0; i < 3; i++){
             drawSquare(cellNumber++, xStep*2+1, i*yStep);
@@ -76,7 +49,7 @@ public class GraphicalFaithTrack {
 
     private void drawPopesFavorTiles() {
         int xStep = height/3 - 1;
-        int yStep = trackWidth/19;
+        int yStep = width /19;
         int x_begin = xStep+2;
         int y_begin = yStep*4;
         LightClient lc = MatchData.getInstance().getLightClientByNickname(this.nickname);
@@ -310,26 +283,5 @@ public class GraphicalFaithTrack {
             boxChars[0] = '┼';
 
         return boxChars;
-    }
-
-
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    char[][] getSymbols() {
-        return symbols;
-    }
-
-    Colour[][] getColours() {
-        return colours;
-    }
-
-    public BackColour[][] getBackGroundColours() {
-        return backGroundColours;
     }
 }

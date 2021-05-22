@@ -81,7 +81,7 @@ public class ScreenTest {
         }
 
         MatchData.getInstance().loadDevelopmentCardGrid(devCardGridCardsIDs);
-        //screen.updateInfo(devCardGridCardsIDs);
+        //symbols.updateInfo(devCardGridCardsIDs);
 
     }
 

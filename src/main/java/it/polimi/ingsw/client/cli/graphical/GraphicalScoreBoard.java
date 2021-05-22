@@ -4,36 +4,11 @@ import it.polimi.ingsw.client.MatchData;
 
 import java.util.List;
 
-public class GraphicalScoreBoard {
-
-    private final int width = 36;
-    private final int height = 4;
-
-    private final char[][] symbols = new char[height][width];
-    private final Colour[][] colours = new Colour[height][width];
-    private final BackColour[][] backGroundColours = new BackColour[height][width];
+public class GraphicalScoreBoard extends GraphicalElement{
 
     public GraphicalScoreBoard() {
+        super(36, 4);
         reset();
-    }
-
-    private void reset(){
-        for(int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                symbols[i][j] = ' ';
-                colours[i][j] = Colour.ANSI_BRIGHT_WHITE;
-                backGroundColours[i][j] = BackColour.ANSI_DEFAULT;
-            }
-        }
-    }
-
-    public void displayScoreBoard() {
-        for(int i = 0; i < height; i++){
-            for(int j = 0; j < width; j++){
-                System.out.print(backGroundColours[i][j].getCode() + colours[i][j].getCode() + symbols[i][j]); //+ Colour.ANSI_RESET
-            }
-            System.out.print("\n");
-        }
     }
 
     public void drawScoreBoard(){
@@ -78,25 +53,5 @@ public class GraphicalScoreBoard {
             x_begin++;
 
         }
-    }
-
-    int getWidth() {
-        return width;
-    }
-
-    int getHeight() {
-        return height;
-    }
-
-    char[][] getSymbols() {
-        return symbols;
-    }
-
-    Colour[][] getColours() {
-        return colours;
-    }
-
-    BackColour[][] getBackGroundColours() {
-        return backGroundColours;
     }
 }

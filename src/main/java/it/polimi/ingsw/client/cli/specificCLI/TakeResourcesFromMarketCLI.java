@@ -2,7 +2,6 @@ package it.polimi.ingsw.client.cli.specificCLI;
 
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.cli.CLI;
-import it.polimi.ingsw.client.cli.graphical.GraphicalMarket;
 import it.polimi.ingsw.client.cli.graphical.Screen;
 import it.polimi.ingsw.client.utilities.InputParser;
 import it.polimi.ingsw.enumerations.Marble;
@@ -39,7 +38,6 @@ public class TakeResourcesFromMarketCLI {
 
     public static void displayMarblesTaken(List<Marble> marblesTaken, boolean needToChooseConversion) {
         System.out.println("These are the marbles you took from the market:");
-        GraphicalMarket.printMarbleLine(marblesTaken);
         if (marblesTaken.contains(Marble.WHITE)){
             if (!needToChooseConversion)
                 System.out.println("White marbles will be automatically converted according to your leader card effects (if any)");

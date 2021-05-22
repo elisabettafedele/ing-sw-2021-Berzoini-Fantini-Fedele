@@ -44,7 +44,7 @@ public class GraphicalLeaderCardTest {
     @Test
     public void displayCard() {
         glc.drawCard();
-        glc.displayCard();
+        glc.display();
     }
 
     static List<LightLeaderCard> getLightLeaderCards(List<LeaderCard> cards){
