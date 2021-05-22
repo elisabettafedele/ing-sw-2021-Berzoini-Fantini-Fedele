@@ -44,7 +44,7 @@ public class OrganizeDepotsCLI {
         if (isInLeaderDepot ^ isInStrongbox ^ isInWarehouse){
             if (isInWarehouse)
                 client.sendMessageToServer(new SelectStorageResponse(resource, ResourceStorageType.WAREHOUSE));
-            if (isInStrongbox)
+            else if (isInStrongbox)
                 client.sendMessageToServer(new SelectStorageResponse(resource, ResourceStorageType.STRONGBOX));
             else
                 client.sendMessageToServer(new SelectStorageResponse(resource, ResourceStorageType.LEADER_DEPOT));

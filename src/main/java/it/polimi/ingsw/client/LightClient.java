@@ -22,7 +22,7 @@ public class LightClient {
     Map<Integer, Integer> leaderDepots;
     //TODO Raffa non serve più, puoi anche rimuovere
     private boolean[] hasTakenPopesTile;
-    int victoryPoints;
+    private int victoryPoints;
 
 
     private PopesTileState[] popesTileStates;

@@ -4,6 +4,9 @@ import it.polimi.ingsw.client.PopesTileState;
 import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.enumerations.*;
 import it.polimi.ingsw.exceptions.*;
+import it.polimi.ingsw.jsonParsers.DevelopmentCardParser;
+import it.polimi.ingsw.jsonParsers.LeaderCardParser;
+import it.polimi.ingsw.model.PersistentPlayer;
 import it.polimi.ingsw.model.cards.*;
 import it.polimi.ingsw.model.depot.Depot;
 import it.polimi.ingsw.model.depot.LeaderDepot;
@@ -17,12 +20,12 @@ import java.util.stream.Collectors;
  * The class represents the {@link Player}'s Personal Board.It includes all the attributes and that PersonalBoard has.
  */
 public class PersonalBoard implements Serializable {
-    private StrongboxDepot[] strongbox;
+    private  StrongboxDepot[] strongbox;
     private Warehouse warehouse;
     private int markerPosition;
-    private Stack<DevelopmentCard>[] developmentCardSlots;
+    private transient Stack<DevelopmentCard>[] developmentCardSlots;
     private List<LeaderCard> leaderCards;
-    private Production defaultProduction;
+    private  Production defaultProduction;
     private final int numberOfStrongboxDepots = 4;
     private final int numberOfDevelopmentCardSlots = 3;
     private final int numberOfInitialLeaderCards = 4;
@@ -33,7 +36,7 @@ public class PersonalBoard implements Serializable {
      * @throws InvalidArgumentException leaderCards is null or contains less or more than 2 Leader Cards
      */
     public PersonalBoard( List<LeaderCard> leaderCards) throws InvalidArgumentException {
-        if(leaderCards==null||leaderCards.size()!=numberOfInitialLeaderCards){
+        if(leaderCards==null || leaderCards.size()!=numberOfInitialLeaderCards){
             throw new InvalidArgumentException();
         }
         strongbox = new StrongboxDepot[numberOfStrongboxDepots];
@@ -54,6 +57,77 @@ public class PersonalBoard implements Serializable {
         Map output = new HashMap();
         output.put(Resource.ANY,1);
         defaultProduction = new Production(new Value(null,input,0),new Value( null,output,0));
+    }
+
+    public PersonalBoard(PersistentPlayer persistentPlayer){
+        markerPosition = persistentPlayer.getFaithTrackPosition();
+        popesTileStates = persistentPlayer.getPopesTileStates();
+        //LEADER CARDS
+        this.leaderCards = new ArrayList<>();
+        List<LeaderCard> leaderCards = LeaderCardParser.parseCards();
+        for (Integer id : persistentPlayer.getOwnedLeaderCards().keySet()){
+            this.leaderCards.add(leaderCards.stream().filter(x -> x.getID() == id).collect(Collectors.toList()).get(0));
+            if (persistentPlayer.getOwnedLeaderCards().get(id))
+                this.leaderCards.get(leaderCards.size()-1).activate();
+        }
+
+        //DEVELOPMENT CARD
+        List<DevelopmentCard> developmentCards = DevelopmentCardParser.parseCards();
+        this.developmentCardSlots = new Stack[3];
+        for (int i = 0; i < persistentPlayer.getDevelopmentCardSlots().length; i++){
+            developmentCardSlots[i] = new Stack<>();
+            if (!persistentPlayer.getDevelopmentCardSlots()[i].isEmpty()){
+                for (int j = 0; j < persistentPlayer.getDevelopmentCardSlots()[i].size(); j++) {
+                    int finalI = i;
+                    int finalJ = j;
+                    developmentCardSlots[i].push(developmentCards.stream().filter(x -> x.getID() == persistentPlayer.getDevelopmentCardSlots()[finalI].get(finalJ)).collect(Collectors.toList()).get(0));
+                }
+            }
+        }
+
+        //RESTORE STRONGBOX
+        strongbox = new StrongboxDepot[4];
+        for (int i = 0; i < 4; i++) {
+            strongbox[i] = new StrongboxDepot(Resource.valueOf(i));
+            if (persistentPlayer.getStrongbox()[i] > 0) {
+                try {
+                    strongbox[i].addResources(persistentPlayer.getStrongbox()[i]);
+                } catch (InvalidDepotException | InvalidArgumentException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        //RESTORE WAREHOUSE
+        try {
+            warehouse = new Warehouse(persistentPlayer.getWarehouse());
+        } catch (InvalidArgumentException e) {
+            e.printStackTrace();
+        }
+
+        //RESTORE LEADER DEPOTS
+        for (Integer id : persistentPlayer.getLeaderDepots().keySet()){
+            for (LeaderCard card : leaderCards){
+                if (card.getID() == id){
+                    try {
+                        card.getEffect().getExtraDepotEffect().getLeaderDepot().addResources(persistentPlayer.getLeaderDepots().get(id));
+                    } catch (InvalidArgumentException | InsufficientSpaceException | DifferentEffectTypeException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+        Map input = new HashMap();
+        input.put(Resource.ANY,2);
+        Map output = new HashMap();
+        output.put(Resource.ANY,1);
+        try {
+            defaultProduction = new Production(new Value(null,input,0),new Value( null,output,0));
+        } catch (InvalidArgumentException e) {
+            e.printStackTrace();
+        }
+
     }
 
     /**

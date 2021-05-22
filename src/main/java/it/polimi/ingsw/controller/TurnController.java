@@ -7,6 +7,7 @@ import it.polimi.ingsw.enumerations.ResourceStorageType;
 import it.polimi.ingsw.messages.toClient.game.SelectStorageRequest;
 import it.polimi.ingsw.messages.toClient.matchData.NotifyTakenPopesFavorTile;
 import it.polimi.ingsw.messages.toClient.matchData.UpdateDepotsStatus;
+import it.polimi.ingsw.model.PersistentGame;
 import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.controller.actions.*;
 import it.polimi.ingsw.enumerations.ActionType;
@@ -61,6 +62,7 @@ public class TurnController {
         if (!currentPlayer.isActive()) {
             ((PlayPhase) controller.getGamePhase()).nextTurn();
         } else {
+            ((PlayPhase)controller.getGamePhase()).saveGameCopy(controller.getGame());
             this.clientHandler = controller.getConnectionByNickname(currentPlayer.getNickname());
             reset();
             setNextAction();
@@ -72,6 +74,7 @@ public class TurnController {
         checkExecutableActions();
         if(isInterruptible && (controller.getGame().getDevelopmentCardGrid().checkEmptyColumn() || endTrigger)){
             controller.endMatch();
+            return;
         }
         if (executableActions.values().stream().noneMatch(x -> x))
             endTurn();
@@ -218,6 +221,7 @@ public class TurnController {
                 end = false;
         //If I do not have any other resource to remove
         if (end){
+            resourcesToRemove = new HashMap<>();
             getController().sendMessageToAll(new UpdateDepotsStatus(currentPlayer.getNickname(), currentPlayer.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), currentPlayer.getPersonalBoard().getStrongboxStatus(), currentPlayer.getPersonalBoard().getLeaderStatus()));
             setStandardActionDoneToTrue();
             setNextAction();
@@ -235,6 +239,9 @@ public class TurnController {
                 }
             }
         }
+        if (standardActionDone)
+            return;
+        resourcesToRemove = new HashMap<>();
         getController().sendMessageToAll(new UpdateDepotsStatus(currentPlayer.getNickname(), currentPlayer.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), currentPlayer.getPersonalBoard().getStrongboxStatus(), currentPlayer.getPersonalBoard().getLeaderStatus()));
         setStandardActionDoneToTrue();
         setNextAction();
@@ -268,9 +275,12 @@ public class TurnController {
 
     public void endTurn(){
         //I set a copy of the game at the end of each turn
-        ((PlayPhase) controller.getGamePhase()).setLastTurnGameCopy(controller.getGame());
+        ((PlayPhase) controller.getGamePhase()).setLastTurnGameCopy(new PersistentGame(controller.getGame()));
         clientHandler.sendMessageToClient(new TextMessage("Turn ended"));
         ((PlayPhase) controller.getGamePhase()).nextTurn();
     }
 
+    public boolean isStandardActionDone() {
+        return standardActionDone;
+    }
 }

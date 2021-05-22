@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.player;
 
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
+import it.polimi.ingsw.model.PersistentPlayer;
 import it.polimi.ingsw.model.cards.LeaderCard;
 
 import java.io.Serializable;
@@ -26,6 +27,13 @@ public class Player implements Serializable {
         this.victoryPoints = 0;
         this.winner = false;
         this.active = true;
+    }
+
+    public Player(PersistentPlayer persistentPlayer){
+        nickname = persistentPlayer.getNickname();
+        victoryPoints = persistentPlayer.getVictoryPoints();
+        active = persistentPlayer.isActive();
+        personalBoard = new PersonalBoard(persistentPlayer);
     }
 
     /**

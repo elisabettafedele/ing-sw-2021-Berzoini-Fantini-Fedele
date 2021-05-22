@@ -20,7 +20,7 @@ public class ValueParser {
     }
 
     public static Value parseValue(JsonArray jsonValues) throws InvalidArgumentException {
-        Map<Flag, Integer> flagValue = new HashMap();
+        Map<Flag, Integer> flagValue = new HashMap<Flag, Integer>();
         Map<Resource, Integer> resourceValue = new HashMap<Resource,Integer>();
         int faithValue=0;
         for (JsonElement jsonElement : jsonValues){

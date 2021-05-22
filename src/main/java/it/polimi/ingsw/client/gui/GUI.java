@@ -204,6 +204,11 @@ public class GUI extends Application implements View {
     }
 
     @Override
+    public void displayDisconnection(String nickname, boolean setUp, boolean gameCancelled) {
+
+    }
+
+    @Override
     public void displaySelectStorageRequest(Resource resource, boolean isInWarehouse, boolean isInStrongbox, boolean isInLeaderDepot) {
 
 

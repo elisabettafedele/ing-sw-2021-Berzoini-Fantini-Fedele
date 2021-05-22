@@ -52,10 +52,6 @@ public class PersonalBoardTest {
 
     }
 
-    @Test(expected = InvalidArgumentException.class)
-    public void personalBoard_constructorCorrectlyThrowsExceptionNullPointer() throws InvalidArgumentException {
-        PersonalBoard pb=new PersonalBoard(null);
-    }
     @Test (expected = InvalidArgumentException.class)
     public void personalBoard_constructorCorrectlyThrowsExceptionNullNotTwoLeaderCards() throws InvalidArgumentException {
         ArrayList<LeaderCard> lcl=new ArrayList<>();

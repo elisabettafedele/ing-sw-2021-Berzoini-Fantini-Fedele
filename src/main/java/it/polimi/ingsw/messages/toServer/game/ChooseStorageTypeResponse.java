@@ -4,8 +4,10 @@ import it.polimi.ingsw.common.ClientHandlerInterface;
 import it.polimi.ingsw.common.ServerInterface;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
+import it.polimi.ingsw.server.Server;
 
 import javax.swing.*;
+import java.util.logging.Level;
 
 public class ChooseStorageTypeResponse implements MessageToServer {
     private Resource resource;
@@ -21,6 +23,7 @@ public class ChooseStorageTypeResponse implements MessageToServer {
     }
     @Override
     public void handleMessage(ServerInterface server, ClientHandlerInterface clientHandler) {
+        Server.SERVER_LOGGER.log(Level.INFO, "New message from " + clientHandler.getNickname() + " that has chosen to store the " + resource + " in " + storageType);
         if (!canDiscard)
             clientHandler.getController().handleMessage(this,clientHandler);
         else

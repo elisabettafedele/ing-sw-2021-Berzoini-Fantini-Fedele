@@ -1,10 +1,14 @@
 package it.polimi.ingsw.model.game;
 
+import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.enumerations.GameMode;
+import it.polimi.ingsw.enumerations.Marble;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.InvalidMethodException;
 import it.polimi.ingsw.exceptions.InvalidPlayerAddException;
 import it.polimi.ingsw.exceptions.ZeroPlayerException;
+import it.polimi.ingsw.model.PersistentGame;
+import it.polimi.ingsw.model.PersistentPlayer;
 import it.polimi.ingsw.model.cards.LeaderCard;
 import it.polimi.ingsw.model.player.Player;
 
@@ -14,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Game implements Serializable {
+public class Game implements Serializable, Cloneable {
     private DevelopmentCardGrid developmentCardGrid;
     private Market market;
     private GameMode gameMode;
@@ -34,6 +38,22 @@ public class Game implements Serializable {
         this.gameMode = gameMode;
         this.players = new ArrayList<Player>();
         this.faithTrack = new FaithTrack();
+    }
+
+    public Game(PersistentGame game){
+        developmentCardGrid = new DevelopmentCardGrid(game.getDevelopmentCardGrid());
+        Marble[][] marketTrayCopy = new Marble[3][4];
+        for (int i = 0; i < marketTrayCopy.length; i++)
+            for(int j = 0; j < marketTrayCopy[i].length; j++)
+                marketTrayCopy[i][j] = game.getMarketTray()[i][j];
+        market = new Market(marketTrayCopy, game.getSlideMarble());
+        gameMode = game.getGameMode();
+        faithTrack = new FaithTrack();
+        faithTrack.setVaticanReportSectionIterator(game.getCurrentSection());
+        this.players = new ArrayList<Player>();
+        for (PersistentPlayer player : game.getPlayers()){
+            this.players.add(new Player(player));
+        }
     }
 
     /**

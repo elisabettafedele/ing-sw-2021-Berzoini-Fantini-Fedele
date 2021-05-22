@@ -37,6 +37,19 @@ public class Warehouse implements Serializable {
         }
     }
 
+    public Warehouse (List<Resource>[] warehouse) throws InvalidArgumentException {
+        this();
+        for (int i = 0; i < warehouse.length; i++){
+            if (!warehouse[i].isEmpty()) {
+                try {
+                    addResourcesToDepot(i, warehouse[i].get(0), warehouse[i].size());
+                } catch (InsufficientSpaceException | InvalidDepotException | InvalidArgumentException | InvalidResourceTypeException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     /**
      * Method used to get the {@link Resource} type of a certain depot of the warehouse
      *
@@ -225,5 +238,12 @@ public class Warehouse implements Serializable {
         } catch (InvalidArgumentException | InsufficientQuantityException e) {
             e.printStackTrace();
         }
+    }
+
+    public void removeAllResources(){
+        removeAll(Resource.COIN);
+        removeAll(Resource.SHIELD);
+        removeAll(Resource.STONE);
+        removeAll(Resource.SERVANT);
     }
 }
