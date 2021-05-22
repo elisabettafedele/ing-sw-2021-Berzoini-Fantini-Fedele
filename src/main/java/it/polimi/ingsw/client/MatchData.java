@@ -139,9 +139,6 @@ public class MatchData {
         if (message instanceof ReloadLeaderCardsOwned)
             getLightClientByNickname(message.getNickname()).reloadLeaderCards(((ReloadLeaderCardsOwned) message).getCards());
 
-        if (message instanceof ReloadDevelopmentCardOwned)
-            getLightClientByNickname(message.getNickname()).reloadDevelopmentCards(((ReloadDevelopmentCardOwned) message).getHiddenDevelopmentCardColours(), ((ReloadDevelopmentCardOwned) message).getOwnedDevelopmentCards());
-
         if (message instanceof ReloadPopesFavorTiles)
             getLightClientByNickname(message.getNickname()).setPopesTileStates(((ReloadPopesFavorTiles) message).getPopesTileStates());
 

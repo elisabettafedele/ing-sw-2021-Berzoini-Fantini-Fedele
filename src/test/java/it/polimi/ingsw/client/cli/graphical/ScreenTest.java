@@ -43,8 +43,10 @@ public class ScreenTest {
         MatchData.getInstance().getLightClientByNickname(playerOne).updateMarkerPosition(5);
         MatchData.getInstance().getLightClientByNickname(playerTwo).updateMarkerPosition(9);
         MatchData.getInstance().getLightClientByNickname(playerTwo).updateTakenPopesFavorTile(0);
+
         MatchData.getInstance().getLightClientByNickname(playerOne).addDevelopmentCard(5, 0, 3);
         MatchData.getInstance().getLightClientByNickname(playerOne).addDevelopmentCard(32, 2, 3);
+
         MatchData.getInstance().getLightClientByNickname(playerOne).addLeaderCard(55, false);
         MatchData.getInstance().getLightClientByNickname(playerOne).addLeaderCard(49, true);
 

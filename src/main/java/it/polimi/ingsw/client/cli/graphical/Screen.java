@@ -5,12 +5,14 @@ import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.common.LightLeaderCard;
 
 import java.util.ArrayList;
+import java.util.EmptyStackException;
 import java.util.List;
+import java.util.Stack;
 
 public class Screen {
 
-    private final static int screen_width = 188;
-    private final static int screen_height = 25;
+    private final static int width = 188;
+    private final static int height = 25;
 
     private final int devCardGrid_x_anchor = 0;
     private final int devCardGrid_y_anchor = 0;
@@ -36,9 +38,9 @@ public class Screen {
     private final int strongbox_x_anchor = 7;
     private final int strongbox_y_anchor = 122;
 
-    private final char[][] screen = new char[screen_height][screen_width];
-    private final Colour[][] colours = new Colour[screen_height][screen_width];
-    private final BackColour[][] backGroundColours = new BackColour[screen_height][screen_width];
+    private final char[][] screen = new char[height][width];
+    private final Colour[][] colours = new Colour[height][width];
+    private final BackColour[][] backGroundColours = new BackColour[height][width];
 
     GraphicalDevelopmentCardGrid graphicalDevelopmentCardGrid;
     List<Integer> developmentCardGridCardsToDisplay;
@@ -74,8 +76,8 @@ public class Screen {
 
     //TODO: la display è uguale in tutti gli elementi grafici
     private void display(){
-        for(int i = 0; i < screen_height; i++){
-            for(int j = 0; j < screen_width; j++){
+        for(int i = 0; i < height; i++){
+            for(int j = 0; j < width; j++){
                 System.out.print(backGroundColours[i][j].getCode() + colours[i][j].getCode() + screen[i][j]); //+ Colour.ANSI_RESET
             }
             System.out.print("\n");
@@ -123,10 +125,19 @@ public class Screen {
 
     private void drawDevelopmentCardSlots() {
         int yStep = GraphicalCard.CardWidth+1;
-        int[] developmentCards = MatchData.getInstance().getLightClientByNickname(this.nickname).getOwnedDevelopmentCards();
-        for(int i = 0; i < developmentCards.length; i++){
-            if(developmentCards[i] != MatchData.EMPTY_SLOT){
-                LightDevelopmentCard ldc = MatchData.getInstance().getDevelopmentCardByID(developmentCards[i]);
+        int[] developmentCardsTop = new int[3];
+        //int[] developmentCardsTop = MatchData.getInstance().getLightClientByNickname(this.nickname).getOwnedDevelopmentCards();
+        Stack<Integer>[] developmentCardSlots = MatchData.getInstance().getLightClientByNickname(this.nickname).getDevelopmentCardSlots();
+        for(int i = 0; i < developmentCardSlots.length; i++){
+            try {
+                developmentCardsTop[i] = developmentCardSlots[i].peek();
+            }catch (EmptyStackException e){
+                developmentCardsTop[i] = MatchData.EMPTY_SLOT;
+            }
+        }
+        for(int i = 0; i < developmentCardsTop.length; i++){
+            if(developmentCardsTop[i] != MatchData.EMPTY_SLOT){
+                LightDevelopmentCard ldc = MatchData.getInstance().getDevelopmentCardByID(developmentCardsTop[i]);
                 GraphicalDevelopmentCard gd = new GraphicalDevelopmentCard(ldc, this.nickname);
                 gd.drawCard();
                 drawElement(GraphicalCard.CardHeight, GraphicalCard.CardWidth, gd.getColours(), gd.getSymbols(),
@@ -151,8 +162,8 @@ public class Screen {
     }
 
     private void reset(){
-        for(int i = 0; i < screen_height; i++) {
-            for (int j = 0; j < screen_width; j++) {
+        for(int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
                 screen[i][j] = ' ';
                 colours[i][j] = Colour.ANSI_DEFAULT;
                 backGroundColours[i][j] = BackColour.ANSI_DEFAULT;
@@ -200,7 +211,7 @@ public class Screen {
 
     public void displaySetUpLeaderCardSelection(List<Integer> IDs){
         reset();
-        int x_anchor = screen_height - GraphicalCard.CardHeight;
+        int x_anchor = height - GraphicalCard.CardHeight;
         int y_anchor = 0;
         int y_step = GraphicalCard.CardWidth + 1;
 
