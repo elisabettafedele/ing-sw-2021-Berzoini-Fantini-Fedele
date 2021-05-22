@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -15,46 +15,50 @@
    <children>
       <AnchorPane fx:id="rightPane" layoutX="419.0" layoutY="24.0" prefHeight="617.0" prefWidth="850.0">
          <children>
-            <Pane fx:id="warehouse_first_depot" layoutX="99.0" layoutY="277.0" prefHeight="32.0" prefWidth="32.0">
+            <Pane fx:id="warehouse" layoutX="37.0" layoutY="217.0" prefHeight="238.0" prefWidth="163.0">
                <children>
-                  <ImageView fitHeight="40.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../img/punchboard/coin.png" />
-                     </image>
-                  </ImageView>
-               </children>
-            </Pane>
-            <Pane fx:id="warehouse_second_depot" layoutX="87.0" layoutY="328.0" prefHeight="32.0" prefWidth="70.0">
-               <children>
-                  <ImageView fitHeight="40.0" fitWidth="35.0" layoutX="-6.0" layoutY="-3.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../img/punchboard/coin.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="40.0" fitWidth="35.0" layoutX="36.0" layoutY="-3.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../img/punchboard/coin.png" />
-                     </image>
-                  </ImageView>
-               </children>
-            </Pane>
-            <Pane fx:id="warehouse_third_depot" layoutX="64.0" layoutY="379.0" prefHeight="34.0" prefWidth="101.0">
-               <children>
-                  <ImageView fitHeight="40.0" fitWidth="35.0" layoutX="-6.0" layoutY="-3.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../img/punchboard/coin.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="40.0" fitWidth="35.0" layoutX="31.0" layoutY="-3.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../img/punchboard/coin.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="40.0" fitWidth="35.0" layoutX="67.0" layoutY="-3.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../img/punchboard/coin.png" />
-                     </image>
-                  </ImageView>
+                  <Pane fx:id="warehouse_first_depot" layoutX="65.0" layoutY="57.0" prefHeight="32.0" prefWidth="32.0">
+                     <children>
+                        <ImageView fitHeight="40.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/punchboard/coin.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </Pane>
+                  <Pane fx:id="warehouse_second_depot" layoutX="47.0" layoutY="110.0" prefHeight="32.0" prefWidth="70.0">
+                     <children>
+                        <ImageView fitHeight="40.0" fitWidth="35.0" layoutX="-6.0" layoutY="-3.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/punchboard/coin.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fitHeight="40.0" fitWidth="35.0" layoutX="36.0" layoutY="-3.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/punchboard/coin.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </Pane>
+                  <Pane fx:id="warehouse_third_depot" layoutX="31.0" layoutY="162.0" prefHeight="34.0" prefWidth="101.0">
+                     <children>
+                        <ImageView fitHeight="40.0" fitWidth="35.0" layoutX="-6.0" layoutY="-3.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/punchboard/coin.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fitHeight="40.0" fitWidth="35.0" layoutX="31.0" layoutY="-3.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/punchboard/coin.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fitHeight="40.0" fitWidth="35.0" layoutX="67.0" layoutY="-3.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/punchboard/coin.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </Pane>
                </children>
             </Pane>
             <Pane layoutX="37.0" layoutY="484.0" prefHeight="101.0" prefWidth="141.0">
@@ -115,26 +119,11 @@
                   </GridPane>
                </children>
             </Pane>
-            <Pane fx:id="faithtrack" layoutX="37.0" layoutY="29.0" prefHeight="145.0" prefWidth="789.0">
+            <Pane fx:id="faithtrack" layoutX="37.0" layoutY="29.0" prefHeight="145.0" prefWidth="697.0">
                <children>
                   <ImageView fitHeight="40.0" fitWidth="25.0" layoutX="8.0" layoutY="100.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../img/punchboard/faithSign.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="54.0" fitWidth="51.0" layoutX="182.0" layoutY="70.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../img/punchboard/vrs1yes.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="54.0" fitWidth="51.0" layoutX="386.0" layoutY="32.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../img/punchboard/vrs2yes.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="54.0" fitWidth="51.0" layoutX="636.0" layoutY="67.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../img/punchboard/vrs3yes.png" />
                      </image>
                   </ImageView>
                   <ImageView fitHeight="40.0" fitWidth="25.0" layoutX="47.0" layoutY="100.0" pickOnBounds="true" preserveRatio="true">
@@ -259,6 +248,25 @@
                   </ImageView>
                </children>
             </Pane>
+            <Pane fx:id="popeTiles" layoutX="206.0" layoutY="53.0" prefHeight="101.0" prefWidth="526.0">
+               <children>
+                  <ImageView fitHeight="54.0" fitWidth="51.0" layoutX="467.0" layoutY="43.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../img/punchboard/vrs3yes.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="54.0" fitWidth="51.0" layoutX="220.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../img/punchboard/vrs2yes.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="54.0" fitWidth="51.0" layoutX="14.0" layoutY="43.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../img/punchboard/vrs1yes.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </Pane>
             <Pane fx:id="firstSlot" layoutX="325.0" layoutY="243.0" prefHeight="306.0" prefWidth="154.0">
                <children>
                   <ImageView fitHeight="228.0" fitWidth="125.0" layoutX="15.0" pickOnBounds="true" preserveRatio="true">
@@ -316,6 +324,17 @@
                   </ImageView>
                </children>
             </Pane>
+            <ImageView fx:id="nextPlayerButton" fitHeight="157.0" fitWidth="40.0" layoutX="791.0" layoutY="154.0" onMouseClicked="#onNextPlayerButtonPressed" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../img/gameStyle/rightArrow.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="previousPlayerButton" fitHeight="67.0" fitWidth="40.0" layoutX="745.0" layoutY="154.0" onMouseClicked="#onPreviousPlayerButtonPressed" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../img/gameStyle/leftArrow.png" />
+               </image>
+            </ImageView>
+            <Label fx:id="currentPBNicknameLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="736.0" layoutY="103.0" prefHeight="51.0" prefWidth="101.0" />
          </children>
       </AnchorPane>
       <AnchorPane fx:id="leftPane" prefHeight="637.0" prefWidth="408.0">
@@ -520,7 +539,20 @@
                   </Pane>
                </children>
             </Pane>
-            <TextArea fx:id="textArea" layoutX="230.0" layoutY="24.0" prefHeight="87.0" prefWidth="163.0" />
+            <Pane layoutX="230.0" layoutY="23.0" prefHeight="88.0" prefWidth="163.0">
+               <children>
+                  <Label fx:id="mainLabelNames" alignment="TOP_CENTER" prefHeight="87.0" prefWidth="87.0">
+                     <font>
+                        <Font size="8.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="mainLabelStats" alignment="TOP_CENTER" layoutX="92.0" prefHeight="88.0" prefWidth="70.0">
+                     <font>
+                        <Font size="8.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Pane>
          </children>
       </AnchorPane>
    </children>

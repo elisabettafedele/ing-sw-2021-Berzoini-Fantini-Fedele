@@ -20,10 +20,12 @@ public class LightClient {
     List<Resource>[] warehouse;
     int[] strongbox;
     Map<Integer, Integer> leaderDepots;
+
+
+
     //TODO Raffa non serve più, puoi anche rimuovere
     private boolean[] hasTakenPopesTile;
     private int victoryPoints;
-
 
     private PopesTileState[] popesTileStates;
 
@@ -63,6 +65,9 @@ public class LightClient {
         return faithTrackPosition;
     }
 
+    public PopesTileState[] getPopesTileStates() {
+        return popesTileStates;
+    }
     public String getNickname() {
         return nickname;
     }
@@ -76,7 +81,6 @@ public class LightClient {
             hiddenDevelopmentCardColours[slot].add(MatchData.getInstance().getDevelopmentCardByID(ownedDevelopmentCards[slot]).getFlagColor());
         ownedDevelopmentCards[slot] = id;
         victoryPointsDevelopmentCardSlots[slot] += victoryPoints;
-        developmentCardSlots[slot].push(id);
     }
 
     public void updateDepotStatus(List<Resource>[] warehouseDepots, int[] strongboxDepots, Map<Integer, Integer> leaderDepots) {
@@ -131,7 +135,13 @@ public class LightClient {
     public void setVictoryPoints(int victoryPoints) {
         this.victoryPoints = victoryPoints;
     }
+    public Stack<Integer>[] getDevelopmentCardSlots() {
+        return developmentCardSlots;
+    }
 
+    public Map<Integer, Integer> getLeaderDepots() {
+        return leaderDepots;
+    }
     public int getVictoryPoints() {
         return victoryPoints;
     }

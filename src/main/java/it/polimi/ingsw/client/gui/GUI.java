@@ -40,8 +40,8 @@ public class GUI extends Application implements View {
             System.exit(0);
 
         });
-        displayChooseStorageTypeRequest(null,null,true,true);
-        //askConnectionParameters();
+        //displayChooseStorageTypeRequest(null,null,true,true);
+        askConnectionParameters();
     }
 
     private void createMainScene(String pathOfFxmlFile, FunctionInterface functionInterface) {
@@ -171,7 +171,7 @@ public class GUI extends Application implements View {
     }
 
     public void loadDevelopmentCards(List<LightDevelopmentCard> lightDevelopmentCards) {
-
+        MatchData.getInstance().setAllDevelopmentCards(lightDevelopmentCards);
     }
 
     @Override
@@ -185,12 +185,12 @@ public class GUI extends Application implements View {
 
     @Override
     public void loadDevelopmentCardGrid(List<Integer> availableCardsIds) {
-
+        MatchData.getInstance().loadDevelopmentCardGrid(availableCardsIds);
     }
 
     @Override
     public void update(MatchDataMessage message) {
-
+        MatchData.getInstance().update(message);
     }
 
     @Override
