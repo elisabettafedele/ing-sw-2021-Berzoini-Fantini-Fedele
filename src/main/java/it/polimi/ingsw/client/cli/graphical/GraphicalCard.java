@@ -1,73 +1,48 @@
 package it.polimi.ingsw.client.cli.graphical;
 
 import it.polimi.ingsw.common.LightCard;
-import it.polimi.ingsw.enumerations.Level;
 import it.polimi.ingsw.enumerations.Resource;
 
 import java.util.List;
 
-public abstract class GraphicalCard {
-    public static final int CardWidth = 14;
-    public static final int CardHeight = 8;
+public abstract class GraphicalCard extends GraphicalElement{
 
     protected LightCard lightCard;
-
-    protected final char[][] symbols = new char[CardHeight][CardWidth];
-    protected final Colour[][] colours = new Colour[CardHeight][CardWidth];
-    protected final BackColour[][] backGroundColours = new BackColour[CardHeight][CardWidth];
 
     String nickname;
 
     public GraphicalCard(LightCard ldc, String nickname) {
+        super(14, 8);
         reset();
         this.lightCard = ldc;
         this.nickname = nickname;
     }
 
-    public void displayCard(){
-        for(int i = 0; i < CardHeight; i++){
-            for(int j = 0; j < CardWidth; j++){
-                System.out.print(backGroundColours[i][j].getCode() + colours[i][j].getCode() + symbols[i][j] + Colour.ANSI_RESET);
-            }
-            System.out.print("\n");
-        }
-    }
-
-    protected void reset(){
-        for(int i = 0; i < CardHeight; i++) {
-            for (int j = 0; j < CardWidth; j++) {
-                symbols[i][j] = ' ';
-                colours[i][j] = Colour.ANSI_BRIGHT_WHITE;
-                backGroundColours[i][j] = BackColour.ANSI_DEFAULT;
-            }
-        }
-    }
-
     protected void drawEdges(){
-        for (int i = 0; i < CardHeight; i++) {
-            for (int j = 0; j < CardWidth; j++) {
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
                 if (i == 0 && j == 0) {
                     symbols[i][j] = '╔';
                     colours[i][j] = Colour.ANSI_BRIGHT_WHITE;
                 }
-                else if (i == 0 && j == CardWidth - 1) {
+                else if (i == 0 && j == width - 1) {
                     symbols[i][j] = '╗';
                     colours[i][j] = Colour.ANSI_BRIGHT_WHITE;
                 }
-                else if ((i == 0 || i == CardHeight - 1) && j > 0 && j < CardWidth -1)
+                else if ((i == 0 || i == height - 1) && j > 0 && j < width -1)
                 {
                     symbols[i][j] = '═';
                     colours[i][j] = Colour.ANSI_BRIGHT_WHITE;
                 }
-                else if (i == CardHeight - 1 && j == 0) {
+                else if (i == height - 1 && j == 0) {
                     symbols[i][j] = '╚';
                     colours[i][j] = Colour.ANSI_BRIGHT_WHITE;
                 }
-                else if (i == CardHeight - 1 && j == CardWidth - 1) {
+                else if (i == height - 1 && j == width - 1) {
                     symbols[i][j] = '╝';
                     colours[i][j] = Colour.ANSI_BRIGHT_WHITE;
                 }
-                else if (i > 0 && i < CardHeight-1 && (j == 0 || j == CardWidth - 1)) {
+                else if (i > 0 && i < height -1 && (j == 0 || j == width - 1)) {
                     symbols[i][j] = '║';
                     colours[i][j] = Colour.ANSI_BRIGHT_WHITE;
                 }
@@ -78,16 +53,16 @@ public abstract class GraphicalCard {
     protected void drawID() {
         int ID = lightCard.getID();
         if(ID>9){
-            symbols[1][CardWidth - 4] = String.valueOf(ID/10).charAt(0);
-            colours[1][CardWidth - 4] = Colour.ANSI_BRIGHT_WHITE;
+            symbols[1][width - 4] = String.valueOf(ID/10).charAt(0);
+            colours[1][width - 4] = Colour.ANSI_BRIGHT_WHITE;
         }
-        symbols[1][CardWidth - 3] = String.valueOf(ID%10).charAt(0);
-        colours[1][CardWidth - 3] = Colour.ANSI_BRIGHT_WHITE;
+        symbols[1][width - 3] = String.valueOf(ID%10).charAt(0);
+        colours[1][width - 3] = Colour.ANSI_BRIGHT_WHITE;
     }
 
     protected void drawVictoryPoints() {
         int vp = lightCard.getVictoryPoints();
-        int h_center = CardWidth/2;
+        int h_center = width /2;
         symbols[3][h_center-2] = 'V';
         colours[3][h_center-2] = Colour.ANSI_BRIGHT_YELLOW;
         symbols[3][h_center-1] = 'P';
@@ -103,7 +78,7 @@ public abstract class GraphicalCard {
     }
 
     protected void drawCost(int posix, List<String> cost) {
-        int center = CardWidth/2;
+        int center = width /2;
         int begin = center - cost.size()/2;
         for (int j = 0; j < cost.size(); j++){
             if(j%2==0){
@@ -155,22 +130,10 @@ public abstract class GraphicalCard {
     }
 
     protected void drawProductionOutput() {
-        drawCost(CardHeight-2, lightCard.getEffectDescription());
+        drawCost(height -2, lightCard.getEffectDescription2());
     }
 
     protected void drawProductionCost() {
-        drawCost( CardHeight-3, lightCard.getEffectDescription2());
-    }
-
-    char[][] getSymbols() {
-        return symbols;
-    }
-
-    Colour[][] getColours() {
-        return colours;
-    }
-
-    BackColour[][] getBackGroundColours() {
-        return backGroundColours;
+        drawCost( height -3, lightCard.getEffectDescription());
     }
 }

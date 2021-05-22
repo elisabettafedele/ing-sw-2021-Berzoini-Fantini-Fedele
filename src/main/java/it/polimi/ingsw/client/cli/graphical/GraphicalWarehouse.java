@@ -6,39 +6,14 @@ import it.polimi.ingsw.enumerations.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GraphicalWarehouse {
-
-    private final int height = 7;
-    private final int width = 7;
-
-    private final char[][] symbols = new char[height][width];
-    private final Colour[][] colours = new Colour[height][width];
-    private final BackColour[][] backGroundColours = new BackColour[height][width];
+public class GraphicalWarehouse extends GraphicalElement{
 
     private String nickname;
 
     public GraphicalWarehouse(String nickname){
+        super(7,7);
         this.nickname = nickname;
         reset();
-    }
-
-    private void reset(){
-        for(int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                symbols[i][j] = ' ';
-                colours[i][j] = Colour.ANSI_BRIGHT_WHITE;
-                backGroundColours[i][j] = BackColour.ANSI_DEFAULT;
-            }
-        }
-    }
-
-    public void displayWarehouse() {
-        for(int i = 0; i < height; i++){
-            for(int j = 0; j < width; j++){
-                System.out.print(backGroundColours[i][j].getCode() + colours[i][j].getCode() + symbols[i][j]); //+ Colour.ANSI_RESET
-            }
-            System.out.print("\n");
-        }
     }
 
     public void drawWarehouse(){
@@ -91,26 +66,6 @@ public class GraphicalWarehouse {
         symbols[x+1][y] = '│';
         symbols[x+2][y] = '┴';
         symbols[x+2][y+2] = '┴';
-    }
-
-    int getHeight() {
-        return height;
-    }
-
-    int getWidth() {
-        return width;
-    }
-
-    char[][] getSymbols() {
-        return symbols;
-    }
-
-    Colour[][] getColours() {
-        return colours;
-    }
-
-    BackColour[][] getBackGroundColours() {
-        return backGroundColours;
     }
 
 }

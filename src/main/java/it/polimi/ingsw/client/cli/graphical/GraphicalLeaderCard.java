@@ -7,6 +7,7 @@ import it.polimi.ingsw.enumerations.Level;
 import it.polimi.ingsw.enumerations.Resource;
 
 import java.util.List;
+import java.util.Map;
 
 public class GraphicalLeaderCard extends GraphicalCard{
 
@@ -33,11 +34,11 @@ public class GraphicalLeaderCard extends GraphicalCard{
 
     private void drawActive(boolean active) {
         if(active){
-            colours[1][CardWidth - 4] = Colour.ANSI_BRIGHT_GREEN;
-            colours[1][CardWidth - 3] = Colour.ANSI_BRIGHT_GREEN;
+            colours[1][width - 4] = Colour.ANSI_BRIGHT_GREEN;
+            colours[1][width - 3] = Colour.ANSI_BRIGHT_GREEN;
         }else{
-            colours[1][CardWidth - 4] = Colour.ANSI_BRIGHT_RED;
-            colours[1][CardWidth - 3] = Colour.ANSI_BRIGHT_RED;
+            colours[1][width - 4] = Colour.ANSI_BRIGHT_RED;
+            colours[1][width - 3] = Colour.ANSI_BRIGHT_RED;
         }
 
     }
@@ -55,58 +56,76 @@ public class GraphicalLeaderCard extends GraphicalCard{
     }
 
     private void drawExtraDepotEffect() {
-        int center = CardWidth/2;
+        int center = width /2;
         int begin = center - 4;
         String s = "DEPOT";
         for(int i = 0; i < s.length(); i++){
-            symbols[CardHeight-3][begin+i] = s.charAt(i);
-            colours[CardHeight-3][begin+i] = Colour.ANSI_BRIGHT_WHITE;
+            symbols[height -3][begin+i] = s.charAt(i);
+            colours[height -3][begin+i] = Colour.ANSI_BRIGHT_WHITE;
         }
-        symbols[CardHeight-3][begin+s.length()] = ':';
-        colours[CardHeight-3][begin+s.length()] = Colour.ANSI_BRIGHT_WHITE;
+        symbols[height -3][begin+s.length()] = ':';
+        colours[height -3][begin+s.length()] = Colour.ANSI_BRIGHT_WHITE;
         Resource r = Resource.valueOf(lightCard.getEffectDescription().get(0));
         Colour c = getResourceColor(r);
-        symbols[CardHeight-3][begin+s.length()+2] = r.symbol.charAt(0);
-        colours[CardHeight-3][begin+s.length()+2] = c;
+        symbols[height -3][begin+s.length()+2] = r.symbol.charAt(0);
+        colours[height -3][begin+s.length()+2] = c;
 
-        //TODO: do the empty/full slots of resources
+        drawResourceSlots(r, c);
+    }
 
+    private void drawResourceSlots(Resource r, Colour c) {
+        int center = width /2;
+        Map<Integer, Integer> leaderDepots = MatchData.getInstance().getLightClientByNickname(this.nickname).getLeaderDepots();
+        int quantity;
+        try {
+            quantity = leaderDepots.get(this.lightCard.getID());
+        }catch(NullPointerException e){
+            quantity = 0;
+        }
+        symbols[height -2][center-1] = '□';
+        symbols[height -2][center+1] = '□';
+        if(quantity > 0)
+            symbols[height -2][center-1] = '■';
+        if(quantity > 1)
+            symbols[height -2][center+1] = '■';
+
+        colours[height -2][center-1] = c;
+        colours[height -2][center+1] = c;
     }
 
     private void drawConversionEffect() {
-        int center = CardWidth/2;
+        int center = width /2;
         int begin = center - 5;
         String s = "CONVERSION";
         for(int i = 0; i < s.length(); i++){
-            symbols[CardHeight-3][begin+i] = s.charAt(i);
-            colours[CardHeight-3][begin+i] = Colour.ANSI_BRIGHT_WHITE;
+            symbols[height -3][begin+i] = s.charAt(i);
+            colours[height -3][begin+i] = Colour.ANSI_BRIGHT_WHITE;
         }
-        symbols[CardHeight-2][center-2] = '\u25CF';
-        symbols[CardHeight-2][center] = '→';
-        colours[CardHeight-2][center] = Colour.ANSI_WHITE;
+        symbols[height -2][center-2] = '\u25CF';
+        symbols[height -2][center] = '→';
+        colours[height -2][center] = Colour.ANSI_WHITE;
 
         Resource r = Resource.valueOf(lightCard.getEffectDescription().get(0));
         Colour c = getResourceColor(r);
-        symbols[CardHeight-2][center+2] = r.symbol.charAt(0);
-        colours[CardHeight-2][center+2] = c;
+        symbols[height -2][center+2] = r.symbol.charAt(0);
+        colours[height -2][center+2] = c;
     }
 
     private void drawDiscountEffect() {
-        int center = CardWidth/2;
+        int center = width /2;
         int begin = center - 4;
         String s = "DISCOUNT";
         for(int i = 0; i < s.length(); i++){
-            symbols[CardHeight-3][begin+i] = s.charAt(i);
-            colours[CardHeight-3][begin+i] = Colour.ANSI_BRIGHT_WHITE;
+            symbols[height -3][begin+i] = s.charAt(i);
+            colours[height -3][begin+i] = Colour.ANSI_BRIGHT_WHITE;
         }
 
-        center = CardWidth/2;
         begin = center;
 
         Resource r = Resource.valueOf(lightCard.getEffectDescription().get(0));
-        symbols[CardHeight-2][begin] = r.symbol.charAt(0);
+        symbols[height -2][begin] = r.symbol.charAt(0);
         Colour c = getResourceColor(r);
-        colours[CardHeight-2][begin] = c;
+        colours[height -2][begin] = c;
 
     }
 
@@ -142,8 +161,8 @@ public class GraphicalLeaderCard extends GraphicalCard{
     }
 
     @Override
-    public void displayCard() {
-        super.displayCard();
+    public void display() {
+        super.display();
     }
 
 

@@ -43,8 +43,10 @@ public class ScreenTest {
         MatchData.getInstance().getLightClientByNickname(playerOne).updateMarkerPosition(5);
         MatchData.getInstance().getLightClientByNickname(playerTwo).updateMarkerPosition(9);
         MatchData.getInstance().getLightClientByNickname(playerTwo).updateTakenPopesFavorTile(0);
+
         MatchData.getInstance().getLightClientByNickname(playerOne).addDevelopmentCard(5, 0, 3);
         MatchData.getInstance().getLightClientByNickname(playerOne).addDevelopmentCard(32, 2, 3);
+
         MatchData.getInstance().getLightClientByNickname(playerOne).addLeaderCard(55, false);
         MatchData.getInstance().getLightClientByNickname(playerOne).addLeaderCard(49, true);
 
@@ -64,8 +66,10 @@ public class ScreenTest {
         strongBoxResources.put(Resource.SHIELD, 5);
         p.addResourcesToStrongbox(strongBoxResources);
 
+        Map<Integer, Integer> leaderDepots = new HashMap<>();
+        leaderDepots.put(55, 1);
 
-        MatchData.getInstance().update(new UpdateDepotsStatus(playerOne, w.getWarehouseDepotsStatus(), p.getStrongboxStatus(), null));
+        MatchData.getInstance().update(new UpdateDepotsStatus(playerOne, w.getWarehouseDepotsStatus(), p.getStrongboxStatus(), leaderDepots));
 
         DevelopmentCardGrid devGrid = new DevelopmentCardGrid();
         List<DevelopmentCard> list = devGrid.getAvailableCards();
@@ -77,7 +81,7 @@ public class ScreenTest {
         }
 
         MatchData.getInstance().loadDevelopmentCardGrid(devCardGridCardsIDs);
-        //screen.updateInfo(devCardGridCardsIDs);
+        //symbols.updateInfo(devCardGridCardsIDs);
 
     }
 

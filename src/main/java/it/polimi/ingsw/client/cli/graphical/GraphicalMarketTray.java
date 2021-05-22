@@ -4,36 +4,11 @@ import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.enumerations.Marble;
 import javafx.css.Match;
 
-public class GraphicalMarketTray {
-
-    private final int width = 18;
-    private final int height = 5;
-
-    private final char[][] symbols = new char[height][width];
-    private final Colour[][] colours = new Colour[height][width];
-    private final BackColour[][] backGroundColours = new BackColour[height][width];
+public class GraphicalMarketTray extends GraphicalElement{
 
     public GraphicalMarketTray(){
+        super(18, 5);
         reset();
-    }
-
-    private void reset(){
-        for(int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                symbols[i][j] = ' ';
-                colours[i][j] = Colour.ANSI_BRIGHT_WHITE;
-                backGroundColours[i][j] = BackColour.ANSI_DEFAULT;
-            }
-        }
-    }
-
-    public void displayMarketTray(){
-        for(int i = 0; i < height; i++){
-            for(int j = 0; j < width; j++){
-                System.out.print(backGroundColours[i][j].getCode() + colours[i][j].getCode() + symbols[i][j]); //+ Colour.ANSI_RESET
-            }
-            System.out.print("\n");
-        }
     }
 
     public void drawMarketTray(){
@@ -68,25 +43,5 @@ public class GraphicalMarketTray {
                 colours[i][j*3] = Colour.getColourByMarble(marketTray[i][j]);
             }
         }
-    }
-
-    int getWidth() {
-        return width;
-    }
-
-    int getHeight() {
-        return height;
-    }
-
-    char[][] getSymbols() {
-        return symbols;
-    }
-
-    Colour[][] getColours() {
-        return colours;
-    }
-
-    BackColour[][] getBackGroundColours() {
-        return backGroundColours;
     }
 }

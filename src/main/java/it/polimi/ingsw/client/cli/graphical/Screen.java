@@ -3,14 +3,14 @@ package it.polimi.ingsw.client.cli.graphical;
 import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.common.LightLeaderCard;
+import it.polimi.ingsw.model.game.DevelopmentCardGrid;
 
 import java.util.ArrayList;
+import java.util.EmptyStackException;
 import java.util.List;
+import java.util.Stack;
 
-public class Screen {
-
-    private final static int screen_width = 188;
-    private final static int screen_height = 25;
+public class Screen extends GraphicalElement{
 
     private final int devCardGrid_x_anchor = 0;
     private final int devCardGrid_y_anchor = 0;
@@ -36,10 +36,6 @@ public class Screen {
     private final int strongbox_x_anchor = 7;
     private final int strongbox_y_anchor = 122;
 
-    private final char[][] screen = new char[screen_height][screen_width];
-    private final Colour[][] colours = new Colour[screen_height][screen_width];
-    private final BackColour[][] backGroundColours = new BackColour[screen_height][screen_width];
-
     GraphicalDevelopmentCardGrid graphicalDevelopmentCardGrid;
     List<Integer> developmentCardGridCardsToDisplay;
 
@@ -57,6 +53,7 @@ public class Screen {
 
     private Screen() {
         //TODO: remove the following two lines, leave only reset()
+        super(188, 25);
         graphicalDevelopmentCardGrid = new GraphicalDevelopmentCardGrid();
         developmentCardGridCardsToDisplay = new ArrayList<>();
         reset();
@@ -70,16 +67,6 @@ public class Screen {
         reset();
         drawAllElements();
         display();
-    }
-
-    //TODO: la display è uguale in tutti gli elementi grafici
-    private void display(){
-        for(int i = 0; i < screen_height; i++){
-            for(int j = 0; j < screen_width; j++){
-                System.out.print(backGroundColours[i][j].getCode() + colours[i][j].getCode() + screen[i][j]); //+ Colour.ANSI_RESET
-            }
-            System.out.print("\n");
-        }
     }
 
     private void drawAllElements() {
@@ -122,14 +109,23 @@ public class Screen {
     }
 
     private void drawDevelopmentCardSlots() {
-        int yStep = GraphicalCard.CardWidth+1;
-        int[] developmentCards = MatchData.getInstance().getLightClientByNickname(this.nickname).getOwnedDevelopmentCards();
-        for(int i = 0; i < developmentCards.length; i++){
-            if(developmentCards[i] != MatchData.EMPTY_SLOT){
-                LightDevelopmentCard ldc = MatchData.getInstance().getDevelopmentCardByID(developmentCards[i]);
+        int yStep = GraphicalDevelopmentCardGrid.cardWidth +1;
+        int[] developmentCardsTop = new int[3];
+        //int[] developmentCardsTop = MatchData.getInstance().getLightClientByNickname(this.nickname).getOwnedDevelopmentCards();
+        Stack<Integer>[] developmentCardSlots = MatchData.getInstance().getLightClientByNickname(this.nickname).getDevelopmentCardSlots();
+        for(int i = 0; i < developmentCardSlots.length; i++){
+            try {
+                developmentCardsTop[i] = developmentCardSlots[i].peek();
+            }catch (EmptyStackException e){
+                developmentCardsTop[i] = MatchData.EMPTY_SLOT;
+            }
+        }
+        for(int i = 0; i < developmentCardsTop.length; i++){
+            if(developmentCardsTop[i] != MatchData.EMPTY_SLOT){
+                LightDevelopmentCard ldc = MatchData.getInstance().getDevelopmentCardByID(developmentCardsTop[i]);
                 GraphicalDevelopmentCard gd = new GraphicalDevelopmentCard(ldc, this.nickname);
                 gd.drawCard();
-                drawElement(GraphicalCard.CardHeight, GraphicalCard.CardWidth, gd.getColours(), gd.getSymbols(),
+                drawElement(GraphicalDevelopmentCardGrid.cardHeight, GraphicalDevelopmentCardGrid.cardWidth, gd.getColours(), gd.getSymbols(),
                         gd.getBackGroundColours(), this.devCardSlots_x_anchor, this.devCardSlots_y_anchor + i*yStep);
             }
 
@@ -137,27 +133,17 @@ public class Screen {
     }
 
     private void drawOwnedLeaderCards() {
-        int yStep = GraphicalCard.CardWidth+1;
+        int yStep = GraphicalDevelopmentCardGrid.cardWidth +1;
         List<Integer> leaderCards = MatchData.getInstance().getLightClientByNickname(this.nickname).getOwnedLeaderCards();
 
         for(int i = 0; i < leaderCards.size(); i++){
             LightLeaderCard llc = MatchData.getInstance().getLeaderCardByID(leaderCards.get(i));
             GraphicalLeaderCard glc = new GraphicalLeaderCard(llc, this.nickname);
             glc.drawCard();
-            drawElement(GraphicalCard.CardHeight, GraphicalCard.CardWidth, glc.getColours(), glc.getSymbols(),
+            drawElement(GraphicalDevelopmentCardGrid.cardHeight, GraphicalDevelopmentCardGrid.cardWidth, glc.getColours(), glc.getSymbols(),
                     glc.getBackGroundColours(), this.ownedLeader_x_anchor, this.ownedLeader_y_anchor + i*yStep);
         }
 
-    }
-
-    private void reset(){
-        for(int i = 0; i < screen_height; i++) {
-            for (int j = 0; j < screen_width; j++) {
-                screen[i][j] = ' ';
-                colours[i][j] = Colour.ANSI_DEFAULT;
-                backGroundColours[i][j] = BackColour.ANSI_DEFAULT;
-            }
-        }
     }
 
     private void drawDevelopmentCardGrid(){
@@ -191,7 +177,7 @@ public class Screen {
     private void drawElement(int height, int width, Colour[][] colours, char[][] symbols, BackColour[][] backColours, int x_anchor, int y_anchor){
         for(int i = 0; i < height; i++){
             for(int j = 0; j < width; j++){
-                this.screen[i + x_anchor][j + y_anchor] = symbols[i][j];
+                this.symbols[i + x_anchor][j + y_anchor] = symbols[i][j];
                 this.colours[i + x_anchor][j + y_anchor] = colours[i][j];
                 this.backGroundColours[i + x_anchor][j + y_anchor] = backColours[i][j];
             }
@@ -200,15 +186,15 @@ public class Screen {
 
     public void displaySetUpLeaderCardSelection(List<Integer> IDs){
         reset();
-        int x_anchor = screen_height - GraphicalCard.CardHeight;
+        int x_anchor = height - GraphicalDevelopmentCardGrid.cardHeight;
         int y_anchor = 0;
-        int y_step = GraphicalCard.CardWidth + 1;
+        int y_step = GraphicalDevelopmentCardGrid.cardWidth + 1;
 
         for(Integer ID : IDs){
             LightLeaderCard llc = MatchData.getInstance().getLeaderCardByID(ID);
             GraphicalLeaderCard glc = new GraphicalLeaderCard(llc, null);
             glc.drawCard();
-            drawElement(GraphicalCard.CardHeight, GraphicalCard.CardWidth, glc.getColours(), glc.getSymbols(),
+            drawElement(GraphicalDevelopmentCardGrid.cardHeight, GraphicalDevelopmentCardGrid.cardWidth, glc.getColours(), glc.getSymbols(),
                     glc.getBackGroundColours(), x_anchor, y_anchor);
 
             y_anchor += y_step;

@@ -1,7 +1,5 @@
 package it.polimi.ingsw.client;
 
-import it.polimi.ingsw.client.cli.graphical.GraphicalMarket;
-import it.polimi.ingsw.client.cli.graphical.GraphicalWarehouse2;
 import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.common.LightLeaderCard;
 import it.polimi.ingsw.enumerations.Marble;
@@ -138,9 +136,6 @@ public class MatchData {
 
         if (message instanceof ReloadLeaderCardsOwned)
             getLightClientByNickname(message.getNickname()).reloadLeaderCards(((ReloadLeaderCardsOwned) message).getCards());
-
-        if (message instanceof ReloadDevelopmentCardOwned)
-            getLightClientByNickname(message.getNickname()).reloadDevelopmentCards(((ReloadDevelopmentCardOwned) message).getHiddenDevelopmentCardColours(), ((ReloadDevelopmentCardOwned) message).getOwnedDevelopmentCards());
 
         if (message instanceof ReloadPopesFavorTiles)
             getLightClientByNickname(message.getNickname()).setPopesTileStates(((ReloadPopesFavorTiles) message).getPopesTileStates());
