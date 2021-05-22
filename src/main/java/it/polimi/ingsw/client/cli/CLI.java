@@ -74,6 +74,11 @@ public class CLI implements View {
     }
 
     @Override
+    public void displayWelcomeBackMessage(String nickname, boolean gameFinished) {
+        System.out.println("Welcome back " + nickname + (gameFinished ? "!\nThe game you were playing in is finished, we are loading the results for you..." : ".\nYou have to finish an old game, we are logging you in the room..."));
+    }
+
+    @Override
     public void displayMessage(String message) {
         System.out.println(message);
     }

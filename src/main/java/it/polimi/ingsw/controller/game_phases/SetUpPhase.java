@@ -8,6 +8,7 @@ import it.polimi.ingsw.messages.toClient.game.ChooseLeaderCardsRequest;
 import it.polimi.ingsw.messages.toClient.game.ChooseResourceTypeRequest;
 import it.polimi.ingsw.messages.toClient.game.ChooseStorageTypeRequest;
 import it.polimi.ingsw.messages.toClient.matchData.*;
+import it.polimi.ingsw.model.LightCardsParser;
 import it.polimi.ingsw.model.cards.*;
 import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.common.LightDevelopmentCard;
@@ -28,7 +29,6 @@ public class SetUpPhase implements GamePhase {
     Controller controller;
     Map<String, Integer> initialResourceByNickname;
     Map<String, List<Resource>> resourcesToStoreByNickname;
-
 
     @Override
     public void executePhase(Controller controller) {
@@ -84,7 +84,6 @@ public class SetUpPhase implements GamePhase {
             connection.setClientHandlerPhase(ClientHandlerPhase.WAITING_DISCARDED_LEADER_CARDS);
             connection.sendMessageToClient(new ChooseLeaderCardsRequest(controller.getPlayerByNickname(nicknames.get(i)).getPersonalBoard().getLeaderCards().stream().map(Card::getID).collect(Collectors.toList())));
         }
-
 
     }
 
@@ -179,10 +178,12 @@ public class SetUpPhase implements GamePhase {
 
 
     private void sendLightCards() {
+        List<LightLeaderCard> leaderCards = LightCardsParser.getLightLeaderCards(LeaderCardParser.parseCards());
+        List<LightDevelopmentCard> developmentCards = LightCardsParser.getLightDevelopmentCards(DevelopmentCardParser.parseCards());
         for (String nickname : controller.getNicknames()) {
             ClientHandler connection = controller.getConnectionByNickname(nickname);
-            connection.sendMessageToClient(new LoadDevelopmentCardsMessage(getLightDevelopmentCards(DevelopmentCardParser.parseCards())));
-            connection.sendMessageToClient(new LoadLeaderCardsMessage(getLightLeaderCards(LeaderCardParser.parseCards())));
+            connection.sendMessageToClient(new LoadDevelopmentCardsMessage(developmentCards));
+            connection.sendMessageToClient(new LoadLeaderCardsMessage(leaderCards));
         }
     }
 
@@ -193,7 +194,6 @@ public class SetUpPhase implements GamePhase {
             IDs.add(cards.get(i));
         return IDs;
     }
-
 
     private void addPlayerToTheGame(String nickname, List<LeaderCard> leaderCardsAssigned, int index) {
         try {
@@ -209,133 +209,6 @@ public class SetUpPhase implements GamePhase {
 
     private int getInitialFaithPoints(int index) {
         return index > 1 ? 1 : 0;
-    }
-
-    private List<LightLeaderCard> getLightLeaderCards(List<LeaderCard> cards){
-        List<LightLeaderCard> lightCards = new ArrayList<>();
-        for(LeaderCard lc : cards){
-
-            String costType;
-            try{
-                lc.getCost().getResourceValue();
-                costType = "RESOURCE";
-            } catch (ValueNotPresentException e) {
-                //e.printStackTrace();
-                costType = "FLAG";
-            }
-            List<String> stringCost = leaderCardResourceAndFlagCostConversion(lc.getCost());
-
-            List<String> effectDescription = new ArrayList<>();
-            List<String> effectDescription2 = new ArrayList<>();
-            String effectType = lc.getEffect().getEffectType().toString();
-            if(lc.getEffect().getEffectType() != EffectType.PRODUCTION)
-                effectDescription = leaderCardsEffectToStringParse(lc.getEffect());
-            else{
-                try {
-                    effectDescription = developmentCardResourceCostConversion(lc.getEffect().getProductionEffect().getProductionPower().get(0));
-                    effectDescription2 = developmentCardResourceCostConversion(lc.getEffect().getProductionEffect().getProductionPower().get(1));
-                } catch (DifferentEffectTypeException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    int faithPoints = lc.getEffect().getProductionEffect().getProductionPower().get(1).getFaithValue();
-                    effectDescription2.add(String.valueOf(faithPoints));
-                    effectDescription2.add("FaithPoints");
-                } catch (ValueNotPresentException | DifferentEffectTypeException e) {
-                    //skip
-                }
-            }
-
-            lightCards.add(new LightLeaderCard(stringCost, lc.getVictoryPoints(), lc.getUsed(), lc.getID(),
-                    effectType, effectDescription, effectDescription2, costType));
-        }
-
-
-        return lightCards;
-    }
-
-    private List<String> leaderCardsEffectToStringParse(Effect effect) {
-        List<String> description = new ArrayList<>();
-        if(effect.getEffectType() == EffectType.WHITE_MARBLE){
-            try {
-                description.add(effect.getWhiteMarbleEffectResource().toString());
-            } catch (DifferentEffectTypeException e) {
-                e.printStackTrace();
-            }
-        }else if(effect.getEffectType() == EffectType.DISCOUNT){
-            try {
-                description.add(effect.getDiscountEffect().toString());
-            } catch (DifferentEffectTypeException e) {
-                e.printStackTrace();
-            }
-        }else if(effect.getEffectType() == EffectType.EXTRA_DEPOT) {
-            try {
-                description.add(effect.getExtraDepotEffect().getLeaderDepot().getResourceType().toString());
-            } catch (DifferentEffectTypeException e) {
-                e.printStackTrace();
-            }
-        }
-        return description;
-    }
-
-    private List<String> leaderCardResourceAndFlagCostConversion(Value cost) {
-        List<String> resourceCost = developmentCardResourceCostConversion(cost);
-        if (resourceCost.size()>0)
-            return resourceCost;
-
-        Map<Flag, Integer> flagActivationCost;
-
-        try {
-            flagActivationCost = cost.getFlagValue();
-            List<String> flagCost = new ArrayList<>();
-            for (Map.Entry<Flag, Integer> entry : flagActivationCost.entrySet()){
-                flagCost.add(entry.getValue().toString());
-                flagCost.add(entry.getKey().getFlagColor().toString());
-                flagCost.add(entry.getKey().getFlagLevel().toString());
-            }
-            return flagCost;
-        } catch (ValueNotPresentException e) {
-            return new ArrayList<>();
-        }
-    }
-
-    private List<LightDevelopmentCard> getLightDevelopmentCards(List<DevelopmentCard> cards){
-        List<LightDevelopmentCard> lightCards = new ArrayList<>();
-        for(DevelopmentCard dc : cards){
-
-            List<String> stringCost = developmentCardResourceCostConversion(dc.getCost());
-            List<String> stringProductionCost = developmentCardResourceCostConversion(dc.getProduction().getProductionPower().get(0));
-            List<String> stringProductionOutput = developmentCardResourceCostConversion(dc.getProduction().getProductionPower().get(1));
-
-            try {
-                int faithPoints = dc.getProduction().getProductionPower().get(1).getFaithValue();
-                stringProductionOutput.add(String.valueOf(faithPoints));
-                stringProductionOutput.add("FaithPoints");
-            } catch (ValueNotPresentException e) {
-                //skip
-            }
-
-            lightCards.add(new LightDevelopmentCard(stringCost, dc.getVictoryPoints(), dc.getUsed(), dc.getID(),
-                    dc.getFlag().getFlagColor().toString(), dc.getFlag().getFlagLevel().toString(), stringProductionCost,
-                    stringProductionOutput));
-        }
-        return lightCards;
-    }
-
-    private List<String> developmentCardResourceCostConversion(Value cost){
-        Map<Resource, Integer> resourceCost;
-        try {
-            resourceCost = cost.getResourceValue();
-        } catch (ValueNotPresentException e) {
-            return new ArrayList<>();
-        }
-        List<String> stringCost = new ArrayList<>();
-
-        for (Map.Entry<Resource, Integer> entry : resourceCost.entrySet()){
-            stringCost.add(entry.getValue().toString());
-            stringCost.add(entry.getKey().toString());
-        }
-        return stringCost;
     }
 
     private int getNumberOfInitialResourcesByIndex(int index) {

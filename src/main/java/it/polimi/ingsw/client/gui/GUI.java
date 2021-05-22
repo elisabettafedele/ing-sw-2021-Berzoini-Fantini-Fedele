@@ -209,6 +209,11 @@ public class GUI extends Application implements View {
     }
 
     @Override
+    public void displayWelcomeBackMessage(String nickname, boolean gameFinished) {
+
+    }
+
+    @Override
     public void displaySelectStorageRequest(Resource resource, boolean isInWarehouse, boolean isInStrongbox, boolean isInLeaderDepot) {
 
 

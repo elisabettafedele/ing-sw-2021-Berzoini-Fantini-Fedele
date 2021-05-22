@@ -75,6 +75,7 @@ public class Controller {
 
         if (gamePhase instanceof MultiplayerPlayPhase){
             getPlayerByNickname(nickname).setActive(false);
+            server.removeConnectionGame(connection);
             sendMessageToAll(new NotifyClientDisconnection(nickname, false, false));
 
 
