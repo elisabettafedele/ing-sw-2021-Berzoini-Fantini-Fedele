@@ -97,7 +97,7 @@ public class SetUpPhase implements GamePhase {
         Player player = controller.getPlayerByNickname(nickname);
         for (Integer id : discardedCards)
             player.getPersonalBoard().removeLeaderCard(id);
-
+        clientHandler.sendMessageToClient(new ReloadLeaderCardsOwned(nickname, player.getPersonalBoard().getLeaderCardsMap(nickname, nickname)));
         if (getNumberOfInitialResourcesByNickname(nickname) == 0) {
             controller.sendMessageToAll(new UpdateDepotsStatus(player.getNickname(), player.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), player.getPersonalBoard().getStrongboxStatus(), player.getPersonalBoard().getLeaderStatus()));
             sendSetUpFinishedMessage(clientHandler);

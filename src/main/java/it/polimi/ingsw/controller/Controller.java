@@ -49,24 +49,28 @@ public class Controller {
             return;
         }
         */
-        connection.getServer().removeConnectionGame(connection);
-        removeConnection(connection);
+
 
         //DISCONNECTION DURING SETUP PHASE
         if (gamePhase instanceof SetUpPhase){
 
             if (connection.getClientHandlerPhase() == ClientHandlerPhase.SET_UP_FINISHED){
                 //CASE 1: THE CLIENT HAS ALREADY FINISHED THE SETUP PHASE: the game starts and the player is set as inactive
+                getClientHandlers().forEach(x -> x.sendMessageToClient(new NotifyClientDisconnection(nickname, true, false)));
+                server.removeConnectionGame(connection, false);
                 getPlayerByNickname(nickname).setActive(false);
             } else {
                 //CASE 2: THE CLIENT HAS NOT FINISHED THE SETUP PHASE YET
+                connection.getServer().removeConnectionGame(connection, true);
                 lockConnections.lock();
                 for (ClientHandler other : getClientHandlers()) {
-                    other.sendMessageToClient(new NotifyClientDisconnection(nickname, true, true));
-                    connection.getServer().removeConnectionGame(other);
-                    other.setGameStarted(false);
-                    other.setClientHandlerPhase(ClientHandlerPhase.WAITING_NICKNAME);
-                    other.getServer().handleNicknameChoice(other);
+                    server.removeConnectionGame(other, true);
+                    if (other.isGameStarted() && other.isActive()) {
+                        other.sendMessageToClient(new NotifyClientDisconnection(nickname, true, true));
+                        other.setGameStarted(false);
+                        other.setClientHandlerPhase(ClientHandlerPhase.WAITING_NICKNAME);
+                        server.handleNicknameChoice(other);
+                    }
                 }
                 lockConnections.unlock();
                 connection.setController(null);
@@ -74,10 +78,11 @@ public class Controller {
         }
 
         if (gamePhase instanceof MultiplayerPlayPhase){
-            getPlayerByNickname(nickname).setActive(false);
-            server.removeConnectionGame(connection);
-            sendMessageToAll(new NotifyClientDisconnection(nickname, false, false));
+            if (!server.removeConnectionGame(connection, false))
+                return;
 
+            getPlayerByNickname(nickname).setActive(false);
+            sendMessageToAll(new NotifyClientDisconnection(nickname, false, false));
 
             //THE PLAYER DISCONNECTED WAS THE TURN'S OWNER -> I check if he has already done his standard action
             if (((MultiplayerPlayPhase) gamePhase).getTurnController().getCurrentPlayer().getNickname().equals(nickname)){
@@ -227,15 +232,7 @@ public class Controller {
                 for (Player gamePlayer : getPlayers()) {
 
                     // 1. I create a map with the leader cards of the gamePlayer I am analyzing
-                    Map<Integer, Boolean> leaderCards = new HashMap<>();
-                    for (LeaderCard card : gamePlayer.getPersonalBoard().getLeaderCards()){
-                        if (card.isActive())
-                            leaderCards.put (card.getID(), true);
-                        else{
-                            if (gamePlayer.getNickname().equals(player.getNickname()))
-                                leaderCards.put(card.getID(), false);
-                        }
-                    }
+                    Map<Integer, Boolean> leaderCards = gamePlayer.getPersonalBoard().getLeaderCardsMap(gamePlayer.getNickname(), player.getNickname());
                     player.sendMessageToClient(new ReloadLeaderCardsOwned(gamePlayer.getNickname(), leaderCards));
 
                     //2. Development cards

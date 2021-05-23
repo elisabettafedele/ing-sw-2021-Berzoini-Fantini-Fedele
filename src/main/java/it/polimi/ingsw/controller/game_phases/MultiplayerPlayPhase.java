@@ -27,7 +27,6 @@ public class MultiplayerPlayPhase extends PlayPhase implements GamePhase {
         if (getTurnController().getController().getClientHandlers().size() == 0){
             return;
         }
-        //TODO cancel match
         while(!getController().getPlayers().get(turnIndex).isActive())
             pickNextPlayer();
         if (endTrigger && getTurnController().getController().getPlayers().get(turnIndex).hasInkwell())

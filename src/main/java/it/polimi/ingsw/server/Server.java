@@ -134,6 +134,12 @@ public class Server implements ServerInterface {
 
     public boolean handleKnownClientReconnection(ClientHandler clientHandler){
         boolean gameFinished = clientsDisconnectedGameFinished.containsKey(clientHandler.getNickname());
+        //If there are no more player in the game
+        /*
+        if (!gameFinished && clientsDisconnected.get(clientHandler.getNickname()).getClientHandlers().isEmpty()) {
+            clientsDisconnected.remove(clientHandler.getNickname());
+            return true;
+        }*/
         clientHandler.sendMessageToClient(new WelcomeBackMessage(clientHandler.getNickname(), gameFinished));
 
         if (gameFinished){
@@ -314,16 +320,20 @@ public class Server implements ServerInterface {
      * Method to remove a connection when the game is already started.
      * If it is the last connection, also the controller is deleted from the list of active games
      * @param connection the {@link ClientHandler} to be removed from the controller
+     * @return true iff the game still exist
      */
-    public void removeConnectionGame(ClientHandler connection){
-        //If it was the last player remained in the game, I delete the game and I remove all the players from disconnectedPlayers -> the game is not finished, but is not playable anymore
-        if (connection.getController().getClientHandlers().size() == 10) {
+    public boolean removeConnectionGame(ClientHandler connection, boolean forced){
+        //If he was the last player remained in the game, I delete the game and I remove all the players from disconnectedPlayers -> the game is not finished, but is not playable anymore
+        if (connection.getController().getClientHandlers().size() == 1) {
             for (String nickname : connection.getController().getPlayers().stream().map(Player::getNickname).collect(Collectors.toList()))
                 clientsDisconnected.remove(nickname);
             activeGames.remove(connection.getController());
+            return false;
         } else {
-            clientsDisconnected.put(connection.getNickname(), connection.getController());
+            if (!forced)
+                clientsDisconnected.put(connection.getNickname(), connection.getController());
             connection.getController().removeConnection(connection);
+            return true;
         }
     }
 
