@@ -168,4 +168,8 @@ public class MatchData {
     public List<Integer> getDevelopmentCardGrid() {
         return developmentCardGrid;
     }
+
+    public String getThisClientNickname(){
+        return thisClient.getNickname();
+    }
 }

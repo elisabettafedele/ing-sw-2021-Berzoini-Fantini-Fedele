@@ -166,4 +166,19 @@ public class GraphicalLeaderCard extends GraphicalCard{
     }
 
 
+    public void drawHiddenCard() {
+        boolean active;
+        try {
+            active = MatchData.getInstance().getLightClientByNickname(this.nickname).
+                    leaderCardIsActive(this.lightCard.getID());
+        }catch(Exception e){
+            active = false;
+        }
+        if(active){
+            drawCard();
+        }else{
+            reset();
+            drawEdges(this.height, this.width);
+        }
+    }
 }
