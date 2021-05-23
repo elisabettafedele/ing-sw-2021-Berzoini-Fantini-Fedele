@@ -54,4 +54,36 @@ public abstract class GraphicalElement {
     public BackColour[][] getBackGroundColours() {
         return backGroundColours;
     }
+
+    protected void drawEdges(int h, int w){
+        for (int i = 0; i < h; i++) {
+            for (int j = 0; j < w; j++) {
+                if (i == 0 && j == 0) {
+                    symbols[i][j] = '╔';
+                    colours[i][j] = Colour.ANSI_BRIGHT_WHITE;
+                }
+                else if (i == 0 && j == w - 1) {
+                    symbols[i][j] = '╗';
+                    colours[i][j] = Colour.ANSI_BRIGHT_WHITE;
+                }
+                else if ((i == 0 || i == h - 1) && j > 0 && j < w -1)
+                {
+                    symbols[i][j] = '═';
+                    colours[i][j] = Colour.ANSI_BRIGHT_WHITE;
+                }
+                else if (i == h - 1 && j == 0) {
+                    symbols[i][j] = '╚';
+                    colours[i][j] = Colour.ANSI_BRIGHT_WHITE;
+                }
+                else if (i == h - 1 && j == w - 1) {
+                    symbols[i][j] = '╝';
+                    colours[i][j] = Colour.ANSI_BRIGHT_WHITE;
+                }
+                else if (i > 0 && i < h-1 && (j == 0 || j == w - 1)) {
+                    symbols[i][j] = '║';
+                    colours[i][j] = Colour.ANSI_BRIGHT_WHITE;
+                }
+            }
+        }
+    }
 }

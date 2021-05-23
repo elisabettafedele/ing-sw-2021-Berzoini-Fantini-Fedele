@@ -34,8 +34,9 @@ public class ScreenTest {
         MatchData.getInstance().setAllDevelopmentCards(getLightDevelopmentCards(DevelopmentCardParser.parseCards()));
         MatchData.getInstance().setAllLeaderCards(getLightLeaderCards(LeaderCardParser.parseCards()));
 
+        String maxLengthName = "abcdefghijjklmnopqrs";
         String playerOne = "Raffa";
-        String playerTwo = "abcdefghijjklmnopqrs";
+        String playerTwo = maxLengthName;
 
         screen.setClientToDisplay(playerOne);
 

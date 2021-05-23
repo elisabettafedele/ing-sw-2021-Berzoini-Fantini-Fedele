@@ -24,10 +24,10 @@ public class Screen extends GraphicalElement{
     private final int ownedLeader_y_anchor = 122;
 
     private final int market_x_anchor = 1;
-    private final int market_y_anchor = 129;
+    private final int market_y_anchor = 123;
 
     private final int scoreBoard_x_anchor = 1;
-    private final int scoreBoard_y_anchor = 152;
+    private final int scoreBoard_y_anchor = 140;
 
     private final int warehouse_x_anchor = 9;
     private final int warehouse_y_anchor = 131;

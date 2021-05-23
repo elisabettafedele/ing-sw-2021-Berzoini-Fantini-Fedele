@@ -17,7 +17,7 @@ public class GraphicalDevelopmentCard extends GraphicalCard{
     //draw itsSelf
     public void drawCard(){
         reset();
-        drawEdges();
+        drawEdges(this.height, this.width);
         drawFlag();
         drawCost(1, lightCard.getCost());
         drawID();

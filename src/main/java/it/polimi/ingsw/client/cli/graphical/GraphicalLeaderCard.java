@@ -17,7 +17,7 @@ public class GraphicalLeaderCard extends GraphicalCard{
 
     public void drawCard(){
         reset();
-        drawEdges();
+        drawEdges(this.height, this.width);
         drawID();
         drawVictoryPoints();
         drawActivationCost();
