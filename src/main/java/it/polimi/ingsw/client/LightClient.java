@@ -18,9 +18,6 @@ public class LightClient {
     int[] strongbox;
     Map<Integer, Integer> leaderDepots; //ID, Qty
 
-
-    //TODO Raffa non serve più, puoi anche rimuovere
-    private boolean[] hasTakenPopesTile;
     private int victoryPoints;
 
     private PopesTileState[] popesTileStates;
@@ -40,9 +37,6 @@ public class LightClient {
         this.developmentCardSlots = new Stack[3];
         for (int i = 0; i < developmentCardSlots.length; i++)
             developmentCardSlots[i] = new Stack<>();
-
-        //TODO Raffa non serve più, puoi anche rimuovere
-        this.hasTakenPopesTile = new boolean[3];
         this.leaderDepots = new HashMap<>();
     }
 
@@ -107,19 +101,9 @@ public class LightClient {
     }
 
 
-    //TODO Raffa non serve più, puoi anche rimuovere
-    public void updateTakenPopesFavorTile(int number){
-        this.hasTakenPopesTile[number] = true;
-    }
-
     public void updatePopeFavorTilesStatus(int number, boolean taken){
         this.popesTileStates[number] = taken ? PopesTileState.TAKEN : PopesTileState.NOT_TAKEN;
     }
-
-    public boolean hasTakenPopesFavorTile(int number){
-        return this.hasTakenPopesTile[number];
-    }
-
 
     //TODO: victoryPointsMessage
     public void setVictoryPoints(int victoryPoints) {
@@ -155,4 +139,6 @@ public class LightClient {
     public void setVictoryPointsDevelopmentCardSlots(int[] victoryPointsDevelopmentCardSlots){
         this.victoryPointsDevelopmentCardSlots = victoryPointsDevelopmentCardSlots;
     }
+
+
 }
