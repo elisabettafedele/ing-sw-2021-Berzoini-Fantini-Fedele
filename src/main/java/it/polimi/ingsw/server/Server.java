@@ -3,15 +3,22 @@ package it.polimi.ingsw.server;
 import it.polimi.ingsw.common.ClientHandlerInterface;
 import it.polimi.ingsw.common.ServerInterface;
 import it.polimi.ingsw.controller.Controller;
+import it.polimi.ingsw.controller.game_phases.PlayPhase;
 import it.polimi.ingsw.enumerations.ClientHandlerPhase;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
+import it.polimi.ingsw.jsonParsers.DevelopmentCardParser;
+import it.polimi.ingsw.jsonParsers.LeaderCardParser;
 import it.polimi.ingsw.messages.toClient.MessageToClient;
+import it.polimi.ingsw.messages.toClient.WelcomeBackMessage;
 import it.polimi.ingsw.messages.toClient.game.GameOverMessage;
 import it.polimi.ingsw.messages.toClient.lobby.NicknameRequest;
 import it.polimi.ingsw.messages.toClient.lobby.NumberOfPlayersRequest;
 import it.polimi.ingsw.messages.toClient.lobby.SendPlayerNicknamesMessage;
 import it.polimi.ingsw.messages.toClient.lobby.WaitingInTheLobbyMessage;
+import it.polimi.ingsw.messages.toClient.matchData.LoadDevelopmentCardsMessage;
+import it.polimi.ingsw.messages.toClient.matchData.LoadLeaderCardsMessage;
+import it.polimi.ingsw.model.LightCardsParser;
 import it.polimi.ingsw.model.player.Player;
 
 import java.io.IOException;
@@ -55,6 +62,7 @@ public class Server implements ServerInterface {
         this.executor = Executors.newCachedThreadPool();
         this.clientsInLobby = new LinkedList<ClientHandler>();
         this.clientsDisconnected = new HashMap<>();
+        this.clientsDisconnectedGameFinished = new HashMap<>();
         this.activeGames = new LinkedList<>();
     }
 
@@ -97,17 +105,16 @@ public class Server implements ServerInterface {
      */
 
     public void handleNicknameChoice(ClientHandler connection) {
+        if(knownClient(connection.getNickname())){
+            if (!handleKnownClientReconnection(connection))
+                return;
+        }
         //SOLO MODE -> start the game
         if (connection.getGameMode() == GameMode.SINGLE_PLAYER) {
             startNewGame(connection);
             return;
         }
 
-        if(knownClient(connection.getNickname())){
-            clientsDisconnected.get(connection.getNickname()).getPlayerByNickname(connection.getNickname()).setActive(true);
-            clientsDisconnected.get(connection.getNickname()).addConnection(connection);
-            clientsDisconnected.remove(connection.getNickname());
-        }
 
         //MULTIPLAYER
         lockLobby.lock();
@@ -121,6 +128,34 @@ public class Server implements ServerInterface {
         }
         finally {
             lockLobby.unlock();
+        }
+
+    }
+
+    public boolean handleKnownClientReconnection(ClientHandler clientHandler){
+        boolean gameFinished = clientsDisconnectedGameFinished.containsKey(clientHandler.getNickname());
+        //If there are no more player in the game
+        /*
+        if (!gameFinished && clientsDisconnected.get(clientHandler.getNickname()).getClientHandlers().isEmpty()) {
+            clientsDisconnected.remove(clientHandler.getNickname());
+            return true;
+        }*/
+        clientHandler.sendMessageToClient(new WelcomeBackMessage(clientHandler.getNickname(), gameFinished));
+
+        if (gameFinished){
+            clientHandler.sendMessageToClient(clientsDisconnectedGameFinished.get(clientHandler.getNickname()));
+            clientsDisconnectedGameFinished.remove(clientHandler.getNickname());
+            return true;
+        } else {
+            clientsDisconnected.get(clientHandler.getNickname()).addConnection(clientHandler);
+            clientHandler.setController(clientsDisconnected.get(clientHandler.getNickname()));
+            clientsDisconnected.get(clientHandler.getNickname()).getPlayerByNickname(clientHandler.getNickname()).setActive(true);
+            clientHandler.sendMessageToClient(new SendPlayerNicknamesMessage(clientHandler.getNickname(), clientsDisconnected.get(clientHandler.getNickname()).getNicknames().stream().filter(x -> !x.equals(clientHandler.getNickname())).collect(Collectors.toList())));
+            clientHandler.sendMessageToClient(new LoadDevelopmentCardsMessage(LightCardsParser.getLightDevelopmentCards(DevelopmentCardParser.parseCards())));
+            clientHandler.sendMessageToClient(new LoadLeaderCardsMessage(LightCardsParser.getLightLeaderCards(LeaderCardParser.parseCards())));
+            ((PlayPhase)clientsDisconnected.get(clientHandler.getNickname()).getGamePhase()).reloadGameCopy(false);
+            clientsDisconnected.remove(clientHandler.getNickname());
+            return false;
         }
 
     }
@@ -285,16 +320,21 @@ public class Server implements ServerInterface {
      * Method to remove a connection when the game is already started.
      * If it is the last connection, also the controller is deleted from the list of active games
      * @param connection the {@link ClientHandler} to be removed from the controller
+     * @return true iff the game still exist
      */
-    public void removeConnectionGame(ClientHandler connection){
-        //If it was the last player remained in the game, I delete the game and I remove all the players from disconnectedPlayers -> the game is not finished, but is not playable anymore
+    public boolean removeConnectionGame(ClientHandler connection, boolean forced){
+        //If he was the last player remained in the game, I delete the game and I remove all the players from disconnectedPlayers -> the game is not finished, but is not playable anymore
         if (connection.getController().getClientHandlers().size() == 1) {
             for (String nickname : connection.getController().getPlayers().stream().map(Player::getNickname).collect(Collectors.toList()))
                 clientsDisconnected.remove(nickname);
             activeGames.remove(connection.getController());
-        }
-        else
+            return false;
+        } else {
+            if (!forced)
+                clientsDisconnected.put(connection.getNickname(), connection.getController());
             connection.getController().removeConnection(connection);
+            return true;
+        }
     }
 
 
@@ -333,7 +373,7 @@ public class Server implements ServerInterface {
     }
 
     private boolean knownClient(String nickname) {
-        return clientsDisconnected.containsKey(nickname);
+        return clientsDisconnected.containsKey(nickname) || clientsDisconnectedGameFinished.containsKey(nickname);
     }
 
 }

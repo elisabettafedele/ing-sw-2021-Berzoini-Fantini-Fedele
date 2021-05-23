@@ -245,4 +245,8 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
         return server;
     }
 
+    public boolean isActive(){
+        return active;
+    }
+
 }
