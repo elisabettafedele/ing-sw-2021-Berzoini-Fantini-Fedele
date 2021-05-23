@@ -18,38 +18,6 @@ public abstract class GraphicalCard extends GraphicalElement{
         this.nickname = nickname;
     }
 
-    protected void drawEdges(){
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                if (i == 0 && j == 0) {
-                    symbols[i][j] = '╔';
-                    colours[i][j] = Colour.ANSI_BRIGHT_WHITE;
-                }
-                else if (i == 0 && j == width - 1) {
-                    symbols[i][j] = '╗';
-                    colours[i][j] = Colour.ANSI_BRIGHT_WHITE;
-                }
-                else if ((i == 0 || i == height - 1) && j > 0 && j < width -1)
-                {
-                    symbols[i][j] = '═';
-                    colours[i][j] = Colour.ANSI_BRIGHT_WHITE;
-                }
-                else if (i == height - 1 && j == 0) {
-                    symbols[i][j] = '╚';
-                    colours[i][j] = Colour.ANSI_BRIGHT_WHITE;
-                }
-                else if (i == height - 1 && j == width - 1) {
-                    symbols[i][j] = '╝';
-                    colours[i][j] = Colour.ANSI_BRIGHT_WHITE;
-                }
-                else if (i > 0 && i < height -1 && (j == 0 || j == width - 1)) {
-                    symbols[i][j] = '║';
-                    colours[i][j] = Colour.ANSI_BRIGHT_WHITE;
-                }
-            }
-        }
-    }
-
     protected void drawID() {
         int ID = lightCard.getID();
         if(ID>9){
