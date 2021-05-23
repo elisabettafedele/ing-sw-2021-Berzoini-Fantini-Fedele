@@ -20,7 +20,6 @@ import it.polimi.ingsw.messages.toClient.matchData.LoadDevelopmentCardsMessage;
 import it.polimi.ingsw.messages.toClient.matchData.LoadLeaderCardsMessage;
 import it.polimi.ingsw.jsonParsers.LightCardsParser;
 import it.polimi.ingsw.model.player.Player;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
@@ -266,6 +265,7 @@ public class Server implements ServerInterface {
                 clientsInLobby.get(0).setController(controller);
                 clientsInLobby.remove(0);
             }
+            controller.setControllerID(playersInGame.stream().sorted().reduce("", String::concat).hashCode());
             lockGames.lock();
             try {
                 activeGames.add(controller);
@@ -295,6 +295,7 @@ public class Server implements ServerInterface {
         connection.setClientHandlerPhase(ClientHandlerPhase.READY_TO_START);
         connection.setGameStarted(true);
         controller.addConnection(connection);
+        controller.setControllerID(connection.getNickname().hashCode());
         connection.setController(controller);
         lockGames.lock();
         try{
