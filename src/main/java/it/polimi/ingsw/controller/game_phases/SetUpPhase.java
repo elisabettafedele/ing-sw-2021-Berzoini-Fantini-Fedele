@@ -97,7 +97,7 @@ public class SetUpPhase implements GamePhase {
         Player player = controller.getPlayerByNickname(nickname);
         for (Integer id : discardedCards)
             player.getPersonalBoard().removeLeaderCard(id);
-        clientHandler.sendMessageToClient(new ReloadLeaderCardsOwned(nickname, player.getPersonalBoard().getLeaderCardsMap(nickname, nickname)));
+        clientHandler.sendMessageToClient(new ReloadLeaderCardsOwned(nickname, player.getPersonalBoard().getLeaderCardsMap()));
         if (getNumberOfInitialResourcesByNickname(nickname) == 0) {
             controller.sendMessageToAll(new UpdateDepotsStatus(player.getNickname(), player.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), player.getPersonalBoard().getStrongboxStatus(), player.getPersonalBoard().getLeaderStatus()));
             sendSetUpFinishedMessage(clientHandler);
@@ -165,7 +165,9 @@ public class SetUpPhase implements GamePhase {
         endPhaseManager(clientHandler);
     }
 
-    private void endPhaseManager(ClientHandler clientHandler) {
+    public void endPhaseManager(ClientHandler clientHandler) {
+        if (!(controller.getGamePhase() instanceof SetUpPhase))
+            return;
         List<String> nicknames = controller.getClientHandlers().stream().map(ClientHandler::getNickname).collect(Collectors.toList());
         for (String nickname : nicknames) {
             if (controller.getConnectionByNickname(nickname).getClientHandlerPhase() != ClientHandlerPhase.SET_UP_FINISHED) {

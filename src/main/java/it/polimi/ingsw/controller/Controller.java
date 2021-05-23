@@ -232,7 +232,7 @@ public class Controller {
                 for (Player gamePlayer : getPlayers()) {
 
                     // 1. I create a map with the leader cards of the gamePlayer I am analyzing
-                    Map<Integer, Boolean> leaderCards = gamePlayer.getPersonalBoard().getLeaderCardsMap(gamePlayer.getNickname(), player.getNickname());
+                    Map<Integer, Boolean> leaderCards = gamePlayer.getPersonalBoard().getLeaderCardsMap();
                     player.sendMessageToClient(new ReloadLeaderCardsOwned(gamePlayer.getNickname(), leaderCards));
 
                     //2. Development cards
