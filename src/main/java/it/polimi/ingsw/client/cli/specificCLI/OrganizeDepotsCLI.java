@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.cli.specificCLI;
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.cli.CLI;
 import it.polimi.ingsw.client.cli.graphical.Colour;
+import it.polimi.ingsw.client.cli.graphical.Screen;
 import it.polimi.ingsw.client.utilities.Command;
 import it.polimi.ingsw.client.utilities.InputParser;
 import it.polimi.ingsw.client.utilities.UtilityPrinter;
@@ -12,6 +13,7 @@ import it.polimi.ingsw.messages.toServer.game.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class OrganizeDepotsCLI {
@@ -20,7 +22,9 @@ public class OrganizeDepotsCLI {
         if (availableDepots.isEmpty())
             System.out.println("There are no available depots for " + resource);
         else {
-            System.out.println("Choose a depot for the " + resource + "\nAvailable depots for this resource type are:");
+            System.out.println("Choose a depot for the " + resource);
+            Screen.getInstance().displayWarehouse();
+            System.out.println("Available depots for this resource type are:");
             UtilityPrinter.printNumericList(availableDepots);
         }
         List<String> textCommands = new ArrayList<>();

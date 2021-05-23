@@ -70,7 +70,8 @@ public class Screen extends GraphicalElement{
     private void drawAllElements() {
         drawDevelopmentCardGrid();
         drawFaithTrack();
-        drawOwnedLeaderCards();
+        if(MatchData.getInstance().getLightClientByNickname(this.nickname).getOwnedLeaderCards().size()<3)
+            drawOwnedLeaderCards();
         drawDevelopmentCardSlots();
         drawMarket();
         drawScoreBoard();
@@ -136,7 +137,10 @@ public class Screen extends GraphicalElement{
         for(int i = 0; i < leaderCards.size(); i++){
             LightLeaderCard llc = MatchData.getInstance().getLeaderCardByID(leaderCards.get(i));
             GraphicalLeaderCard glc = new GraphicalLeaderCard(llc, this.nickname);
-            glc.drawCard();
+            if(!this.nickname.equals(MatchData.getInstance().getThisClientNickname()))
+                glc.drawHiddenCard();
+            else
+                glc.drawCard();
             drawElement(GraphicalDevelopmentCardGrid.cardHeight, GraphicalDevelopmentCardGrid.cardWidth, glc.getColours(), glc.getSymbols(),
                     glc.getBackGroundColours(), this.ownedLeader_x_anchor, this.ownedLeader_y_anchor + i*yStep);
         }
@@ -190,6 +194,41 @@ public class Screen extends GraphicalElement{
 
             y_anchor += y_step;
         }
-        display();
+        int x_start = height - GraphicalDevelopmentCardGrid.cardHeight;
+        int x_end = height;
+        int y_start = 0;
+        int y_end = width;
+        displayASection(x_start, x_end, y_start, y_end);
     }
+
+    private void displayASection(int x_start, int x_end, int y_start, int y_end) {
+        for(int i = x_start; i < x_end; i++){
+            for(int j = y_start; j < y_end; j++){
+                System.out.print(backGroundColours[i][j].getCode() + colours[i][j].getCode() + symbols[i][j]); //+ Colour.ANSI_RESET
+            }
+            System.out.print("\n");
+        }
+    }
+
+    public void displayWarehouse(){
+        reset();
+        GraphicalWarehouse gw = new GraphicalWarehouse(this.nickname);
+        gw.drawWarehouse();
+        drawElement(gw.getHeight(), gw.getWidth(), gw.getColours(), gw.getSymbols(), gw.getBackGroundColours(),
+                height-gw.getHeight()-1, 0);
+        drawDepotsNumbers(gw.getHeight(), gw.getWidth());
+        displayASection(height-gw.getHeight()-2, height, 0, width);
+    }
+
+    private void drawDepotsNumbers(int h, int w) {
+        String[] depots = new String[]{"◄ First Depot", "◄ Second Depot", "◄ Third Depot"};
+
+        for(int i = 0; i < 3; i++){
+            for(int j = 0; j < depots[i].length(); j++){
+                symbols[height - h + i*2][w+j] = depots[i].charAt(j);
+            }
+        }
+    }
+
+
 }

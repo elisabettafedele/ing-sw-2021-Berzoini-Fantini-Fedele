@@ -58,9 +58,9 @@ public class GraphicalFaithTrack extends GraphicalElement{
         Colour c = getColourByPopesTileState(pts[0]);
         drawLowerTiles(x_begin, y_begin, xStep, yStep, c, 2);
         c = getColourByPopesTileState(pts[1]);
-        drawLowerTiles(x_begin, y_begin+yStep*11, xStep, yStep, c, 4);
-        c = getColourByPopesTileState(pts[2]);
         drawUpperTile(x_begin - 1, y_begin+yStep*5, xStep, yStep, c, 3);
+        c = getColourByPopesTileState(pts[2]);
+        drawLowerTiles(x_begin, y_begin+yStep*11, xStep, yStep, c, 4);
     }
 
     private Colour getColourByPopesTileState(PopesTileState pt) {
