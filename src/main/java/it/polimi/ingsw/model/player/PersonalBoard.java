@@ -675,14 +675,13 @@ public class PersonalBoard implements Serializable {
         }
         return slots;
     }
-    public Map<Integer, Boolean> getLeaderCardsMap(String myNickname, String nicknameOther) {
+    public Map<Integer, Boolean> getLeaderCardsMap() {
         Map<Integer, Boolean> leaderCards = new HashMap<>();
         for (LeaderCard card : this.leaderCards) {
             if (card.isActive())
                 leaderCards.put(card.getID(), true);
             else {
-                if (myNickname.equals(nicknameOther))
-                    leaderCards.put(card.getID(), false);
+                leaderCards.put(card.getID(), false);
             }
         }
         return leaderCards;

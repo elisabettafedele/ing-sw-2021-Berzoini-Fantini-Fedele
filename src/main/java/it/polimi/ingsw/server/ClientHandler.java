@@ -38,6 +38,7 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
 
     private final Thread pinger;
     private boolean active = false;
+    private boolean validNickname;
 
     public Controller getController() {
         return controller;
@@ -68,6 +69,7 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
         this.IPAddress = socket.getInetAddress().getHostAddress();
         this.port = socket.getPort();
         this.server = server;
+        this.validNickname = false;
         this.pinger = new Thread(() -> {
             while (active){
                 try{
@@ -159,7 +161,7 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
             return;
         //The connection is not active anymore
         this.active = false;
-        Server.SERVER_LOGGER.log(Level.SEVERE, "Client disconnected");
+        Server.SERVER_LOGGER.log(Level.SEVERE, "Client " + nickname + " disconnected");
         //If the game is started, the controller will handle his disconnection
         if (gameStarted){
             controller.handleClientDisconnection(nickname);
@@ -249,4 +251,11 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
         return active;
     }
 
+    public boolean isValidNickname() {
+        return validNickname;
+    }
+
+    public void setValidNickname(boolean validNickname) {
+        this.validNickname = validNickname;
+    }
 }

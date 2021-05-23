@@ -283,4 +283,8 @@ public class TurnController {
     public boolean isStandardActionDone() {
         return standardActionDone;
     }
+
+    public List<Action> getPossibleActions() {
+        return possibleActions;
+    }
 }
