@@ -4,12 +4,12 @@ import it.polimi.ingsw.common.ClientHandlerInterface;
 import it.polimi.ingsw.common.ServerInterface;
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.controller.game_phases.PlayPhase;
+import it.polimi.ingsw.controller.game_phases.SetUpPhase;
 import it.polimi.ingsw.enumerations.ClientHandlerPhase;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.jsonParsers.DevelopmentCardParser;
 import it.polimi.ingsw.jsonParsers.LeaderCardParser;
-import it.polimi.ingsw.messages.toClient.MessageToClient;
 import it.polimi.ingsw.messages.toClient.WelcomeBackMessage;
 import it.polimi.ingsw.messages.toClient.game.GameOverMessage;
 import it.polimi.ingsw.messages.toClient.lobby.NicknameRequest;
@@ -18,7 +18,7 @@ import it.polimi.ingsw.messages.toClient.lobby.SendPlayerNicknamesMessage;
 import it.polimi.ingsw.messages.toClient.lobby.WaitingInTheLobbyMessage;
 import it.polimi.ingsw.messages.toClient.matchData.LoadDevelopmentCardsMessage;
 import it.polimi.ingsw.messages.toClient.matchData.LoadLeaderCardsMessage;
-import it.polimi.ingsw.model.LightCardsParser;
+import it.polimi.ingsw.jsonParsers.LightCardsParser;
 import it.polimi.ingsw.model.player.Player;
 
 import java.io.IOException;
@@ -46,6 +46,7 @@ public class Server implements ServerInterface {
     private List<ClientHandler> clientsInLobby;
     private Map<String, Controller> clientsDisconnected;
     private Map<String, GameOverMessage> clientsDisconnectedGameFinished;
+    private List<String> takenNicknames;
 
 
     private List<Controller> activeGames;
@@ -60,10 +61,11 @@ public class Server implements ServerInterface {
     public Server(int port) {
         this.port = port;
         this.executor = Executors.newCachedThreadPool();
-        this.clientsInLobby = new LinkedList<ClientHandler>();
+        this.clientsInLobby = new LinkedList<>();
         this.clientsDisconnected = new HashMap<>();
         this.clientsDisconnectedGameFinished = new HashMap<>();
         this.activeGames = new LinkedList<>();
+        this.takenNicknames = new ArrayList<>();
     }
 
     /**
@@ -101,7 +103,7 @@ public class Server implements ServerInterface {
      * If the GameMode is Multiplayer:
      * - it adds the ClientHandler that has sent his nicknames to the list of waiting clients (if not already present)
      * - it calls the NewGameManager method
-     * @param connection
+     * @param connection the connection with the client that has chosen his nickname
      */
 
     public void handleNicknameChoice(ClientHandler connection) {
@@ -109,6 +111,26 @@ public class Server implements ServerInterface {
             if (!handleKnownClientReconnection(connection))
                 return;
         }
+
+        if (takenNicknames.contains(connection.getNickname())){
+            connection.setClientHandlerPhase(ClientHandlerPhase.WAITING_NICKNAME);
+            connection.sendMessageToClient(new NicknameRequest(true, true));
+            return;
+        } else{
+            takenNicknames.add(connection.getNickname());
+            connection.setValidNickname(true);
+        }
+
+        /*else {
+            for (Controller controller : activeGames) {
+                if (controller.getPlayers().stream().map(Player::getNickname).collect(Collectors.toList()).contains(connection.getNickname())) {
+                    connection.setClientHandlerPhase(ClientHandlerPhase.WAITING_NICKNAME);
+                    connection.sendMessageToClient(new NicknameRequest(true, true));
+                    return;
+                }
+            }
+        }*/
+
         //SOLO MODE -> start the game
         if (connection.getGameMode() == GameMode.SINGLE_PLAYER) {
             startNewGame(connection);
@@ -153,8 +175,13 @@ public class Server implements ServerInterface {
             clientHandler.sendMessageToClient(new SendPlayerNicknamesMessage(clientHandler.getNickname(), clientsDisconnected.get(clientHandler.getNickname()).getNicknames().stream().filter(x -> !x.equals(clientHandler.getNickname())).collect(Collectors.toList())));
             clientHandler.sendMessageToClient(new LoadDevelopmentCardsMessage(LightCardsParser.getLightDevelopmentCards(DevelopmentCardParser.parseCards())));
             clientHandler.sendMessageToClient(new LoadLeaderCardsMessage(LightCardsParser.getLightLeaderCards(LeaderCardParser.parseCards())));
-            ((PlayPhase)clientsDisconnected.get(clientHandler.getNickname()).getGamePhase()).reloadGameCopy(false);
-            clientsDisconnected.remove(clientHandler.getNickname());
+            if (clientsDisconnected.get(clientHandler.getNickname()).getGamePhase() instanceof SetUpPhase){
+                clientHandler.setClientHandlerPhase(ClientHandlerPhase.SET_UP_FINISHED);
+                ((SetUpPhase) clientsDisconnected.get(clientHandler.getNickname()).getGamePhase()).endPhaseManager(clientHandler);
+            } else {
+                ((PlayPhase) clientsDisconnected.get(clientHandler.getNickname()).getGamePhase()).reloadGameCopy(false);
+                clientsDisconnected.remove(clientHandler.getNickname());
+            }
             return false;
         }
 
@@ -176,20 +203,30 @@ public class Server implements ServerInterface {
                 clientsInLobby.get(0).setClientHandlerPhase(ClientHandlerPhase.WAITING_NUMBER_OF_PLAYERS);
                 clientsInLobby.get(0).sendMessageToClient(new NumberOfPlayersRequest());
             }else if(numberOfPlayersForNextGame != -1 && clientsInLobby.size() >= numberOfPlayersForNextGame){
-                if(!duplicatesNicknameForNextMatch()){
+                if(!invalidNicknameForNextMatch())
                     startNewGame();
-                }else{
-                    askNicknameToFirstDuplicate();
-                }
             }
         } finally {
             lockLobby.unlock();
         }
     }
 
+    private boolean invalidNicknameForNextMatch(){
+        lockLobby.lock();
+        try {
+            for (int i = 1; i < numberOfPlayersForNextGame; i++) {
+                if (!clientsInLobby.get(i).isValidNickname())
+                    return true;
+            }
+        } finally {
+            lockLobby.unlock();
+        }
+        return false;
+    }
+
     /**
      * Method that checks whether there are duplicates nicknames in the group of players who will join the next match
-     * @return
+     * @return true iff there are duplicates nicknames among the players that are ready to start a new game
      */
     private boolean duplicatesNicknameForNextMatch() {
         lockLobby.lock();
@@ -215,9 +252,7 @@ public class Server implements ServerInterface {
         try {
             controller = new Controller(GameMode.MULTI_PLAYER);
             controller.setServer(this);
-        } catch (InvalidArgumentException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
+        } catch (InvalidArgumentException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
         lockLobby.lock();
@@ -305,6 +340,7 @@ public class Server implements ServerInterface {
             position = clientsInLobby.indexOf(connection);
             if (position > -1) {
                 clientsInLobby.remove(connection);
+                takenNicknames.remove(connection.getNickname());
                 if (position == 0)
                     numberOfPlayersForNextGame = -1;
                 if(position < numberOfPlayersForNextGame || numberOfPlayersForNextGame == -1)
@@ -325,8 +361,10 @@ public class Server implements ServerInterface {
     public boolean removeConnectionGame(ClientHandler connection, boolean forced){
         //If he was the last player remained in the game, I delete the game and I remove all the players from disconnectedPlayers -> the game is not finished, but is not playable anymore
         if (connection.getController().getClientHandlers().size() == 1) {
-            for (String nickname : connection.getController().getPlayers().stream().map(Player::getNickname).collect(Collectors.toList()))
+            for (String nickname : connection.getController().getPlayers().stream().map(Player::getNickname).collect(Collectors.toList())) {
                 clientsDisconnected.remove(nickname);
+                takenNicknames.remove(nickname);
+            }
             activeGames.remove(connection.getController());
             return false;
         } else {
@@ -368,6 +406,7 @@ public class Server implements ServerInterface {
         for (String nickname : disconnectedClientsNicknames) {
             clientsDisconnected.remove(nickname);
             clientsDisconnectedGameFinished.put(nickname, gameOverMessage);
+            takenNicknames.remove(nickname);
         }
         activeGames.remove(controller);
     }

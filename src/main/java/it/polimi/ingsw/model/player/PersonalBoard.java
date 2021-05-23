@@ -1,12 +1,11 @@
 package it.polimi.ingsw.model.player;
 
 import it.polimi.ingsw.client.PopesTileState;
-import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.enumerations.*;
 import it.polimi.ingsw.exceptions.*;
 import it.polimi.ingsw.jsonParsers.DevelopmentCardParser;
 import it.polimi.ingsw.jsonParsers.LeaderCardParser;
-import it.polimi.ingsw.model.PersistentPlayer;
+import it.polimi.ingsw.model.persistency.PersistentPlayer;
 import it.polimi.ingsw.model.cards.*;
 import it.polimi.ingsw.model.depot.Depot;
 import it.polimi.ingsw.model.depot.LeaderDepot;
@@ -675,14 +674,13 @@ public class PersonalBoard implements Serializable {
         }
         return slots;
     }
-    public Map<Integer, Boolean> getLeaderCardsMap(String myNickname, String nicknameOther) {
+    public Map<Integer, Boolean> getLeaderCardsMap() {
         Map<Integer, Boolean> leaderCards = new HashMap<>();
         for (LeaderCard card : this.leaderCards) {
             if (card.isActive())
                 leaderCards.put(card.getID(), true);
             else {
-                if (myNickname.equals(nicknameOther))
-                    leaderCards.put(card.getID(), false);
+                leaderCards.put(card.getID(), false);
             }
         }
         return leaderCards;

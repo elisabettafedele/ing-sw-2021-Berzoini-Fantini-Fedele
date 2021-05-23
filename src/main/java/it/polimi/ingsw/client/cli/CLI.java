@@ -186,6 +186,11 @@ public class CLI implements View {
     }
 
     @Override
+    public void displayResourcesToStore(List<Resource> resourcesToStore) {
+        OrganizeDepotsCLI.displayResourcesToStore(resourcesToStore);
+    }
+
+    @Override
     public void displayReorganizeDepotsRequest(List<String> depots, boolean first, boolean failure, List<Resource> availableLeaderResources){
        OrganizeDepotsCLI.displayReorganizeDepotsRequest(client, depots, first, failure, availableLeaderResources);
     }
@@ -227,6 +232,7 @@ public class CLI implements View {
 
     @Override
     public void displayStandardView() {
+        Screen.getInstance().setClientToDisplay(MatchData.getInstance().getThisClientNickname());
         Screen.getInstance().displayStandardView();
     }
 

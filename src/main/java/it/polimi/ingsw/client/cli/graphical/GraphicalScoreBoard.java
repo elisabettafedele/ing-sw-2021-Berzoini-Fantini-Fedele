@@ -7,12 +7,84 @@ import java.util.List;
 public class GraphicalScoreBoard extends GraphicalElement{
 
     public GraphicalScoreBoard() {
-        super(36, 4);
+        super(29, 11); //TODO: width to 29
         reset();
     }
 
     public void drawScoreBoard(){
-        drawPlayersPositions();
+        List<String> nicknames = MatchData.getInstance().getAllNicknames();
+        int maxLength = getMaxLength(nicknames);
+        drawTable(maxLength, nicknames.size());
+        fillNamesAndScores(nicknames, maxLength);
+    }
+
+    private void fillNamesAndScores(List<String> nicknames, int max_length) {
+        int x_begin = 3;
+        for(String nickname : nicknames) {
+            for (int i = 0; i < nickname.length(); i++) {
+                symbols[x_begin][i+1] = nickname.charAt(i);
+            }
+            int faithTrackPosition = MatchData.getInstance().getLightClientByNickname(nickname).getFaithTrackPosition();
+            if(faithTrackPosition > 9){
+                symbols[x_begin][max_length + 2] = String.valueOf(faithTrackPosition/10).charAt(0);
+            }
+            symbols[x_begin][max_length + 3] = String.valueOf(faithTrackPosition%10).charAt(0);
+
+            int victoryPoints = MatchData.getInstance().getLightClientByNickname(nickname).getVictoryPoints();
+            if(victoryPoints > 9){
+                symbols[x_begin][max_length + 6] = String.valueOf(victoryPoints /10).charAt(0);
+            }
+            symbols[x_begin][max_length + 7] = String.valueOf(victoryPoints %10).charAt(0);
+
+            x_begin += 2;
+        }
+    }
+
+    private void drawTable(int maxLength, int size) {
+        drawEdges(3+size*2, maxLength+1+8);
+        drawSeparators(size, maxLength);
+        fillHeader(maxLength);
+    }
+
+    private void fillHeader(int maxLength) {
+        symbols[1][maxLength+2] = 'P';
+        symbols[1][maxLength+3] = 'O';
+        symbols[1][maxLength+4] = 'S';
+        symbols[1][maxLength+6] = 'V';
+        symbols[1][maxLength+7] = 'P';
+    }
+
+    private void drawSeparators(int size, int maxLength) {
+        for(int i = 0; i < size; i++){
+            for(int j = 0; j < maxLength + 1 + 8; j++){
+                symbols[i*2+2][j] = '═';
+            }
+            symbols[i*2+2][0] = '╠';
+            symbols[i*2+2][maxLength+8] = '╣';
+        }
+        for(int i = 0; i < 3+size*2; i++){
+            symbols[i][maxLength+1] = '║';
+            symbols[i][maxLength+5] = '║';
+            if(i==0){
+                symbols[i][maxLength+1] = '╦';
+                symbols[i][maxLength+5] = '╦';
+            }else if(i == 2+size*2){
+                symbols[i][maxLength+1] = '╩';
+                symbols[i][maxLength+5] = '╩';
+            }else if(i%2 == 0){
+                symbols[i][maxLength+1] = '╬';
+                symbols[i][maxLength+5] = '╬';
+            }
+        }
+    }
+
+    private int getMaxLength(List<String> nicknames) {
+        int max_length = 0;
+        for(String nickname : nicknames){
+            if(nickname.length() > max_length)
+                max_length = nickname.length();
+        }
+        return max_length;
     }
 
     private void drawPlayersPositions() {

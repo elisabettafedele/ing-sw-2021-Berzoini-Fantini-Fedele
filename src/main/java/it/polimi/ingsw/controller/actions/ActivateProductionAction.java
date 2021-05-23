@@ -1,5 +1,6 @@
 package it.polimi.ingsw.controller.actions;
 
+import it.polimi.ingsw.enumerations.ActionType;
 import it.polimi.ingsw.messages.toClient.game.DisplayStandardView;
 import it.polimi.ingsw.messages.toClient.matchData.UpdateDepotsStatus;
 import it.polimi.ingsw.server.ClientHandler;
@@ -285,5 +286,9 @@ public class ActivateProductionAction implements Action{
             return buildBasicProductionPower().getProductionPower();
         }
         return null;
+    }
+
+    public String toString(){
+        return ActionType.ACTIVATE_PRODUCTION.name().replace('_', ' ');
     }
 }

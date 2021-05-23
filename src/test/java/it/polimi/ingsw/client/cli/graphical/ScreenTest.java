@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.cli.graphical;
 
 import it.polimi.ingsw.client.MatchData;
+import it.polimi.ingsw.client.PopesTileState;
 import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.common.LightLeaderCard;
 import it.polimi.ingsw.enumerations.EffectType;
@@ -16,7 +17,6 @@ import it.polimi.ingsw.model.player.PersonalBoard;
 import it.polimi.ingsw.model.player.Warehouse;
 import it.polimi.ingsw.jsonParsers.DevelopmentCardParser;
 import it.polimi.ingsw.jsonParsers.LeaderCardParser;
-import javafx.css.Match;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,22 +33,45 @@ public class ScreenTest {
         MatchData.getInstance().setAllDevelopmentCards(getLightDevelopmentCards(DevelopmentCardParser.parseCards()));
         MatchData.getInstance().setAllLeaderCards(getLightLeaderCards(LeaderCardParser.parseCards()));
 
+        String maxLengthName = "abcdefghijjklmnopqrs";
         String playerOne = "Raffa";
-        String playerTwo = "abcdefghijjklmnopqrs";
+        String playerTwo = "Gianni";
 
-        screen.setClientToDisplay(playerOne);
+        screen.setClientToDisplay(playerTwo);
 
         MatchData.getInstance().setThisClient(playerOne);
         MatchData.getInstance().addLightClient(playerTwo);
         MatchData.getInstance().getLightClientByNickname(playerOne).updateMarkerPosition(5);
         MatchData.getInstance().getLightClientByNickname(playerTwo).updateMarkerPosition(9);
-        MatchData.getInstance().getLightClientByNickname(playerTwo).updateTakenPopesFavorTile(0);
+
+        MatchData.getInstance().getLightClientByNickname(playerTwo).addDevelopmentCard(37, 2, 3);
+        MatchData.getInstance().getLightClientByNickname(playerTwo).addDevelopmentCard(2, 1, 3);
+        MatchData.getInstance().getLightClientByNickname(playerTwo).addDevelopmentCard(9, 1, 3);
+        MatchData.getInstance().getLightClientByNickname(playerTwo).addDevelopmentCard(15, 1, 3);
 
         MatchData.getInstance().getLightClientByNickname(playerOne).addDevelopmentCard(5, 0, 3);
+        MatchData.getInstance().getLightClientByNickname(playerOne).addDevelopmentCard(38, 2, 3);
+        MatchData.getInstance().getLightClientByNickname(playerOne).addDevelopmentCard(13, 2, 3);
         MatchData.getInstance().getLightClientByNickname(playerOne).addDevelopmentCard(32, 2, 3);
+
+
+        PopesTileState[] ptsOne = new PopesTileState[3];
+        ptsOne[0] = PopesTileState.TAKEN;
+        ptsOne[1] = PopesTileState.NOT_TAKEN;
+        ptsOne[2] = PopesTileState.NOT_REACHED;
+        PopesTileState[] ptsTwo = new PopesTileState[3];
+        ptsTwo[0] = PopesTileState.NOT_TAKEN;
+        ptsTwo[1] = PopesTileState.TAKEN;
+        ptsTwo[2] = PopesTileState.NOT_REACHED;
+
+        MatchData.getInstance().getLightClientByNickname(playerOne).setPopesTileStates(ptsOne);
+        MatchData.getInstance().getLightClientByNickname(playerTwo).setPopesTileStates(ptsTwo);
 
         MatchData.getInstance().getLightClientByNickname(playerOne).addLeaderCard(55, false);
         MatchData.getInstance().getLightClientByNickname(playerOne).addLeaderCard(49, true);
+
+        MatchData.getInstance().getLightClientByNickname(playerTwo).addLeaderCard(61, true);
+        MatchData.getInstance().getLightClientByNickname(playerTwo).addLeaderCard(53, false);
 
         Market market = new Market();
         MatchData.getInstance().update(new UpdateMarketView(playerOne, market.getMarketTray(), market.getSlideMarble()));

@@ -2,6 +2,8 @@ package it.polimi.ingsw.client.cli.specificCLI;
 
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.cli.CLI;
+import it.polimi.ingsw.client.cli.graphical.Colour;
+import it.polimi.ingsw.client.cli.graphical.Screen;
 import it.polimi.ingsw.client.utilities.Command;
 import it.polimi.ingsw.client.utilities.InputParser;
 import it.polimi.ingsw.client.utilities.UtilityPrinter;
@@ -11,6 +13,7 @@ import it.polimi.ingsw.messages.toServer.game.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class OrganizeDepotsCLI {
@@ -19,7 +22,9 @@ public class OrganizeDepotsCLI {
         if (availableDepots.isEmpty())
             System.out.println("There are no available depots for " + resource);
         else {
-            System.out.println("Choose a depot for the " + resource + "\nAvailable depots for this resource type are:");
+            System.out.println("Choose a depot for the " + resource);
+            Screen.getInstance().displayWarehouse();
+            System.out.println("Available depots for this resource type are:");
             UtilityPrinter.printNumericList(availableDepots);
         }
         List<String> textCommands = new ArrayList<>();
@@ -112,22 +117,12 @@ public class OrganizeDepotsCLI {
             client.sendMessageToServer(new MoveResourcesRequest(originDepot, destinationDepot, resource, quantity));
         }
     }
-    /*
-    public static void displayMoveRequest(List<String> originDepots, List<Resource> destinationDepots){
 
-
-
-
-        List <String> origins = originDepots.stream().filter(x -> x != Resource.ANY).map(x -> ResourceStorageType.valueOf(x.getValue()).name()).collect(Collectors.toList());
-        System.out.println("Select the origin depot:");
-        UtilityPrinter.printNumericList(origins);
-        String originDepot = InputParser.getCommandFromList(origins);
-        Resource originResource = originDepots.get(ResourceStorageType.getIndexByString(originDepot));
-        List <String> destinations = destinationDepots.stream().filter(x -> x == Resource.ANY || x == originResource).map(x -> originDepots.indexOf(x) > 2 ? ResourceStorageType.LEADER_DEPOT.name() : ResourceStorageType.valueOf(x.getValue()).name()).collect(Collectors.toList());
-        System.out.println("Select the destination depot:");
-        UtilityPrinter.printNumericList(destinations);
-        String destinationDepot = InputParser.getCommandFromList(destinations);
-        client.sendMessageToServer(new MoveResourcesRequest(originDepot, destinationDepot, resource, quantity));
+    public static void displayResourcesToStore(List<Resource> resourcesToStore){
+        System.out.println("Conversion done!\nYou now have to store these resources: ");
+        for (Resource resource : resourcesToStore){
+            System.out.print(Colour.getColourByResource(resource).getCode() + resource.symbol + Colour.ANSI_RESET + " ");
+        }
+        System.out.println(" ");
     }
-*/
 }

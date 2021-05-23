@@ -1,5 +1,6 @@
 package it.polimi.ingsw.controller.actions;
 
+import it.polimi.ingsw.enumerations.ActionType;
 import it.polimi.ingsw.messages.toClient.game.DisplayStandardView;
 import it.polimi.ingsw.messages.toClient.matchData.NotifyLeaderAction;
 import it.polimi.ingsw.messages.toClient.matchData.UpdateMarkerPosition;
@@ -137,5 +138,9 @@ public class LeaderCardAction implements Action{
             e.printStackTrace();
         }
         return false;
+    }
+
+    public String toString(){
+        return activateORdiscard ? ActionType.ACTIVATE_LEADER_CARD.name().replace('_', ' ') : ActionType.DISCARD_LEADER_CARD.name().replace('_', ' ');
     }
 }

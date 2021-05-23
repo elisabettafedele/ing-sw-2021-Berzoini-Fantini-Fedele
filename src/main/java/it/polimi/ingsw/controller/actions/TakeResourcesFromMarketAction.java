@@ -179,7 +179,7 @@ public class TakeResourcesFromMarketAction implements Action {
         if (resourcesToStore.isEmpty()) {
             manageEndAction();
         } else {
-            clientHandler.sendMessageToClient(new TextMessage("Conversion done!\nYou now have to store these resources: " + resourcesToStore));
+            clientHandler.sendMessageToClient(new NotifyResourcesToStore(resourcesToStore));
             handleChooseStorageTypeRequest();
         }
     }
@@ -351,4 +351,7 @@ public class TakeResourcesFromMarketAction implements Action {
         turnController.setNextAction();
     }
 
+    public String toString(){
+        return ActionType.TAKE_RESOURCE_FROM_MARKET.name().replace('_', ' ');
+    }
 }

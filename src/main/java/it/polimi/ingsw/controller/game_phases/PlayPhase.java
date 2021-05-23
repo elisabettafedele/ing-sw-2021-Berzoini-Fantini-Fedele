@@ -2,24 +2,16 @@ package it.polimi.ingsw.controller.game_phases;
 
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.controller.TurnController;
-import it.polimi.ingsw.enumerations.GameMode;
-import it.polimi.ingsw.exceptions.InvalidArgumentException;
-import it.polimi.ingsw.jsonParsers.GameCloneThroughJson;
-import it.polimi.ingsw.messages.toClient.matchData.*;
-import it.polimi.ingsw.model.PersistentGame;
-import it.polimi.ingsw.model.cards.Card;
-import it.polimi.ingsw.model.cards.LeaderCard;
+import it.polimi.ingsw.model.persistency.PersistentGame;
 import it.polimi.ingsw.model.game.Game;
 import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.messages.toServer.game.ChooseActionResponse;
 import it.polimi.ingsw.messages.toServer.game.EndTurnRequest;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
 import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.server.Server;
 
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.logging.Level;
 
 public abstract class PlayPhase {
     private Controller controller;
@@ -56,8 +48,10 @@ public abstract class PlayPhase {
     public abstract void handleResourceDiscard(String nickname);
 
     public void handleMessage(MessageToServer message, ClientHandler clientHandler) {
-        if (message instanceof ChooseActionResponse && (clientHandler.getNickname().equals(getTurnController().getCurrentPlayer().getNickname())))
+        if (message instanceof ChooseActionResponse && (clientHandler.getNickname().equals(getTurnController().getCurrentPlayer().getNickname()))) {
+            Server.SERVER_LOGGER.log(Level.INFO, "New message from " + clientHandler.getNickname() + " that has chosen his next action : " + turnController.getPossibleActions().get(((ChooseActionResponse)message).getActionChosen()).toString());
             getTurnController().doAction(((ChooseActionResponse) message).getActionChosen());
+        }
         if (message instanceof EndTurnRequest && (clientHandler.getNickname().equals(getTurnController().getCurrentPlayer().getNickname())))
             getTurnController().endTurn();
     }

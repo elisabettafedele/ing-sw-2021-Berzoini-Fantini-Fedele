@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.cli.graphical;
 
 import it.polimi.ingsw.client.LightClient;
 import it.polimi.ingsw.client.MatchData;
+import it.polimi.ingsw.client.PopesTileState;
 
 public class GraphicalFaithTrack extends GraphicalElement{
 
@@ -53,29 +54,39 @@ public class GraphicalFaithTrack extends GraphicalElement{
         int x_begin = xStep+2;
         int y_begin = yStep*4;
         LightClient lc = MatchData.getInstance().getLightClientByNickname(this.nickname);
-        boolean taken = lc.hasTakenPopesFavorTile(0);
-        drawLowerTiles(x_begin, y_begin, xStep, yStep, taken, 2);
-        taken = lc.hasTakenPopesFavorTile(2);
-        drawLowerTiles(x_begin, y_begin+yStep*11, xStep, yStep, taken, 4);
-        taken = lc.hasTakenPopesFavorTile(1);
-        drawUpperTile(x_begin - 1, y_begin+yStep*5, xStep, yStep, taken, 3);
+        PopesTileState[] pts = lc.getPopesTileStates();
+        Colour c = getColourByPopesTileState(pts[0]);
+        drawLowerTiles(x_begin, y_begin, xStep, yStep, c, 2);
+        c = getColourByPopesTileState(pts[1]);
+        drawUpperTile(x_begin - 1, y_begin+yStep*5, xStep, yStep, c, 3);
+        c = getColourByPopesTileState(pts[2]);
+        drawLowerTiles(x_begin, y_begin+yStep*11, xStep, yStep, c, 4);
     }
 
-    private void drawUpperTile(int x_begin, int y_begin, int xStep, int yStep, boolean taken, int vps) {
+    private Colour getColourByPopesTileState(PopesTileState pt) {
+        if(pt == PopesTileState.NOT_REACHED)
+            return Colour.ANSI_YELLOW;
+        else if(pt == PopesTileState.TAKEN)
+            return Colour.ANSI_GREEN;
+        else
+            return Colour.ANSI_RED;
+    }
+
+    private void drawUpperTile(int x_begin, int y_begin, int xStep, int yStep, Colour c, int vps) {
         for(int i = 0; i < xStep; i++) {
             for (int j = 0; j < yStep * 2 + 1; j++) {
                 if(i==0 && j == 0){
                     symbols[i + x_begin][j + y_begin] = '┌';
-                    colours[i + x_begin][j + y_begin] = taken ? Colour.ANSI_BRIGHT_GREEN : Colour.ANSI_BRIGHT_RED;
+                    colours[i + x_begin][j + y_begin] = c;
                 }else if(i == 0 && j == yStep*2){
                     symbols[i + x_begin][j + y_begin] = '┐';
-                    colours[i + x_begin][j + y_begin] = taken ? Colour.ANSI_BRIGHT_GREEN : Colour.ANSI_BRIGHT_RED;
+                    colours[i + x_begin][j + y_begin] = c;
                 }else if(i == 0){
                     symbols[i + x_begin][j + y_begin] = '─';
-                    colours[i + x_begin][j + y_begin] = taken  ? Colour.ANSI_BRIGHT_GREEN : Colour.ANSI_BRIGHT_RED;
+                    colours[i + x_begin][j + y_begin] = c;
                 }else if(j == 0 || j == yStep*2){
                     symbols[i + x_begin][j + y_begin] = '│';
-                    colours[i + x_begin][j + y_begin] = taken  ? Colour.ANSI_BRIGHT_GREEN : Colour.ANSI_BRIGHT_RED;
+                    colours[i + x_begin][j + y_begin] = c;
                 }
             }
         }
@@ -90,24 +101,24 @@ public class GraphicalFaithTrack extends GraphicalElement{
         colours[x_begin + 1][y_begin+4] = Colour.ANSI_BRIGHT_YELLOW;
     }
 
-    private void drawLowerTiles(int x_begin, int y_begin, int xStep, int yStep, boolean taken, int vps) {
+    private void drawLowerTiles(int x_begin, int y_begin, int xStep, int yStep, Colour c, int vps) {
         for(int i = 0; i < xStep; i++){
             for(int j = 0; j < yStep*2+1; j++){
                 if(i == xStep - 1 && j == 0) {
                     symbols[i + x_begin][j + y_begin] = '└';
-                    colours[i + x_begin][j + y_begin] = taken ? Colour.ANSI_BRIGHT_GREEN : Colour.ANSI_BRIGHT_RED;
+                    colours[i + x_begin][j + y_begin] = c;
                 }
                 else if(i == xStep - 1 && j == yStep * 2) {
                     symbols[i + x_begin][j + y_begin] = '┘';
-                    colours[i + x_begin][j + y_begin] = taken ? Colour.ANSI_BRIGHT_GREEN : Colour.ANSI_BRIGHT_RED;
+                    colours[i + x_begin][j + y_begin] = c;
                 }
                 else if(j==0 || j == yStep*2) {
                     symbols[i + x_begin][j + y_begin] = '│';
-                    colours[i + x_begin][j + y_begin] = taken ? Colour.ANSI_BRIGHT_GREEN : Colour.ANSI_BRIGHT_RED;
+                    colours[i + x_begin][j + y_begin] = c;
                 }
                 else if(i == xStep-1) {
                     symbols[i + x_begin][j + y_begin] = '─';
-                    colours[i + x_begin][j + y_begin] = taken ? Colour.ANSI_BRIGHT_GREEN : Colour.ANSI_BRIGHT_RED;
+                    colours[i + x_begin][j + y_begin] = c;
                 }
             }
         }

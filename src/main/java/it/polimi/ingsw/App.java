@@ -4,10 +4,7 @@ import it.polimi.ingsw.exceptions.DifferentEffectTypeException;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -18,8 +15,15 @@ public class App
 {
 
     public static void main(String[] args ) throws InvalidArgumentException, DifferentEffectTypeException, UnsupportedEncodingException {
-        List<Integer> l = new ArrayList<>();
-        l.add(5);
+        Stack<Integer> stack = new Stack<>();
+
+        stack.push(5);
+        stack.push(3);
+        stack.push(9);
+        for(int i = 0; i < stack.size(); i++){
+            System.out.println(stack.get(i));
+        }
+        System.out.println(stack);
     }
 }
 

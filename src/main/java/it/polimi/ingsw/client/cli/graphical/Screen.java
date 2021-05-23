@@ -3,7 +3,6 @@ package it.polimi.ingsw.client.cli.graphical;
 import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.common.LightLeaderCard;
-import it.polimi.ingsw.model.game.DevelopmentCardGrid;
 
 import java.util.ArrayList;
 import java.util.EmptyStackException;
@@ -25,10 +24,10 @@ public class Screen extends GraphicalElement{
     private final int ownedLeader_y_anchor = 122;
 
     private final int market_x_anchor = 1;
-    private final int market_y_anchor = 129;
+    private final int market_y_anchor = 123;
 
     private final int scoreBoard_x_anchor = 1;
-    private final int scoreBoard_y_anchor = 152;
+    private final int scoreBoard_y_anchor = 140;
 
     private final int warehouse_x_anchor = 9;
     private final int warehouse_y_anchor = 131;
@@ -52,7 +51,6 @@ public class Screen extends GraphicalElement{
     }
 
     private Screen() {
-        //TODO: remove the following two lines, leave only reset()
         super(188, 25);
         graphicalDevelopmentCardGrid = new GraphicalDevelopmentCardGrid();
         developmentCardGridCardsToDisplay = new ArrayList<>();
@@ -72,7 +70,8 @@ public class Screen extends GraphicalElement{
     private void drawAllElements() {
         drawDevelopmentCardGrid();
         drawFaithTrack();
-        drawOwnedLeaderCards();
+        if(MatchData.getInstance().getLightClientByNickname(this.nickname).getOwnedLeaderCards().size()<3)
+            drawOwnedLeaderCards();
         drawDevelopmentCardSlots();
         drawMarket();
         drawScoreBoard();
@@ -110,25 +109,24 @@ public class Screen extends GraphicalElement{
 
     private void drawDevelopmentCardSlots() {
         int yStep = GraphicalDevelopmentCardGrid.cardWidth +1;
-        int[] developmentCardsTop = new int[3];
-        //int[] developmentCardsTop = MatchData.getInstance().getLightClientByNickname(this.nickname).getOwnedDevelopmentCards();
         Stack<Integer>[] developmentCardSlots = MatchData.getInstance().getLightClientByNickname(this.nickname).getDevelopmentCardSlots();
-        for(int i = 0; i < developmentCardSlots.length; i++){
-            try {
-                developmentCardsTop[i] = developmentCardSlots[i].peek();
-            }catch (EmptyStackException e){
-                developmentCardsTop[i] = MatchData.EMPTY_SLOT;
-            }
-        }
-        for(int i = 0; i < developmentCardsTop.length; i++){
-            if(developmentCardsTop[i] != MatchData.EMPTY_SLOT){
-                LightDevelopmentCard ldc = MatchData.getInstance().getDevelopmentCardByID(developmentCardsTop[i]);
-                GraphicalDevelopmentCard gd = new GraphicalDevelopmentCard(ldc, this.nickname);
-                gd.drawCard();
-                drawElement(GraphicalDevelopmentCardGrid.cardHeight, GraphicalDevelopmentCardGrid.cardWidth, gd.getColours(), gd.getSymbols(),
-                        gd.getBackGroundColours(), this.devCardSlots_x_anchor, this.devCardSlots_y_anchor + i*yStep);
-            }
 
+        for(int i = 0; i < developmentCardSlots.length; i++){
+            for(int j = 0; j < developmentCardSlots[i].size(); j++){
+                LightDevelopmentCard ldc = MatchData.getInstance().getDevelopmentCardByID(developmentCardSlots[i].get(j));
+                GraphicalDevelopmentCard gdc = new GraphicalDevelopmentCard(ldc, this.nickname);
+                gdc.drawCard();
+
+                int x_anchor = this.devCardSlots_x_anchor + (developmentCardSlots[i].size()*(-2) + 2) + j*2;
+                drawElement(gdc.getHeight(), gdc.getWidth(), gdc.getColours(), gdc.getSymbols(), gdc.getBackGroundColours(),
+                        x_anchor, this.devCardSlots_y_anchor+i*yStep);
+
+                if(developmentCardSlots[i].size() > 1 && j != 0){
+                    symbols[x_anchor][this.devCardSlots_y_anchor+i*yStep] = '╠';
+                    symbols[x_anchor][this.devCardSlots_y_anchor+i*yStep+gdc.getWidth()-1] = '╣';
+
+                }
+            }
         }
     }
 
@@ -139,39 +137,36 @@ public class Screen extends GraphicalElement{
         for(int i = 0; i < leaderCards.size(); i++){
             LightLeaderCard llc = MatchData.getInstance().getLeaderCardByID(leaderCards.get(i));
             GraphicalLeaderCard glc = new GraphicalLeaderCard(llc, this.nickname);
-            glc.drawCard();
+            if(!this.nickname.equals(MatchData.getInstance().getThisClientNickname()))
+                glc.drawHiddenCard();
+            else
+                glc.drawCard();
             drawElement(GraphicalDevelopmentCardGrid.cardHeight, GraphicalDevelopmentCardGrid.cardWidth, glc.getColours(), glc.getSymbols(),
                     glc.getBackGroundColours(), this.ownedLeader_x_anchor, this.ownedLeader_y_anchor + i*yStep);
         }
 
     }
 
+    private void drawCompositeElement(GraphicalElement ge, int x_anchor, int y_anchor){
+        int geWidth = ge.getWidth();
+        int geHeight = ge.getHeight();
+
+        Colour[][] colours = ge.getColours();
+        char[][] symbols = ge.getSymbols();
+        BackColour[][] backColours = ge.getBackGroundColours();
+
+        drawElement(geHeight, geWidth, colours, symbols, backColours, x_anchor, y_anchor);
+    }
+
     private void drawDevelopmentCardGrid(){
         graphicalDevelopmentCardGrid.drawDevelopmentCardGrid(MatchData.getInstance().getDevelopmentCardGrid());
-
-        int devCardGridWidth = graphicalDevelopmentCardGrid.getWidth();
-        int devCardGridHeight = graphicalDevelopmentCardGrid.getHeight();
-
-        Colour[][] colours = graphicalDevelopmentCardGrid.getColours();
-        char[][] symbols = graphicalDevelopmentCardGrid.getSymbols();
-        BackColour[][] backColours = graphicalDevelopmentCardGrid.getBackGroundColours();
-
-        drawElement(devCardGridHeight, devCardGridWidth, colours, symbols, backColours, devCardGrid_x_anchor, devCardGrid_y_anchor);
+        drawCompositeElement(graphicalDevelopmentCardGrid, devCardGrid_x_anchor, devCardGrid_y_anchor);
     }
 
     private void drawFaithTrack() {
         this.graphicalFaithTrack = new GraphicalFaithTrack(this.nickname);
         graphicalFaithTrack.drawFaithTrack();
-
-        int faithTrackWidth = graphicalFaithTrack.getWidth();
-        int faithTrackHeight = graphicalFaithTrack.getHeight();
-
-        Colour[][] colours = graphicalFaithTrack.getColours();
-        char[][] symbols = graphicalFaithTrack.getSymbols();
-        BackColour[][] backColours = graphicalFaithTrack.getBackGroundColours();
-
-        drawElement(faithTrackHeight, faithTrackWidth, colours, symbols, backColours, faith_track_x_anchor, faith_track_y_anchor);
-
+        drawCompositeElement(graphicalFaithTrack, faith_track_x_anchor, faith_track_y_anchor);
     }
 
     private void drawElement(int height, int width, Colour[][] colours, char[][] symbols, BackColour[][] backColours, int x_anchor, int y_anchor){
@@ -199,6 +194,41 @@ public class Screen extends GraphicalElement{
 
             y_anchor += y_step;
         }
-        display();
+        int x_start = height - GraphicalDevelopmentCardGrid.cardHeight;
+        int x_end = height;
+        int y_start = 0;
+        int y_end = width;
+        displayASection(x_start, x_end, y_start, y_end);
     }
+
+    private void displayASection(int x_start, int x_end, int y_start, int y_end) {
+        for(int i = x_start; i < x_end; i++){
+            for(int j = y_start; j < y_end; j++){
+                System.out.print(backGroundColours[i][j].getCode() + colours[i][j].getCode() + symbols[i][j]); //+ Colour.ANSI_RESET
+            }
+            System.out.print("\n");
+        }
+    }
+
+    public void displayWarehouse(){
+        reset();
+        GraphicalWarehouse gw = new GraphicalWarehouse(this.nickname);
+        gw.drawWarehouse();
+        drawElement(gw.getHeight(), gw.getWidth(), gw.getColours(), gw.getSymbols(), gw.getBackGroundColours(),
+                height-gw.getHeight()-1, 0);
+        drawDepotsNumbers(gw.getHeight(), gw.getWidth());
+        displayASection(height-gw.getHeight()-2, height, 0, width);
+    }
+
+    private void drawDepotsNumbers(int h, int w) {
+        String[] depots = new String[]{"◄ First Depot", "◄ Second Depot", "◄ Third Depot"};
+
+        for(int i = 0; i < 3; i++){
+            for(int j = 0; j < depots[i].length(); j++){
+                symbols[height - h + i*2][w+j] = depots[i].charAt(j);
+            }
+        }
+    }
+
+
 }
