@@ -7,6 +7,8 @@ import it.polimi.ingsw.enumerations.ResourceStorageType;
 import it.polimi.ingsw.messages.toClient.game.SelectStorageRequest;
 import it.polimi.ingsw.messages.toClient.matchData.NotifyTakenPopesFavorTile;
 import it.polimi.ingsw.messages.toClient.matchData.UpdateDepotsStatus;
+import it.polimi.ingsw.model.persistency.GameHistory;
+import it.polimi.ingsw.model.persistency.PersistentController;
 import it.polimi.ingsw.model.persistency.PersistentGame;
 import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.controller.actions.*;
@@ -266,6 +268,7 @@ public class TurnController {
 
     public void setStandardActionDoneToTrue(){
         standardActionDone=true;
+        GameHistory.saveGame(new PersistentController(new PersistentGame(getController().getGame()), currentPlayer.getNickname(), controller.getControllerID(), controller.getGamePhase().toString()));
     }
 
     public void setEndTriggerToTrue() {
@@ -274,6 +277,7 @@ public class TurnController {
 
     public void endTurn(){
         //I set a copy of the game at the end of each turn
+        GameHistory.saveGame(new PersistentController(new PersistentGame(getController().getGame()), currentPlayer.getNickname(), controller.getControllerID(), controller.getGamePhase().toString()));
         ((PlayPhase) controller.getGamePhase()).setLastTurnGameCopy(new PersistentGame(controller.getGame()));
         clientHandler.sendMessageToClient(new TextMessage("Turn ended"));
         ((PlayPhase) controller.getGamePhase()).nextTurn();

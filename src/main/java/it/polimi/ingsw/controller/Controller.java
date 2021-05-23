@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 public class Controller {
     private Game game;
     private GamePhase gamePhase;
+    private int controllerID;
     private List<ClientHandler> clientHandlers;
     private ReentrantLock lockPlayers = new ReentrantLock(true);
     private ReentrantLock lockConnections = new ReentrantLock(true);
@@ -267,5 +268,13 @@ public class Controller {
 
     public Server getServer() {
         return server;
+    }
+
+    public int getControllerID() {
+        return controllerID;
+    }
+
+    public void setControllerID(int controllerID) {
+        this.controllerID = controllerID;
     }
 }
