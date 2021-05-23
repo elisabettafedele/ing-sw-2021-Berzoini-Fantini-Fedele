@@ -1,14 +1,13 @@
 package it.polimi.ingsw.model.game;
 
-import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.enumerations.Marble;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.InvalidMethodException;
 import it.polimi.ingsw.exceptions.InvalidPlayerAddException;
 import it.polimi.ingsw.exceptions.ZeroPlayerException;
-import it.polimi.ingsw.model.PersistentGame;
-import it.polimi.ingsw.model.PersistentPlayer;
+import it.polimi.ingsw.model.persistency.PersistentGame;
+import it.polimi.ingsw.model.persistency.PersistentPlayer;
 import it.polimi.ingsw.model.cards.LeaderCard;
 import it.polimi.ingsw.model.player.Player;
 

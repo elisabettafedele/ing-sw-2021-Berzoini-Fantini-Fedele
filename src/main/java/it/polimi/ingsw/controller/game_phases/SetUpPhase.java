@@ -8,7 +8,7 @@ import it.polimi.ingsw.messages.toClient.game.ChooseLeaderCardsRequest;
 import it.polimi.ingsw.messages.toClient.game.ChooseResourceTypeRequest;
 import it.polimi.ingsw.messages.toClient.game.ChooseStorageTypeRequest;
 import it.polimi.ingsw.messages.toClient.matchData.*;
-import it.polimi.ingsw.model.LightCardsParser;
+import it.polimi.ingsw.jsonParsers.LightCardsParser;
 import it.polimi.ingsw.model.cards.*;
 import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.common.LightDevelopmentCard;

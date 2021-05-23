@@ -1,4 +1,4 @@
-package it.polimi.ingsw.model;
+package it.polimi.ingsw.model.persistency;
 
 import it.polimi.ingsw.client.PopesTileState;
 import it.polimi.ingsw.enumerations.Resource;

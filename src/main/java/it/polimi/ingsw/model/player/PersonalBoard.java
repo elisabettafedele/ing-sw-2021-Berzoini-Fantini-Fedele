@@ -1,12 +1,11 @@
 package it.polimi.ingsw.model.player;
 
 import it.polimi.ingsw.client.PopesTileState;
-import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.enumerations.*;
 import it.polimi.ingsw.exceptions.*;
 import it.polimi.ingsw.jsonParsers.DevelopmentCardParser;
 import it.polimi.ingsw.jsonParsers.LeaderCardParser;
-import it.polimi.ingsw.model.PersistentPlayer;
+import it.polimi.ingsw.model.persistency.PersistentPlayer;
 import it.polimi.ingsw.model.cards.*;
 import it.polimi.ingsw.model.depot.Depot;
 import it.polimi.ingsw.model.depot.LeaderDepot;

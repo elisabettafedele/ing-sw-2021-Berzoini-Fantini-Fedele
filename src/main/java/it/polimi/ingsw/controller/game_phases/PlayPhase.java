@@ -2,13 +2,7 @@ package it.polimi.ingsw.controller.game_phases;
 
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.controller.TurnController;
-import it.polimi.ingsw.enumerations.GameMode;
-import it.polimi.ingsw.exceptions.InvalidArgumentException;
-import it.polimi.ingsw.jsonParsers.GameCloneThroughJson;
-import it.polimi.ingsw.messages.toClient.matchData.*;
-import it.polimi.ingsw.model.PersistentGame;
-import it.polimi.ingsw.model.cards.Card;
-import it.polimi.ingsw.model.cards.LeaderCard;
+import it.polimi.ingsw.model.persistency.PersistentGame;
 import it.polimi.ingsw.model.game.Game;
 import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.messages.toServer.game.ChooseActionResponse;
@@ -17,11 +11,7 @@ import it.polimi.ingsw.messages.toServer.MessageToServer;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.server.Server;
 
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 public abstract class PlayPhase {
     private Controller controller;

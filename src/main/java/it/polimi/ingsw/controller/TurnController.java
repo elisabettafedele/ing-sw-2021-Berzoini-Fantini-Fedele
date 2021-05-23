@@ -7,7 +7,7 @@ import it.polimi.ingsw.enumerations.ResourceStorageType;
 import it.polimi.ingsw.messages.toClient.game.SelectStorageRequest;
 import it.polimi.ingsw.messages.toClient.matchData.NotifyTakenPopesFavorTile;
 import it.polimi.ingsw.messages.toClient.matchData.UpdateDepotsStatus;
-import it.polimi.ingsw.model.PersistentGame;
+import it.polimi.ingsw.model.persistency.PersistentGame;
 import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.controller.actions.*;
 import it.polimi.ingsw.enumerations.ActionType;
@@ -21,7 +21,6 @@ import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.model.game.VaticanReportSection;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class TurnController {
     private ClientHandler clientHandler;

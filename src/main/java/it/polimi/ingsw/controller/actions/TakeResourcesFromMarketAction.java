@@ -179,7 +179,7 @@ public class TakeResourcesFromMarketAction implements Action {
         if (resourcesToStore.isEmpty()) {
             manageEndAction();
         } else {
-            clientHandler.sendMessageToClient(new TextMessage("Conversion done!\nYou now have to store these resources: " + resourcesToStore));
+            clientHandler.sendMessageToClient(new NotifyResourcesToStore(resourcesToStore));
             handleChooseStorageTypeRequest();
         }
     }

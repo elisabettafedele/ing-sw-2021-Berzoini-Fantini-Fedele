@@ -31,6 +31,7 @@ public interface VirtualView {
     void displayChooseProductionPowersRequest(Map<Integer, List<Value>> availableProductionPowers, Map<Resource, Integer> availableResources);
     void displaySelectDevelopmentCardSlotRequest(boolean firstSlotAvailable, boolean secondSlotAvailable, boolean thirdSlotAvailable);
     void displaySelectStorageRequest(Resource resource, boolean isInWarehouse, boolean isInStrongbox, boolean isInLeaderDepot);
+    void displayResourcesToStore(List<Resource> resourcesToStore);
 
     //SETUP
     void loadLeaderCards(List<LightLeaderCard> leaderCards);

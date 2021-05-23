@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.cli.specificCLI;
 
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.cli.CLI;
+import it.polimi.ingsw.client.cli.graphical.Colour;
 import it.polimi.ingsw.client.utilities.Command;
 import it.polimi.ingsw.client.utilities.InputParser;
 import it.polimi.ingsw.client.utilities.UtilityPrinter;
@@ -112,22 +113,12 @@ public class OrganizeDepotsCLI {
             client.sendMessageToServer(new MoveResourcesRequest(originDepot, destinationDepot, resource, quantity));
         }
     }
-    /*
-    public static void displayMoveRequest(List<String> originDepots, List<Resource> destinationDepots){
 
-
-
-
-        List <String> origins = originDepots.stream().filter(x -> x != Resource.ANY).map(x -> ResourceStorageType.valueOf(x.getValue()).name()).collect(Collectors.toList());
-        System.out.println("Select the origin depot:");
-        UtilityPrinter.printNumericList(origins);
-        String originDepot = InputParser.getCommandFromList(origins);
-        Resource originResource = originDepots.get(ResourceStorageType.getIndexByString(originDepot));
-        List <String> destinations = destinationDepots.stream().filter(x -> x == Resource.ANY || x == originResource).map(x -> originDepots.indexOf(x) > 2 ? ResourceStorageType.LEADER_DEPOT.name() : ResourceStorageType.valueOf(x.getValue()).name()).collect(Collectors.toList());
-        System.out.println("Select the destination depot:");
-        UtilityPrinter.printNumericList(destinations);
-        String destinationDepot = InputParser.getCommandFromList(destinations);
-        client.sendMessageToServer(new MoveResourcesRequest(originDepot, destinationDepot, resource, quantity));
+    public static void displayResourcesToStore(List<Resource> resourcesToStore){
+        System.out.println("Conversion done!\nYou now have to store these resources: ");
+        for (Resource resource : resourcesToStore){
+            System.out.print(Colour.getColourByResource(resource).getCode() + resource.symbol + Colour.ANSI_RESET + " ");
+        }
+        System.out.println(" ");
     }
-*/
 }

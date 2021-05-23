@@ -18,7 +18,7 @@ import it.polimi.ingsw.messages.toClient.lobby.SendPlayerNicknamesMessage;
 import it.polimi.ingsw.messages.toClient.lobby.WaitingInTheLobbyMessage;
 import it.polimi.ingsw.messages.toClient.matchData.LoadDevelopmentCardsMessage;
 import it.polimi.ingsw.messages.toClient.matchData.LoadLeaderCardsMessage;
-import it.polimi.ingsw.model.LightCardsParser;
+import it.polimi.ingsw.jsonParsers.LightCardsParser;
 import it.polimi.ingsw.model.player.Player;
 
 import java.io.IOException;
