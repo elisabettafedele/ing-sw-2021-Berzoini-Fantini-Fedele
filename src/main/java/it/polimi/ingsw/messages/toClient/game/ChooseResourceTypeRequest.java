@@ -19,7 +19,6 @@ public class ChooseResourceTypeRequest implements MessageToClient {
 
     @Override
     public void handleMessage(VirtualView view) {
-        //System.out.println(this.toString());
         view.displayChooseResourceTypeRequest(resourceTypes, quantity);
     }
 }

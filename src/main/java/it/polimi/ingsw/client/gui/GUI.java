@@ -6,9 +6,11 @@ import it.polimi.ingsw.client.View;
 import it.polimi.ingsw.common.FunctionInterface;
 import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.common.LightLeaderCard;
+import it.polimi.ingsw.controller.actions.LeaderCardAction;
 import it.polimi.ingsw.enumerations.ActionType;
 import it.polimi.ingsw.enumerations.Marble;
 import it.polimi.ingsw.enumerations.Resource;
+import it.polimi.ingsw.enumerations.ResourceStorageType;
 import it.polimi.ingsw.messages.toClient.matchData.MatchDataMessage;
 import it.polimi.ingsw.model.cards.Value;
 import javafx.application.Application;
@@ -20,6 +22,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -83,7 +86,6 @@ public class GUI extends Application implements View {
     private void resetControllers() {
         setupSceneController = null;
         gameSceneController=null;
-
     }
 
     @Override
@@ -130,17 +132,31 @@ public class GUI extends Application implements View {
     public void displayMarblesTaken(List<Marble> marblesTaken, boolean needToChooseConversion) {
 
     }
+    //@Override
+    public void displayResourcesToStore(List<Resource> resourcesToStore){
+        gameSceneController.displayResourcesInsertion(resourcesToStore);
+    }
     @Override
     public void displayChooseStorageTypeRequest(Resource resource, List<String> availableDepots, boolean canDiscard, boolean canReorganize) {
-        resetControllers();
-        createMainScene("/FXML/GameScene.fxml", () -> {
-            stage.setTitle("Maestri del Rinascimento");
-            stage.setResizable(false);
-            stage.show();
-            gameSceneController = fxmlLoader.getController();
-            gameSceneController.setGUI(this);
-            gameSceneController.setClient(client);
-        });
+        if(setupSceneController!=null){
+            resetControllers();
+            createMainScene("/FXML/GameScene.fxml", () -> {
+                stage.setTitle("Maestri del Rinascimento");
+                stage.setResizable(false);
+                stage.show();
+                gameSceneController = fxmlLoader.getController();
+                gameSceneController.setGUI(this);
+                gameSceneController.setClient(client);
+            });
+        }
+        HashMap<ResourceStorageType,Boolean> interactableDepots=new HashMap<>();
+        for(ResourceStorageType resourceStorageType: ResourceStorageType.values()){
+            interactableDepots.put(resourceStorageType,false);
+        }
+        for(String s: availableDepots){
+            interactableDepots.put(ResourceStorageType.valueOf(s),true);
+        }
+        gameSceneController.activateResourceInsertion(resource,interactableDepots,canDiscard,canReorganize);
 
 
     }

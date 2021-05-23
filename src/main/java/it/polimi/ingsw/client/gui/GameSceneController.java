@@ -1,35 +1,29 @@
 package it.polimi.ingsw.client.gui;
 
 import it.polimi.ingsw.client.Client;
-import it.polimi.ingsw.client.LightClient;
 import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.client.PopesTileState;
 import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.common.LightLeaderCard;
-import it.polimi.ingsw.enumerations.FlagColor;
-import it.polimi.ingsw.enumerations.Level;
-import it.polimi.ingsw.enumerations.Marble;
-import it.polimi.ingsw.enumerations.Resource;
+import it.polimi.ingsw.enumerations.*;
 import javafx.application.Platform;
-import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.Tooltip;
 import javafx.scene.effect.ColorAdjust;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
-import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Locale;
-import java.util.Stack;
 
 public class GameSceneController {
     private GUI gui=null;
@@ -50,8 +44,6 @@ public class GameSceneController {
     @FXML
     private Pane warehouse_third_depot;
     @FXML
-    private GridPane strongbox;
-    @FXML
     private Pane faithtrack;
     @FXML
     private Pane firstSlot;
@@ -60,41 +52,63 @@ public class GameSceneController {
     @FXML
     private Pane thirdSlot;
     @FXML
+    private Pane activateProductionPane;
+    @FXML
     private Pane popeTiles;
+    @FXML
+    private Pane leftLeaderDepot;
+    @FXML
+    private Pane rightLeaderDepot;
+    @FXML
+    private GridPane strongbox;
     @FXML
     private GridPane developmentCardGrid;
     @FXML
     private GridPane marketGrid;
-    @FXML
-    private Pane leftLeaderDepot;
+
     @FXML
     private ImageView leftLeaderCard;
-    @FXML
-    private Pane rightLeaderDepot;
+
     @FXML
     private ImageView rightLeaderCard;
+    @FXML
+    private ImageView previousPlayerButton;
+    @FXML
+    private ImageView nextPlayerButton;
+    @FXML
+    private ImageView basicProduction;
     @FXML
     private Label mainLabelNames;
     @FXML
     private Label mainLabelStats;
     @FXML
     private Label currentPBNicknameLabel;
+
     @FXML
-    private ImageView previousPlayerButton;
+    private VBox popupVbox;
     @FXML
-    private ImageView nextPlayerButton;
+    private Button reorganizeButton;
+    @FXML
+    private Button discardButton;
 
     List<String> players;
     int currentPlayerIndex;
 
     MatchData matchData;
 
-
+    Map<ActionType,Boolean> doableActions;
 
     @FXML
     public void initialize() {
         matchData=MatchData.getInstance();
         currentPlayerIndex=0;
+        doableActions= new HashMap<>();
+        final boolean debug=true;
+        doableActions.put(ActionType.TAKE_RESOURCE_FROM_MARKET,debug);
+        doableActions.put(ActionType.BUY_DEVELOPMENT_CARD,debug);
+        doableActions.put(ActionType.ACTIVATE_PRODUCTION,debug);
+        doableActions.put(ActionType.ACTIVATE_LEADER_CARD,debug);
+        doableActions.put(ActionType.DISCARD_LEADER_CARD,debug);
         players=matchData.getAllNicknames();
         ColorAdjust colorAdjust=new ColorAdjust();
         colorAdjust.setBrightness(0.4);
@@ -102,10 +116,108 @@ public class GameSceneController {
         previousPlayerButton.setEffect(colorAdjust);
         nextPlayerButton.setDisable(true);
         nextPlayerButton.setEffect(colorAdjust);
+
         updateDevelopmentCardGridView();
         updateMarketView();
         updateMainLabel();
         updateView();
+        updateGlowingObjects();
+    }
+
+    private void updateGlowingObjects() {
+        deactivateGlowingAndSelectEventHandler(developmentCardGrid);
+        deactivateGlowingAndSelectEventHandler(leftLeaderCard);
+        deactivateGlowingAndSelectEventHandler(rightLeaderCard);
+        deactivateGlowingAndSelectEventHandler(activateProductionPane);
+        deactivateGlowingAndSelectEventHandler(marketGrid);
+        if(currentPlayerIndex==0){
+            List<LightLeaderCard> leaderCards =new ArrayList<>();
+            for(Integer lcID :matchData.getLightClientByNickname(players.get(currentPlayerIndex)).getOwnedLeaderCards()){
+                leaderCards.add(matchData.getLeaderCardByID(lcID));
+            }
+            for(ActionType actionType : doableActions.keySet()){
+                if(doableActions.get(actionType)==true){
+                    switch (actionType){
+                        case TAKE_RESOURCE_FROM_MARKET:
+                            activateGlowingAndSelectEventHandler(marketGrid,false,actionType);
+                            break;
+                        case ACTIVATE_PRODUCTION:
+                            activateGlowingAndSelectEventHandler(activateProductionPane,false,actionType);
+                            break;
+                        case BUY_DEVELOPMENT_CARD:
+                            activateGlowingAndSelectEventHandler(developmentCardGrid,false,actionType);
+                            break;
+                        case ACTIVATE_LEADER_CARD:
+                            int i=0;
+                            for(LightLeaderCard lc : leaderCards){
+                                if(!matchData.getLightClientByNickname(players.get(currentPlayerIndex)).leaderCardIsActive(lc.getID())){
+                                    activateGlowingAndSelectEventHandler(((Pane)leftLeaderCard.getParent()).getChildren().get(i*2),true,actionType);
+                                }
+                                i++;
+                            }
+                        case DISCARD_LEADER_CARD:
+                            int ii=0;
+                            for(LightLeaderCard lc : leaderCards){
+                                if(matchData.getLightClientByNickname(players.get(currentPlayerIndex)).leaderCardIsActive(lc.getID())){
+                                    activateGlowingAndSelectEventHandler(((Pane)leftLeaderCard.getParent()).getChildren().get(ii*2),false,actionType);
+                                }
+                                ii++;
+                            }
+                    }
+                }
+            }
+        }
+    }
+
+    private void deactivateGlowingAndSelectEventHandler(Node nodeToActivate){
+        if (nodeToActivate.getOnMouseEntered() != null) {
+            nodeToActivate.removeEventHandler(MouseEvent.MOUSE_ENTERED,nodeToActivate.getOnMouseEntered());
+        }
+        if (nodeToActivate.getOnMouseExited() != null) {
+            nodeToActivate.removeEventHandler(MouseEvent.MOUSE_EXITED,nodeToActivate.getOnMouseExited());
+        }
+        if (nodeToActivate.getOnMouseClicked() != null) {
+            nodeToActivate.removeEventHandler(MouseEvent.MOUSE_CLICKED,nodeToActivate.getOnMouseClicked());
+        }
+    }
+
+    private void activateGlowingAndSelectEventHandler(Node nodeToActivate, boolean activateLeaderCard, ActionType actionType){
+        nodeToActivate.setOnMouseEntered(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                glowNode(nodeToActivate);
+                Tooltip.install(nodeToActivate,new Tooltip(actionType.toString().replace('_',' ')));
+            }
+        });
+        nodeToActivate.setOnMouseExited(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                nodeToActivate.setEffect(null);
+                if(activateLeaderCard){
+                    ColorAdjust colorAdjust=new ColorAdjust();
+                    colorAdjust.setBrightness(0.4);
+                    nodeToActivate.setEffect(colorAdjust);
+                }
+            }
+        });
+        nodeToActivate.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                selectAction(nodeToActivate);
+            }
+        });
+    }
+
+    private void selectAction(Node nodeToActivate) {
+        System.out.println(nodeToActivate.getId());
+    }
+
+    private void glowNode(Node nodeToGlow){
+        DropShadow borderGlow = new DropShadow();
+        borderGlow.setColor(Color.CYAN);
+        borderGlow.setOffsetX(0f);
+        borderGlow.setOffsetY(0f);
+        nodeToGlow.setEffect(borderGlow);
     }
 
     private void updateMainLabel() {
@@ -131,6 +243,7 @@ public class GameSceneController {
     }
 
     private void updateDevelopmentCardsSlots() {
+        basicProduction.setVisible(true);
         firstSlot.getChildren().forEach(node -> node.setVisible(false));
         secondSlot.getChildren().forEach(node -> node.setVisible(false));
         thirdSlot.getChildren().forEach(node -> node.setVisible(false));
@@ -360,6 +473,32 @@ public class GameSceneController {
         });
     }
 
+    public void activateResourceInsertion(Resource resource, HashMap<ResourceStorageType, Boolean> interactableDepots, boolean canDiscard, boolean canReorganize) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                popupVbox.setVisible(true);
+                HBox resourcesHBox=(HBox) popupVbox.getChildren().get(1);
+            }
+        });
+    }
+
+    public void displayResourcesInsertion(List<Resource> resources) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                popupVbox.setVisible(true);
+                HBox resourcesHBox=(HBox) popupVbox.getChildren().get(1);
+                for(Resource resource: resources){
+                    ImageView resourceImage= new ImageView( new Image(SetupSceneController.class.getResource("/img/punchboard/" + resource.toString().toLowerCase(Locale.ROOT) + ".png").toString()));
+                    resourceImage.setPreserveRatio(true);
+                    resourceImage.setFitHeight(((ImageView)warehouse_first_depot.getChildren()).getFitHeight());
+                    resourcesHBox.getChildren().add(resourceImage);
+                }
+            }
+        });
+    }
+
     /*   Use this to avoid Thread exception
 
 
@@ -372,4 +511,5 @@ public class GameSceneController {
 
 
  */
+
 }

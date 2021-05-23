@@ -15,8 +15,6 @@ public class ChooseLeaderCardsRequest implements MessageToClient {
 
     @Override
     public void handleMessage(VirtualView view) {
-
-        //System.out.println(this.toString());
         view.displayChooseLeaderCardsRequest(leaderCardsIDs);
     }
 }

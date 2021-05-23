@@ -125,6 +125,7 @@ public class Client implements ClientInterface {
                 connected.set(false);
                 break;
             }
+            System.out.println(message.toString());
             ((MessageToClient) message).handleMessage(view);
         }
     }

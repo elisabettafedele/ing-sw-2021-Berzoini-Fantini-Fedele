@@ -19,7 +19,6 @@ public class ChooseWhiteMarbleConversionRequest implements MessageToClient {
 
     @Override
     public void handleMessage(VirtualView view) {
-        //System.out.println(this.toString());
         view.displayChooseWhiteMarbleConversionRequest(conversions, numberOfWhiteMarbles);
 
     }

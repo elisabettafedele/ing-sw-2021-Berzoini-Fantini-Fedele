@@ -20,7 +20,6 @@ public class ChooseProductionPowersRequest implements MessageToClient {
 
     @Override
     public void handleMessage(VirtualView view) {
-        //System.out.println(this.toString());
         view.displayChooseProductionPowersRequest(this.availableProductionPowers, this.availableResources);
     }
 }

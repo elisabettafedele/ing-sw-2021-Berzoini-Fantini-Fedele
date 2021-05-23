@@ -12,3 +12,7 @@
     -fx-background-size: cover, auto;
     -fx-background-position: center center;
 }
+.popup-box{
+    -fx-background-color: white;
+}
+
