@@ -5,8 +5,6 @@ import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.utilities.Utils;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.enumerations.Resource;
-import it.polimi.ingsw.messages.toServer.game.ChooseLeaderCardsResponse;
-import it.polimi.ingsw.messages.toServer.game.ChooseResourceTypeResponse;
 import it.polimi.ingsw.messages.toServer.lobby.GameModeResponse;
 import it.polimi.ingsw.messages.toServer.lobby.NicknameResponse;
 import it.polimi.ingsw.messages.toServer.lobby.NumberOfPlayersResponse;
@@ -14,11 +12,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.effect.ColorAdjust;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -26,14 +20,11 @@ import javafx.scene.layout.VBox;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.UnaryOperator;
 
 public class SetupSceneController {
     List<Integer> selectedLeaderCard;
     List<Resource> selectedResources;
-    boolean[] selectedResourcesBooleans;
     boolean selectionStarted;
 
     private GUI gui=null;
@@ -72,22 +63,12 @@ public class SetupSceneController {
     @FXML
     private Button sendNumOfPlayerButton;
     @FXML
-    private Button confirmSelectionButton;
-    @FXML
     private TextField ipTextField;
 
     @FXML
     private TextField portTextField;
     @FXML
     private TextField nicknameField;
-
-    @FXML
-    private HBox hboxCards;
-
-    @FXML
-    private GridPane gridResources;
-
-
 
 
 
@@ -100,15 +81,10 @@ public class SetupSceneController {
         vBoxNickname.setVisible(false);
         vBoxNumOfPlayers.setVisible(false);
         vBoxWaiting.setVisible(false);
-        hboxCards.setVisible(false);
-        gridResources.setVisible(false);
         selectedResources=new ArrayList<>();
         selectedLeaderCard=new ArrayList<>();
         selectionStarted=false;
-        hboxCards.managedProperty().bind(hboxCards.visibleProperty());
-        gridResources.managedProperty().bind(gridResources.visibleProperty());
     }
-
     UnaryOperator<TextFormatter.Change> integerFilter = change -> {
         String newText = change.getControlNewText();
         if (newText.equals("") || newText.matches("([1-9][0-9]{0,4})")) {
@@ -202,7 +178,6 @@ public class SetupSceneController {
                 vBoxNickname.setVisible(false);
                 vBoxNumOfPlayers.setVisible(true);
                 vBoxWaiting.setVisible(false);
-                //TODO default value or activate button only after choice
                 numOfPlayersChoiceBox.getItems().add("2");
                 numOfPlayersChoiceBox.getItems().add("3");
                 numOfPlayersChoiceBox.getItems().add("4");
@@ -231,7 +206,6 @@ public class SetupSceneController {
                     vBoxNumOfPlayers.setVisible(false);
                     vBoxWaiting.setVisible(true);
                     lastLabel.setText("Waiting in the lobby..");
-                    confirmSelectionButton.setVisible(false);
             }
         });
     }
@@ -265,140 +239,12 @@ public class SetupSceneController {
         });
     }
 
-    public void displayLeaderCardsRequest(List<Integer> leaderCards,Client cLient) {
-        selectionStarted=true;
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                lastLabel.setText(lastLabel.getText()+"\n Choose two out of the four following Leader cards:");
-                confirmSelectionButton.setVisible(true);
-                confirmSelectionButton.setDisable(true);
-                selectedResources=new ArrayList<>();
-                selectedLeaderCard=new ArrayList<>();
-                HashMap<Integer, ImageView> leaderCardsMap= buildCards(leaderCards);
-                for(ImageView lcImage: leaderCardsMap.values()){
-                    hboxCards.getChildren().add(lcImage);
-                }
-                hboxCards.setVisible(true);
-
-            }
-        });
-
-    }
-
-    private HashMap<Integer, ImageView> buildCards(List<Integer> leaderCards) {
-        HashMap<Integer,ImageView> leaderCardsMap=new HashMap<>();
-        leaderCards.forEach(lc->{
-            ImageView lcImage= new ImageView( new Image(SetupSceneController.class.getResource("/img/Cards/LeaderCards/front/" + lc + ".png").toString()));
-            lcImage.setFitHeight(200);
-            lcImage.setPreserveRatio(true);
-            lcImage.setSmooth(true);
-            lcImage.getStyleClass().add("cards");
-            lcImage.addEventHandler(MouseEvent.MOUSE_PRESSED, mouseEvent -> {
-                if(selectedLeaderCard.contains(lc)){
-                    for(int i=0;i<selectedLeaderCard.size();i++){
-                        if(selectedLeaderCard.get(i)==lc){
-                            selectedLeaderCard.remove(i);
-                            lcImage.setEffect(null);
-                        }
-                    }
-                    confirmSelectionButton.setDisable(true);
-                }else if (selectedLeaderCard.size()<2){
-                    selectedLeaderCard.add(lc);
-                    ColorAdjust colorAdjust=new ColorAdjust();
-                    colorAdjust.setBrightness(0.4);
-                    lcImage.setEffect(colorAdjust);
-                    if(selectedLeaderCard.size()==2){
-                        confirmSelectionButton.setDisable(false);
-                    }
-                }
-            });
-            leaderCardsMap.put(lc,lcImage);
-        });
-        return leaderCardsMap;
-    }
-    @FXML
-    public void handleConfirmSelectionButton(){
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                if(selectedLeaderCard.size()==2){
-                    client.sendMessageToServer(new ChooseLeaderCardsResponse(selectedLeaderCard));
-                    selectedLeaderCard=new ArrayList<>();
-                    hboxCards.setVisible(false);
-                    confirmSelectionButton.setVisible(false);
-                    lastLabel.setText("Waiting the other players, the game will start as soon as they all be ready...");
-                }
-                if(selectedLeaderCard.size()==0&&selectedResources.size()>0){
-                    client.sendMessageToServer(new ChooseResourceTypeResponse(selectedResources));
-                    gridResources.setVisible(false);
-                    confirmSelectionButton.setVisible(false);
-                    lastLabel.setText("Waiting the other players, the game will start as soon as they all be ready...");
-                }
-
-            }
-        });
 
 
-    }
 
-    public void displayChooseResourceTypeRequest( int quantity) {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                selectedResourcesBooleans=new boolean[4*quantity];
-                confirmSelectionButton.setDisable(true);
-                confirmSelectionButton.setVisible(true);
-                lastLabel.setText("Choose " + quantity + (quantity>1?" resources":" resource"));
-                List<ImageView> resourcesImages= buildResources(quantity);
-                int resCounter=0;
-                for(int row=0;row<quantity;row++){
-                    for(int col=0;col<4;col++){
-                        gridResources.add(resourcesImages.get(resCounter), col, row);
-                        resCounter++;
-                    }
-                }
-                gridResources.setVisible(true);
-            }
-        });
-    }
 
-    private List<ImageView> buildResources(int quantity) {
-        List<Resource> resources= Resource.realValues();
-        List<ImageView> resourcesImages=new ArrayList<>();
-        AtomicInteger resCounter= new AtomicInteger();
-        for(int ii=0; ii<quantity;ii++){
-            resources.forEach(resource->{
-                ImageView resourceImage= new ImageView( new Image(SetupSceneController.class.getResource("/img/punchboard/" + resource.toString().toLowerCase(Locale.ROOT) + ".png").toString()));
-                resourceImage.setFitHeight(40);
-                resourceImage.setPreserveRatio(true);
-                resourceImage.setSmooth(true);
-                resourceImage.setId(resCounter.toString());
-                resourceImage.addEventHandler(MouseEvent.MOUSE_PRESSED, mouseEvent -> {
 
-                    if(selectedResourcesBooleans[Integer.parseInt(resourceImage.getId())]){
-                        selectedResources.remove(resource);
-                        selectedResourcesBooleans[Integer.parseInt(resourceImage.getId())]=false;
-                        resourceImage.setEffect(null);
-                        confirmSelectionButton.setDisable(true);
-                    }else if (selectedResources.size()<quantity){
-                        selectedResources.add(resource);
-                        selectedResourcesBooleans[Integer.parseInt(resourceImage.getId())]=true;
-                        ColorAdjust colorAdjust=new ColorAdjust();
-                        colorAdjust.setBrightness(0.4);
-                        resourceImage.setEffect(colorAdjust);
-                        if(selectedResources.size()==quantity){
-                            confirmSelectionButton.setDisable(false);
-                        }
-                    }
-                });
-                resourcesImages.add(resourceImage);
-                resCounter.getAndIncrement();
-            });
-        }
 
-        return resourcesImages;
-    }
 
 /*   Use this to avoid Thread exception
 

@@ -141,20 +141,6 @@ public class GUI extends Application implements View {
     }
     @Override
     public void displayChooseStorageTypeRequest(Resource resource, List<String> availableDepots, boolean canDiscard, boolean canReorganize) {
-        /*
-        if(setupSceneController!=null){
-            resetControllers();
-            createMainScene("/FXML/GameScene.fxml", () -> {
-                stage.setTitle("Maestri del Rinascimento");
-                stage.setResizable(false);
-                stage.show();
-                gameSceneController = fxmlLoader.getController();
-                gameSceneController.setGUI(this);
-                gameSceneController.setClient(client);
-            });
-        }
-
-         */
         HashMap<ResourceStorageType,Boolean> interactableDepots=new HashMap<>();
         for(ResourceStorageType resourceStorageType: ResourceStorageType.values()){
             interactableDepots.put(resourceStorageType,false);
@@ -183,7 +169,6 @@ public class GUI extends Application implements View {
             gameSceneController.setClient(client);
             gameSceneController.displayLeaderCardsRequest(leaderCards, client);
         });
-
     }
 
     @Override

@@ -106,14 +106,15 @@ public class GameSceneController {
     Map<ActionType,Boolean> doableActions;
     Map<ResourceStorageType,Node> storageNameToNodeMap;
     List<Resource> selectedResources;
-    List<Integer> selectedLeaderCard;
+    List<Integer> selectedLeaderCards;
 
     @FXML
     public void initialize() {
         matchData=MatchData.getInstance();
+        players=matchData.getAllNicknames();
         currentPlayerIndex=0;
         doableActions= new HashMap<>();
-        final boolean debug=true;
+        final boolean debug=false;
         doableActions.put(ActionType.TAKE_RESOURCE_FROM_MARKET,debug);
         doableActions.put(ActionType.BUY_DEVELOPMENT_CARD,debug);
         doableActions.put(ActionType.ACTIVATE_PRODUCTION,debug);
@@ -126,7 +127,6 @@ public class GameSceneController {
         storageNameToNodeMap.put(ResourceStorageType.WAREHOUSE,warehouse);
         storageNameToNodeMap.put(ResourceStorageType.STRONGBOX,strongbox);
         storageNameToNodeMap.put(ResourceStorageType.LEADER_DEPOT,leftLeaderDepot.getParent());
-        players=matchData.getAllNicknames();
         ColorAdjust colorAdjust=new ColorAdjust();
         colorAdjust.setBrightness(0.4);
         previousPlayerButton.setDisable(true);
@@ -138,7 +138,8 @@ public class GameSceneController {
         updateMarketView();
         updateMainLabel();
         updateView();
-        //updateGlowingObjects();
+        leftLeaderCard.setImage(new Image(GameSceneController.class.getResource("/img/Cards/LeaderCards/back/leaderCardsBack.png").toString()));
+        rightLeaderCard.setImage(new Image(GameSceneController.class.getResource("/img/Cards/LeaderCards/back/leaderCardsBack.png").toString()));
     }
 
     private void updateGlowingObjects() {
@@ -356,7 +357,10 @@ public class GameSceneController {
             cardCounter++;
         }
     }
-
+/*
+set all boxes invisible, then makes visible the one where the player is.
+It also puts the right PopTile Image reading matchdata'LightClient info.
+ */
     private void updateFaithTrack() {
         for(Node ftBox : faithtrack.getChildren()){
             ftBox.setVisible(false);
@@ -574,6 +578,7 @@ public class GameSceneController {
             @Override
             public void run() {
                 popupVbox.setVisible(true);
+                ((Label) popupVbox.getChildren().get(0)).setText("Drag the resource into one of the glowing depots, if any");
                 HBox resourcesHBox=(HBox) popupVbox.getChildren().get(1);
                 highlightAndDrag(resourcesHBox.getChildren().get(0),interactableDepots);
             }
@@ -612,29 +617,40 @@ public class GameSceneController {
         }
     }
 
+
+    // *********************************************************************  //
+    //                        INITIAL GAME FUNCTIONS                          //
+    // *********************************************************************  //
+
     public void displayLeaderCardsRequest(List<Integer> leaderCards, Client client) {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+                popupVbox.setVisible(true);
+                //set Reorganize button invisible
+                ((Button) buttonsHbox.getChildren().get(1)).setVisible(false);
+                ((Button) buttonsHbox.getChildren().get(1)).setManaged(false);
+                //turn DiscardButton into ConfirmSelectionButton
                 Button confirmSelectionButton=(Button) buttonsHbox.getChildren().get(0);
-                HBox hBox=((HBox)popupVbox.getChildren().get(1));
-                ((Label) popupVbox.getChildren().get(0)).setText("Choose two out of the four following Leader cards:");
                 confirmSelectionButton.setText("Confirm selection");
                 confirmSelectionButton.setDisable(true);
                 confirmSelectionButton.setVisible(true);
-                ((Button) buttonsHbox.getChildren().get(1)).setVisible(false);
-                ((Button) buttonsHbox.getChildren().get(1)).setManaged(false);
+
+                HBox selectionHBox=((HBox)popupVbox.getChildren().get(1));
+                ((Label) popupVbox.getChildren().get(0)).setText("Choose two out of the four following Leader cards:");
+
+
                 selectedResources=new ArrayList<>();
-                selectedLeaderCard=new ArrayList<>();
+                selectedLeaderCards =new ArrayList<>();
 
                 HashMap<Integer, ImageView> leaderCardsMap= buildCards(leaderCards,confirmSelectionButton);
                 for(ImageView lcImage: leaderCardsMap.values()){
-                    ((HBox)popupVbox.getChildren().get(1)).getChildren().add(lcImage);
+                    selectionHBox.getChildren().add(lcImage);
                 }
                 confirmSelectionButton.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent actionEvent) {
-                        handleConfirmSelectionButton(confirmSelectionButton,hBox,((Label) popupVbox.getChildren().get(0)));
+                        handleConfirmSelectionButton(confirmSelectionButton,selectionHBox,((Label) popupVbox.getChildren().get(0)));
                     }
                 });
             }
@@ -642,16 +658,51 @@ public class GameSceneController {
         });
     }
 
+    private HashMap<Integer, ImageView> buildCards(List<Integer> leaderCards, Button confirmSelectionButton) {
+        HashMap<Integer,ImageView> leaderCardsMap=new HashMap<>();
+        leaderCards.forEach(lc->{
+            ImageView lcImage= new ImageView( new Image(SetupSceneController.class.getResource("/img/Cards/LeaderCards/front/" + lc + ".png").toString()));
+            lcImage.setFitHeight(200);
+            lcImage.setPreserveRatio(true);
+            lcImage.setSmooth(true);
+            lcImage.getStyleClass().add("cards");
+            lcImage.addEventHandler(MouseEvent.MOUSE_PRESSED, mouseEvent -> {
+                if(selectedLeaderCards.contains(lc)){
+                    for(int i = 0; i< selectedLeaderCards.size(); i++){
+                        if(selectedLeaderCards.get(i)==lc){
+                            selectedLeaderCards.remove(i);
+                            lcImage.setEffect(null);
+                        }
+                    }
+                    confirmSelectionButton.setDisable(true);
+                }else if (selectedLeaderCards.size()<2){
+                    selectedLeaderCards.add(lc);
+                    ColorAdjust colorAdjust=new ColorAdjust();
+                    colorAdjust.setBrightness(0.4);
+                    lcImage.setEffect(colorAdjust);
+                    if(selectedLeaderCards.size()==2){
+                        confirmSelectionButton.setDisable(false);
+                    }
+                }
+            });
+            leaderCardsMap.put(lc,lcImage);
+        });
+        return leaderCardsMap;
+    }
+
+
     public void displayChooseResourceTypeRequest( int quantity) {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                Button confirmSelectionButton=(Button) ((HBox)popupVbox.getChildren().get(2)).getChildren().get(0);
-                boolean[] selectedResourcesBooleans=new boolean[4*quantity];
-                GridPane gridResources= new GridPane();
-                ((HBox)popupVbox.getChildren().get(1)).getChildren().add(gridResources);
+                Button confirmSelectionButton=(Button) buttonsHbox.getChildren().get(0);
                 confirmSelectionButton.setDisable(true);
                 confirmSelectionButton.setVisible(true);
+                boolean[] selectedResourcesBooleans=new boolean[4*quantity];
+                GridPane gridResources= new GridPane();
+                HBox selectionHBox=((HBox)popupVbox.getChildren().get(1));
+                selectionHBox.getChildren().add(gridResources);
+
                 ((Label) popupVbox.getChildren().get(0)).setText("Choose " + quantity + (quantity>1?" resources":" resource"));
                 List<ImageView> resourcesImages= buildResources(quantity,selectedResourcesBooleans,confirmSelectionButton);
                 int resCounter=0;
@@ -665,6 +716,7 @@ public class GameSceneController {
             }
         });
     }
+
     private List<ImageView> buildResources(int quantity, boolean[] selectedResourcesBooleans, Button confirmSelectionButton) {
         List<Resource> resources= Resource.realValues();
         List<ImageView> resourcesImages=new ArrayList<>();
@@ -702,58 +754,26 @@ public class GameSceneController {
         return resourcesImages;
     }
 
-    private HashMap<Integer, ImageView> buildCards(List<Integer> leaderCards, Button confirmSelectionButton) {
-        HashMap<Integer,ImageView> leaderCardsMap=new HashMap<>();
-        leaderCards.forEach(lc->{
-            ImageView lcImage= new ImageView( new Image(SetupSceneController.class.getResource("/img/Cards/LeaderCards/front/" + lc + ".png").toString()));
-            lcImage.setFitHeight(200);
-            lcImage.setPreserveRatio(true);
-            lcImage.setSmooth(true);
-            lcImage.getStyleClass().add("cards");
-            lcImage.addEventHandler(MouseEvent.MOUSE_PRESSED, mouseEvent -> {
-                if(selectedLeaderCard.contains(lc)){
-                    for(int i=0;i<selectedLeaderCard.size();i++){
-                        if(selectedLeaderCard.get(i)==lc){
-                            selectedLeaderCard.remove(i);
-                            lcImage.setEffect(null);
-                        }
-                    }
-                    confirmSelectionButton.setDisable(true);
-                }else if (selectedLeaderCard.size()<2){
-                    selectedLeaderCard.add(lc);
-                    ColorAdjust colorAdjust=new ColorAdjust();
-                    colorAdjust.setBrightness(0.4);
-                    lcImage.setEffect(colorAdjust);
-                    if(selectedLeaderCard.size()==2){
-                        confirmSelectionButton.setDisable(false);
-                    }
-                }
-            });
-            leaderCardsMap.put(lc,lcImage);
-        });
-        return leaderCardsMap;
-    }
 
-    private void handleConfirmSelectionButton(Button confirmSelectionButton, HBox hBox, Label label){
+    private void handleConfirmSelectionButton(Button confirmSelectionButton, HBox selectionHBox, Label label){
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                if(selectedLeaderCard.size()==2){
-                    client.sendMessageToServer(new ChooseLeaderCardsResponse(selectedLeaderCard));
-                    selectedLeaderCard=new ArrayList<>();
-                    for(Node node : hBox.getChildren()){
-                        hBox.getChildren().remove(node);
-                    }
+                if(selectedLeaderCards.size()==2){
+                    client.sendMessageToServer(new ChooseLeaderCardsResponse(selectedLeaderCards));
+                    selectedLeaderCards =new ArrayList<>();
+                    selectionHBox.getChildren().clear();
                     confirmSelectionButton.setVisible(false);
-                    label.setText("Waiting the other players, the game will start as soon as they all be ready...");
+                    confirmSelectionButton.setDisable(true);
+                    label.setText("Waiting the other players, the game will start \nas soon as they all be ready...");
                 }
-                if(selectedLeaderCard.size()==0&&selectedResources.size()>0){
+                if(selectedLeaderCards.size()==0&&selectedResources.size()>0){
                     client.sendMessageToServer(new ChooseResourceTypeResponse(selectedResources));
-                    hBox.getChildren().remove(0);
+                    selectionHBox.getChildren().clear();
                     confirmSelectionButton.setVisible(false);
-                    label.setText("Waiting the other players, the game will start as soon as they all be ready...");
+                    confirmSelectionButton.setText("Discard");
+                    label.setText("Waiting the other players, the game will start \nas soon as they all be ready...");
                 }
-
             }
         });
 
