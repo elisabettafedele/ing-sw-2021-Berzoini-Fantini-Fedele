@@ -188,11 +188,11 @@ public class TurnController {
         }
         for(Player p: controller.getPlayers()){
             if(p.getPersonalBoard().getMarkerPosition()>=controller.getGame().getFaithTrack().getLength()){
-                ((PlayPhase) controller.getGamePhase()).handleEndTriggered();
+                endTrigger = true;
             }
         }
         if(isInterruptible&&((SinglePlayerPlayPhase)controller.getGamePhase()).getBlackCrossPosition()>=controller.getGame().getFaithTrack().getLength()){
-            ((PlayPhase) controller.getGamePhase()).handleEndTriggered();
+            endTrigger = true;
         }
 
     }
@@ -268,16 +268,20 @@ public class TurnController {
 
     public void setStandardActionDoneToTrue(){
         standardActionDone=true;
-        GameHistory.saveGame(new PersistentControllerPlayPhase(new PersistentGame(getController().getGame()), currentPlayer.getNickname(), controller.getControllerID(), endTrigger));
+        if (controller.getGame().getGameMode() == GameMode.SINGLE_PLAYER)
+            ((SinglePlayerPlayPhase)controller.getGamePhase()).setLastPlayer(currentPlayer.getNickname());
+        ((PlayPhase)controller.getGamePhase()).saveGame();
     }
 
-    public void setEndTriggerToTrue() {
-        endTrigger = true;
+    public void setEndTrigger(boolean endTrigger) {
+        this.endTrigger = endTrigger;
+        if (endTrigger)
+            ((PlayPhase)getController().getGamePhase()).handleEndTriggered();
     }
 
     public void endTurn(){
         //I set a copy of the game at the end of each turn
-        GameHistory.saveGame(new PersistentControllerPlayPhase(new PersistentGame(getController().getGame()), currentPlayer.getNickname(), controller.getControllerID(), endTrigger));
+        ((PlayPhase)controller.getGamePhase()).saveGame();
         ((PlayPhase) controller.getGamePhase()).setLastTurnGameCopy(new PersistentGame(controller.getGame()));
         clientHandler.sendMessageToClient(new TextMessage("Turn ended"));
         ((PlayPhase) controller.getGamePhase()).nextTurn();

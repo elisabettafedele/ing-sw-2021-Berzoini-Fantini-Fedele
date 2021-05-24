@@ -412,6 +412,11 @@ public class Server implements ServerInterface {
         activeGames.remove(controller);
     }
 
+    public void gameEnded(Controller controller){
+        takenNicknames.remove(controller.getPlayers().get(0).getNickname());
+        activeGames.remove(controller);
+    }
+
     private boolean knownClient(String nickname) {
         return clientsDisconnected.containsKey(nickname) || clientsDisconnectedGameFinished.containsKey(nickname);
     }

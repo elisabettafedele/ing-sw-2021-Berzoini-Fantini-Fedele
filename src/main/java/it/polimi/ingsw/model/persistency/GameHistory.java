@@ -57,6 +57,11 @@ public class GameHistory {
 
     }
 
+    public synchronized static PersistentControllerPlayPhaseSingle retrievePlayControllerSingle(int controllerID) {
+        JsonObject persistentControllerPlayPhaseSingle = retrieveGameFromControllerId(controllerID);
+        return new Gson().fromJson(persistentControllerPlayPhaseSingle, PersistentControllerPlayPhaseSingle.class);
+    }
+
     public static boolean isSetUpPhase(int controlledID){
         return retrieveGameFromControllerId(controlledID).get("gamePhase").getAsString().equals(SETUP_PHASE);
     }
@@ -72,7 +77,7 @@ public class GameHistory {
             jsonObject.addProperty("controllerID", controller.getControllerID());
             jsonObject.addProperty("gamePhase", PLAY_PHASE);
             jsonObject.add("game", JsonParser.parseString(JsonAdapter.toJsonClass(controller.getGame())));
-            jsonObject.addProperty("lastTurnNickname", controller.getLastPlayer());
+            jsonObject.addProperty("lastPlayer", controller.getLastPlayer());
             jsonArray.add(jsonObject);
             gson.toJson(jsonArray, writer);
         } catch (IOException e) {
@@ -91,6 +96,26 @@ public class GameHistory {
             jsonObject.addProperty("gamePhase", SETUP_PHASE);
             jsonObject.add("game", JsonParser.parseString(JsonAdapter.toJsonClass(controller.getGame())));
             jsonObject.add("resourcesToStore", JsonParser.parseString(JsonAdapter.toJsonClass(controller.getResourcesToStore())));
+            jsonArray.add(jsonObject);
+            gson.toJson(jsonArray, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static synchronized void saveGame(PersistentControllerPlayPhaseSingle controller){
+        if (!saveGames)
+            return;
+        JsonArray jsonArray = getJsonArray(controller.getControllerID());
+        try (Writer writer = new FileWriter("backupOfGames.json", false)) {
+            Gson gson = JsonAdapter.getGsonBuilder();
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("controllerID", controller.getControllerID());
+            jsonObject.addProperty("gamePhase", PLAY_PHASE);
+            jsonObject.add("game", JsonParser.parseString(JsonAdapter.toJsonClass(controller.getGame())));
+            jsonObject.addProperty("lastPlayer", controller.getLastPlayer());
+            jsonObject.add("tokens", JsonParser.parseString(JsonAdapter.toJsonClass(controller.getTokens())));
+            jsonObject.addProperty("blackCrossPosition", controller.getBlackCrossPosition());
             jsonArray.add(jsonObject);
             gson.toJson(jsonArray, writer);
         } catch (IOException e) {

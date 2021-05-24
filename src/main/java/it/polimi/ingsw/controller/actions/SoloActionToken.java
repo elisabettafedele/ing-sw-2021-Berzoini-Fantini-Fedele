@@ -11,6 +11,7 @@ public abstract class SoloActionToken {
 
     private String pathImageFront;
     private String pathImageBack;
+    private int id;
 
     public SoloActionToken(String pathImageFront, String pathImageBack) {
         this.pathImageFront = pathImageFront;
@@ -44,4 +45,11 @@ public abstract class SoloActionToken {
         return Objects.hash(pathImageFront, pathImageBack);
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 }

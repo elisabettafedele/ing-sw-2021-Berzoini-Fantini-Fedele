@@ -6,5 +6,6 @@ public class SinglePlayerEndPhase extends EndPhase {
     @Override
     public void notifyResults() {
         getController().getConnectionByNickname(getController().getPlayers().get(0).getNickname()).sendMessageToClient(new NotifyPointsSinglePlayer(getController().getPlayers().get(0).getVictoryPoints()));
+        getController().getServer().gameEnded(getController());
     }
 }

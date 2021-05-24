@@ -8,11 +8,13 @@ import it.polimi.ingsw.jsonParsers.DevelopmentCardParser;
 import it.polimi.ingsw.jsonParsers.LeaderCardParser;
 import it.polimi.ingsw.jsonParsers.LightCardsParser;
 import it.polimi.ingsw.messages.toClient.NotifyClientDisconnection;
+import it.polimi.ingsw.messages.toClient.WelcomeBackMessage;
 import it.polimi.ingsw.messages.toClient.matchData.*;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.LeaderCard;
 import it.polimi.ingsw.model.persistency.GameHistory;
 import it.polimi.ingsw.model.persistency.PersistentControllerPlayPhase;
+import it.polimi.ingsw.model.persistency.PersistentControllerPlayPhaseSingle;
 import it.polimi.ingsw.model.persistency.PersistentControllerSetUpPhase;
 import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.common.ClientHandlerInterface;
@@ -53,11 +55,10 @@ public class Controller {
     public void handleClientDisconnection(String nickname){
         ClientHandler connection = getConnectionByNickname(nickname);
         //SINGLE PLAYER
-        /*if (connection.getGameMode() == GameMode.SINGLE_PLAYER){
-            connection.getServer().removeConnectionGame(connection);
+        if (connection.getGameMode() == GameMode.SINGLE_PLAYER){
+            connection.getServer().gameEnded(this);
             return;
         }
-        */
 
 
         //DISCONNECTION DURING SETUP PHASE
@@ -135,11 +136,30 @@ public class Controller {
     }
 
     private void reloadPlayPhase(){
+        if (game.getGameMode() == GameMode.MULTI_PLAYER)
+            reloadMultiplayerPlayPhase();
+        else
+            reloadSinglePlayerPlayPhase();
+    }
+
+    private void reloadMultiplayerPlayPhase(){
         PersistentControllerPlayPhase controller = GameHistory.retrievePlayController(controllerID);
         game = new Game(controller.getGame());
-        gamePhase = game.getGameMode() == GameMode.MULTI_PLAYER ? new MultiplayerPlayPhase(this, controller.getLastPlayer(), controller.isEndTriggered()) : new SinglePlayerPlayPhase(this);
-        if (gamePhase instanceof MultiplayerPlayPhase)
-            ((MultiplayerPlayPhase) gamePhase).restartLastTurn();
+        sendLightCards();
+        clientHandlers.forEach(x -> x.sendMessageToClient(new WelcomeBackMessage(x.getNickname(), false)));
+        sendMatchData(game, false);
+        gamePhase = new MultiplayerPlayPhase(this, controller.getLastPlayer(), controller.isEndTriggered());
+        ((PlayPhase)gamePhase).restartLastTurn();
+    }
+
+    private void reloadSinglePlayerPlayPhase(){
+        PersistentControllerPlayPhaseSingle controller = GameHistory.retrievePlayControllerSingle(controllerID);
+        game = new Game(controller.getGame());
+        sendLightCards();
+        clientHandlers.forEach(x -> x.sendMessageToClient(new WelcomeBackMessage(x.getNickname(), false)));
+        sendMatchData(game, false);
+        gamePhase = new SinglePlayerPlayPhase(this, controller.getLastPlayer(), controller.isEndTriggered(), controller.getBlackCrossPosition(), controller.getTokens());
+        ((PlayPhase)gamePhase).restartLastTurn();
     }
 
 

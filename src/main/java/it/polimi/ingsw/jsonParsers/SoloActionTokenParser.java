@@ -9,6 +9,7 @@ import it.polimi.ingsw.controller.actions.BlackCrossMoveToken;
 import it.polimi.ingsw.controller.actions.DiscardToken;
 import it.polimi.ingsw.controller.actions.SoloActionToken;
 import it.polimi.ingsw.enumerations.FlagColor;
+import it.polimi.ingsw.model.cards.LeaderCard;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -58,6 +59,10 @@ public class SoloActionTokenParser {
                 tokens.add(new BlackCrossMoveToken(imageFront, imageBack, numberOfMoves, shuffle));
             }
 
+        }
+        int id = 65;
+        for (SoloActionToken token : tokens){
+            token.setId(id++);
         }
         return tokens;
     }

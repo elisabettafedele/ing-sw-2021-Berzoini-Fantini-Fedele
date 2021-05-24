@@ -7,6 +7,9 @@ import it.polimi.ingsw.exceptions.InvalidMethodException;
 import it.polimi.ingsw.exceptions.ZeroPlayerException;
 import it.polimi.ingsw.messages.toClient.WelcomeBackMessage;
 import it.polimi.ingsw.messages.toClient.matchData.UpdateMarkerPosition;
+import it.polimi.ingsw.model.persistency.GameHistory;
+import it.polimi.ingsw.model.persistency.PersistentControllerPlayPhase;
+import it.polimi.ingsw.model.persistency.PersistentGame;
 import it.polimi.ingsw.model.player.Player;
 
 import java.util.List;
@@ -15,7 +18,6 @@ import java.util.stream.Collectors;
 public class MultiplayerPlayPhase extends PlayPhase implements GamePhase {
 
     private int turnIndex;
-    private boolean endTrigger;
 
     public MultiplayerPlayPhase(Controller controller){
         setController(controller);
@@ -25,15 +27,15 @@ public class MultiplayerPlayPhase extends PlayPhase implements GamePhase {
 
     public MultiplayerPlayPhase(Controller controller, String lastPlayerNickname, boolean endTrigger){
         setController(controller);
-        this.endTrigger = endTrigger;
         this.turnIndex = controller.getPlayers().stream().map(Player::getNickname).collect(Collectors.toList()).indexOf(lastPlayerNickname);
-        controller.sendLightCards();
-        controller.sendMatchData(controller.getGame(), false);
-        controller.getNicknames().forEach(x -> controller.getConnectionByNickname(x).sendMessageToClient(new WelcomeBackMessage(x, false)));
+        //controller.sendLightCards();
+        //controller.sendMatchData(controller.getGame(), false);
         pickNextPlayer();
         setTurnController(new TurnController(controller, controller.getPlayers().get(turnIndex)));
+        getTurnController().setEndTrigger(endTrigger);
     }
 
+    @Override
     public void restartLastTurn(){
         getTurnController().start(getController().getPlayers().get(turnIndex));
     }
@@ -46,7 +48,7 @@ public class MultiplayerPlayPhase extends PlayPhase implements GamePhase {
         }
         while(!getController().getPlayers().get(turnIndex).isActive())
             pickNextPlayer();
-        if (endTrigger && getTurnController().getController().getPlayers().get(turnIndex).hasInkwell())
+        if (getTurnController().isEndTriggered() && getTurnController().getController().getPlayers().get(turnIndex).hasInkwell())
             getController().endMatch();
         else
             getTurnController().start(getController().getPlayers().get(turnIndex));
@@ -79,7 +81,7 @@ public class MultiplayerPlayPhase extends PlayPhase implements GamePhase {
 
     @Override
     public void handleEndTriggered() {
-        endTrigger = true;
+
     }
 
 
@@ -88,6 +90,10 @@ public class MultiplayerPlayPhase extends PlayPhase implements GamePhase {
         setTurnController(new TurnController(controller,getPlayer()));
         reloadGameCopy(false);
         getTurnController().start(getPlayer());
+    }
+
+    public void saveGame(){
+        GameHistory.saveGame(new PersistentControllerPlayPhase(new PersistentGame(getController().getGame()), getTurnController().getCurrentPlayer().getNickname(), getController().getControllerID(), getTurnController().isEndTriggered()));
     }
 
 }

@@ -76,4 +76,8 @@ public abstract class PlayPhase {
     public void setLastTurnGameCopy(PersistentGame lastTurnGameCopy) {
         this.lastTurnGameCopy = lastTurnGameCopy;
     }
+
+    public abstract void saveGame();
+
+    public abstract void restartLastTurn();
 }
