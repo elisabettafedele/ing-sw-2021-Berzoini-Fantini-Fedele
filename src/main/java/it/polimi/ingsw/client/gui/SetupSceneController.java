@@ -225,7 +225,6 @@ public class SetupSceneController {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                if(!selectionStarted){
                     vBoxIPandPORT.setVisible(false);
                     vBoxGameMode.setVisible(false);
                     vBoxNickname.setVisible(false);
@@ -233,9 +232,6 @@ public class SetupSceneController {
                     vBoxWaiting.setVisible(true);
                     lastLabel.setText("Waiting in the lobby..");
                     confirmSelectionButton.setVisible(false);
-                }
-
-
             }
         });
     }
@@ -365,8 +361,6 @@ public class SetupSceneController {
                 gridResources.setVisible(true);
             }
         });
-
-
     }
 
     private List<ImageView> buildResources(int quantity) {

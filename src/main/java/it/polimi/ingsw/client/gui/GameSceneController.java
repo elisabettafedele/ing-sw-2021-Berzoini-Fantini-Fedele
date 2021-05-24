@@ -6,7 +6,10 @@ import it.polimi.ingsw.client.PopesTileState;
 import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.common.LightLeaderCard;
 import it.polimi.ingsw.enumerations.*;
+import it.polimi.ingsw.messages.toServer.game.ChooseLeaderCardsResponse;
+import it.polimi.ingsw.messages.toServer.game.ChooseResourceTypeResponse;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -17,13 +20,15 @@ import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class GameSceneController {
     private GUI gui=null;
@@ -87,6 +92,8 @@ public class GameSceneController {
     @FXML
     private VBox popupVbox;
     @FXML
+    private HBox buttonsHbox;
+    @FXML
     private Button reorganizeButton;
     @FXML
     private Button discardButton;
@@ -97,6 +104,9 @@ public class GameSceneController {
     MatchData matchData;
 
     Map<ActionType,Boolean> doableActions;
+    Map<ResourceStorageType,Node> storageNameToNodeMap;
+    List<Resource> selectedResources;
+    List<Integer> selectedLeaderCard;
 
     @FXML
     public void initialize() {
@@ -109,6 +119,13 @@ public class GameSceneController {
         doableActions.put(ActionType.ACTIVATE_PRODUCTION,debug);
         doableActions.put(ActionType.ACTIVATE_LEADER_CARD,debug);
         doableActions.put(ActionType.DISCARD_LEADER_CARD,debug);
+        storageNameToNodeMap=new HashMap<>();
+        storageNameToNodeMap.put(ResourceStorageType.WAREHOUSE_FIRST_DEPOT,warehouse_first_depot);
+        storageNameToNodeMap.put(ResourceStorageType.WAREHOUSE_SECOND_DEPOT,warehouse_second_depot);
+        storageNameToNodeMap.put(ResourceStorageType.WAREHOUSE_THIRD_DEPOT,warehouse_third_depot);
+        storageNameToNodeMap.put(ResourceStorageType.WAREHOUSE,warehouse);
+        storageNameToNodeMap.put(ResourceStorageType.STRONGBOX,strongbox);
+        storageNameToNodeMap.put(ResourceStorageType.LEADER_DEPOT,leftLeaderDepot.getParent());
         players=matchData.getAllNicknames();
         ColorAdjust colorAdjust=new ColorAdjust();
         colorAdjust.setBrightness(0.4);
@@ -121,7 +138,7 @@ public class GameSceneController {
         updateMarketView();
         updateMainLabel();
         updateView();
-        updateGlowingObjects();
+        //updateGlowingObjects();
     }
 
     private void updateGlowingObjects() {
@@ -185,7 +202,7 @@ public class GameSceneController {
         nodeToActivate.setOnMouseEntered(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                glowNode(nodeToActivate);
+                glowNode(nodeToActivate,Color.CYAN);
                 Tooltip.install(nodeToActivate,new Tooltip(actionType.toString().replace('_',' ')));
             }
         });
@@ -207,14 +224,80 @@ public class GameSceneController {
             }
         });
     }
+    private void makeDraggable(Node resourceToDrag) {
+        resourceToDrag.setOnDragDetected(new EventHandler<MouseEvent>() {
+            public void handle(MouseEvent event) {
+                Dragboard db = resourceToDrag.startDragAndDrop(TransferMode.ANY);
+                Image resourceImage= ((ImageView) resourceToDrag).getImage();
+                Map<DataFormat,Object> content = new HashMap<>();
+                content.put(DataFormat.IMAGE,resourceImage);
+                db.setContent(content);
+                event.consume();
+            }
+        });
+        resourceToDrag.setOnDragDone(new EventHandler<DragEvent>() {
+            public void handle(DragEvent event) {
+                ((HBox) resourceToDrag.getParent()).getChildren().remove(0);
+                event.consume();
+            }
+        });
+    }
+
+
+    private void activateDraggableOver(Node nodeDraggableOver) {
+        nodeDraggableOver.setOnDragOver(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+                if (event.getGestureSource() != nodeDraggableOver &&
+                        event.getDragboard().hasContent(DataFormat.IMAGE)) {
+                    event.acceptTransferModes(TransferMode.ANY);
+                }
+                event.consume();
+            }
+        });
+        nodeDraggableOver.setOnDragEntered(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+                if (event.getGestureSource() != nodeDraggableOver &&
+                        event.getDragboard().hasContent(DataFormat.IMAGE)) {
+                    glowNode(nodeDraggableOver,Color.ORANGE);
+                }
+                event.consume();
+            }
+        });
+        nodeDraggableOver.setOnDragExited(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+                glowNode(nodeDraggableOver,Color.CYAN);
+                event.consume();
+            }
+        });
+        nodeDraggableOver.setOnDragDropped(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+                Dragboard db = event.getDragboard();
+                boolean success = false;
+                if (db.hasContent(DataFormat.IMAGE)) {
+                    addResource(nodeDraggableOver,db.getContent(DataFormat.IMAGE));
+                    success = true;
+                }
+                event.setDropCompleted(success);
+                event.consume();
+            }
+        });
+    }
+
+    private void addResource(Node nodeDraggableOver, Object content) {
+        //manda messaggio e refresha;
+    }
 
     private void selectAction(Node nodeToActivate) {
         System.out.println(nodeToActivate.getId());
     }
 
-    private void glowNode(Node nodeToGlow){
+    private void glowNode(Node nodeToGlow,Color color){
         DropShadow borderGlow = new DropShadow();
-        borderGlow.setColor(Color.CYAN);
+        borderGlow.setColor(color);
         borderGlow.setOffsetX(0f);
         borderGlow.setOffsetY(0f);
         nodeToGlow.setEffect(borderGlow);
@@ -410,9 +493,6 @@ public class GameSceneController {
         }
     }
 
-
-
-
     private void updateMarketView() {
         for(int row=0;row< 3 ;row++ ){
             for(int col=0; col< 4; col++){
@@ -473,16 +553,6 @@ public class GameSceneController {
         });
     }
 
-    public void activateResourceInsertion(Resource resource, HashMap<ResourceStorageType, Boolean> interactableDepots, boolean canDiscard, boolean canReorganize) {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                popupVbox.setVisible(true);
-                HBox resourcesHBox=(HBox) popupVbox.getChildren().get(1);
-            }
-        });
-    }
-
     public void displayResourcesInsertion(List<Resource> resources) {
         Platform.runLater(new Runnable() {
             @Override
@@ -499,6 +569,196 @@ public class GameSceneController {
         });
     }
 
+    public void activateResourceInsertion(Resource resource, HashMap<ResourceStorageType, Boolean> interactableDepots, boolean canDiscard, boolean canReorganize) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                popupVbox.setVisible(true);
+                HBox resourcesHBox=(HBox) popupVbox.getChildren().get(1);
+                highlightAndDrag(resourcesHBox.getChildren().get(0),interactableDepots);
+            }
+        });
+    }
+//TODO make glow only if on playerpage (currentplayerindex==0)
+// TODO sostituire i depot pane con delle immagini cornice, o non si illumineranno se vuoti
+
+    private void highlightAndDrag(Node resourceToDrag, HashMap<ResourceStorageType, Boolean> interactableDepots) {
+        glowNode(resourceToDrag,Color.CYAN);
+        makeDraggable(resourceToDrag);
+        for(ResourceStorageType resourceStorageType: interactableDepots.keySet()){
+            if(interactableDepots.get(resourceStorageType)){
+                if (resourceStorageType.equals(ResourceStorageType.LEADER_DEPOT)){
+                    int lcCounter=0;
+                    for(LightLeaderCard lc: matchData.getLightClientByNickname(players.get(0)).getOwnedLeaderCards().stream().map(x -> matchData.getLeaderCardByID(x)).collect(Collectors.toList())){
+                        if(lc.getEffectType().equals("EXTRA_DEPOT")){
+                            if(lcCounter == 0) {
+                                glowNode(leftLeaderDepot,Color.CYAN);
+                                activateDraggableOver(leftLeaderDepot);
+                            }
+                            if(lcCounter==1){
+                                glowNode(rightLeaderDepot,Color.CYAN);
+                                activateDraggableOver(rightLeaderDepot);
+                            }
+                        }
+                        lcCounter++;
+                    }
+                }
+                else {
+                    glowNode(storageNameToNodeMap.get(resourceStorageType),Color.CYAN);
+                    activateDraggableOver(storageNameToNodeMap.get(resourceStorageType));
+                }
+
+            }
+        }
+    }
+
+    public void displayLeaderCardsRequest(List<Integer> leaderCards, Client client) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                Button confirmSelectionButton=(Button) buttonsHbox.getChildren().get(0);
+                HBox hBox=((HBox)popupVbox.getChildren().get(1));
+                ((Label) popupVbox.getChildren().get(0)).setText("Choose two out of the four following Leader cards:");
+                confirmSelectionButton.setText("Confirm selection");
+                confirmSelectionButton.setDisable(true);
+                confirmSelectionButton.setVisible(true);
+                ((Button) buttonsHbox.getChildren().get(1)).setVisible(false);
+                ((Button) buttonsHbox.getChildren().get(1)).setManaged(false);
+                selectedResources=new ArrayList<>();
+                selectedLeaderCard=new ArrayList<>();
+
+                HashMap<Integer, ImageView> leaderCardsMap= buildCards(leaderCards,confirmSelectionButton);
+                for(ImageView lcImage: leaderCardsMap.values()){
+                    ((HBox)popupVbox.getChildren().get(1)).getChildren().add(lcImage);
+                }
+                confirmSelectionButton.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        handleConfirmSelectionButton(confirmSelectionButton,hBox,((Label) popupVbox.getChildren().get(0)));
+                    }
+                });
+            }
+
+        });
+    }
+
+    public void displayChooseResourceTypeRequest( int quantity) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                Button confirmSelectionButton=(Button) ((HBox)popupVbox.getChildren().get(2)).getChildren().get(0);
+                boolean[] selectedResourcesBooleans=new boolean[4*quantity];
+                GridPane gridResources= new GridPane();
+                ((HBox)popupVbox.getChildren().get(1)).getChildren().add(gridResources);
+                confirmSelectionButton.setDisable(true);
+                confirmSelectionButton.setVisible(true);
+                ((Label) popupVbox.getChildren().get(0)).setText("Choose " + quantity + (quantity>1?" resources":" resource"));
+                List<ImageView> resourcesImages= buildResources(quantity,selectedResourcesBooleans,confirmSelectionButton);
+                int resCounter=0;
+                for(int row=0;row<quantity;row++){
+                    for(int col=0;col<4;col++){
+                        gridResources.add(resourcesImages.get(resCounter), col, row);
+                        resCounter++;
+                    }
+                }
+                gridResources.setVisible(true);
+            }
+        });
+    }
+    private List<ImageView> buildResources(int quantity, boolean[] selectedResourcesBooleans, Button confirmSelectionButton) {
+        List<Resource> resources= Resource.realValues();
+        List<ImageView> resourcesImages=new ArrayList<>();
+        AtomicInteger resCounter= new AtomicInteger();
+        for(int ii=0; ii<quantity;ii++){
+            resources.forEach(resource->{
+                ImageView resourceImage= new ImageView( new Image(SetupSceneController.class.getResource("/img/punchboard/" + resource.toString().toLowerCase(Locale.ROOT) + ".png").toString()));
+                resourceImage.setFitHeight(40);
+                resourceImage.setPreserveRatio(true);
+                resourceImage.setSmooth(true);
+                resourceImage.setId(resCounter.toString());
+                resourceImage.addEventHandler(MouseEvent.MOUSE_PRESSED, mouseEvent -> {
+
+                    if(selectedResourcesBooleans[Integer.parseInt(resourceImage.getId())]){
+                        selectedResources.remove(resource);
+                        selectedResourcesBooleans[Integer.parseInt(resourceImage.getId())]=false;
+                        resourceImage.setEffect(null);
+                        confirmSelectionButton.setDisable(true);
+                    }else if (selectedResources.size()<quantity){
+                        selectedResources.add(resource);
+                        selectedResourcesBooleans[Integer.parseInt(resourceImage.getId())]=true;
+                        ColorAdjust colorAdjust=new ColorAdjust();
+                        colorAdjust.setBrightness(0.4);
+                        resourceImage.setEffect(colorAdjust);
+                        if(selectedResources.size()==quantity){
+                            confirmSelectionButton.setDisable(false);
+                        }
+                    }
+                });
+                resourcesImages.add(resourceImage);
+                resCounter.getAndIncrement();
+            });
+        }
+
+        return resourcesImages;
+    }
+
+    private HashMap<Integer, ImageView> buildCards(List<Integer> leaderCards, Button confirmSelectionButton) {
+        HashMap<Integer,ImageView> leaderCardsMap=new HashMap<>();
+        leaderCards.forEach(lc->{
+            ImageView lcImage= new ImageView( new Image(SetupSceneController.class.getResource("/img/Cards/LeaderCards/front/" + lc + ".png").toString()));
+            lcImage.setFitHeight(200);
+            lcImage.setPreserveRatio(true);
+            lcImage.setSmooth(true);
+            lcImage.getStyleClass().add("cards");
+            lcImage.addEventHandler(MouseEvent.MOUSE_PRESSED, mouseEvent -> {
+                if(selectedLeaderCard.contains(lc)){
+                    for(int i=0;i<selectedLeaderCard.size();i++){
+                        if(selectedLeaderCard.get(i)==lc){
+                            selectedLeaderCard.remove(i);
+                            lcImage.setEffect(null);
+                        }
+                    }
+                    confirmSelectionButton.setDisable(true);
+                }else if (selectedLeaderCard.size()<2){
+                    selectedLeaderCard.add(lc);
+                    ColorAdjust colorAdjust=new ColorAdjust();
+                    colorAdjust.setBrightness(0.4);
+                    lcImage.setEffect(colorAdjust);
+                    if(selectedLeaderCard.size()==2){
+                        confirmSelectionButton.setDisable(false);
+                    }
+                }
+            });
+            leaderCardsMap.put(lc,lcImage);
+        });
+        return leaderCardsMap;
+    }
+
+    private void handleConfirmSelectionButton(Button confirmSelectionButton, HBox hBox, Label label){
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                if(selectedLeaderCard.size()==2){
+                    client.sendMessageToServer(new ChooseLeaderCardsResponse(selectedLeaderCard));
+                    selectedLeaderCard=new ArrayList<>();
+                    for(Node node : hBox.getChildren()){
+                        hBox.getChildren().remove(node);
+                    }
+                    confirmSelectionButton.setVisible(false);
+                    label.setText("Waiting the other players, the game will start as soon as they all be ready...");
+                }
+                if(selectedLeaderCard.size()==0&&selectedResources.size()>0){
+                    client.sendMessageToServer(new ChooseResourceTypeResponse(selectedResources));
+                    hBox.getChildren().remove(0);
+                    confirmSelectionButton.setVisible(false);
+                    label.setText("Waiting the other players, the game will start as soon as they all be ready...");
+                }
+
+            }
+        });
+
+
+    }
     /*   Use this to avoid Thread exception
 
 

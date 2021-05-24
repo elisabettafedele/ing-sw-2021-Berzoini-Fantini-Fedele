@@ -105,7 +105,9 @@ public class GUI extends Application implements View {
 
     @Override
     public void displayWaitingInTheLobbyMessage() {
-        setupSceneController.displayWaitingInTheLobbyMessage();
+        if(setupSceneController != null){
+            setupSceneController.displayWaitingInTheLobbyMessage();
+        }
     }
 
     @Override
@@ -132,12 +134,14 @@ public class GUI extends Application implements View {
     public void displayMarblesTaken(List<Marble> marblesTaken, boolean needToChooseConversion) {
 
     }
-    //@Override
+
+    @Override
     public void displayResourcesToStore(List<Resource> resourcesToStore){
         gameSceneController.displayResourcesInsertion(resourcesToStore);
     }
     @Override
     public void displayChooseStorageTypeRequest(Resource resource, List<String> availableDepots, boolean canDiscard, boolean canReorganize) {
+        /*
         if(setupSceneController!=null){
             resetControllers();
             createMainScene("/FXML/GameScene.fxml", () -> {
@@ -149,6 +153,8 @@ public class GUI extends Application implements View {
                 gameSceneController.setClient(client);
             });
         }
+
+         */
         HashMap<ResourceStorageType,Boolean> interactableDepots=new HashMap<>();
         for(ResourceStorageType resourceStorageType: ResourceStorageType.values()){
             interactableDepots.put(resourceStorageType,false);
@@ -167,7 +173,17 @@ public class GUI extends Application implements View {
 
     @Override
     public void displayChooseLeaderCardsRequest(List<Integer> leaderCards){
-        setupSceneController.displayLeaderCardsRequest(leaderCards, client);
+        resetControllers();
+        createMainScene("/FXML/GameScene.fxml", () -> {
+            stage.setTitle("Maestri del Rinascimento");
+            stage.setResizable(false);
+            stage.show();
+            gameSceneController = fxmlLoader.getController();
+            gameSceneController.setGUI(this);
+            gameSceneController.setClient(client);
+            gameSceneController.displayLeaderCardsRequest(leaderCards, client);
+        });
+
     }
 
     @Override
@@ -183,7 +199,7 @@ public class GUI extends Application implements View {
     @Override
 
     public void displayChooseResourceTypeRequest(List<Resource> resourceTypes, int quantity) {
-        setupSceneController.displayChooseResourceTypeRequest(quantity);
+        gameSceneController.displayChooseResourceTypeRequest(quantity);
     }
 
     public void loadDevelopmentCards(List<LightDevelopmentCard> lightDevelopmentCards) {
@@ -232,11 +248,6 @@ public class GUI extends Application implements View {
     @Override
     public void displaySelectStorageRequest(Resource resource, boolean isInWarehouse, boolean isInStrongbox, boolean isInLeaderDepot) {
 
-
-    }
-
-    @Override
-    public void displayResourcesToStore(List<Resource> resourcesToStore) {
 
     }
 
