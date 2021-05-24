@@ -1,11 +1,19 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.common.LightDevelopmentCard;
+import it.polimi.ingsw.common.LightLeaderCard;
 import it.polimi.ingsw.controller.game_phases.*;
 import it.polimi.ingsw.enumerations.ClientHandlerPhase;
+import it.polimi.ingsw.jsonParsers.DevelopmentCardParser;
+import it.polimi.ingsw.jsonParsers.LeaderCardParser;
+import it.polimi.ingsw.jsonParsers.LightCardsParser;
 import it.polimi.ingsw.messages.toClient.NotifyClientDisconnection;
 import it.polimi.ingsw.messages.toClient.matchData.*;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.LeaderCard;
+import it.polimi.ingsw.model.persistency.GameHistory;
+import it.polimi.ingsw.model.persistency.PersistentControllerPlayPhase;
+import it.polimi.ingsw.model.persistency.PersistentControllerSetUpPhase;
 import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.common.ClientHandlerInterface;
 import it.polimi.ingsw.controller.game_phases.SinglePlayerEndPhase;
@@ -102,7 +110,36 @@ public class Controller {
      * Method to start the controller. A new SetUp phase is created
      */
     public void start(){
+        if (GameHistory.retrieveGameFromControllerId(controllerID) != null)
+            reloadAnOldGame();
+        else
+            startANewGame();
+    }
+
+    private void startANewGame(){
         this.setGamePhase(new SetUpPhase());
+    }
+
+    private void reloadAnOldGame(){
+        if (GameHistory.isSetUpPhase(controllerID))
+            reloadSetUpPhase();
+        else
+            reloadPlayPhase();
+    }
+
+    private void reloadSetUpPhase(){
+        PersistentControllerSetUpPhase controller = GameHistory.retrieveSetUpController(controllerID);
+        game = new Game(controller.getGame());
+        gamePhase = new SetUpPhase(controller.getResourcesToStore(), this);
+        ((SetUpPhase) gamePhase).reloadPhase();
+    }
+
+    private void reloadPlayPhase(){
+        PersistentControllerPlayPhase controller = GameHistory.retrievePlayController(controllerID);
+        game = new Game(controller.getGame());
+        gamePhase = game.getGameMode() == GameMode.MULTI_PLAYER ? new MultiplayerPlayPhase(this, controller.getLastPlayer(), controller.isEndTriggered()) : new SinglePlayerPlayPhase(this);
+        if (gamePhase instanceof MultiplayerPlayPhase)
+            ((MultiplayerPlayPhase) gamePhase).restartLastTurn();
     }
 
 
@@ -276,5 +313,15 @@ public class Controller {
 
     public void setControllerID(int controllerID) {
         this.controllerID = controllerID;
+    }
+
+    public void sendLightCards() {
+        List<LightLeaderCard> leaderCards = LightCardsParser.getLightLeaderCards(LeaderCardParser.parseCards());
+        List<LightDevelopmentCard> developmentCards = LightCardsParser.getLightDevelopmentCards(DevelopmentCardParser.parseCards());
+        for (String nickname : getNicknames()) {
+            ClientHandler connection = getConnectionByNickname(nickname);
+            connection.sendMessageToClient(new LoadDevelopmentCardsMessage(developmentCards));
+            connection.sendMessageToClient(new LoadLeaderCardsMessage(leaderCards));
+        }
     }
 }

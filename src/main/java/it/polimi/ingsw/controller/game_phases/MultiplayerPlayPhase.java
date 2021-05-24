@@ -5,10 +5,12 @@ import it.polimi.ingsw.controller.TurnController;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.InvalidMethodException;
 import it.polimi.ingsw.exceptions.ZeroPlayerException;
+import it.polimi.ingsw.messages.toClient.WelcomeBackMessage;
 import it.polimi.ingsw.messages.toClient.matchData.UpdateMarkerPosition;
 import it.polimi.ingsw.model.player.Player;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MultiplayerPlayPhase extends PlayPhase implements GamePhase {
 
@@ -19,6 +21,21 @@ public class MultiplayerPlayPhase extends PlayPhase implements GamePhase {
         setController(controller);
         this.turnIndex = 0;
         setPlayer(controller.getPlayers().get(turnIndex));
+    }
+
+    public MultiplayerPlayPhase(Controller controller, String lastPlayerNickname, boolean endTrigger){
+        setController(controller);
+        this.endTrigger = endTrigger;
+        this.turnIndex = controller.getPlayers().stream().map(Player::getNickname).collect(Collectors.toList()).indexOf(lastPlayerNickname);
+        controller.sendLightCards();
+        controller.sendMatchData(controller.getGame(), false);
+        controller.getNicknames().forEach(x -> controller.getConnectionByNickname(x).sendMessageToClient(new WelcomeBackMessage(x, false)));
+        pickNextPlayer();
+        setTurnController(new TurnController(controller, controller.getPlayers().get(turnIndex)));
+    }
+
+    public void restartLastTurn(){
+        getTurnController().start(getController().getPlayers().get(turnIndex));
     }
 
     @Override

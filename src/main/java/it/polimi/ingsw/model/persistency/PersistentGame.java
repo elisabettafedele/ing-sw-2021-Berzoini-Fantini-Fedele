@@ -50,6 +50,8 @@ public class PersistentGame implements Serializable {
         currentSection = game.getFaithTrack().getCurrentSection();
     }
 
+    public PersistentGame (){ }
+
     public GameMode getGameMode() {
         return gameMode;
     }
@@ -72,5 +74,29 @@ public class PersistentGame implements Serializable {
 
     public VaticanReportSection getCurrentSection() {
         return currentSection;
+    }
+
+    public void setGameMode(GameMode gameMode) {
+        this.gameMode = gameMode;
+    }
+
+    public void setMarketTray(Marble[][] marketTray) {
+        this.marketTray = marketTray;
+    }
+
+    public void setSlideMarble(Marble slideMarble) {
+        this.slideMarble = slideMarble;
+    }
+
+    public void setDevelopmentCardGrid(Stack<Integer>[][] developmentCardGrid) {
+        this.developmentCardGrid = developmentCardGrid;
+    }
+
+    public void setPlayers(List<PersistentPlayer> players) {
+        this.players = players;
+    }
+
+    public void setCurrentSection(VaticanReportSection currentSection) {
+        this.currentSection = currentSection;
     }
 }

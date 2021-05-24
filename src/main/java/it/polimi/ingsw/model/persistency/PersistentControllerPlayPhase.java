@@ -4,11 +4,13 @@ public class PersistentControllerPlayPhase {
     private PersistentGame game;
     private String lastPlayer;
     private int controllerID;
+    private boolean endTriggered;
 
-    public PersistentControllerPlayPhase(PersistentGame game, String lastPlayer, int controllerID){
+    public PersistentControllerPlayPhase(PersistentGame game, String lastPlayer, int controllerID, boolean endTriggered){
         this.game = game;
         this.lastPlayer = lastPlayer;
         this.controllerID = controllerID;
+        this.endTriggered = endTriggered;
     }
 
     public int getControllerID() {
@@ -23,4 +25,7 @@ public class PersistentControllerPlayPhase {
         return lastPlayer;
     }
 
+    public boolean isEndTriggered() {
+        return endTriggered;
+    }
 }

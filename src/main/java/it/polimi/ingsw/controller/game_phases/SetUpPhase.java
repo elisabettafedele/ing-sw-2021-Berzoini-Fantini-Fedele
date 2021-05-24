@@ -37,9 +37,50 @@ public class SetUpPhase implements GamePhase {
     public void executePhase(Controller controller) {
         this.controller = controller;
         resourcesToStoreByNickname = new HashMap<>();
-        sendLightCards();
+        controller.sendLightCards();
         setUpLeaderCards();
         controller.sendMessageToAll(new LoadDevelopmentCardGrid(controller.getGame().getDevelopmentCardGrid().getAvailableCards().stream().map(Card::getID).collect(Collectors.toList())));
+    }
+
+    public SetUpPhase(Map<String, List<Resource>> resourcesToStoreByNickname, Controller controller){
+        this.resourcesToStoreByNickname = resourcesToStoreByNickname;
+        this.controller = controller;
+    }
+
+    public SetUpPhase(){ }
+
+    public void reloadPhase(){
+        List<String> nicknames = controller.getNicknames();
+        initialResourceByNickname = new HashMap<>();
+        nicknames.forEach(x -> initialResourceByNickname.put(x, getNumberOfInitialResourcesByIndex(nicknames.indexOf(x))));
+        controller.sendLightCards();
+        controller.sendMatchData(controller.getGame(), false);
+        for (String nickname : nicknames){
+            controller.getConnectionByNickname(nickname).sendMessageToClient(new WelcomeBackMessage(nickname, false));
+            if (controller.getPlayerByNickname(nickname).getPersonalBoard().getLeaderCards().size() == 4){
+                controller.getConnectionByNickname(nickname).setClientHandlerPhase(ClientHandlerPhase.WAITING_DISCARDED_LEADER_CARDS);
+                controller.getConnectionByNickname(nickname).sendMessageToClient(new ChooseLeaderCardsRequest(controller.getPlayerByNickname(nickname).getPersonalBoard().getLeaderCards().stream().map(Card::getID).collect(Collectors.toList())));
+            }
+            else {
+                if (initialResourceByNickname.get(nickname) == 0){
+                    controller.getConnectionByNickname(nickname).setClientHandlerPhase(ClientHandlerPhase.SET_UP_FINISHED);
+                    endPhaseManager(controller.getConnectionByNickname(nickname));
+                }
+                else if (initialResourceByNickname.get(nickname) == controller.getPlayerByNickname(nickname).getPersonalBoard().countResourceNumber()){
+                    controller.getConnectionByNickname(nickname).setClientHandlerPhase(ClientHandlerPhase.SET_UP_FINISHED);
+                    endPhaseManager(controller.getConnectionByNickname(nickname));
+                }
+                else if (resourcesToStoreByNickname.get(nickname).isEmpty()){
+                    assignResources(controller.getConnectionByNickname(nickname));
+                }
+                else {
+                    Resource resourceType = resourcesToStoreByNickname.get(nickname).get(0);
+                    List<String> availableStorage = controller.getPlayerByNickname(nickname).getPersonalBoard().getWarehouse().getAvailableWarehouseDepotsForResourceType(resourceType).stream().map(x -> x.name()).collect(Collectors.toList());
+                    controller.getConnectionByNickname(nickname).setClientHandlerPhase(ClientHandlerPhase.WAITING_CHOOSE_STORAGE_TYPE);
+                    controller.getConnectionByNickname(nickname).sendMessageToClient(new ChooseStorageTypeRequest(resourceType, availableStorage, false, false));
+                }
+            }
+        }
     }
 
     public void handleMessage(MessageToServer message, ClientHandler clientHandler) {
@@ -183,17 +224,6 @@ public class SetUpPhase implements GamePhase {
             }
         }
         controller.setGamePhase(controller.getGame().getGameMode() == GameMode.MULTI_PLAYER ? new MultiplayerPlayPhase(controller) : new SinglePlayerPlayPhase(controller));
-    }
-
-
-    private void sendLightCards() {
-        List<LightLeaderCard> leaderCards = LightCardsParser.getLightLeaderCards(LeaderCardParser.parseCards());
-        List<LightDevelopmentCard> developmentCards = LightCardsParser.getLightDevelopmentCards(DevelopmentCardParser.parseCards());
-        for (String nickname : controller.getNicknames()) {
-            ClientHandler connection = controller.getConnectionByNickname(nickname);
-            connection.sendMessageToClient(new LoadDevelopmentCardsMessage(developmentCards));
-            connection.sendMessageToClient(new LoadLeaderCardsMessage(leaderCards));
-        }
     }
 
 

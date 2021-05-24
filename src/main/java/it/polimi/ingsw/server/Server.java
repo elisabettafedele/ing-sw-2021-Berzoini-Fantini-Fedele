@@ -105,7 +105,7 @@ public class Server implements ServerInterface {
      * @param connection the connection with the client that has chosen his nickname
      */
 
-    public void handleNicknameChoice(ClientHandler connection) {
+    public synchronized void handleNicknameChoice(ClientHandler connection) {
         if(knownClient(connection.getNickname())){
             if (!handleKnownClientReconnection(connection))
                 return;

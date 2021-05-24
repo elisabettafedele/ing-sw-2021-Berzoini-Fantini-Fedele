@@ -16,9 +16,9 @@ public class PersistentPlayer implements Serializable {
     private int faithTrackPosition;
     private Map<Integer, Boolean> ownedLeaderCards; //<ID, active>
     private Stack<Integer>[] developmentCardSlots;
-    List<Resource>[] warehouse;
-    int[] strongbox;
-    Map<Integer, Integer> leaderDepots;
+    private List<Resource>[] warehouse;
+    private int[] strongbox;
+    private Map<Integer, Integer> leaderDepots;
     private int victoryPoints;
     private PopesTileState[] popesTileStates;
     private boolean active;
@@ -38,6 +38,8 @@ public class PersistentPlayer implements Serializable {
         victoryPoints = player.getVictoryPoints();
         popesTileStates = player.getPersonalBoard().getPopesTileStates();
     }
+
+    public PersistentPlayer(){}
 
     public String getNickname() {
         return nickname;
@@ -77,5 +79,45 @@ public class PersistentPlayer implements Serializable {
 
     public boolean isActive() {
         return active;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void setFaithTrackPosition(int faithTrackPosition) {
+        this.faithTrackPosition = faithTrackPosition;
+    }
+
+    public void setOwnedLeaderCards(Map<Integer, Boolean> ownedLeaderCards) {
+        this.ownedLeaderCards = ownedLeaderCards;
+    }
+
+    public void setDevelopmentCardSlots(Stack<Integer>[] developmentCardSlots) {
+        this.developmentCardSlots = developmentCardSlots;
+    }
+
+    public void setWarehouse(List<Resource>[] warehouse) {
+        this.warehouse = warehouse;
+    }
+
+    public void setStrongbox(int[] strongbox) {
+        this.strongbox = strongbox;
+    }
+
+    public void setLeaderDepots(Map<Integer, Integer> leaderDepots) {
+        this.leaderDepots = leaderDepots;
+    }
+
+    public void setVictoryPoints(int victoryPoints) {
+        this.victoryPoints = victoryPoints;
+    }
+
+    public void setPopesTileStates(PopesTileState[] popesTileStates) {
+        this.popesTileStates = popesTileStates;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

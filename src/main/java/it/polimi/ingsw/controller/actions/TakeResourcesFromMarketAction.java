@@ -28,7 +28,6 @@ public class TakeResourcesFromMarketAction implements Action {
     private ClientHandler clientHandler;
     private Controller controller;
     private Market market;
-    private PlayPhase playPhase;
     private List<Resource> resourcesToStore;
     private List<Marble> marblesToConvert;
     private TurnController turnController;
@@ -45,7 +44,6 @@ public class TakeResourcesFromMarketAction implements Action {
         this.controller = turnController.getController();
         this.resourcesToStore = new LinkedList<>();
         this.market = controller.getGame().getMarket();
-        this.playPhase = (PlayPhase) controller.getGamePhase();
     }
 
     @Override
@@ -316,7 +314,7 @@ public class TakeResourcesFromMarketAction implements Action {
      */
     private void handleDiscard(Resource resource) {
         resourcesToStore.remove(resource);
-        playPhase.handleResourceDiscard(player.getNickname());
+        ((PlayPhase) controller.getGamePhase()).handleResourceDiscard(player.getNickname());
         if (resourcesToStore.isEmpty())
             manageEndAction();
         else

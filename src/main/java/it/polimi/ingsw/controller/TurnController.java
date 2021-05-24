@@ -268,7 +268,7 @@ public class TurnController {
 
     public void setStandardActionDoneToTrue(){
         standardActionDone=true;
-        GameHistory.saveGame(new PersistentControllerPlayPhase(new PersistentGame(getController().getGame()), currentPlayer.getNickname(), controller.getControllerID()));
+        GameHistory.saveGame(new PersistentControllerPlayPhase(new PersistentGame(getController().getGame()), currentPlayer.getNickname(), controller.getControllerID(), endTrigger));
     }
 
     public void setEndTriggerToTrue() {
@@ -277,7 +277,7 @@ public class TurnController {
 
     public void endTurn(){
         //I set a copy of the game at the end of each turn
-        GameHistory.saveGame(new PersistentControllerPlayPhase(new PersistentGame(getController().getGame()), currentPlayer.getNickname(), controller.getControllerID()));
+        GameHistory.saveGame(new PersistentControllerPlayPhase(new PersistentGame(getController().getGame()), currentPlayer.getNickname(), controller.getControllerID(), endTrigger));
         ((PlayPhase) controller.getGamePhase()).setLastTurnGameCopy(new PersistentGame(controller.getGame()));
         clientHandler.sendMessageToClient(new TextMessage("Turn ended"));
         ((PlayPhase) controller.getGamePhase()).nextTurn();
