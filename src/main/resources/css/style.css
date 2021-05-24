@@ -3,6 +3,15 @@
     -fx-background-position: right bottom;
 }
 */
+.root {
+}
+Label, .label, Text, .text, Button, .button, TextField, .text-field, GridPane, .gridPane {
+    -fx-font-family:"SansSerif" ;
+    -fx-font-size: 12 ;
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+}
+
 .cards{
     -fx-border-radius: 30;
 }

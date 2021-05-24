@@ -101,7 +101,7 @@
                         </ImageView>
                         <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="x0" textAlignment="CENTER" GridPane.columnIndex="1">
                            <font>
-                              <Font name="Mongolian Baiti" size="22.0" />
+                              <Font name="Bell MT" size="8.0" />
                            </font>
                         </Text>
                         <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="x0" textAlignment="CENTER" GridPane.columnIndex="3">
@@ -350,7 +350,10 @@
             <Label fx:id="currentPBNicknameLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="736.0" layoutY="103.0" prefHeight="51.0" prefWidth="101.0" />
             <VBox fx:id="popupVbox" alignment="CENTER" layoutX="54.0" layoutY="89.0" prefHeight="148.0" prefWidth="341.0" styleClass="popup-box" stylesheets="@../css/style.css">
                <children>
-                  <Label alignment="CENTER" prefHeight="40.0" prefWidth="341.0" />
+                  <Label alignment="CENTER" prefHeight="71.0" prefWidth="341.0">
+                     <font>
+                        <Font size="10.0" />
+                     </font></Label>
                   <HBox alignment="CENTER" prefHeight="62.0" prefWidth="341.0" />
                   <HBox fx:id="buttonsHbox" alignment="CENTER" prefHeight="37.0" prefWidth="341.0">
                      <children>
@@ -530,7 +533,7 @@
                <children>
                   <ImageView fx:id="leftLeaderCard" fitHeight="119.0" fitWidth="74.0" layoutX="2.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../img/Cards/LeaderCards/front/55.png" />
+                        <Image url="@../img/Cards/LeaderCards/back/leaderCardsBack.png" />
                      </image>
                   </ImageView>
                   <Pane fx:id="leftLeaderDepot" layoutX="14.0" layoutY="84.0" prefHeight="27.0" prefWidth="51.0">
@@ -549,7 +552,7 @@
                   </Pane>
                   <ImageView fx:id="rightLeaderCard" fitHeight="115.0" fitWidth="74.0" layoutX="93.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../img/Cards/LeaderCards/front/56.png" />
+                        <Image url="@../img/Cards/LeaderCards/back/leaderCardsBack.png" />
                      </image>
                   </ImageView>
                   <Pane fx:id="rightLeaderDepot" layoutX="105.0" layoutY="85.0" prefHeight="23.0" prefWidth="51.0">
