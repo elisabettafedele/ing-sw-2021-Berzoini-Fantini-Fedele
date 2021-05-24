@@ -10,6 +10,9 @@ import it.polimi.ingsw.messages.toClient.game.ChooseStorageTypeRequest;
 import it.polimi.ingsw.messages.toClient.matchData.*;
 import it.polimi.ingsw.jsonParsers.LightCardsParser;
 import it.polimi.ingsw.model.cards.*;
+import it.polimi.ingsw.model.persistency.GameHistory;
+import it.polimi.ingsw.model.persistency.PersistentControllerSetUpPhase;
+import it.polimi.ingsw.model.persistency.PersistentGame;
 import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.exceptions.*;
@@ -76,6 +79,7 @@ public class SetUpPhase implements GamePhase {
         }
 
         //I send to everyone the view with the leader Cards to choose
+        GameHistory.saveSetupPhase(new PersistentControllerSetUpPhase(new PersistentGame(controller.getGame()), controller.getControllerID(), resourcesToStoreByNickname));
         controller.sendMatchData(controller.getGame(), false);
 
         for (int i = 0; i < nicknames.size(); i++) {
@@ -97,6 +101,7 @@ public class SetUpPhase implements GamePhase {
         Player player = controller.getPlayerByNickname(nickname);
         for (Integer id : discardedCards)
             player.getPersonalBoard().removeLeaderCard(id);
+        GameHistory.saveSetupPhase(new PersistentControllerSetUpPhase(new PersistentGame(controller.getGame()), controller.getControllerID(), resourcesToStoreByNickname));
         clientHandler.sendMessageToClient(new ReloadLeaderCardsOwned(nickname, player.getPersonalBoard().getLeaderCardsMap()));
         if (getNumberOfInitialResourcesByNickname(nickname) == 0) {
             controller.sendMessageToAll(new UpdateDepotsStatus(player.getNickname(), player.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), player.getPersonalBoard().getStrongboxStatus(), player.getPersonalBoard().getLeaderStatus()));
@@ -123,6 +128,7 @@ public class SetUpPhase implements GamePhase {
      */
     private void setInitialResourcesByNickname(List<Resource> resources, ClientHandler clientHandler){
         resourcesToStoreByNickname.put(clientHandler.getNickname(), resources);
+        GameHistory.saveSetupPhase(new PersistentControllerSetUpPhase(new PersistentGame(controller.getGame()), controller.getControllerID(), resourcesToStoreByNickname));
         List<String> availableDepots = ResourceStorageType.getWarehouseDepots();
         if (resources.size() == 2 && resources.get(0) == resources.get(1))
             availableDepots.remove(ResourceStorageType.WAREHOUSE_FIRST_DEPOT.name());
@@ -144,6 +150,7 @@ public class SetUpPhase implements GamePhase {
         } catch (InvalidDepotException | InvalidArgumentException | InvalidResourceTypeException | InsufficientSpaceException e) {
             e.printStackTrace();
         }
+        GameHistory.saveSetupPhase(new PersistentControllerSetUpPhase(new PersistentGame(controller.getGame()), controller.getControllerID(), resourcesToStoreByNickname));
         if (resourcesToStoreByNickname.get(player.getNickname()).isEmpty()) {
             controller.sendMessageToAll(new UpdateDepotsStatus(player.getNickname(), player.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), player.getPersonalBoard().getStrongboxStatus(), player.getPersonalBoard().getLeaderStatus()));
             sendSetUpFinishedMessage(clientHandler);

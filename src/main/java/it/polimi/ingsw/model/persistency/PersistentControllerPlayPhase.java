@@ -1,16 +1,14 @@
 package it.polimi.ingsw.model.persistency;
 
-public class PersistentController {
+public class PersistentControllerPlayPhase {
     private PersistentGame game;
     private String lastPlayer;
     private int controllerID;
-    private String gamePhase;
 
-    public PersistentController(PersistentGame game, String lastPlayer, int controllerID, String gamePhase){
+    public PersistentControllerPlayPhase(PersistentGame game, String lastPlayer, int controllerID){
         this.game = game;
         this.lastPlayer = lastPlayer;
         this.controllerID = controllerID;
-        this.gamePhase = gamePhase;
     }
 
     public int getControllerID() {
@@ -25,7 +23,4 @@ public class PersistentController {
         return lastPlayer;
     }
 
-    public String getGamePhase() {
-        return gamePhase;
-    }
 }

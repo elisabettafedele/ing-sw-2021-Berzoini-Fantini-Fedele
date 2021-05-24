@@ -12,6 +12,9 @@ import java.util.Iterator;
 public class GameHistory {
 
     public static boolean saveGames;
+    public static final String PLAY_PHASE = "PLAY_PHASE";
+    public static final String SETUP_PHASE = "SETUP_PHASE";
+
 
 
     public synchronized static JsonObject retrieveGameFromControllerId(int id) {
@@ -31,9 +34,48 @@ public class GameHistory {
         return jsonObjectOfOldMatch;
     }
 
-    public synchronized static void saveGame(PersistentController controller){
+
+
+
+    public synchronized static void saveGame(PersistentControllerPlayPhase controller){
         if (!saveGames)
             return;
+        JsonArray jsonArray = getJsonArray(controller.getControllerID());
+
+        try (Writer writer = new FileWriter("backupOfGames.json", false)) {
+            Gson gson = JsonAdapter.getGsonBuilder();
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("controllerID", controller.getControllerID());
+            jsonObject.addProperty("gamePhase", PLAY_PHASE);
+            jsonObject.add("game", JsonParser.parseString(JsonAdapter.toJsonClass(controller.getGame())));
+            jsonObject.addProperty("lastTurnNickname", controller.getLastPlayer());
+            jsonArray.add(jsonObject);
+            gson.toJson(jsonArray, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static synchronized void saveSetupPhase(PersistentControllerSetUpPhase controller){
+        if (!saveGames)
+            return;
+        JsonArray jsonArray = getJsonArray(controller.getControllerID());
+        try (Writer writer = new FileWriter("backupOfGames.json", false)) {
+            Gson gson = JsonAdapter.getGsonBuilder();
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("controllerID", controller.getControllerID());
+            jsonObject.addProperty("gamePhase", SETUP_PHASE);
+            jsonObject.add("game", JsonParser.parseString(JsonAdapter.toJsonClass(controller.getGame())));
+            jsonObject.add("resourcesToStore", JsonParser.parseString(JsonAdapter.toJsonClass(controller.getResourcesToStore())));
+            jsonArray.add(jsonObject);
+            gson.toJson(jsonArray, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private static JsonArray getJsonArray(int controllerID){
         JsonArray jsonArray = null;
         try (JsonReader jsonReader = new JsonReader(new FileReader("backupOfGames.json"))) {
             jsonArray = new Gson().fromJson(jsonReader, JsonArray.class);
@@ -44,7 +86,7 @@ public class GameHistory {
                 while (iterator.hasNext() && jsonObjectOfOldMatch == null) {
                     JsonElement currentJsonElement = iterator.next();
                     int oldMatchId = currentJsonElement.getAsJsonObject().get("controllerID").getAsInt();
-                    if (oldMatchId == controller.getControllerID()) jsonObjectOfOldMatch = currentJsonElement.getAsJsonObject();
+                    if (oldMatchId == controllerID) jsonObjectOfOldMatch = currentJsonElement.getAsJsonObject();
                 }
                 if (jsonObjectOfOldMatch != null) jsonArray.remove(jsonObjectOfOldMatch);
             }
@@ -53,20 +95,6 @@ public class GameHistory {
         }
 
         if (jsonArray == null) jsonArray = new JsonArray();
-
-        try (Writer writer = new FileWriter("backupOfGames.json", false)) {
-            Gson gson = JsonAdapter.getGsonBuilder();
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("controllerID", controller.getControllerID());
-            jsonObject.add("game", JsonParser.parseString(JsonAdapter.toJsonClass(controller.getGame())));
-            jsonObject.addProperty("gamePhase", controller.getGamePhase());
-            jsonObject.addProperty("nextTurnIndex", controller.getLastPlayer());
-            jsonArray.add(jsonObject);
-            gson.toJson(jsonArray, writer);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
+        return jsonArray;
     }
 }
