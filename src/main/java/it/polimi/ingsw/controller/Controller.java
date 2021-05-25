@@ -194,16 +194,7 @@ public class Controller {
     }
 
     public synchronized void handleMessage(MessageToServer message, ClientHandlerInterface clientHandler){
-
-        //SETUP MESSAGES
-        if (gamePhase instanceof SetUpPhase) {
-            ((SetUpPhase) gamePhase).handleMessage(message, (ClientHandler) clientHandler);
-        }
-
-        //IN-GAME MESSAGES
-        if(gamePhase instanceof PlayPhase){
-            ((PlayPhase) gamePhase).handleMessage(message,(ClientHandler) clientHandler);
-        }
+        gamePhase.handleMessage(message, (ClientHandler) clientHandler);
     }
 
     public Game getGame(){
@@ -250,13 +241,11 @@ public class Controller {
         this.gamePhase = gamePhase;
         sendMessageToAll(new TextMessage(gamePhase.toString() + " has started!"));
         gamePhase.executePhase(this);
-
     }
 
     public GamePhase getGamePhase(){
         return gamePhase;
     }
-
 
     public void sendMessageToAll(MessageToClient message){
         lockConnections.lock();
@@ -284,9 +273,6 @@ public class Controller {
         assert game!=null;
         //Inform all the clients that a previous game status is being restored
         sendMessageToAll(new ReloadMatchData(true, disconnection));
-        if (!disconnection){
-            //Resend all the cards
-        }
         sendMessageToAll(new LoadDevelopmentCardGrid(game.getDevelopmentCardGrid().getAvailableCards().stream().map(Card::getID).collect(Collectors.toList())));
         sendMessageToAll(new UpdateMarketView(RELOAD, game.getMarket().getMarketTray(), game.getMarket().getSlideMarble()));
         lockConnections.lock();
@@ -340,12 +326,13 @@ public class Controller {
     }
 
     public void sendLightCards() {
+        getClientHandlers().forEach(x -> sendLightCards(x.getNickname()));
+    }
+
+    public void sendLightCards(String nickname){
         List<LightLeaderCard> leaderCards = LightCardsParser.getLightLeaderCards(LeaderCardParser.parseCards());
         List<LightDevelopmentCard> developmentCards = LightCardsParser.getLightDevelopmentCards(DevelopmentCardParser.parseCards());
-        for (String nickname : getNicknames()) {
-            ClientHandler connection = getConnectionByNickname(nickname);
-            connection.sendMessageToClient(new LoadDevelopmentCardsMessage(developmentCards));
-            connection.sendMessageToClient(new LoadLeaderCardsMessage(leaderCards));
-        }
+        getConnectionByNickname(nickname).sendMessageToClient(new LoadDevelopmentCardsMessage(developmentCards));
+        getConnectionByNickname(nickname).sendMessageToClient(new LoadLeaderCardsMessage(leaderCards));
     }
 }

@@ -1,20 +1,17 @@
 package it.polimi.ingsw.controller.game_phases;
 
 
-import it.polimi.ingsw.common.LightLeaderCard;
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.enumerations.*;
 import it.polimi.ingsw.messages.toClient.game.ChooseLeaderCardsRequest;
 import it.polimi.ingsw.messages.toClient.game.ChooseResourceTypeRequest;
 import it.polimi.ingsw.messages.toClient.game.ChooseStorageTypeRequest;
 import it.polimi.ingsw.messages.toClient.matchData.*;
-import it.polimi.ingsw.jsonParsers.LightCardsParser;
 import it.polimi.ingsw.model.cards.*;
 import it.polimi.ingsw.model.persistency.GameHistory;
 import it.polimi.ingsw.model.persistency.PersistentControllerSetUpPhase;
 import it.polimi.ingsw.model.persistency.PersistentGame;
 import it.polimi.ingsw.server.ClientHandler;
-import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.exceptions.*;
 import it.polimi.ingsw.messages.toClient.*;
 import it.polimi.ingsw.messages.toServer.game.ChooseLeaderCardsResponse;
@@ -22,9 +19,7 @@ import it.polimi.ingsw.messages.toServer.game.ChooseResourceTypeResponse;
 import it.polimi.ingsw.messages.toServer.game.ChooseStorageTypeResponse;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
 import it.polimi.ingsw.model.player.Player;
-import it.polimi.ingsw.jsonParsers.DevelopmentCardParser;
 import it.polimi.ingsw.jsonParsers.LeaderCardParser;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -82,6 +77,7 @@ public class SetUpPhase implements GamePhase {
             }
         }
     }
+
 
     public void handleMessage(MessageToServer message, ClientHandler clientHandler) {
         if (message instanceof ChooseLeaderCardsResponse && clientHandler.getClientHandlerPhase() == ClientHandlerPhase.WAITING_DISCARDED_LEADER_CARDS) {
