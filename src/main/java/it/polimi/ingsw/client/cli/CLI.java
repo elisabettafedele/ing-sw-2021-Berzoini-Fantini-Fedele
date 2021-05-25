@@ -48,12 +48,15 @@ public class CLI implements View {
     }
 
     @Override
-    public void displayResults(Map<String, Integer> results) {
+    public void displayResults(Map<String, Integer> results, boolean readyForAnotherGame) {
         int i = 1;
         for (String name : results.keySet()){
             System.out.println((results.keySet().size() > 1 ? (i++ + ". ") : "")+ name + ": " + results.get(name) + " victory points");
         }
-        client.closeSocket();
+        if (!readyForAnotherGame)
+            client.closeSocket();
+        else
+            System.out.println("You can now start another game!");
     }
 
     @Override

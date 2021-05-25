@@ -34,7 +34,7 @@ public class GameHistory {
                     }
                 }
             }
-        } catch (IOException e) { return null;}
+        } catch (IOException e) { return jsonObjectOfOldMatch;}
         return jsonObjectOfOldMatch;
     }
 
@@ -196,6 +196,16 @@ public class GameHistory {
             }
         }
         return developmentCardGrid;
+    }
+
+    public static void removeOldGame(int controllerID){
+        JsonArray jsonArray = getJsonArray(controllerID);
+        try (Writer writer = new FileWriter("backupOfGames.json", false)) {
+            Gson gson = JsonAdapter.getGsonBuilder();
+            gson.toJson(jsonArray, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

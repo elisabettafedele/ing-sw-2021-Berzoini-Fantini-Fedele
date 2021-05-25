@@ -46,7 +46,7 @@ public interface VirtualView {
     void displayStandardView();
 
     //END
-    void displayResults(Map<String, Integer> results);
+    void displayResults(Map<String, Integer> results, boolean readyForAnotherGame);
     void displayResults(int victoryPoints);
 
     //DISCONNECTIONS

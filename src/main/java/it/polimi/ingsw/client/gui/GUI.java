@@ -211,7 +211,7 @@ public class GUI extends Application implements View {
     }
 
     @Override
-    public void displayResults(Map<String, Integer> results) {
+    public void displayResults(Map<String, Integer> results, boolean readyForAnotherGame) {
 
     }
 

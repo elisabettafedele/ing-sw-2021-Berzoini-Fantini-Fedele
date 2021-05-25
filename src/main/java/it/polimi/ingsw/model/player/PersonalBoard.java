@@ -65,9 +65,10 @@ public class PersonalBoard implements Serializable {
         this.leaderCards = new ArrayList<>();
         List<LeaderCard> leaderCards = LeaderCardParser.parseCards();
         for (Integer id : persistentPlayer.getOwnedLeaderCards().keySet()){
-            this.leaderCards.add(leaderCards.stream().filter(x -> x.getID() == id).collect(Collectors.toList()).get(0));
+            LeaderCard cardToAdd = leaderCards.stream().filter(x -> x.getID() == id).collect(Collectors.toList()).get(0);
+            this.leaderCards.add(cardToAdd);
             if (persistentPlayer.getOwnedLeaderCards().get(id))
-                this.leaderCards.get(leaderCards.size()-1).activate();
+                cardToAdd.activate();
         }
 
         //DEVELOPMENT CARD
@@ -395,7 +396,7 @@ public class PersonalBoard implements Serializable {
         if(boxesToMoveQuantity<0){
             throw new InvalidArgumentException();
         }
-        markerPosition = markerPosition + boxesToMoveQuantity;
+        markerPosition = Math.min(markerPosition + boxesToMoveQuantity, 24);
     }
 
     /**

@@ -148,7 +148,7 @@ public class TurnController {
         }
 
         if(isVaticanReport){
-            VaticanReportSection vaticanReportSection=controller.getGame().getFaithTrack().getCurrentSection();
+            VaticanReportSection vaticanReportSection=controller.getGame().getFaithTrack().getCurrentSection(true);
             if(!isInterruptible){// multiplayer
                 try {
                     for(Player p: controller.getGame().getPlayers()){

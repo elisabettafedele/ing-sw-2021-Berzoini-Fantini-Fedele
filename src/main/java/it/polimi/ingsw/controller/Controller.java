@@ -69,6 +69,8 @@ public class Controller {
                 getClientHandlers().forEach(x -> x.sendMessageToClient(new NotifyClientDisconnection(nickname, true, false)));
                 server.removeConnectionGame(connection, false);
                 getPlayerByNickname(nickname).setActive(false);
+                if (gamePhase instanceof SetUpPhase)
+                    ((SetUpPhase) gamePhase).endPhaseManager(connection);
             } else {
                 //CASE 2: THE CLIENT HAS NOT FINISHED THE SETUP PHASE YET
                 connection.getServer().removeConnectionGame(connection, true);
@@ -129,6 +131,7 @@ public class Controller {
     }
 
     private void reloadSetUpPhase(){
+        clientHandlers.forEach(x -> x.sendMessageToClient(new WelcomeBackMessage(x.getNickname(), false)));
         PersistentControllerSetUpPhase controller = GameHistory.retrieveSetUpController(controllerID);
         game = new Game(controller.getGame());
         gamePhase = new SetUpPhase(controller.getResourcesToStore(), this);
@@ -145,6 +148,7 @@ public class Controller {
     private void reloadMultiplayerPlayPhase(){
         PersistentControllerPlayPhase controller = GameHistory.retrievePlayController(controllerID);
         game = new Game(controller.getGame());
+        getPlayers().forEach(x -> x.setActive(true));
         sendLightCards();
         clientHandlers.forEach(x -> x.sendMessageToClient(new WelcomeBackMessage(x.getNickname(), false)));
         sendMatchData(game, false);
