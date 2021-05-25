@@ -56,9 +56,9 @@ public class FaithTrack implements Serializable {
      * Returns the {@link VaticanReportSection} stored in currentSection and suddenly changes currentSection to the next {@link VaticanReportSection}
      * returned by vaticanReportSectionIterator.If it is the last VaticanReportSection currentSection remains the same;
      */
-    public VaticanReportSection getCurrentSection() {
+    public VaticanReportSection getCurrentSection(boolean goNext) {
         VaticanReportSection returnedSection=currentSection;
-        if(vaticanReportSectionIterator.hasNext()){
+        if(goNext && vaticanReportSectionIterator.hasNext()){
             currentSection= vaticanReportSectionIterator.next();
         }
         return returnedSection;

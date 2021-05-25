@@ -31,11 +31,11 @@ public class FaithTrackTest {
         assertTrue(faithTrack.getVictoryPoints(2)==0);
         assertTrue(faithTrack.getVictoryPoints(9)==4);
         //Test:getCurrentSection_returnsCorrectVaticanReportSection
-        VaticanReportSection vaticanReportSection=faithTrack.getCurrentSection();
+        VaticanReportSection vaticanReportSection=faithTrack.getCurrentSection(true);
         assertTrue(vaticanReportSection.getStart()==5);
         assertTrue(vaticanReportSection.getEnd()==8);
         assertTrue(vaticanReportSection.getPopeFavorPoints()==2);
-        vaticanReportSection=faithTrack.getCurrentSection();
+        vaticanReportSection=faithTrack.getCurrentSection(true);
         assertTrue(vaticanReportSection.getStart()==12);
         assertTrue(vaticanReportSection.getEnd()==16);
         assertTrue(vaticanReportSection.getPopeFavorPoints()==3);

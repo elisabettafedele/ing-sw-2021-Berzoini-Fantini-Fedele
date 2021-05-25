@@ -53,6 +53,7 @@ public class Game implements Serializable, Cloneable {
         for (PersistentPlayer player : game.getPlayers()){
             this.players.add(new Player(player));
         }
+        players.get(0).setInkwell(true);
     }
 
     /**

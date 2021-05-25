@@ -19,6 +19,7 @@ import it.polimi.ingsw.messages.toClient.lobby.WaitingInTheLobbyMessage;
 import it.polimi.ingsw.messages.toClient.matchData.LoadDevelopmentCardsMessage;
 import it.polimi.ingsw.messages.toClient.matchData.LoadLeaderCardsMessage;
 import it.polimi.ingsw.jsonParsers.LightCardsParser;
+import it.polimi.ingsw.model.persistency.GameHistory;
 import it.polimi.ingsw.model.player.Player;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -338,6 +339,9 @@ public class Server implements ServerInterface {
         int position = -1;
         try{
             lockLobby.lock();
+            //If the client has already taken a valid nickname, I remove it from the list.
+            if (connection.getClientHandlerPhase() != ClientHandlerPhase.WAITING_NICKNAME && connection.getClientHandlerPhase() !=ClientHandlerPhase.WAITING_GAME_MODE)
+                takenNicknames.remove(connection.getNickname());
             position = clientsInLobby.indexOf(connection);
             if (position > -1) {
                 clientsInLobby.remove(connection);
@@ -365,6 +369,7 @@ public class Server implements ServerInterface {
             for (String nickname : connection.getController().getPlayers().stream().map(Player::getNickname).collect(Collectors.toList())) {
                 clientsDisconnected.remove(nickname);
                 takenNicknames.remove(nickname);
+                GameHistory.removeOldGame(connection.getController().getControllerID());
             }
             activeGames.remove(connection.getController());
             return false;
@@ -403,12 +408,13 @@ public class Server implements ServerInterface {
      * @param gameOverMessage
      */
     public void gameEnded(Controller controller, GameOverMessage gameOverMessage){
+        controller.getPlayers().forEach(x -> takenNicknames.remove(x.getNickname()));
         List<String> disconnectedClientsNicknames = controller.getPlayers().stream().filter(x -> !x.isActive()).map(x -> x.getNickname()).collect(Collectors.toList());
         for (String nickname : disconnectedClientsNicknames) {
             clientsDisconnected.remove(nickname);
             clientsDisconnectedGameFinished.put(nickname, gameOverMessage);
-            takenNicknames.remove(nickname);
         }
+        GameHistory.removeOldGame(controller.getControllerID());
         activeGames.remove(controller);
     }
 

@@ -16,7 +16,7 @@ public class MultiplayerEndPhase extends EndPhase {
         for (Player player : sortedPlayers){
             results.put(player.getNickname(), player.getVictoryPoints());
         }
-        getController().sendMessageToAll(new GameOverMessage(results));
-        getController().getServer().gameEnded(getController(), new GameOverMessage(results));
+        getController().sendMessageToAll(new GameOverMessage(results, false));
+        getController().getServer().gameEnded(getController(), new GameOverMessage(results, true));
     }
 }

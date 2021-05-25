@@ -9,10 +9,8 @@ import it.polimi.ingsw.enumerations.Marble;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.jsonParsers.JsonAdapter;
 import it.polimi.ingsw.model.game.VaticanReportSection;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
+
+import java.io.*;
 import java.util.*;
 
 public class GameHistory {
@@ -36,7 +34,7 @@ public class GameHistory {
                     }
                 }
             }
-        } catch (IOException e) { e.printStackTrace();}
+        } catch (IOException e) { return jsonObjectOfOldMatch;}
         return jsonObjectOfOldMatch;
     }
 
@@ -139,7 +137,7 @@ public class GameHistory {
                 if (jsonObjectOfOldMatch != null) jsonArray.remove(jsonObjectOfOldMatch);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            jsonArray = null;
         }
 
         if (jsonArray == null) jsonArray = new JsonArray();
@@ -198,6 +196,16 @@ public class GameHistory {
             }
         }
         return developmentCardGrid;
+    }
+
+    public static void removeOldGame(int controllerID){
+        JsonArray jsonArray = getJsonArray(controllerID);
+        try (Writer writer = new FileWriter("backupOfGames.json", false)) {
+            Gson gson = JsonAdapter.getGsonBuilder();
+            gson.toJson(jsonArray, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

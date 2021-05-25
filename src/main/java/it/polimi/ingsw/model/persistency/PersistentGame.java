@@ -47,7 +47,7 @@ public class PersistentGame implements Serializable {
             e.printStackTrace();
         }
 
-        currentSection = game.getFaithTrack().getCurrentSection();
+        currentSection = game.getFaithTrack().getCurrentSection(false);
     }
 
     public PersistentGame (){ }

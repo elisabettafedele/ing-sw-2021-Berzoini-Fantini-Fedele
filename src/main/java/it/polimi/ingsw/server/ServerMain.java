@@ -17,7 +17,7 @@ public class ServerMain {
         Server server = new Server(port);
         String answer;
         do {
-            System.out.println("Do you want to save games in json files? y | n");
+            System.out.println("Do you want to save games in a json file? y | n");
             answer = in.nextLine();
         } while (!(answer.equals("y") || answer.equals("n")));
         GameHistory.saveGames = answer.equals("y");

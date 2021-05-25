@@ -220,6 +220,7 @@ public class ActivateProductionAction implements Action{
 
             try {
                 personalBoard.addResourcesToStrongbox(resourceToAdd);
+                turnController.getController().sendMessageToAll(new UpdateDepotsStatus(player.getNickname(), player.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), player.getPersonalBoard().getStrongboxStatus(), player.getPersonalBoard().getLeaderStatus()));
             } catch (InvalidDepotException | InvalidArgumentException e) {
                 e.printStackTrace();
             }
