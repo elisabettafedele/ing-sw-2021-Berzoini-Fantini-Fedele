@@ -8,6 +8,7 @@ import it.polimi.ingsw.common.LightLeaderCard;
 import it.polimi.ingsw.enumerations.*;
 import it.polimi.ingsw.messages.toServer.game.ChooseLeaderCardsResponse;
 import it.polimi.ingsw.messages.toServer.game.ChooseResourceTypeResponse;
+import it.polimi.ingsw.messages.toServer.game.ChooseStorageTypeResponse;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -121,11 +122,11 @@ public class GameSceneController {
         doableActions.put(ActionType.ACTIVATE_LEADER_CARD,debug);
         doableActions.put(ActionType.DISCARD_LEADER_CARD,debug);
         storageNameToNodeMap=new HashMap<>();
-        storageNameToNodeMap.put(ResourceStorageType.WAREHOUSE_FIRST_DEPOT,warehouse_first_depot);
-        storageNameToNodeMap.put(ResourceStorageType.WAREHOUSE_SECOND_DEPOT,warehouse_second_depot);
-        storageNameToNodeMap.put(ResourceStorageType.WAREHOUSE_THIRD_DEPOT,warehouse_third_depot);
+        storageNameToNodeMap.put(ResourceStorageType.WAREHOUSE_FIRST_DEPOT,warehouse.getChildren().get(3));
+        storageNameToNodeMap.put(ResourceStorageType.WAREHOUSE_SECOND_DEPOT,warehouse.getChildren().get(4));
+        storageNameToNodeMap.put(ResourceStorageType.WAREHOUSE_THIRD_DEPOT,warehouse.getChildren().get(5));
         storageNameToNodeMap.put(ResourceStorageType.WAREHOUSE,warehouse);
-        storageNameToNodeMap.put(ResourceStorageType.STRONGBOX,strongbox);
+        storageNameToNodeMap.put(ResourceStorageType.STRONGBOX,((Pane)strongbox.getParent()).getChildren().get(1));
         storageNameToNodeMap.put(ResourceStorageType.LEADER_DEPOT,leftLeaderDepot.getParent());
         ColorAdjust colorAdjust=new ColorAdjust();
         colorAdjust.setBrightness(0.4);
@@ -225,20 +226,22 @@ public class GameSceneController {
             }
         });
     }
-    private void makeDraggable(Node resourceToDrag) {
+    private void makeDraggable(Node resourceToDrag, String resourceAsString) {
         resourceToDrag.setOnDragDetected(new EventHandler<MouseEvent>() {
             public void handle(MouseEvent event) {
-                Dragboard db = resourceToDrag.startDragAndDrop(TransferMode.ANY);
-                Image resourceImage= ((ImageView) resourceToDrag).getImage();
-                Map<DataFormat,Object> content = new HashMap<>();
-                content.put(DataFormat.IMAGE,resourceImage);
+                Dragboard db = resourceToDrag.startDragAndDrop(TransferMode.MOVE);
+                ClipboardContent content = new ClipboardContent();
+                content.putString(resourceAsString);
                 db.setContent(content);
                 event.consume();
             }
         });
         resourceToDrag.setOnDragDone(new EventHandler<DragEvent>() {
             public void handle(DragEvent event) {
-                ((HBox) resourceToDrag.getParent()).getChildren().remove(0);
+                if (event.getTransferMode() == TransferMode.MOVE) {
+                    ((HBox) resourceToDrag.getParent()).getChildren().remove(0);
+                }
+
                 event.consume();
             }
         });
@@ -250,8 +253,8 @@ public class GameSceneController {
             @Override
             public void handle(DragEvent event) {
                 if (event.getGestureSource() != nodeDraggableOver &&
-                        event.getDragboard().hasContent(DataFormat.IMAGE)) {
-                    event.acceptTransferModes(TransferMode.ANY);
+                        event.getDragboard().hasString()) {
+                    event.acceptTransferModes(TransferMode.MOVE);
                 }
                 event.consume();
             }
@@ -260,7 +263,7 @@ public class GameSceneController {
             @Override
             public void handle(DragEvent event) {
                 if (event.getGestureSource() != nodeDraggableOver &&
-                        event.getDragboard().hasContent(DataFormat.IMAGE)) {
+                        event.getDragboard().hasString()) {
                     glowNode(nodeDraggableOver,Color.ORANGE);
                 }
                 event.consume();
@@ -278,8 +281,8 @@ public class GameSceneController {
             public void handle(DragEvent event) {
                 Dragboard db = event.getDragboard();
                 boolean success = false;
-                if (db.hasContent(DataFormat.IMAGE)) {
-                    addResource(nodeDraggableOver,db.getContent(DataFormat.IMAGE));
+                if (event.getDragboard().hasString()) {
+                    addResource(nodeDraggableOver,db.getString());
                     success = true;
                 }
                 event.setDropCompleted(success);
@@ -288,8 +291,49 @@ public class GameSceneController {
         });
     }
 
-    private void addResource(Node nodeDraggableOver, Object content) {
-        //manda messaggio e refresha;
+    private void deactivateDraggableOver(Node nodeDraggableOver) {
+        if (nodeDraggableOver.getOnDragOver() != null) {
+            nodeDraggableOver.removeEventHandler(DragEvent.DRAG_OVER,nodeDraggableOver.getOnDragOver());
+        }
+        if (nodeDraggableOver.getOnDragEntered() != null) {
+            nodeDraggableOver.removeEventHandler(DragEvent.DRAG_ENTERED,nodeDraggableOver.getOnDragEntered());
+        }
+        if (nodeDraggableOver.getOnDragExited() != null) {
+            nodeDraggableOver.removeEventHandler(DragEvent.DRAG_EXITED,nodeDraggableOver.getOnDragExited());
+        }
+        if(nodeDraggableOver.getOnDragDropped()!=null){
+            nodeDraggableOver.removeEventHandler(DragEvent.DRAG_DROPPED,nodeDraggableOver.getOnDragDropped());
+        }
+    }
+
+    private void addResource(Node nodeDraggableOver, String resourceToAddAsString) {
+        String storageSelected= new String();
+        for(ResourceStorageType rst: storageNameToNodeMap.keySet()){
+            if(storageNameToNodeMap.get(rst).equals(nodeDraggableOver)){
+                storageSelected=rst.toString();
+            }
+        }
+        finishStorageInsertion();
+        client.sendMessageToServer(new ChooseStorageTypeResponse(Resource.valueOf(resourceToAddAsString),storageSelected,discardButton.isVisible(),reorganizeButton.isVisible()));
+    }
+
+    private void finishStorageInsertion() {
+        for(ResourceStorageType resourceStorageType : storageNameToNodeMap.keySet()){
+            if(resourceStorageType.equals(ResourceStorageType.LEADER_DEPOT)){
+                deactivateDraggableOver(leftLeaderDepot);
+                deactivateDraggableOver(rightLeaderDepot);
+                if(leftLeaderCard.getEffect() instanceof DropShadow){
+                    rightLeaderCard.setEffect(null);
+                }
+                if(rightLeaderCard.getEffect() instanceof DropShadow){
+                    leftLeaderCard.setEffect(null);
+                }
+            }
+            else{
+                deactivateDraggableOver(storageNameToNodeMap.get(resourceStorageType));
+                storageNameToNodeMap.get(resourceStorageType).setEffect(null);
+            }
+        }
     }
 
     private void selectAction(Node nodeToActivate) {
@@ -313,7 +357,7 @@ public class GameSceneController {
         }
     }
 
-    private void updateView() {
+    public void updateView() {
         updateFaithTrack();
         updateWarehouseAndStrongboxView();
         updateDevelopmentCardsSlots();
@@ -403,6 +447,7 @@ It also puts the right PopTile Image reading matchdata'LightClient info.
                 warehouseDepotBox.setVisible(false);
                 if(boxCounter<warehouse[i].size()){
                     ((ImageView) warehouseDepotBox).setImage(new Image(GameSceneController.class.getResource("/img/punchboard/" + warehouse[i].get(boxCounter).toString().toLowerCase() + ".png").toString()));
+                    warehouseDepotBox.setVisible(true);
                 }
                 boxCounter++;
             }
@@ -414,6 +459,7 @@ It also puts the right PopTile Image reading matchdata'LightClient info.
         for(Integer lcID :matchData.getLightClientByNickname(players.get(currentPlayerIndex)).getOwnedLeaderCards()){
             leaderCards.add(matchData.getLeaderCardByID(lcID));
         }
+        leaderCards.stream().forEach(x->System.out.println(x.toString()));
         //initializes visibilities
         rightLeaderCard.setVisible(false);
         leftLeaderCard.setVisible(false);
@@ -566,30 +612,34 @@ It also puts the right PopTile Image reading matchdata'LightClient info.
                 for(Resource resource: resources){
                     ImageView resourceImage= new ImageView( new Image(SetupSceneController.class.getResource("/img/punchboard/" + resource.toString().toLowerCase(Locale.ROOT) + ".png").toString()));
                     resourceImage.setPreserveRatio(true);
-                    resourceImage.setFitHeight(((ImageView)warehouse_first_depot.getChildren()).getFitHeight());
+                    resourceImage.setFitHeight(((ImageView)warehouse_first_depot.getChildren().get(0)).getFitHeight());
                     resourcesHBox.getChildren().add(resourceImage);
                 }
             }
         });
     }
 
-    public void activateResourceInsertion(Resource resource, HashMap<ResourceStorageType, Boolean> interactableDepots, boolean canDiscard, boolean canReorganize) {
+    public void startResourceInsertion(Resource resource, HashMap<ResourceStorageType, Boolean> interactableDepots, boolean canDiscard, boolean canReorganize) {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+                discardButton.setVisible(canDiscard);
+                discardButton.setManaged(canDiscard);
+                reorganizeButton.setVisible(canReorganize);
+                reorganizeButton.setManaged(canReorganize);
                 popupVbox.setVisible(true);
                 ((Label) popupVbox.getChildren().get(0)).setText("Drag the resource into one of the glowing depots, if any");
                 HBox resourcesHBox=(HBox) popupVbox.getChildren().get(1);
-                highlightAndDrag(resourcesHBox.getChildren().get(0),interactableDepots);
+                highlightAndDrag(resourcesHBox.getChildren().get(0),resource.toString(), interactableDepots);
             }
         });
     }
 //TODO make glow only if on playerpage (currentplayerindex==0)
 // TODO sostituire i depot pane con delle immagini cornice, o non si illumineranno se vuoti
 
-    private void highlightAndDrag(Node resourceToDrag, HashMap<ResourceStorageType, Boolean> interactableDepots) {
+    private void highlightAndDrag(Node resourceToDrag, String resourceAsString, HashMap<ResourceStorageType, Boolean> interactableDepots) {
         glowNode(resourceToDrag,Color.CYAN);
-        makeDraggable(resourceToDrag);
+        makeDraggable(resourceToDrag, resourceAsString);
         for(ResourceStorageType resourceStorageType: interactableDepots.keySet()){
             if(interactableDepots.get(resourceStorageType)){
                 if (resourceStorageType.equals(ResourceStorageType.LEADER_DEPOT)){
@@ -597,11 +647,11 @@ It also puts the right PopTile Image reading matchdata'LightClient info.
                     for(LightLeaderCard lc: matchData.getLightClientByNickname(players.get(0)).getOwnedLeaderCards().stream().map(x -> matchData.getLeaderCardByID(x)).collect(Collectors.toList())){
                         if(lc.getEffectType().equals("EXTRA_DEPOT")){
                             if(lcCounter == 0) {
-                                glowNode(leftLeaderDepot,Color.CYAN);
+                                glowNode(leftLeaderCard,Color.CYAN);
                                 activateDraggableOver(leftLeaderDepot);
                             }
                             if(lcCounter==1){
-                                glowNode(rightLeaderDepot,Color.CYAN);
+                                glowNode(rightLeaderCard,Color.CYAN);
                                 activateDraggableOver(rightLeaderDepot);
                             }
                         }
@@ -609,7 +659,14 @@ It also puts the right PopTile Image reading matchdata'LightClient info.
                     }
                 }
                 else {
-                    glowNode(storageNameToNodeMap.get(resourceStorageType),Color.CYAN);
+                    if(resourceStorageType.equals(ResourceStorageType.WAREHOUSE)){
+                        glowNode(storageNameToNodeMap.get(ResourceStorageType.WAREHOUSE_FIRST_DEPOT),Color.CYAN);
+                        glowNode(storageNameToNodeMap.get(ResourceStorageType.WAREHOUSE_SECOND_DEPOT),Color.CYAN);
+                        glowNode(storageNameToNodeMap.get(ResourceStorageType.WAREHOUSE_THIRD_DEPOT),Color.CYAN);
+                    }
+                    else{
+                        glowNode(storageNameToNodeMap.get(resourceStorageType),Color.CYAN);
+                    }
                     activateDraggableOver(storageNameToNodeMap.get(resourceStorageType));
                 }
 
@@ -628,18 +685,16 @@ It also puts the right PopTile Image reading matchdata'LightClient info.
             public void run() {
                 popupVbox.setVisible(true);
                 //set Reorganize button invisible
-                ((Button) buttonsHbox.getChildren().get(1)).setVisible(false);
-                ((Button) buttonsHbox.getChildren().get(1)).setManaged(false);
+                reorganizeButton.setVisible(false);
+                reorganizeButton.setManaged(false);
                 //turn DiscardButton into ConfirmSelectionButton
-                Button confirmSelectionButton=(Button) buttonsHbox.getChildren().get(0);
+                Button confirmSelectionButton=discardButton;
                 confirmSelectionButton.setText("Confirm selection");
                 confirmSelectionButton.setDisable(true);
                 confirmSelectionButton.setVisible(true);
 
                 HBox selectionHBox=((HBox)popupVbox.getChildren().get(1));
                 ((Label) popupVbox.getChildren().get(0)).setText("Choose two out of the four following Leader cards:");
-
-
                 selectedResources=new ArrayList<>();
                 selectedLeaderCards =new ArrayList<>();
 
@@ -650,7 +705,7 @@ It also puts the right PopTile Image reading matchdata'LightClient info.
                 confirmSelectionButton.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent actionEvent) {
-                        handleConfirmSelectionButton(confirmSelectionButton,selectionHBox,((Label) popupVbox.getChildren().get(0)));
+                        handleConfirmSelectionButton(confirmSelectionButton,selectionHBox,((Label) popupVbox.getChildren().get(0)),leaderCards);
                     }
                 });
             }
@@ -695,7 +750,7 @@ It also puts the right PopTile Image reading matchdata'LightClient info.
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                Button confirmSelectionButton=(Button) buttonsHbox.getChildren().get(0);
+                Button confirmSelectionButton= discardButton;
                 confirmSelectionButton.setDisable(true);
                 confirmSelectionButton.setVisible(true);
                 boolean[] selectedResourcesBooleans=new boolean[4*quantity];
@@ -755,12 +810,13 @@ It also puts the right PopTile Image reading matchdata'LightClient info.
     }
 
 
-    private void handleConfirmSelectionButton(Button confirmSelectionButton, HBox selectionHBox, Label label){
+    private void handleConfirmSelectionButton(Button confirmSelectionButton, HBox selectionHBox, Label label, List<Integer> leaderCards){
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 if(selectedLeaderCards.size()==2){
-                    client.sendMessageToServer(new ChooseLeaderCardsResponse(selectedLeaderCards));
+                    selectedLeaderCards.stream().forEach(card->leaderCards.remove(card));
+                    client.sendMessageToServer(new ChooseLeaderCardsResponse(leaderCards));
                     selectedLeaderCards =new ArrayList<>();
                     selectionHBox.getChildren().clear();
                     confirmSelectionButton.setVisible(false);
@@ -772,6 +828,7 @@ It also puts the right PopTile Image reading matchdata'LightClient info.
                     selectionHBox.getChildren().clear();
                     confirmSelectionButton.setVisible(false);
                     confirmSelectionButton.setText("Discard");
+                    reorganizeButton.setManaged(true);
                     label.setText("Waiting the other players, the game will start \nas soon as they all be ready...");
                 }
             }

@@ -7,6 +7,7 @@ import it.polimi.ingsw.enumerations.*;
 import it.polimi.ingsw.messages.toClient.game.ChooseLeaderCardsRequest;
 import it.polimi.ingsw.messages.toClient.game.ChooseResourceTypeRequest;
 import it.polimi.ingsw.messages.toClient.game.ChooseStorageTypeRequest;
+import it.polimi.ingsw.messages.toClient.game.NotifyResourcesToStore;
 import it.polimi.ingsw.messages.toClient.matchData.*;
 import it.polimi.ingsw.jsonParsers.LightCardsParser;
 import it.polimi.ingsw.model.cards.*;
@@ -77,6 +78,8 @@ public class SetUpPhase implements GamePhase {
                     Resource resourceType = resourcesToStoreByNickname.get(nickname).get(0);
                     List<String> availableStorage = controller.getPlayerByNickname(nickname).getPersonalBoard().getWarehouse().getAvailableWarehouseDepotsForResourceType(resourceType).stream().map(x -> x.name()).collect(Collectors.toList());
                     controller.getConnectionByNickname(nickname).setClientHandlerPhase(ClientHandlerPhase.WAITING_CHOOSE_STORAGE_TYPE);
+                    List<Resource> resourcesList= resourcesToStoreByNickname.get(nickname);
+                    controller.getConnectionByNickname(nickname).sendMessageToClient(new NotifyResourcesToStore(resourcesList));
                     controller.getConnectionByNickname(nickname).sendMessageToClient(new ChooseStorageTypeRequest(resourceType, availableStorage, false, false));
                 }
             }
@@ -174,6 +177,7 @@ public class SetUpPhase implements GamePhase {
         if (resources.size() == 2 && resources.get(0) == resources.get(1))
             availableDepots.remove(ResourceStorageType.WAREHOUSE_FIRST_DEPOT.name());
         clientHandler.setClientHandlerPhase(ClientHandlerPhase.WAITING_CHOOSE_STORAGE_TYPE);
+        clientHandler.sendMessageToClient(new NotifyResourcesToStore(resources));
         clientHandler.sendMessageToClient(new ChooseStorageTypeRequest(resources.get(0), availableDepots, false, false));
     }
 

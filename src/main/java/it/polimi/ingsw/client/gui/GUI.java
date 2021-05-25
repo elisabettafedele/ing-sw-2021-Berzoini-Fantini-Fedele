@@ -6,7 +6,6 @@ import it.polimi.ingsw.client.View;
 import it.polimi.ingsw.common.FunctionInterface;
 import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.common.LightLeaderCard;
-import it.polimi.ingsw.controller.actions.LeaderCardAction;
 import it.polimi.ingsw.enumerations.ActionType;
 import it.polimi.ingsw.enumerations.Marble;
 import it.polimi.ingsw.enumerations.Resource;
@@ -43,7 +42,6 @@ public class GUI extends Application implements View {
             System.exit(0);
 
         });
-        //displayChooseStorageTypeRequest(null,null,true,true);
         askConnectionParameters();
     }
 
@@ -148,9 +146,7 @@ public class GUI extends Application implements View {
         for(String s: availableDepots){
             interactableDepots.put(ResourceStorageType.valueOf(s),true);
         }
-        gameSceneController.activateResourceInsertion(resource,interactableDepots,canDiscard,canReorganize);
-
-
+        gameSceneController.startResourceInsertion(resource,interactableDepots,canDiscard,canReorganize);
     }
 
     @Override
@@ -208,6 +204,9 @@ public class GUI extends Application implements View {
     @Override
     public void update(MatchDataMessage message) {
         MatchData.getInstance().update(message);
+        if(gameSceneController!=null){
+            gameSceneController.updateView();
+        }
     }
 
     @Override
