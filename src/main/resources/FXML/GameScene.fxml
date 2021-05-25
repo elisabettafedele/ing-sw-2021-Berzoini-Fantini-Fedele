@@ -636,12 +636,17 @@
             </Pane>
             <Pane layoutX="230.0" layoutY="23.0" prefHeight="88.0" prefWidth="163.0">
                <children>
-                  <Label fx:id="mainLabelNames" alignment="TOP_CENTER" prefHeight="87.0" prefWidth="87.0">
+                  <Label fx:id="mainLabelNames" alignment="TOP_CENTER" prefHeight="67.0" prefWidth="87.0">
                      <font>
                         <Font size="8.0" />
                      </font>
                   </Label>
-                  <Label fx:id="mainLabelStats" alignment="TOP_CENTER" layoutX="92.0" prefHeight="88.0" prefWidth="70.0">
+                  <Label fx:id="mainLabelStats" alignment="TOP_CENTER" layoutX="92.0" prefHeight="67.0" prefWidth="70.0">
+                     <font>
+                        <Font size="8.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="mainLabelMessage" alignment="CENTER" layoutX="1.0" layoutY="62.0" prefHeight="27.0" prefWidth="163.0">
                      <font>
                         <Font size="8.0" />
                      </font>

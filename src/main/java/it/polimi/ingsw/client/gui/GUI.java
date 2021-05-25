@@ -237,7 +237,7 @@ public class GUI extends Application implements View {
 
     @Override
     public void displayChooseActionRequest(Map<ActionType, Boolean> executableActions, boolean standardActionDone) {
-
+        gameSceneController.displayChooseActionRequest(executableActions,standardActionDone);
     }
 
     @Override

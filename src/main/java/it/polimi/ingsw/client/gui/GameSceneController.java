@@ -89,6 +89,8 @@ public class GameSceneController {
     @FXML
     private Label mainLabelStats;
     @FXML
+    private Label mainLabelMessage;
+    @FXML
     private Label currentPBNicknameLabel;
 
     @FXML
@@ -105,23 +107,26 @@ public class GameSceneController {
 
     MatchData matchData;
 
-    Map<ActionType,Boolean> doableActions;
+    Map<ActionType,Boolean> executableActions;
     Map<ResourceStorageType,Node> storageNameToNodeMap;
     List<Resource> selectedResources;
     List<Integer> selectedLeaderCards;
+
+    boolean isYourTurn;
 
     @FXML
     public void initialize() {
         matchData=MatchData.getInstance();
         players=matchData.getAllNicknames();
         currentPlayerIndex=0;
-        doableActions= new HashMap<>();
+        isYourTurn =false;
+        executableActions = new HashMap<>();
         final boolean debug=false;
-        doableActions.put(ActionType.TAKE_RESOURCE_FROM_MARKET,debug);
-        doableActions.put(ActionType.BUY_DEVELOPMENT_CARD,debug);
-        doableActions.put(ActionType.ACTIVATE_PRODUCTION,debug);
-        doableActions.put(ActionType.ACTIVATE_LEADER_CARD,debug);
-        doableActions.put(ActionType.DISCARD_LEADER_CARD,debug);
+        executableActions.put(ActionType.TAKE_RESOURCE_FROM_MARKET,debug);
+        executableActions.put(ActionType.BUY_DEVELOPMENT_CARD,debug);
+        executableActions.put(ActionType.ACTIVATE_PRODUCTION,debug);
+        executableActions.put(ActionType.ACTIVATE_LEADER_CARD,debug);
+        executableActions.put(ActionType.DISCARD_LEADER_CARD,debug);
         storageNameToNodeMap=new HashMap<>();
         storageNameToNodeMap.put(ResourceStorageType.WAREHOUSE_FIRST_DEPOT,warehouse.getChildren().get(3));
         storageNameToNodeMap.put(ResourceStorageType.WAREHOUSE_SECOND_DEPOT,warehouse.getChildren().get(4));
@@ -150,13 +155,13 @@ public class GameSceneController {
         deactivateGlowingAndSelectEventHandler(rightLeaderCard);
         deactivateGlowingAndSelectEventHandler(activateProductionPane);
         deactivateGlowingAndSelectEventHandler(marketGrid);
-        if(currentPlayerIndex==0){
+        if(currentPlayerIndex==0&&isYourTurn){
             List<LightLeaderCard> leaderCards =new ArrayList<>();
             for(Integer lcID :matchData.getLightClientByNickname(players.get(currentPlayerIndex)).getOwnedLeaderCards()){
                 leaderCards.add(matchData.getLeaderCardByID(lcID));
             }
-            for(ActionType actionType : doableActions.keySet()){
-                if(doableActions.get(actionType)==true){
+            for(ActionType actionType : executableActions.keySet()){
+                if(executableActions.get(actionType)==true){
                     switch (actionType){
                         case TAKE_RESOURCE_FROM_MARKET:
                             activateGlowingAndSelectEventHandler(marketGrid,false,actionType);
@@ -178,7 +183,7 @@ public class GameSceneController {
                         case DISCARD_LEADER_CARD:
                             int ii=0;
                             for(LightLeaderCard lc : leaderCards){
-                                if(matchData.getLightClientByNickname(players.get(currentPlayerIndex)).leaderCardIsActive(lc.getID())){
+                                if(!matchData.getLightClientByNickname(players.get(currentPlayerIndex)).leaderCardIsActive(lc.getID())){
                                     activateGlowingAndSelectEventHandler(((Pane)leftLeaderCard.getParent()).getChildren().get(ii*2),false,actionType);
                                 }
                                 ii++;
@@ -190,15 +195,24 @@ public class GameSceneController {
     }
 
     private void deactivateGlowingAndSelectEventHandler(Node nodeToActivate){
-        if (nodeToActivate.getOnMouseEntered() != null) {
-            nodeToActivate.removeEventHandler(MouseEvent.MOUSE_ENTERED,nodeToActivate.getOnMouseEntered());
-        }
-        if (nodeToActivate.getOnMouseExited() != null) {
-            nodeToActivate.removeEventHandler(MouseEvent.MOUSE_EXITED,nodeToActivate.getOnMouseExited());
-        }
-        if (nodeToActivate.getOnMouseClicked() != null) {
-            nodeToActivate.removeEventHandler(MouseEvent.MOUSE_CLICKED,nodeToActivate.getOnMouseClicked());
-        }
+        nodeToActivate.setOnMouseEntered(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                mouseEvent.consume();
+            }
+        });
+        nodeToActivate.setOnMouseExited(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                mouseEvent.consume();
+            }
+        });
+        nodeToActivate.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                mouseEvent.consume();
+            }
+        });
     }
 
     private void activateGlowingAndSelectEventHandler(Node nodeToActivate, boolean activateLeaderCard, ActionType actionType){
@@ -227,6 +241,8 @@ public class GameSceneController {
             }
         });
     }
+
+
     private void makeDraggable(Node resourceToDrag, String resourceAsString) {
         resourceToDrag.setOnDragDetected(new EventHandler<MouseEvent>() {
             public void handle(MouseEvent event) {
@@ -327,7 +343,11 @@ public class GameSceneController {
             }
         }
         resetStorageInsertion();
+        ((Label)popupVbox.getChildren().get(0)).setText("Waiting the other players, the game will start \nas soon as they all be ready...");
         client.sendMessageToServer(new ChooseStorageTypeResponse(Resource.valueOf(resourceToAddAsString),storageSelected,discardButton.isVisible(),reorganizeButton.isVisible()));
+        popupVbox.setVisible(false);
+        popupVbox.setManaged(false);
+        mainLabelMessage.setText("WAIT YOUR TURN");
     }
 
     private void resetStorageInsertion() {
@@ -350,7 +370,16 @@ public class GameSceneController {
     }
 
     private void selectAction(Node nodeToActivate) {
-        System.out.println(nodeToActivate.getId());
+        String selectedAction=new String();
+        for(ActionType actionType:executableActions.keySet()){
+            if(executableActions.get(actionType).equals(nodeToActivate)){
+                selectedAction= actionType.toString();
+                selectedAction.replace('_','\n');
+            }
+        }
+        mainLabelNames.setText("\nYOU \nCHOSE :");
+        mainLabelStats.setText(selectedAction);
+        mainLabelMessage.setText("Have a nice day :)");
     }
 
     private void glowNode(Node nodeToGlow,Color color){
@@ -362,8 +391,10 @@ public class GameSceneController {
     }
 
     private void updateMainLabel() {
+        mainLabelMessage.setFont(new Font(mainLabelNames.getFont().toString(),10));
         mainLabelStats.setFont(new Font(mainLabelNames.getFont().toString(),10));
         mainLabelStats.setText("\n");
+        mainLabelNames.setFont(new Font(mainLabelNames.getFont().toString(),10));
         mainLabelNames.setText("\n");
         for(int i=0;i<players.size();i++){
             mainLabelNames.setText(mainLabelNames.getText() + players.get(i) + "\n");
@@ -596,6 +627,7 @@ It also puts the right PopTile Image reading matchdata'LightClient info.
                 else{
                     currentPlayerIndex++;
                 }
+                updateGlowingObjects();
                 updateView();
             }
         });
@@ -611,6 +643,7 @@ It also puts the right PopTile Image reading matchdata'LightClient info.
                 else{
                     currentPlayerIndex--;
                 }
+                updateGlowingObjects();
                 updateView();
             }
         });
@@ -636,6 +669,7 @@ It also puts the right PopTile Image reading matchdata'LightClient info.
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+                popupVbox.setVisible(true);
                 discardButton.setVisible(canDiscard);
                 discardButton.setManaged(canDiscard);
                 reorganizeButton.setVisible(canReorganize);
@@ -763,6 +797,7 @@ It also puts the right PopTile Image reading matchdata'LightClient info.
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+                popupVbox.setVisible(true);
                 Button confirmSelectionButton= discardButton;
                 confirmSelectionButton.setDisable(true);
                 confirmSelectionButton.setVisible(true);
@@ -835,6 +870,8 @@ It also puts the right PopTile Image reading matchdata'LightClient info.
                     confirmSelectionButton.setVisible(false);
                     confirmSelectionButton.setDisable(true);
                     label.setText("Waiting the other players, the game will start \nas soon as they all be ready...");
+
+                    popupVbox.setVisible(false);
                 }
                 if(selectedLeaderCards.size()==0&&selectedResources.size()>0){
                     client.sendMessageToServer(new ChooseResourceTypeResponse(selectedResources));
@@ -849,6 +886,21 @@ It also puts the right PopTile Image reading matchdata'LightClient info.
 
 
     }
+
+
+    public void displayChooseActionRequest(Map<ActionType, Boolean> executableActions, boolean standardActionDone) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                  GameSceneController.this.executableActions =executableActions;
+                  isYourTurn=true;
+                  mainLabelMessage.setText("IT'S YOUR TURN!");
+                  updateGlowingObjects();
+                  //TODO attiva tasti switch player e gestici la possibilità di una leadercard che si puo sia scartare che attivare
+            }
+        });
+    }
+
     /*   Use this to avoid Thread exception
 
 
