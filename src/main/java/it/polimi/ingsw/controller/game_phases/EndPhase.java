@@ -2,7 +2,11 @@ package it.polimi.ingsw.controller.game_phases;
 
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
+import it.polimi.ingsw.messages.toServer.MessageToServer;
+import it.polimi.ingsw.model.cards.Card;
+import it.polimi.ingsw.model.cards.LeaderCard;
 import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.server.ClientHandler;
 
 public abstract class EndPhase implements GamePhase {
 
@@ -13,21 +17,24 @@ public abstract class EndPhase implements GamePhase {
         this.controller = controller;
         countVictoryPoints();
         notifyResults();
+    }
 
-
+    public void handleMessage(MessageToServer message, ClientHandler clientHandler){
+        //ignored
     }
 
     private void countVictoryPoints(){
         for (Player player : controller.getPlayers()){
             try {
                 //Development Cards
-                player.addVictoryPoints(player.getPersonalBoard().getDevelopmentCards().stream().map(x -> x.getVictoryPoints()).mapToInt(i -> i).sum());
+                player.addVictoryPoints(player.getPersonalBoard().getDevelopmentCards().stream().map(Card::getVictoryPoints).mapToInt(i -> i).sum());
+
                 //FaithTrack
                 player.addVictoryPoints(controller.getGame().getFaithTrack().getVictoryPoints(player.getPersonalBoard().getMarkerPosition()));
-                //Previous favor tiles are already counted
 
                 //Leader Cards
-                player.addVictoryPoints(player.getPersonalBoard().getLeaderCards().stream().filter(x -> x.isActive()).map(x -> x.getVictoryPoints()).mapToInt(i -> i).sum());
+                player.addVictoryPoints(player.getPersonalBoard().getLeaderCards().stream().filter(LeaderCard::isActive).map(Card::getVictoryPoints).mapToInt(i -> i).sum());
+
                 //Resources
                 player.addVictoryPoints(player.getPersonalBoard().countResourceNumber() / 5);
             } catch (InvalidArgumentException e){
@@ -40,10 +47,6 @@ public abstract class EndPhase implements GamePhase {
 
     public Controller getController(){
         return controller;
-    }
-
-    public void removeControllerFromActiveGames(){
-
     }
 
     public String toString(){

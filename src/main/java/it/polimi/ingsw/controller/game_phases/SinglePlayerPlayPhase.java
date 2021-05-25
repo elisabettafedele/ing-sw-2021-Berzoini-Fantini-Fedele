@@ -18,7 +18,7 @@ import it.polimi.ingsw.jsonParsers.SoloActionTokenParser;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class SinglePlayerPlayPhase extends PlayPhase implements GamePhase {
+public class SinglePlayerPlayPhase extends PlayPhase {
     private int blackCrossPosition;
     private Queue<SoloActionToken> tokens;
     public static String LORENZO = "LORENZO";
@@ -28,12 +28,6 @@ public class SinglePlayerPlayPhase extends PlayPhase implements GamePhase {
     public SinglePlayerPlayPhase(Controller controller){
         setController(controller);
         this.blackCrossPosition = 0;
-        try {
-           setPlayer(controller.getGame().getSinglePlayer());
-           this.lastPlayer = getPlayer().getNickname();
-        } catch (InvalidMethodException | ZeroPlayerException e) {
-            e.printStackTrace();
-        }
         setPlayer(controller.getPlayers().get(0));
         this.tokens = SoloActionTokenParser.parseTokens();
         shuffleTokens();

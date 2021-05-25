@@ -3,19 +3,15 @@ package it.polimi.ingsw.controller.game_phases;
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.controller.TurnController;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
-import it.polimi.ingsw.exceptions.InvalidMethodException;
-import it.polimi.ingsw.exceptions.ZeroPlayerException;
-import it.polimi.ingsw.messages.toClient.WelcomeBackMessage;
 import it.polimi.ingsw.messages.toClient.matchData.UpdateMarkerPosition;
 import it.polimi.ingsw.model.persistency.GameHistory;
 import it.polimi.ingsw.model.persistency.PersistentControllerPlayPhase;
 import it.polimi.ingsw.model.persistency.PersistentGame;
 import it.polimi.ingsw.model.player.Player;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MultiplayerPlayPhase extends PlayPhase implements GamePhase {
+public class MultiplayerPlayPhase extends PlayPhase {
 
     private int turnIndex;
 
@@ -28,8 +24,6 @@ public class MultiplayerPlayPhase extends PlayPhase implements GamePhase {
     public MultiplayerPlayPhase(Controller controller, String lastPlayerNickname, boolean endTrigger){
         setController(controller);
         this.turnIndex = controller.getPlayers().stream().map(Player::getNickname).collect(Collectors.toList()).indexOf(lastPlayerNickname);
-        //controller.sendLightCards();
-        //controller.sendMatchData(controller.getGame(), false);
         pickNextPlayer();
         setTurnController(new TurnController(controller, controller.getPlayers().get(turnIndex)));
         getTurnController().setEndTrigger(endTrigger);
@@ -43,17 +37,21 @@ public class MultiplayerPlayPhase extends PlayPhase implements GamePhase {
     @Override
     public void nextTurn() {
         pickNextPlayer();
+        while(!getController().getPlayers().get(turnIndex).isActive() && getTurnController().getController().getClientHandlers().size() > 0)
+            pickNextPlayer();
         if (getTurnController().getController().getClientHandlers().size() == 0){
+            //TODO handle better
             return;
         }
-        while(!getController().getPlayers().get(turnIndex).isActive())
-            pickNextPlayer();
         if (getTurnController().isEndTriggered() && getTurnController().getController().getPlayers().get(turnIndex).hasInkwell())
-            getController().endMatch();
+            getController().endMatch(); //In theory this is not needed since this work is done by pickNextPlayer. Just an extra check
         else
             getTurnController().start(getController().getPlayers().get(turnIndex));
     }
 
+    /**
+     * Method used to set the next player index. It also checks whether the match should end and, in that case, it makes it end.
+     */
     public void pickNextPlayer(){
         if (turnIndex == getController().getPlayers().size() - 1 && getTurnController().isEndTriggered())
             getController().endMatch();
@@ -61,40 +59,46 @@ public class MultiplayerPlayPhase extends PlayPhase implements GamePhase {
             turnIndex = turnIndex == getController().getPlayers().size() - 1 ? 0 : turnIndex + 1;
     }
 
+    /**
+     * Method to handle the discard of resources by one player. When a resource is discarded all the other players gain one faith point
+     * @param nickname is the nickname of the player who has discarded the resource and that will not gain any faith point
+     */
     @Override
     public void handleResourceDiscard(String nickname)  {
-        List<Player> players = null;
-        try {
-            players = getController().getGame().getPlayers();
-        } catch (InvalidMethodException | ZeroPlayerException e) {
-            e.printStackTrace();
-        }
+        List<Player> players = getController().getPlayers();
         for (Player player : players){
             if (!nickname.equals(player.getNickname())) {
                 try {
                     player.getPersonalBoard().moveMarker(1);
                     getController().sendMessageToAll(new UpdateMarkerPosition(player.getNickname(), player.getPersonalBoard().getMarkerPosition()));
-                } catch (InvalidArgumentException e) {
-                    e.printStackTrace();
-                }
+                } catch (InvalidArgumentException ignored) { } //never thrown, the argument is "1", so it will never be negative
             }
         }
         getTurnController().checkFaithTrack();
     }
 
+    /**
+     * Method called when endTrigger is set true by the {@link TurnController}.
+     * Since the {@link it.polimi.ingsw.enumerations.GameMode} in this case is multiplayer, I do not have to do anything.
+     * I just wait until the round is finished. The end will be checked and handled by pickNextPlayer().
+     */
     @Override
     public void handleEndTriggered() {
-
+        //When the endTrigger variable becomes true and the game is multiplayer, I do not have to do anything. I just wait until the round is finished -> it is checked by pickNextPlayer().
     }
 
 
     @Override
     public void executePhase(Controller controller) {
         setTurnController(new TurnController(controller,getPlayer()));
+        //TODO check why I am doing this
         reloadGameCopy(false);
         getTurnController().start(getPlayer());
     }
 
+    /**
+     * Method used to save a multiplayer game as a json file after a player has performed a standard action (his turn becomes valid) and at the end of each turn
+     */
     public void saveGame(){
         GameHistory.saveGame(new PersistentControllerPlayPhase(new PersistentGame(getController().getGame()), getTurnController().getCurrentPlayer().getNickname(), getController().getControllerID(), getTurnController().isEndTriggered()));
     }

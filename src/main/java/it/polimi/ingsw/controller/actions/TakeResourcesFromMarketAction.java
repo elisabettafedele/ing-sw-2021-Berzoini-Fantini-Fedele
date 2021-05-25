@@ -10,7 +10,6 @@ import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.controller.*;
 import it.polimi.ingsw.enumerations.*;
 import it.polimi.ingsw.exceptions.*;
-import it.polimi.ingsw.messages.toClient.*;
 import it.polimi.ingsw.messages.toServer.*;
 import it.polimi.ingsw.model.cards.Effect;
 import it.polimi.ingsw.model.cards.LeaderCard;
@@ -40,7 +39,7 @@ public class TakeResourcesFromMarketAction implements Action {
      */
     public TakeResourcesFromMarketAction(TurnController turnController) {
         this.player= turnController.getCurrentPlayer();
-        this.turnController=turnController;
+        this.turnController = turnController;
         this.controller = turnController.getController();
         this.resourcesToStore = new LinkedList<>();
         this.market = controller.getGame().getMarket();
@@ -67,25 +66,6 @@ public class TakeResourcesFromMarketAction implements Action {
         clientHandler.sendMessageToClient(new MarbleInsertionPositionRequest());
     }
 
-    @Override
-    public void handleMessage(MessageToServer message) {
-        if (message instanceof MarbleInsertionPositionResponse)
-            handleInsertionPositionResponse(((MarbleInsertionPositionResponse) message).getInsertionPosition());
-        if (message instanceof ChooseWhiteMarbleConversionResponse)
-            handleWhiteMarblesConversionResponse(((ChooseWhiteMarbleConversionResponse) message).getResource());
-        if (message instanceof ChooseStorageTypeResponse)
-            storeResource(((ChooseStorageTypeResponse) message).getResource(), ((ChooseStorageTypeResponse) message).getStorageType());
-        if (message instanceof DiscardResourceRequest)
-            handleDiscard(((DiscardResourceRequest) message).getResource());
-        if (message instanceof ReorganizeDepotRequest)
-            handleReorganizeDepotsRequest();
-        if (message instanceof SwapWarehouseDepotsRequest)
-            handleSwapRequest(((SwapWarehouseDepotsRequest) message).getOriginDepot(), ((SwapWarehouseDepotsRequest) message).getDestinationDepot());
-        if (message instanceof MoveResourcesRequest)
-            handleMoveRequest(((MoveResourcesRequest) message).getOriginDepot(), ((MoveResourcesRequest) message).getDestinationDepot(), ((MoveResourcesRequest) message).getResource(), ((MoveResourcesRequest) message).getQuantity());
-        if (message instanceof NotifyEndDepotsReorganization)
-            handleEndDepotsOrganization();
-    }
 
     /**
      * Method called once that the client has inserted the desired insertion position
@@ -98,8 +78,7 @@ public class TakeResourcesFromMarketAction implements Action {
             marblesToConvert = market.insertMarbleFromTheSlide(insertionPosition - 1);
             controller.sendMessageToAll(new UpdateMarketView(clientHandler.getNickname(), controller.getGame().getMarket().getMarketTray(), controller.getGame().getMarket().getSlideMarble()));
             clientHandler.sendMessageToClient(new NotifyMarbleTaken(marblesToConvert, whiteMarblesNumber > 1));
-        } catch (InvalidArgumentException e) {
-        }
+        } catch (InvalidArgumentException ignored) { }// Never thrown I check its validity before
         if (whiteMarblesNumber > 1 && marblesToConvert.contains(Marble.WHITE)) {
             handleWhiteMarblesConversion();
         } else if ((whiteMarblesNumber == 1 && marblesToConvert.contains(Marble.WHITE)))
@@ -170,7 +149,7 @@ public class TakeResourcesFromMarketAction implements Action {
                 try {
                     player.getPersonalBoard().moveMarker(1);
                     controller.sendMessageToAll(new UpdateMarkerPosition(player.getNickname(), player.getPersonalBoard().getMarkerPosition()));
-                } catch (InvalidArgumentException ignored) { }
+                } catch (InvalidArgumentException ignored) { } //I move the marker of a not negative quantity
             } else if (marble != Marble.WHITE)
                 resourcesToStore.add(Resource.valueOf(marble.getValue()));
         }
@@ -347,6 +326,65 @@ public class TakeResourcesFromMarketAction implements Action {
         turnController.setStandardActionDoneToTrue();
         clientHandler.sendMessageToClient(new DisplayStandardView());
         turnController.setNextAction();
+    }
+/*
+    @Override
+    public void handleMessage(MessageToServer message){
+        //ignored since it does not match any type of message I am waiting
+    }
+
+    public void handleMessage(MarbleInsertionPositionResponse message){
+        handleInsertionPositionResponse(message.getInsertionPosition());
+    }
+
+    public void handleMessage(ChooseWhiteMarbleConversionResponse message) {
+        handleWhiteMarblesConversionResponse(message.getResource());
+    }
+
+    public void handleMessage(ChooseStorageTypeResponse message) {
+        storeResource(message.getResource(), message.getStorageType());
+    }
+
+    public void handleMessage(DiscardResourceRequest message) {
+        handleDiscard(message.getResource());
+    }
+
+    public void handleMessage(ReorganizeDepotRequest message) {
+        handleReorganizeDepotsRequest();
+    }
+
+    public void handleMessage(SwapWarehouseDepotsRequest message) {
+        handleSwapRequest(message.getOriginDepot(), message.getDestinationDepot());
+    }
+
+    public void handleMessage(MoveResourcesRequest message) {
+        handleMoveRequest(message.getOriginDepot(), message.getDestinationDepot(), message.getResource(), message.getQuantity());
+    }
+
+    public void handleMessage(NotifyEndDepotsReorganization message){
+        handleEndDepotsOrganization();
+    }
+
+    */
+
+    @Override
+    public void handleMessage(MessageToServer message) {
+        if (message instanceof MarbleInsertionPositionResponse)
+            handleInsertionPositionResponse(((MarbleInsertionPositionResponse) message).getInsertionPosition());
+        if (message instanceof ChooseWhiteMarbleConversionResponse)
+            handleWhiteMarblesConversionResponse(((ChooseWhiteMarbleConversionResponse) message).getResource());
+        if (message instanceof ChooseStorageTypeResponse)
+            storeResource(((ChooseStorageTypeResponse) message).getResource(), ((ChooseStorageTypeResponse) message).getStorageType());
+        if (message instanceof DiscardResourceRequest)
+            handleDiscard(((DiscardResourceRequest) message).getResource());
+        if (message instanceof ReorganizeDepotRequest)
+            handleReorganizeDepotsRequest();
+        if (message instanceof SwapWarehouseDepotsRequest)
+            handleSwapRequest(((SwapWarehouseDepotsRequest) message).getOriginDepot(), ((SwapWarehouseDepotsRequest) message).getDestinationDepot());
+        if (message instanceof MoveResourcesRequest)
+            handleMoveRequest(((MoveResourcesRequest) message).getOriginDepot(), ((MoveResourcesRequest) message).getDestinationDepot(), ((MoveResourcesRequest) message).getResource(), ((MoveResourcesRequest) message).getQuantity());
+        if (message instanceof NotifyEndDepotsReorganization)
+            handleEndDepotsOrganization();
     }
 
     public String toString(){

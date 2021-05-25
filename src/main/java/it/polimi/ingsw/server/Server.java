@@ -420,6 +420,7 @@ public class Server implements ServerInterface {
 
     public void gameEnded(Controller controller){
         takenNicknames.remove(controller.getPlayers().get(0).getNickname());
+        GameHistory.removeOldGame(controller.getControllerID());
         activeGames.remove(controller);
     }
 

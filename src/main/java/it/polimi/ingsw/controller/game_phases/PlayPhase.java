@@ -13,7 +13,7 @@ import it.polimi.ingsw.server.Server;
 
 import java.util.logging.Level;
 
-public abstract class PlayPhase {
+public abstract class PlayPhase implements GamePhase{
     private Controller controller;
     private TurnController turnController;
     private Player player;
@@ -31,6 +31,10 @@ public abstract class PlayPhase {
         this.player = player;
     }
 
+    public void setLastTurnGameCopy(PersistentGame lastTurnGameCopy) {
+        this.lastTurnGameCopy = lastTurnGameCopy;
+    }
+
     public Controller getController() {
         return controller;
     }
@@ -41,6 +45,10 @@ public abstract class PlayPhase {
 
     public Player getPlayer() {
         return player;
+    }
+
+    public PersistentGame getLastTurnGameCopy() {
+        return lastTurnGameCopy;
     }
 
     public abstract void nextTurn();
@@ -57,9 +65,6 @@ public abstract class PlayPhase {
     }
 
     public abstract void handleEndTriggered();
-    public String toString(){
-        return "Play Phase";
-    }
 
     public void saveGameCopy(Game game){
         lastTurnGameCopy = new PersistentGame(game);
@@ -69,15 +74,11 @@ public abstract class PlayPhase {
         controller.sendMatchData(controller.getGame(), disconnection);
     }
 
-    public PersistentGame getLastTurnGameCopy() {
-        return lastTurnGameCopy;
-    }
-
-    public void setLastTurnGameCopy(PersistentGame lastTurnGameCopy) {
-        this.lastTurnGameCopy = lastTurnGameCopy;
-    }
-
     public abstract void saveGame();
 
     public abstract void restartLastTurn();
+
+    public String toString(){
+        return "Play Phase";
+    }
 }
