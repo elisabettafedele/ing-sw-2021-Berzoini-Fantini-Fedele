@@ -24,6 +24,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import java.util.*;
@@ -292,18 +293,30 @@ public class GameSceneController {
     }
 
     private void deactivateDraggableOver(Node nodeDraggableOver) {
-        if (nodeDraggableOver.getOnDragOver() != null) {
-            nodeDraggableOver.removeEventHandler(DragEvent.DRAG_OVER,nodeDraggableOver.getOnDragOver());
-        }
-        if (nodeDraggableOver.getOnDragEntered() != null) {
-            nodeDraggableOver.removeEventHandler(DragEvent.DRAG_ENTERED,nodeDraggableOver.getOnDragEntered());
-        }
-        if (nodeDraggableOver.getOnDragExited() != null) {
-            nodeDraggableOver.removeEventHandler(DragEvent.DRAG_EXITED,nodeDraggableOver.getOnDragExited());
-        }
-        if(nodeDraggableOver.getOnDragDropped()!=null){
-            nodeDraggableOver.removeEventHandler(DragEvent.DRAG_DROPPED,nodeDraggableOver.getOnDragDropped());
-        }
+        nodeDraggableOver.setOnDragOver(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+                event.consume();
+            }
+        });
+        nodeDraggableOver.setOnDragEntered(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+                event.consume();
+            }
+        });
+        nodeDraggableOver.setOnDragExited(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+                event.consume();
+            }
+        });
+        nodeDraggableOver.setOnDragDropped(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+                event.consume();
+            }
+        });
     }
 
     private void addResource(Node nodeDraggableOver, String resourceToAddAsString) {
@@ -313,11 +326,11 @@ public class GameSceneController {
                 storageSelected=rst.toString();
             }
         }
-        finishStorageInsertion();
+        resetStorageInsertion();
         client.sendMessageToServer(new ChooseStorageTypeResponse(Resource.valueOf(resourceToAddAsString),storageSelected,discardButton.isVisible(),reorganizeButton.isVisible()));
     }
 
-    private void finishStorageInsertion() {
+    private void resetStorageInsertion() {
         for(ResourceStorageType resourceStorageType : storageNameToNodeMap.keySet()){
             if(resourceStorageType.equals(ResourceStorageType.LEADER_DEPOT)){
                 deactivateDraggableOver(leftLeaderDepot);
@@ -349,8 +362,9 @@ public class GameSceneController {
     }
 
     private void updateMainLabel() {
-        mainLabelStats.setText("\n\n");
-        mainLabelNames.setText("\n\n");
+        mainLabelStats.setFont(new Font(mainLabelNames.getFont().toString(),10));
+        mainLabelStats.setText("\n");
+        mainLabelNames.setText("\n");
         for(int i=0;i<players.size();i++){
             mainLabelNames.setText(mainLabelNames.getText() + players.get(i) + "\n");
             mainLabelStats.setText(mainLabelStats.getText() + "FT: " + matchData.getLightClientByNickname(players.get(i)).getFaithTrackPosition() + " VP: " + matchData.getLightClientByNickname(players.get(i)).getVictoryPoints() + "\n");
@@ -459,7 +473,6 @@ It also puts the right PopTile Image reading matchdata'LightClient info.
         for(Integer lcID :matchData.getLightClientByNickname(players.get(currentPlayerIndex)).getOwnedLeaderCards()){
             leaderCards.add(matchData.getLeaderCardByID(lcID));
         }
-        leaderCards.stream().forEach(x->System.out.println(x.toString()));
         //initializes visibilities
         rightLeaderCard.setVisible(false);
         leftLeaderCard.setVisible(false);
@@ -509,7 +522,7 @@ It also puts the right PopTile Image reading matchdata'LightClient info.
             //if card is inactive
             else{
                 //if player is watching its leaderCards he can see the inactive ones too
-                if(currentPlayerIndex==0){
+                if(currentPlayerIndex==0 && leaderCards.size()!=4){
                     if(i==0){
                         leftLeaderCard.setImage(new Image(GameSceneController.class.getResource("/img/Cards/LeaderCards/front/" + leaderCards.get(i).getID() + ".png").toString()));
                         ColorAdjust colorAdjust=new ColorAdjust();
