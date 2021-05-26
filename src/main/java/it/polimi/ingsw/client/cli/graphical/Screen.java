@@ -1,12 +1,16 @@
 package it.polimi.ingsw.client.cli.graphical;
 
 import it.polimi.ingsw.client.MatchData;
+import it.polimi.ingsw.common.LightCard;
 import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.common.LightLeaderCard;
+import it.polimi.ingsw.enumerations.Resource;
+import it.polimi.ingsw.exceptions.ValueNotPresentException;
+import it.polimi.ingsw.model.cards.Value;
 
 import java.util.ArrayList;
-import java.util.EmptyStackException;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 public class Screen extends GraphicalElement{
@@ -62,6 +66,8 @@ public class Screen extends GraphicalElement{
     }
 
     public void displayStandardView(){
+        System.out.print("\u001b[2J");
+        System.out.flush();
         reset();
         drawAllElements();
         display();
@@ -179,27 +185,102 @@ public class Screen extends GraphicalElement{
         }
     }
 
-    public void displaySetUpLeaderCardSelection(List<Integer> IDs){
+    public void displayCardSelection(List<Integer> IDs, List<Value> basicProduction){
         reset();
         int x_anchor = height - GraphicalDevelopmentCardGrid.cardHeight;
         int y_anchor = 0;
         int y_step = GraphicalDevelopmentCardGrid.cardWidth + 1;
+        LightCard lc;
+        GraphicalCard gc;
+        boolean basicProd = false;
+
+        if(IDs.contains(0)){
+            drawBasicProduction(y_step*(IDs.size()-1), x_anchor, basicProduction);
+            IDs.remove(Integer.valueOf(0));
+            basicProd = true;
+        }
 
         for(Integer ID : IDs){
-            LightLeaderCard llc = MatchData.getInstance().getLeaderCardByID(ID);
-            GraphicalLeaderCard glc = new GraphicalLeaderCard(llc, null);
-            glc.drawCard();
-            drawElement(GraphicalDevelopmentCardGrid.cardHeight, GraphicalDevelopmentCardGrid.cardWidth, glc.getColours(), glc.getSymbols(),
-                    glc.getBackGroundColours(), x_anchor, y_anchor);
+            if(ID < 49){
+                lc = MatchData.getInstance().getDevelopmentCardByID(ID);
+                gc = new GraphicalDevelopmentCard(lc, this.nickname);
+            }else{
+                lc = MatchData.getInstance().getLeaderCardByID(ID);
+                gc = new GraphicalLeaderCard(lc, this.nickname);
+            }
+            gc.drawCard();
+            drawElement(GraphicalDevelopmentCardGrid.cardHeight, GraphicalDevelopmentCardGrid.cardWidth, gc.getColours(), gc.getSymbols(),
+                    gc.getBackGroundColours(), x_anchor, y_anchor);
 
             y_anchor += y_step;
         }
+        if(basicProd)
+            IDs.add(0);
         int x_start = height - GraphicalDevelopmentCardGrid.cardHeight;
         int x_end = height;
         int y_start = 0;
         int y_end = width;
         displayASection(x_start, x_end, y_start, y_end);
     }
+
+    private void drawBasicProduction(int y_anchor, int x_anchor, List<Value> basicProduction) {
+        String a = "BASIC  ID:0";
+        String b = "PRODUCTION";
+        String c = "  POWER";
+        List<String> name = new ArrayList<>();
+        name.add(a);
+        name.add(b);
+        name.add(c);
+
+        for(int i = x_anchor; i < x_anchor + 3; i++){
+            for(int j = y_anchor; j < y_anchor + name.get(i-x_anchor).length(); j++){
+                symbols[i][j+1] = name.get(i-x_anchor).charAt(j-y_anchor);
+                colours[i][j+1] = Colour.ANSI_BLUE;
+            }
+        }
+        try {
+            if(basicProduction.get(0).getResourceValue().containsKey(Resource.ANY)){
+                drawUnselectedBasicProductionPower(x_anchor, y_anchor);
+            }else{
+                drawSelectedBasicProductionPower(x_anchor, y_anchor, basicProduction);
+            }
+        } catch (ValueNotPresentException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void drawSelectedBasicProductionPower(int x_anchor, int y_anchor, List<Value> basicProduction) throws ValueNotPresentException {
+        Map<Resource, Integer> cost = basicProduction.get(0).getResourceValue();
+        int start = 4;
+        symbols[x_anchor + 4][y_anchor + 3] = '1';
+        symbols[x_anchor + 4][y_anchor + 5] = '1';
+        for(Map.Entry<Resource, Integer> entry : cost.entrySet()){
+            symbols[x_anchor + 4][y_anchor + start] = entry.getKey().symbol.charAt(0);
+            colours[x_anchor + 4][y_anchor + start] = Colour.getColourByResource(entry.getKey());
+            start += 2;
+        }
+        symbols[x_anchor + 5][y_anchor + 4] = '1';
+        start = 5;
+        cost = basicProduction.get(1).getResourceValue();
+        for(Map.Entry<Resource, Integer> entry : cost.entrySet()){
+            symbols[x_anchor + 5][y_anchor + start] = entry.getKey().symbol.charAt(0);
+            colours[x_anchor + 5][y_anchor + start] = Colour.getColourByResource(entry.getKey());
+            start += 2;
+        }
+    }
+
+
+    private void drawUnselectedBasicProductionPower(int x_anchor, int y_anchor) {
+        symbols[x_anchor + 4][y_anchor + 3] = '1';
+        symbols[x_anchor + 4][y_anchor + 4] = '?';
+        symbols[x_anchor + 4][y_anchor + 5] = '1';
+        symbols[x_anchor + 4][y_anchor + 6] = '?';
+
+        symbols[x_anchor + 5][y_anchor + 4] = '1';
+        symbols[x_anchor + 5][y_anchor + 5] = '?';
+
+    }
+
 
     private void displayASection(int x_start, int x_end, int y_start, int y_end) {
         for(int i = x_start; i < x_end; i++){

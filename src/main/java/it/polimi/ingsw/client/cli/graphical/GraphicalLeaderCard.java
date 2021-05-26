@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.cli.graphical;
 
 
 import it.polimi.ingsw.client.MatchData;
+import it.polimi.ingsw.common.LightCard;
 import it.polimi.ingsw.common.LightLeaderCard;
 import it.polimi.ingsw.enumerations.Level;
 import it.polimi.ingsw.enumerations.Resource;
@@ -11,10 +12,11 @@ import java.util.Map;
 
 public class GraphicalLeaderCard extends GraphicalCard{
 
-    public GraphicalLeaderCard(LightLeaderCard ldc, String nickname) {
+    public GraphicalLeaderCard(LightCard ldc, String nickname) {
         super(ldc, nickname);
     }
 
+    @Override
     public void drawCard(){
         reset();
         drawEdges(this.height, this.width);
@@ -102,6 +104,7 @@ public class GraphicalLeaderCard extends GraphicalCard{
             colours[height -3][begin+i] = Colour.ANSI_BRIGHT_WHITE;
         }
         symbols[height -2][center-2] = '\u25CF';
+        colours[height -2][center-2] = Colour.ANSI_BRIGHT_WHITE;
         symbols[height -2][center] = '→';
         colours[height -2][center] = Colour.ANSI_WHITE;
 

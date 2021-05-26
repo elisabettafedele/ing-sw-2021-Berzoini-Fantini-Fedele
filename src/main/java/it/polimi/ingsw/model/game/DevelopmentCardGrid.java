@@ -24,7 +24,7 @@ public class DevelopmentCardGrid implements Serializable {
      * @throws UnsupportedEncodingException
      * @throws InvalidArgumentException
      */
-    public DevelopmentCardGrid() throws UnsupportedEncodingException, InvalidArgumentException {
+    public DevelopmentCardGrid(){
         cardGrid = new Stack[LEVEL][COLOR];
         List<DevelopmentCard> cards = DevelopmentCardParser.parseCards();
         Random rand = new Random();

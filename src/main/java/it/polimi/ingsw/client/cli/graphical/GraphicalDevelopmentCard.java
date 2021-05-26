@@ -10,11 +10,11 @@ import java.util.List;
 public class GraphicalDevelopmentCard extends GraphicalCard{
 
 
-    public GraphicalDevelopmentCard(LightDevelopmentCard ldc, String nickname) {
+    public GraphicalDevelopmentCard(LightCard ldc, String nickname) {
         super(ldc, nickname);
     }
 
-    //draw itsSelf
+    @Override
     public void drawCard(){
         reset();
         drawEdges(this.height, this.width);
