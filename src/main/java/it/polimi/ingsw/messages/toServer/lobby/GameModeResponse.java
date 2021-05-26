@@ -22,8 +22,8 @@ public class GameModeResponse implements MessageToServer {
     public void handleMessage(ServerInterface server, ClientHandlerInterface clientHandler) {
         if (clientHandler.getClientHandlerPhase() == ClientHandlerPhase.WAITING_GAME_MODE) {
             clientHandler.setGameMode(gameMode);
-            clientHandler.sendMessageToClient(new NicknameRequest(false, false));
             clientHandler.setClientHandlerPhase(ClientHandlerPhase.WAITING_NICKNAME);
+            clientHandler.sendMessageToClient(new NicknameRequest(false, false));
         }
     }
 }

@@ -19,10 +19,10 @@ public class NumberOfPlayersResponse implements MessageToServer {
     @Override
     public void handleMessage(ServerInterface server, ClientHandlerInterface clientHandler) {
         if (clientHandler.getClientHandlerPhase() == ClientHandlerPhase.WAITING_NUMBER_OF_PLAYERS) {
-            // TODO insert the port of the client in the log message
-            clientHandler.setNumberOfPlayersForNextGame(numberOfPlayers);
             clientHandler.sendMessageToClient(new WaitingInTheLobbyMessage());
+            //TODO message matchmaking
             clientHandler.setClientHandlerPhase(ClientHandlerPhase.WAITING_IN_THE_LOBBY);
+            clientHandler.setNumberOfPlayersForNextGame(numberOfPlayers);
         }
     }
 }
