@@ -95,6 +95,8 @@ public class GameSceneController {
     @FXML
     private VBox popupVbox;
     @FXML
+    private VBox reorganizationVbox;
+    @FXML
     private HBox buttonsHbox;
     @FXML
     private Button reorganizeButton;
@@ -104,6 +106,8 @@ public class GameSceneController {
     private Button activateLeaderCardButton;
     @FXML
     private Button discardLeaderCardButton;
+    @FXML
+    private Button endTurnButton;
 
 
     List<String> players;
@@ -155,9 +159,26 @@ public class GameSceneController {
         greyNode(nextPlayerButton);
         activateLeaderCardButton.setVisible(false);
         discardLeaderCardButton.setVisible(false);
+        endTurnButton.setVisible(false);
+        endTurnButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                endTurnButton.setVisible(false);
+                mainLabelMessage.setText("WAIT YOUR TURN");
+                client.sendMessageToServer(new EndTurnRequest());
+            }
+        });
         updateView();
         leftLeaderCard.setImage(new Image(GameSceneController.class.getResource("/img/Cards/LeaderCards/back/leaderCardsBack.png").toString()));
         rightLeaderCard.setImage(new Image(GameSceneController.class.getResource("/img/Cards/LeaderCards/back/leaderCardsBack.png").toString()));
+        reorganizationVbox.setVisible(false);
+        ((Button)((HBox)reorganizationVbox.getChildren().get(1)).getChildren().get(2)).setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                reorganizationVbox.setVisible(false);
+                client.sendMessageToServer(new NotifyEndDepotsReorganization());
+            }
+        });
     }
 
     public void setGUI(GUI gui) {
@@ -464,6 +485,7 @@ public class GameSceneController {
                 GameSceneController.this.executableActions =executableActions;
                 isYourTurn=true;
                 mainLabelMessage.setText("IT'S YOUR TURN!");
+                endTurnButton.setVisible(standardActionDone);
                 updateGlowingObjects();
             }
         });
@@ -628,7 +650,13 @@ public class GameSceneController {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+                popupVbox.setManaged(true);
                 popupVbox.setVisible(true);
+                discardButton.setManaged(true);
+                reorganizeButton.setManaged(true);
+                discardButton.setVisible(true);
+                reorganizeButton.setVisible(true);
+                discardButton.setText("Discard");
                 HBox resourcesHBox=(HBox) popupVbox.getChildren().get(1);
                 for(Resource resource: resources){
                     ImageView resourceImage= new ImageView( new Image(SetupSceneController.class.getResource("/img/punchboard/" + resource.toString().toLowerCase(Locale.ROOT) + ".png").toString()));
@@ -644,15 +672,40 @@ public class GameSceneController {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+                mainLabelMessage.setText("IT'S YOUR TURN!");
                 popupVbox.setVisible(true);
                 discardButton.setVisible(canDiscard);
                 discardButton.setManaged(canDiscard);
+                discardButton.setDisable(!canDiscard);
                 reorganizeButton.setVisible(canReorganize);
                 reorganizeButton.setManaged(canReorganize);
+                reorganizeButton.setDisable(!canReorganize);
+
                 popupVbox.setVisible(true);
                 ((Label) popupVbox.getChildren().get(0)).setText("Drag the resource into one of the glowing depots, if any");
                 HBox resourcesHBox=(HBox) popupVbox.getChildren().get(1);
                 highlightAndDrag(resourcesHBox.getChildren().get(0),resource.toString(), interactableDepots);
+                discardButton.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        ((HBox) popupVbox.getChildren().get(1)).getChildren().remove(0);
+                        resetStorageInsertion();
+                        popupVbox.setVisible(false);
+                        popupVbox.setManaged(false);
+                        mainLabelMessage.setText("WAIT YOUR TURN");
+                        client.sendMessageToServer(new DiscardResourceRequest(resource));
+                    }
+                });
+                reorganizeButton.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        resetStorageInsertion();
+                        popupVbox.setVisible(false);
+                        popupVbox.setManaged(false);
+                        mainLabelMessage.setText("WAIT YOUR TURN");
+                        client.sendMessageToServer(new ReorganizeDepotRequest());
+                    }
+                });
             }
         });
     }
@@ -993,7 +1046,6 @@ public class GameSceneController {
                 ((Pane)((Pane) marketGrid.getParent()).getChildren().get(1)).getChildren().stream().forEach(node->arrows.add(node));
                 ((Pane)((Pane) marketGrid.getParent()).getChildren().get(2)).getChildren().stream().forEach(node->arrows.add(node));;
                 for(Node arrow : arrows){
-                    System.out.println(arrow.getId());
                     glowNode(arrow,Color.CYAN);
                     arrow.setOnMouseClicked(new EventHandler<MouseEvent>() {
                         @Override
@@ -1020,6 +1072,42 @@ public class GameSceneController {
                 }
             }
         });
+    }
+
+    public void displayReorganizeDepotsRequest(List<String> depots, boolean failure, List<Resource> availableLeaderResource) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                Button moveButton = (Button)((HBox)reorganizationVbox.getChildren().get(1)).getChildren().get(0);
+                Button swapButton = (Button)((HBox)reorganizationVbox.getChildren().get(1)).getChildren().get(1);
+                mainLabelMessage.setText("IT'S YOUR TURN!");//TODO change it to wait your turn only when turn actually ends(do it after "who's turn" message implementation
+                popupVbox.setVisible(false);
+                reorganizationVbox.setVisible(true);
+                if(failure){
+                    ((Label)reorganizationVbox.getChildren().get(0)).setText("Invalid reorganization: check the capacity \nand the type of the depots before reorganizing");
+                }
+                else{
+                    ((Label)reorganizationVbox.getChildren().get(0)).setText("Press a button");
+                }
+                moveButton.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        sourceAndTargetDepotsSelection(true,depots,availableLeaderResource);
+                    }
+                });
+                swapButton.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        sourceAndTargetDepotsSelection(false,depots,availableLeaderResource);
+                    }
+                });
+            }
+        });
+
+    }
+
+    private void sourceAndTargetDepotsSelection(boolean moveORswap, List<String> depots, List<Resource> availableLeaderResource) {
+        //TODO
     }
 
 

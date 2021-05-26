@@ -150,7 +150,9 @@ public class GUI extends Application implements View {
     }
 
     @Override
-    public void displayReorganizeDepotsRequest(List<String> depots, boolean first, boolean failure, List<Resource> availableLeaderResource){}
+    public void displayReorganizeDepotsRequest(List<String> depots, boolean first, boolean failure, List<Resource> availableLeaderResource){
+        gameSceneController.displayReorganizeDepotsRequest(depots,failure,availableLeaderResource);
+    }
 
 
     @Override
