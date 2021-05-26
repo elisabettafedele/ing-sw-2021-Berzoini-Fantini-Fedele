@@ -368,12 +368,13 @@
                </image>
             </ImageView>
             <Label fx:id="currentPBNicknameLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="736.0" layoutY="103.0" prefHeight="51.0" prefWidth="101.0" />
-            <VBox fx:id="popupVbox" alignment="CENTER" layoutX="54.0" layoutY="89.0" prefHeight="148.0" prefWidth="341.0" styleClass="popup-box" stylesheets="@../css/style.css">
+            <VBox fx:id="popupVbox" alignment="CENTER" layoutX="54.0" layoutY="19.0" prefHeight="166.0" prefWidth="341.0" styleClass="popup-box" stylesheets="@../css/style.css">
                <children>
                   <Label alignment="CENTER" prefHeight="71.0" prefWidth="341.0">
                      <font>
                         <Font size="10.0" />
-                     </font></Label>
+                     </font>
+                  </Label>
                   <HBox alignment="CENTER" prefHeight="62.0" prefWidth="341.0" />
                   <HBox fx:id="buttonsHbox" alignment="CENTER" prefHeight="37.0" prefWidth="341.0">
                      <children>
@@ -632,16 +633,18 @@
                         </ImageView>
                      </children>
                   </Pane>
+                  <Button fx:id="activateLeaderCardButton" layoutX="57.0" layoutY="23.0" mnemonicParsing="false" text="Activate" />
+                  <Button fx:id="discardLeaderCardButton" layoutX="58.0" layoutY="62.0" mnemonicParsing="false" text="Discard" />
                </children>
             </Pane>
             <Pane layoutX="230.0" layoutY="23.0" prefHeight="88.0" prefWidth="163.0">
                <children>
-                  <Label fx:id="mainLabelNames" alignment="TOP_CENTER" prefHeight="67.0" prefWidth="87.0">
+                  <Label fx:id="mainLabelNames" alignment="CENTER" prefHeight="67.0" prefWidth="87.0">
                      <font>
                         <Font size="8.0" />
                      </font>
                   </Label>
-                  <Label fx:id="mainLabelStats" alignment="TOP_CENTER" layoutX="92.0" prefHeight="67.0" prefWidth="70.0">
+                  <Label fx:id="mainLabelStats" alignment="CENTER" layoutX="92.0" prefHeight="67.0" prefWidth="70.0">
                      <font>
                         <Font size="8.0" />
                      </font>
