@@ -230,20 +230,15 @@ public class TakeResourcesFromMarketAction implements Action {
         }
         try {
             player.getPersonalBoard().removeResources(origin, originResourceType, quantity);
-        } catch (InsufficientQuantityException e) {
+        } catch (InsufficientQuantityException| InvalidResourceTypeException e) {
             clientHandler.sendMessageToClient(new SendReorganizeDepotsCommands(availableDepotsForReorganization, false, true, availableLeaderResources));
-            return;
-        } catch (InvalidResourceTypeException e) {
-            e.printStackTrace();
             return;
         }
         try {
             player.getPersonalBoard().addResources(destination, originResourceType, quantity);
             controller.sendMessageToAll(new UpdateDepotsStatus(clientHandler.getNickname(), player.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), player.getPersonalBoard().getStrongboxStatus(), player.getPersonalBoard().getLeaderStatus()));
             clientHandler.sendMessageToClient(new SendReorganizeDepotsCommands(availableDepotsForReorganization, false, false, availableLeaderResources));
-        } catch (InvalidDepotException | InvalidArgumentException | InvalidResourceTypeException e) {
-            e.printStackTrace();
-        } catch (InsufficientSpaceException e) {
+        } catch (InvalidDepotException | InvalidArgumentException | InvalidResourceTypeException | InsufficientSpaceException e) {
             try {
                 //If the add of resources in the destination depot was not possible, I add again the resources to the origin depot
                 player.getPersonalBoard().addResources(origin, originResourceType, quantity);
