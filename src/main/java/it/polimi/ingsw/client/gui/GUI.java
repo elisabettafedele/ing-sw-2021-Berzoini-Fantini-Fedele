@@ -254,6 +254,9 @@ public class GUI extends Application implements View {
 
     @Override
     public void displayStandardView() {
-
+        if(gameSceneController!=null){
+            gameSceneController.updateView();
+            gameSceneController.enableNextPreviousButtons();
+        }
     }
 }

@@ -212,6 +212,13 @@ public class GameSceneController {
         });
     }
 
+    public void enableNextPreviousButtons() {
+        nextPlayerButton.setEffect(null);
+        nextPlayerButton.setDisable(false);
+        previousPlayerButton.setEffect(null);
+        previousPlayerButton.setDisable(false);
+    }
+
     // *********************************************************************  //
     //                        UPDATING VIEW FUNCTIONS                         //
     // *********************************************************************  //
@@ -447,6 +454,11 @@ public class GameSceneController {
     }
 
     private void updateGlowingObjects() {
+        deactivateGlowingAndSelectEventHandler(developmentCardGrid);
+        deactivateGlowingAndSelectEventHandler(leftLeaderCard);
+        deactivateGlowingAndSelectEventHandler(rightLeaderCard);
+        deactivateGlowingAndSelectEventHandler(activateProductionPane);
+        deactivateGlowingAndSelectEventHandler(marketGrid);
         if(currentPlayerIndex==0&&isYourTurn){
             List<LightLeaderCard> leaderCards =new ArrayList<>();
             for(Integer lcID :matchData.getLightClientByNickname(players.get(currentPlayerIndex)).getOwnedLeaderCards()){
@@ -850,7 +862,6 @@ public class GameSceneController {
         return leaderCardsMap;
     }
 
-
     public void displayChooseResourceTypeRequest( int quantity) {
         Platform.runLater(new Runnable() {
             @Override
@@ -944,7 +955,6 @@ public class GameSceneController {
 
 
     }
-
 
 
     /*   Use this to avoid Thread exception
