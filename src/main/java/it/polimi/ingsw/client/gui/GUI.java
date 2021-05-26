@@ -120,7 +120,7 @@ public class GUI extends Application implements View {
 
     @Override
     public void displayMarbleInsertionPositionRequest() {
-
+        gameSceneController.displayMarbleInsertionPositionRequest();
     }
 
     @Override
@@ -150,7 +150,9 @@ public class GUI extends Application implements View {
     }
 
     @Override
-    public void displayReorganizeDepotsRequest(List<String> depots, boolean first, boolean failure, List<Resource> availableLeaderResource){}
+    public void displayReorganizeDepotsRequest(List<String> depots, boolean first, boolean failure, List<Resource> availableLeaderResource){
+        gameSceneController.displayReorganizeDepotsRequest(depots,failure,availableLeaderResource);
+    }
 
 
     @Override
@@ -254,6 +256,9 @@ public class GUI extends Application implements View {
 
     @Override
     public void displayStandardView() {
-
+        if(gameSceneController!=null){
+            gameSceneController.updateView();
+            gameSceneController.enableNextPreviousButtons();
+        }
     }
 }

@@ -6,9 +6,7 @@ import it.polimi.ingsw.client.PopesTileState;
 import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.common.LightLeaderCard;
 import it.polimi.ingsw.enumerations.*;
-import it.polimi.ingsw.messages.toServer.game.ChooseLeaderCardsResponse;
-import it.polimi.ingsw.messages.toServer.game.ChooseResourceTypeResponse;
-import it.polimi.ingsw.messages.toServer.game.ChooseStorageTypeResponse;
+import it.polimi.ingsw.messages.toServer.game.*;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -75,7 +73,6 @@ public class GameSceneController {
 
     @FXML
     private ImageView leftLeaderCard;
-
     @FXML
     private ImageView rightLeaderCard;
     @FXML
@@ -84,6 +81,8 @@ public class GameSceneController {
     private ImageView nextPlayerButton;
     @FXML
     private ImageView basicProduction;
+    @FXML
+    private ImageView slideMarble;
     @FXML
     private Label mainLabelNames;
     @FXML
@@ -96,6 +95,8 @@ public class GameSceneController {
     @FXML
     private VBox popupVbox;
     @FXML
+    private VBox reorganizationVbox;
+    @FXML
     private HBox buttonsHbox;
     @FXML
     private Button reorganizeButton;
@@ -105,6 +106,8 @@ public class GameSceneController {
     private Button activateLeaderCardButton;
     @FXML
     private Button discardLeaderCardButton;
+    @FXML
+    private Button endTurnButton;
 
 
     List<String> players;
@@ -114,6 +117,7 @@ public class GameSceneController {
 
     Map<ActionType,Boolean> executableActions;
     Map<ResourceStorageType,Node> storageNameToNodeMap;
+    Map<String,Integer> marketArrowsNumMap;
     List<Resource> selectedResources;
     List<Integer> selectedLeaderCards;
 
@@ -141,21 +145,40 @@ public class GameSceneController {
         storageNameToNodeMap.put(ResourceStorageType.WAREHOUSE,warehouse);
         storageNameToNodeMap.put(ResourceStorageType.STRONGBOX,((Pane)strongbox.getParent()).getChildren().get(1));
         storageNameToNodeMap.put(ResourceStorageType.LEADER_DEPOT,leftLeaderDepot.getParent());
-        ColorAdjust colorAdjust=new ColorAdjust();
-        colorAdjust.setBrightness(0.4);
+        marketArrowsNumMap=new HashMap<>();
+        marketArrowsNumMap.put("one",1);
+        marketArrowsNumMap.put("two",2);
+        marketArrowsNumMap.put("three",3);
+        marketArrowsNumMap.put("four",4);
+        marketArrowsNumMap.put("five",5);
+        marketArrowsNumMap.put("six",6);
+        marketArrowsNumMap.put("seven",7);
         previousPlayerButton.setDisable(true);
-        previousPlayerButton.setEffect(colorAdjust);
+        greyNode(previousPlayerButton);
         nextPlayerButton.setDisable(true);
-        nextPlayerButton.setEffect(colorAdjust);
+        greyNode(nextPlayerButton);
         activateLeaderCardButton.setVisible(false);
         discardLeaderCardButton.setVisible(false);
-
-        updateDevelopmentCardGridView();
-        updateMarketView();
-        updateMainLabel();
+        endTurnButton.setVisible(false);
+        endTurnButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                endTurnButton.setVisible(false);
+                mainLabelMessage.setText("WAIT YOUR TURN");
+                client.sendMessageToServer(new EndTurnRequest());
+            }
+        });
         updateView();
         leftLeaderCard.setImage(new Image(GameSceneController.class.getResource("/img/Cards/LeaderCards/back/leaderCardsBack.png").toString()));
         rightLeaderCard.setImage(new Image(GameSceneController.class.getResource("/img/Cards/LeaderCards/back/leaderCardsBack.png").toString()));
+        reorganizationVbox.setVisible(false);
+        ((Button)((HBox)reorganizationVbox.getChildren().get(1)).getChildren().get(2)).setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                reorganizationVbox.setVisible(false);
+                client.sendMessageToServer(new NotifyEndDepotsReorganization());
+            }
+        });
     }
 
     public void setGUI(GUI gui) {
@@ -177,6 +200,13 @@ public class GameSceneController {
         borderGlow.setOffsetY(0f);
         nodeToGlow.setEffect(borderGlow);
     }
+    private void greyNode(Node nodeToGrey){
+        ColorAdjust colorAdjust=new ColorAdjust();
+        colorAdjust.setBrightness(0.4);
+        nodeToGrey.setEffect(colorAdjust);
+    }
+
+
 
     @FXML
     public void onNextPlayerButtonPressed(){
@@ -212,24 +242,42 @@ public class GameSceneController {
         });
     }
 
+    public void enableNextPreviousButtons() {
+        nextPlayerButton.setEffect(null);
+        nextPlayerButton.setDisable(false);
+        previousPlayerButton.setEffect(null);
+        previousPlayerButton.setDisable(false);
+    }
+
     // *********************************************************************  //
     //                        UPDATING VIEW FUNCTIONS                         //
     // *********************************************************************  //
 
     public void updateView() {
-        updateFaithTrack();
-        updateWarehouseAndStrongboxView();
-        updateDevelopmentCardsSlots();
-        updateLeaderCardsView();
-        if(currentPlayerIndex==0){
-            currentPBNicknameLabel.setText("You");
-        }
-        else{
-            currentPBNicknameLabel.setText(players.get(currentPlayerIndex));
-        }
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                updateDevelopmentCardGridView();
+                updateMarketView();
+                updateMainLabel();
+                updateFaithTrack();
+                updateWarehouseAndStrongboxView();
+                updateDevelopmentCardsSlots();
+                updateLeaderCardsView();
+                if(currentPlayerIndex==0){
+                    currentPBNicknameLabel.setText("You");
+                }
+                else{
+                    currentPBNicknameLabel.setText(players.get(currentPlayerIndex));
+                }
+            }
+        });
+
     }
 
     private void updateMainLabel() {
+        mainLabelNames.setText("");
+        mainLabelStats.setText("");
         mainLabelMessage.setFont(new Font(mainLabelNames.getFont().toString(),8));
         mainLabelStats.setFont(new Font(mainLabelNames.getFont().toString(),8));
         mainLabelNames.setFont(new Font(mainLabelNames.getFont().toString(),8));
@@ -377,16 +425,12 @@ public class GameSceneController {
                 if(currentPlayerIndex==0 && leaderCards.size()!=4){
                     if(i==0){
                         leftLeaderCard.setImage(new Image(GameSceneController.class.getResource("/img/Cards/LeaderCards/front/" + leaderCards.get(i).getID() + ".png").toString()));
-                        ColorAdjust colorAdjust=new ColorAdjust();
-                        colorAdjust.setBrightness(0.4);
-                        leftLeaderCard.setEffect(colorAdjust);
+                        greyNode(leftLeaderCard);
                         leftLeaderCard.setVisible(true);
                     }
                     if(i==1){
                         rightLeaderCard.setImage(new Image(GameSceneController.class.getResource("/img/Cards/LeaderCards/front/" + leaderCards.get(i).getID() + ".png").toString()));
-                        ColorAdjust colorAdjust=new ColorAdjust();
-                        colorAdjust.setBrightness(0.4);
-                        rightLeaderCard.setEffect(colorAdjust);
+                        greyNode(rightLeaderCard);
                         rightLeaderCard.setVisible(true);
                     }
                 }
@@ -414,6 +458,7 @@ public class GameSceneController {
                 ((ImageView) marketGrid.getChildren().get(col+row*4)).setImage(new Image(GameSceneController.class.getResource("/img/punchboard/marble_" + matchData.getMarketTray()[row][col].toString().toLowerCase() + ".png").toString()));
             }
         }
+        slideMarble.setImage(new Image(GameSceneController.class.getResource("/img/punchboard/marble_" + matchData.getSlideMarble().toString().toLowerCase() + ".png").toString()));
     }
 
     private void updateDevelopmentCardGridView() {
@@ -440,13 +485,14 @@ public class GameSceneController {
                 GameSceneController.this.executableActions =executableActions;
                 isYourTurn=true;
                 mainLabelMessage.setText("IT'S YOUR TURN!");
+                endTurnButton.setVisible(standardActionDone);
                 updateGlowingObjects();
-                //TODO attiva tasti switch player
             }
         });
     }
 
     private void updateGlowingObjects() {
+        deactivateAllActionsGlowing();
         if(currentPlayerIndex==0&&isYourTurn){
             List<LightLeaderCard> leaderCards =new ArrayList<>();
             for(Integer lcID :matchData.getLightClientByNickname(players.get(currentPlayerIndex)).getOwnedLeaderCards()){
@@ -488,26 +534,51 @@ public class GameSceneController {
         }
     }
 
-    private void deactivateGlowingAndSelectEventHandler(Node nodeToActivate){
-        nodeToActivate.setOnMouseEntered(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                mouseEvent.consume();
+    private void deactivateAllActionsGlowing(){
+        deactivateGlowingAndSelectEventHandler(developmentCardGrid,false);
+        if(currentPlayerIndex==0){
+            //list of booleans, true if card is active or discarded, false if inactive. If inactive, it makes the card grey
+            List<Boolean> leaderCardsBooleans=matchData.getLightClientByNickname(players.get(currentPlayerIndex)).getOwnedLeaderCards().stream().map(lcId->matchData.getLightClientByNickname(players.get(currentPlayerIndex)).leaderCardIsActive(lcId)).collect(Collectors.toList());
+            for(int i=2;i>leaderCardsBooleans.size();i--){
+                leaderCardsBooleans.add(true);
             }
-        });
-        nodeToActivate.setOnMouseExited(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                mouseEvent.consume();
-            }
-        });
-        nodeToActivate.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                mouseEvent.consume();
-            }
-        });
+            deactivateGlowingAndSelectEventHandler(leftLeaderCard,!leaderCardsBooleans.get(0));
+            deactivateGlowingAndSelectEventHandler(rightLeaderCard,!leaderCardsBooleans.get(1));
+        }
+        else{
+            deactivateGlowingAndSelectEventHandler(leftLeaderCard,false);
+            deactivateGlowingAndSelectEventHandler(rightLeaderCard,false);
+        }
+        deactivateGlowingAndSelectEventHandler(activateProductionPane,false);
+        deactivateGlowingAndSelectEventHandler(marketGrid,false);
     }
+
+    private void deactivateGlowingAndSelectEventHandler(Node nodeToDeactivate, boolean backToGreyLeaderCard){
+        nodeToDeactivate.setOnMouseEntered(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                mouseEvent.consume();
+            }
+        });
+        nodeToDeactivate.setOnMouseExited(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                mouseEvent.consume();
+            }
+        });
+        nodeToDeactivate.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                mouseEvent.consume();
+            }
+        });
+        nodeToDeactivate.setEffect(null);
+        if(backToGreyLeaderCard){
+            greyNode(nodeToDeactivate);
+        }
+    }
+
+
 
     private void activateGlowingAndSelectEventHandler(Node nodeToActivate, boolean backToGreyLeaderCard, ActionType actionType){
         nodeToActivate.setOnMouseEntered(new EventHandler<MouseEvent>() {
@@ -528,9 +599,7 @@ public class GameSceneController {
             public void handle(MouseEvent mouseEvent) {
                 nodeToActivate.setEffect(null);
                 if(backToGreyLeaderCard){
-                    ColorAdjust colorAdjust=new ColorAdjust();
-                    colorAdjust.setBrightness(0.4);
-                    nodeToActivate.setEffect(colorAdjust);
+                    greyNode(nodeToActivate);
                     mouseEvent.consume();
                 }
             }
@@ -563,21 +632,14 @@ public class GameSceneController {
                 else{
                       selectAction(actionType.toString());
                 }
-                deactivateGlowingAndSelectEventHandler(developmentCardGrid);
-                deactivateGlowingAndSelectEventHandler(leftLeaderCard);
-                deactivateGlowingAndSelectEventHandler(rightLeaderCard);
-                deactivateGlowingAndSelectEventHandler(activateProductionPane);
-                deactivateGlowingAndSelectEventHandler(marketGrid);
+                deactivateAllActionsGlowing();
                 mouseEvent.consume();
             }
         });
     }
 
     private void selectAction(String selectedAction) {
-        selectedAction.replace('_',' ');
-        mainLabelNames.setText("\nYOU \nCHOSE :");
-        mainLabelStats.setText(selectedAction);
-        mainLabelMessage.setText("Have a nice day :)");
+        client.sendMessageToServer(new ChooseActionResponse(ActionType.valueOf(selectedAction).getValue()));
     }
 
 
@@ -588,7 +650,13 @@ public class GameSceneController {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+                popupVbox.setManaged(true);
                 popupVbox.setVisible(true);
+                discardButton.setManaged(true);
+                reorganizeButton.setManaged(true);
+                discardButton.setVisible(true);
+                reorganizeButton.setVisible(true);
+                discardButton.setText("Discard");
                 HBox resourcesHBox=(HBox) popupVbox.getChildren().get(1);
                 for(Resource resource: resources){
                     ImageView resourceImage= new ImageView( new Image(SetupSceneController.class.getResource("/img/punchboard/" + resource.toString().toLowerCase(Locale.ROOT) + ".png").toString()));
@@ -604,15 +672,40 @@ public class GameSceneController {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+                mainLabelMessage.setText("IT'S YOUR TURN!");
                 popupVbox.setVisible(true);
                 discardButton.setVisible(canDiscard);
                 discardButton.setManaged(canDiscard);
+                discardButton.setDisable(!canDiscard);
                 reorganizeButton.setVisible(canReorganize);
                 reorganizeButton.setManaged(canReorganize);
+                reorganizeButton.setDisable(!canReorganize);
+
                 popupVbox.setVisible(true);
                 ((Label) popupVbox.getChildren().get(0)).setText("Drag the resource into one of the glowing depots, if any");
                 HBox resourcesHBox=(HBox) popupVbox.getChildren().get(1);
                 highlightAndDrag(resourcesHBox.getChildren().get(0),resource.toString(), interactableDepots);
+                discardButton.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        ((HBox) popupVbox.getChildren().get(1)).getChildren().remove(0);
+                        resetStorageInsertion();
+                        popupVbox.setVisible(false);
+                        popupVbox.setManaged(false);
+                        mainLabelMessage.setText("WAIT YOUR TURN");
+                        client.sendMessageToServer(new DiscardResourceRequest(resource));
+                    }
+                });
+                reorganizeButton.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        resetStorageInsertion();
+                        popupVbox.setVisible(false);
+                        popupVbox.setManaged(false);
+                        mainLabelMessage.setText("WAIT YOUR TURN");
+                        client.sendMessageToServer(new ReorganizeDepotRequest());
+                    }
+                });
             }
         });
     }
@@ -837,9 +930,7 @@ public class GameSceneController {
                     confirmSelectionButton.setDisable(true);
                 }else if (selectedLeaderCards.size()<2){
                     selectedLeaderCards.add(lc);
-                    ColorAdjust colorAdjust=new ColorAdjust();
-                    colorAdjust.setBrightness(0.4);
-                    lcImage.setEffect(colorAdjust);
+                    greyNode(lcImage);
                     if(selectedLeaderCards.size()==2){
                         confirmSelectionButton.setDisable(false);
                     }
@@ -849,7 +940,6 @@ public class GameSceneController {
         });
         return leaderCardsMap;
     }
-
 
     public void displayChooseResourceTypeRequest( int quantity) {
         Platform.runLater(new Runnable() {
@@ -899,9 +989,7 @@ public class GameSceneController {
                     }else if (selectedResources.size()<quantity){
                         selectedResources.add(resource);
                         selectedResourcesBooleans[Integer.parseInt(resourceImage.getId())]=true;
-                        ColorAdjust colorAdjust=new ColorAdjust();
-                        colorAdjust.setBrightness(0.4);
-                        resourceImage.setEffect(colorAdjust);
+                        greyNode(resourceImage);
                         if(selectedResources.size()==quantity){
                             confirmSelectionButton.setDisable(false);
                         }
@@ -945,6 +1033,82 @@ public class GameSceneController {
 
     }
 
+    // *********************************************************************  //
+    //                          ACTIONS FUNCTIONS                             //
+    // *********************************************************************  //
+
+    public void displayMarbleInsertionPositionRequest() {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                //TODO handle white marbles conversion
+                List<Node> arrows=new ArrayList<>();
+                ((Pane)((Pane) marketGrid.getParent()).getChildren().get(1)).getChildren().stream().forEach(node->arrows.add(node));
+                ((Pane)((Pane) marketGrid.getParent()).getChildren().get(2)).getChildren().stream().forEach(node->arrows.add(node));;
+                for(Node arrow : arrows){
+                    glowNode(arrow,Color.CYAN);
+                    arrow.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent mouseEvent) {
+                            client.sendMessageToServer(new MarbleInsertionPositionResponse(marketArrowsNumMap.get(arrow.getId())));
+                            arrows.forEach(arrow->deactivateGlowingAndSelectEventHandler(arrow,false));
+                            mouseEvent.consume();
+                        }
+                    });
+                    arrow.setOnMouseEntered(new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent mouseEvent) {
+                            glowNode(arrow,Color.CORAL);
+                            mouseEvent.consume();
+                        }
+                    });
+                    arrow.setOnMouseExited(new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent mouseEvent) {
+                            glowNode(arrow,Color.CYAN);
+                            mouseEvent.consume();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    public void displayReorganizeDepotsRequest(List<String> depots, boolean failure, List<Resource> availableLeaderResource) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                Button moveButton = (Button)((HBox)reorganizationVbox.getChildren().get(1)).getChildren().get(0);
+                Button swapButton = (Button)((HBox)reorganizationVbox.getChildren().get(1)).getChildren().get(1);
+                mainLabelMessage.setText("IT'S YOUR TURN!");//TODO change it to wait your turn only when turn actually ends(do it after "who's turn" message implementation
+                popupVbox.setVisible(false);
+                reorganizationVbox.setVisible(true);
+                if(failure){
+                    ((Label)reorganizationVbox.getChildren().get(0)).setText("Invalid reorganization: check the capacity \nand the type of the depots before reorganizing");
+                }
+                else{
+                    ((Label)reorganizationVbox.getChildren().get(0)).setText("Press a button");
+                }
+                moveButton.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        sourceAndTargetDepotsSelection(true,depots,availableLeaderResource);
+                    }
+                });
+                swapButton.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        sourceAndTargetDepotsSelection(false,depots,availableLeaderResource);
+                    }
+                });
+            }
+        });
+
+    }
+
+    private void sourceAndTargetDepotsSelection(boolean moveORswap, List<String> depots, List<Resource> availableLeaderResource) {
+        //TODO
+    }
 
 
     /*   Use this to avoid Thread exception
