@@ -199,6 +199,7 @@ public class SetUpPhase implements GamePhase {
             Resource resourceType = resourcesToStoreByNickname.get(player.getNickname()).get(0);
             List<String> availableStorage = player.getPersonalBoard().getWarehouse().getAvailableWarehouseDepotsForResourceType(resourceType).stream().map(x -> x.name()).collect(Collectors.toList());
             clientHandler.setClientHandlerPhase(ClientHandlerPhase.WAITING_CHOOSE_STORAGE_TYPE);
+            controller.sendMessageToAll(new UpdateDepotsStatus(player.getNickname(), player.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), player.getPersonalBoard().getStrongboxStatus(), player.getPersonalBoard().getLeaderStatus()));
             clientHandler.sendMessageToClient(new ChooseStorageTypeRequest(resourceType, availableStorage, false, false));
         }
 
