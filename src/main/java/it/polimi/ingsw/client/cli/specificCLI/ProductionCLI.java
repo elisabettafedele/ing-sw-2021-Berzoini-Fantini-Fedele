@@ -50,8 +50,11 @@ public class ProductionCLI {
             }
 
             System.out.println("Your current selections are:");
+            List<Integer> IDs = new ArrayList<>();
             for(Map.Entry<Integer, List<Value>> entry : selectedProductions.entrySet()){
-                System.out.println(entry.getKey() + ", " + entry.getValue());
+                //System.out.println(entry.getKey() + ", " + entry.getValue());
+                IDs.add(entry.getKey());
+                Screen.getInstance().displayCardSelection(IDs, selectedProductions.get(0));
             }
             System.out.printf("What do you want to do:\n1. Select another production\n" +
                     "2. Remove an already chosen production\n3. Confirm your list of production(s)\n");
@@ -74,7 +77,6 @@ public class ProductionCLI {
         }
     }
 
-    //check
     private static List<Integer> displayAvailableProductions(Map<Integer, List<Value>> availableProductionPowers, Map<Resource, Integer> availableResources){
         List <Integer> availableProductionIDs = new ArrayList<>();
         for(Map.Entry<Integer, List<Value>> entry : availableProductionPowers.entrySet()){
@@ -85,14 +87,15 @@ public class ProductionCLI {
                 //skip
             }
             if(hasResourcesForThisProduction(activationCost, availableResources) && entry.getKey() != 0){
-                System.out.println(entry.getKey());
+                //System.out.println(entry.getKey());
                 availableProductionIDs.add(entry.getKey());
             }
         }
         if(availableResources.values().stream().mapToInt(Integer::intValue).sum() >= 2 && availableProductionPowers.containsKey(0)){
-            System.out.println("0. Basic Production Power: " + availableProductionPowers.get(0));
+            //System.out.println("0. Basic Production Power: " + availableProductionPowers.get(0));
             availableProductionIDs.add(BASIC_PRODUCTION_POWER);
         }
+        Screen.getInstance().displayCardSelection(availableProductionIDs, availableProductionPowers.get(0));
         return availableProductionIDs;
     }
 
@@ -102,9 +105,10 @@ public class ProductionCLI {
         List<Integer> selectedIDs = new ArrayList<>();
         System.out.println("Your current productions are:");
         for(Map.Entry<Integer, List<Value>> entry : selectedProductions.entrySet()){
-            System.out.println(entry.getKey() + ", " + entry.getValue());
+            //System.out.println(entry.getKey() + ", " + entry.getValue());
             selectedIDs.add(entry.getKey());
         }
+        Screen.getInstance().displayCardSelection(selectedIDs, selectedProductions.get(0));
         System.out.print("Select the production ID you want to remove: ");
         Integer selection = InputParser.getInt(
                 "Error: the ID provided is not available. Provide a valid ID", CLI.conditionOnInteger(selectedIDs));

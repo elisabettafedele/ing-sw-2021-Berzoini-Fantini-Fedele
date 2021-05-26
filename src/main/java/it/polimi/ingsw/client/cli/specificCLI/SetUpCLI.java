@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class SetUpCLI {
 
     public static void displayChooseLeaderCardsRequest(Client client, List<Integer> leaderCardsIDs){
-        Screen.getInstance().displaySetUpLeaderCardSelection(leaderCardsIDs);
+        Screen.getInstance().displayCardSelection(leaderCardsIDs, null);
         System.out.println("Choose two Leader Cards to keep");
         //InputParser.flush();
         System.out.print("Insert the ID of the first leader card chosen: ");

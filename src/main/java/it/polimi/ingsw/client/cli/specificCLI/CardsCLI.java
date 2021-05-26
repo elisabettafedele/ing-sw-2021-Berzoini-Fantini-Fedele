@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.cli.specificCLI;
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.client.cli.CLI;
+import it.polimi.ingsw.client.cli.graphical.Screen;
 import it.polimi.ingsw.client.utilities.InputParser;
 import it.polimi.ingsw.messages.toServer.game.SelectCardResponse;
 import it.polimi.ingsw.messages.toServer.game.SelectDevelopmentCardSlotResponse;
@@ -39,16 +40,16 @@ public class CardsCLI {
         client.sendMessageToServer( new SelectDevelopmentCardSlotResponse(selection));
     }
 
+    /**
+     * Method to display a graphical request to the user when activating/discarding
+     * {@link it.polimi.ingsw.model.cards.LeaderCard} or when buying {@link it.polimi.ingsw.model.cards.DevelopmentCard}
+     * @param client the {@link Client} to who the message is directed
+     * @param cardsIDs the IDs of the {@link it.polimi.ingsw.model.cards.Card} to be displayed
+     * @param leaderORdevelopment True if the cards to display are leader cards, False if they are development
+     */
     public static void displaySelectCardRequest(Client client, List<Integer> cardsIDs, boolean leaderORdevelopment) {
-        System.out.println("Select a card:");
-        for (Integer id : cardsIDs){
-            if(leaderORdevelopment){
-                System.out.printf("%d. %s \n", id, MatchData.getInstance().getLeaderCardByID(id));
-            }
-            else{ System.out.printf("%d. %s \n", id, MatchData.getInstance().getDevelopmentCardByID(id));
-            }
+        Screen.getInstance().displayCardSelection(cardsIDs, null);
 
-        }
         System.out.print("Insert the ID of the card you want to select: ");
         Integer selection = InputParser.getInt("Error: the ID provided is not available. Provide a valid ID", CLI.conditionOnInteger(cardsIDs));
         client.sendMessageToServer( new SelectCardResponse(selection));

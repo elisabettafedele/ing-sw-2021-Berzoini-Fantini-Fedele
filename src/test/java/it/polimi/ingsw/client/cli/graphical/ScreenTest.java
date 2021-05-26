@@ -121,7 +121,7 @@ public class ScreenTest {
             IDs.add(rand.nextInt(16) + 49);
         List<Integer> lcIDs = new ArrayList<>();
         lcIDs.addAll(IDs);
-        Screen.getInstance().displaySetUpLeaderCardSelection(lcIDs);
+        Screen.getInstance().displayCardSelection(lcIDs, null);
     }
 
 

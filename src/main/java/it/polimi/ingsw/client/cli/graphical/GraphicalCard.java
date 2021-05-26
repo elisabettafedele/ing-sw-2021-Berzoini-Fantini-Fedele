@@ -18,6 +18,8 @@ public abstract class GraphicalCard extends GraphicalElement{
         this.nickname = nickname;
     }
 
+    abstract void drawCard();
+
     protected void drawID() {
         int ID = lightCard.getID();
         if(ID>9){

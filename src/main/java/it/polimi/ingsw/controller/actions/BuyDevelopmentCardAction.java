@@ -133,7 +133,7 @@ public class BuyDevelopmentCardAction implements Action{
             try {
                 newCard = turnController.getController().getGame().getDevelopmentCardGrid().removeCard(developmentCardChosen);
                 currentPlayer.getPersonalBoard().addDevelopmentCard(developmentCardChosen,((SelectDevelopmentCardSlotResponse) message).getSlotSelected());
-                turnController.getController().sendMessageToAll(new NotifyDevelopmentCardBought(currentPlayer.getNickname(), developmentCardChosen.getID(), newCard.getID(), ((SelectDevelopmentCardSlotResponse) message).getSlotSelected(), developmentCardChosen.getVictoryPoints()));
+                turnController.getController().sendMessageToAll(new NotifyDevelopmentCardBought(currentPlayer.getNickname(), developmentCardChosen.getID(), newCard == null ? -1 : newCard.getID(), ((SelectDevelopmentCardSlotResponse) message).getSlotSelected(), developmentCardChosen.getVictoryPoints()));
                 Map<Resource, Integer> cost = developmentCardChosen.getDiscountedCost(this.getDiscountedResources());
                 if(currentPlayer.getPersonalBoard().getNumOfDevelopmentCards()==7){
                     turnController.setEndTrigger(true);
