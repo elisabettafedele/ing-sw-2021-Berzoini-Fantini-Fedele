@@ -52,7 +52,7 @@ public class Controller {
         this.server = server;
     }
 
-    public void handleClientDisconnection(String nickname){
+    public synchronized void handleClientDisconnection(String nickname){
         ClientHandler connection = getConnectionByNickname(nickname);
         //SINGLE PLAYER
         if (connection.getGameMode() == GameMode.SINGLE_PLAYER){
@@ -60,14 +60,16 @@ public class Controller {
             return;
         }
 
-
+        //MULTIPLAYER
         //DISCONNECTION DURING SETUP PHASE
         if (gamePhase instanceof SetUpPhase){
 
             if (connection.getClientHandlerPhase() == ClientHandlerPhase.SET_UP_FINISHED){
                 //CASE 1: THE CLIENT HAS ALREADY FINISHED THE SETUP PHASE: the game starts and the player is set as inactive
-                getClientHandlers().forEach(x -> x.sendMessageToClient(new NotifyClientDisconnection(nickname, true, false)));
-                server.removeConnectionGame(connection, false);
+                if (!server.removeConnectionGame(connection, false))
+                    return;
+                //If I am here is because the game still exists
+                getClientHandlers().stream().filter(x -> !x.getNickname().equals(nickname)).collect(Collectors.toList()).forEach(x -> x.sendMessageToClient(new NotifyClientDisconnection(nickname, true, false)));
                 getPlayerByNickname(nickname).setActive(false);
                 if (gamePhase instanceof SetUpPhase)
                     ((SetUpPhase) gamePhase).endPhaseManager(connection);
@@ -87,25 +89,35 @@ public class Controller {
                 lockConnections.unlock();
                 connection.setController(null);
             }
+            return;
         }
 
         if (gamePhase instanceof MultiplayerPlayPhase){
-            if (!server.removeConnectionGame(connection, false))
+
+            if (clientHandlers.size() < 1){
+                //The game is cancelled
+                server.removeConnectionGame(connection, false);
                 return;
-
-            getPlayerByNickname(nickname).setActive(false);
-            sendMessageToAll(new NotifyClientDisconnection(nickname, false, false));
-
-            //THE PLAYER DISCONNECTED WAS THE TURN'S OWNER -> I check if he has already done his standard action
-            if (((MultiplayerPlayPhase) gamePhase).getTurnController().getCurrentPlayer().getNickname().equals(nickname)){
-                if (!((MultiplayerPlayPhase) gamePhase).getTurnController().isStandardActionDone()){
-                    //IF HE HAS NOT DONE THE STANDARD ACTION YET -> INVALID TURN! UNDO OF THE TURN
-                    game = new Game(((MultiplayerPlayPhase) gamePhase).getLastTurnGameCopy());
-                    game.getPlayerByNickname(nickname).setActive(false);
-                    sendMatchData(game, true);
+            } else {
+                //The game will still be played
+                getPlayerByNickname(nickname).setActive(false);
+                server.removeConnectionGame(connection, false);
+                sendMessageToAll(new NotifyClientDisconnection(nickname, false, false));
+                if (((MultiplayerPlayPhase) gamePhase).getTurnController().getCurrentPlayer().getNickname().equals(nickname)){
+                    //THE PLAYER DISCONNECTED WAS THE TURN'S OWNER -> I check if he has already done his standard action
+                    if (!((MultiplayerPlayPhase) gamePhase).getTurnController().isStandardActionDone()){
+                        //IF HE HAS NOT DONE THE STANDARD ACTION YET -> INVALID TURN! UNDO OF THE TURN
+                        game = new Game(((MultiplayerPlayPhase) gamePhase).getLastTurnGameCopy());
+                        sendMatchData(game, true);
+                    }
+                    ((MultiplayerPlayPhase) gamePhase).nextTurn();
                 }
-                ((MultiplayerPlayPhase) gamePhase).nextTurn();
             }
+
+
+
+
+
         }
     }
 
