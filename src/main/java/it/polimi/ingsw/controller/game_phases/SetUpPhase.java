@@ -144,8 +144,7 @@ public class SetUpPhase implements GamePhase {
         GameHistory.saveSetupPhase(new PersistentControllerSetUpPhase(new PersistentGame(controller.getGame()), controller.getControllerID(), resourcesToStoreByNickname));
         clientHandler.sendMessageToClient(new ReloadLeaderCardsOwned(nickname, player.getPersonalBoard().getLeaderCardsMap()));
         if (getNumberOfInitialResourcesByNickname(nickname) == 0) {
-            controller.sendMessageToAll(new UpdateDepotsStatus(player.getNickname(), player.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), player.getPersonalBoard().getStrongboxStatus(), player.getPersonalBoard().getLeaderStatus()));
-            sendSetUpFinishedMessage(clientHandler);
+            endPhaseManager(clientHandler);
         } else {
             assignResources(clientHandler);
         }
@@ -194,7 +193,7 @@ public class SetUpPhase implements GamePhase {
         GameHistory.saveSetupPhase(new PersistentControllerSetUpPhase(new PersistentGame(controller.getGame()), controller.getControllerID(), resourcesToStoreByNickname));
         if (resourcesToStoreByNickname.get(player.getNickname()).isEmpty()) {
             controller.sendMessageToAll(new UpdateDepotsStatus(player.getNickname(), player.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), player.getPersonalBoard().getStrongboxStatus(), player.getPersonalBoard().getLeaderStatus()));
-            sendSetUpFinishedMessage(clientHandler);
+            endPhaseManager(clientHandler);
         } else {
             Resource resourceType = resourcesToStoreByNickname.get(player.getNickname()).get(0);
             List<String> availableStorage = player.getPersonalBoard().getWarehouse().getAvailableWarehouseDepotsForResourceType(resourceType).stream().map(x -> x.name()).collect(Collectors.toList());
@@ -209,19 +208,20 @@ public class SetUpPhase implements GamePhase {
      * Method to inform the client that he has finished the setUp phase and that the game will start when all the other players will be ready
      * @param clientHandler
      */
+    /*
     private void sendSetUpFinishedMessage(ClientHandler clientHandler) {
         clientHandler.setClientHandlerPhase(ClientHandlerPhase.SET_UP_FINISHED);
         endPhaseManager(clientHandler);
-    }
+    }*/
 
-    public void endPhaseManager(ClientHandler clientHandler) {
+    public synchronized void endPhaseManager(ClientHandler clientHandler) {
+        clientHandler.setClientHandlerPhase(ClientHandlerPhase.SET_UP_FINISHED);
         if (!(controller.getGamePhase() instanceof SetUpPhase))
             return;
         List<String> nicknames = controller.getClientHandlers().stream().map(ClientHandler::getNickname).collect(Collectors.toList());
         for (String nickname : nicknames) {
             if (controller.getConnectionByNickname(nickname).getClientHandlerPhase() != ClientHandlerPhase.SET_UP_FINISHED) {
-                if (clientHandler.isActive())
-                    clientHandler.sendMessageToClient(new TextMessage("Waiting the other players, the game will start as soon as they all be ready..."));
+                clientHandler.sendMessageToClient(new TextMessage("Waiting the other players, the game will start as soon as they all be ready..."));
                 return;
             }
         }

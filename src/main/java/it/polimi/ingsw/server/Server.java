@@ -121,16 +121,6 @@ public class Server implements ServerInterface {
             connection.setValidNickname(true);
         }
 
-        /*else {
-            for (Controller controller : activeGames) {
-                if (controller.getPlayers().stream().map(Player::getNickname).collect(Collectors.toList()).contains(connection.getNickname())) {
-                    connection.setClientHandlerPhase(ClientHandlerPhase.WAITING_NICKNAME);
-                    connection.sendMessageToClient(new NicknameRequest(true, true));
-                    return;
-                }
-            }
-        }*/
-
         //SOLO MODE -> start the game
         if (connection.getGameMode() == GameMode.SINGLE_PLAYER) {
             startNewGame(connection);
@@ -169,6 +159,7 @@ public class Server implements ServerInterface {
             clientsDisconnectedGameFinished.remove(clientHandler.getNickname());
             return true;
         } else {
+            clientHandler.setGameStarted(true);
             clientsDisconnected.get(clientHandler.getNickname()).addConnection(clientHandler);
             clientHandler.setController(clientsDisconnected.get(clientHandler.getNickname()));
             clientsDisconnected.get(clientHandler.getNickname()).getPlayerByNickname(clientHandler.getNickname()).setActive(true);
@@ -196,7 +187,7 @@ public class Server implements ServerInterface {
      * - If both a) and b) are true a new multiplayer game starts
      */
     @Override
-    public void NewGameManager() {
+    public synchronized void NewGameManager() {
         lockLobby.lock();
         try{
             if(numberOfPlayersForNextGame == -1 && clientsInLobby.get(0).getClientHandlerPhase() != ClientHandlerPhase.WAITING_NUMBER_OF_PLAYERS){
