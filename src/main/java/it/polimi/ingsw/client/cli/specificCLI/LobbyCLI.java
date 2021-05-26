@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.cli.specificCLI;
 
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.cli.CLI;
+import it.polimi.ingsw.client.cli.graphical.Colour;
 import it.polimi.ingsw.client.utilities.Utils;
 import it.polimi.ingsw.client.utilities.InputParser;
 import it.polimi.ingsw.enumerations.GameMode;
@@ -59,7 +60,8 @@ public class LobbyCLI {
     }
 
     public static void displayGameModeRequest(Client client) {
-        System.out.println("Insert a game mode, multiplayer or solo mode: m | s");
+        System.out.println(Colour.ANSI_BRIGHT_GREEN.getCode() + "\nConnection established!" + Colour.ANSI_RESET);
+        System.out.println("\nInsert a game mode, multiplayer or solo mode: m | s");
         client.sendMessageToServer(new GameModeResponse(getGameMode()));
     }
 

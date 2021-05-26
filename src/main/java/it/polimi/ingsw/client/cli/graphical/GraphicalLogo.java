@@ -1,14 +1,34 @@
 package it.polimi.ingsw.client.cli.graphical;
 
+import java.awt.*;
+import java.util.ArrayList;
+
 public class GraphicalLogo {
     public static void printLogo(){
-        System.out.println( Colour.ANSI_BLUE.getCode() + "███╗   ███╗ █████╗ ███████╗████████╗███████╗██████╗      ██████╗ ███████╗    ██████╗ ███████╗███╗   ██╗ █████╗ ██╗███████╗███████╗ █████╗ ███╗   ██╗ ██████╗███████╗    \n" +
+        //Just a try, it is not nice, but I am not ready to delete it
+        /*
+        char[][] logo = new char[6][168];
+        ArrayList<String> stringLogo = new ArrayList<>();
+        stringLogo.add("███╗   ███╗ █████╗ ███████╗████████╗███████╗██████╗      ██████╗ ███████╗    ██████╗ ███████╗███╗   ██╗ █████╗ ██╗███████╗███████╗ █████╗ ███╗   ██╗ ██████╗███████╗    ");
+        stringLogo.add("████╗ ████║██╔══██╗██╔════╝╚══██╔══╝██╔════╝██╔══██╗    ██╔═══██╗██╔════╝    ██╔══██╗██╔════╝████╗  ██║██╔══██╗██║██╔════╝██╔════╝██╔══██╗████╗  ██║██╔════╝██╔════╝     ");
+        stringLogo.add("██╔████╔██║███████║███████╗   ██║   █████╗  ██████╔╝    ██║   ██║█████╗      ██████╔╝█████╗  ██╔██╗ ██║███████║██║███████╗███████╗███████║██╔██╗ ██║██║     █████╗       ");
+        stringLogo.add("██║╚██╔╝██║██╔══██║╚════██║   ██║   ██╔══╝  ██╔══██╗    ██║   ██║██╔══╝      ██╔══██╗██╔══╝  ██║╚██╗██║██╔══██║██║╚════██║╚════██║██╔══██║██║╚██╗██║██║     ██╔══╝       ");
+        stringLogo.add("██║ ╚═╝ ██║██║  ██║███████║   ██║   ███████╗██║  ██║    ╚██████╔╝██║         ██║  ██║███████╗██║ ╚████║██║  ██║██║███████║███████║██║  ██║██║ ╚████║╚██████╗███████╗     ");
+        stringLogo.add("╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝     ╚═════╝ ╚═╝         ╚═╝  ╚═╝╚══════╝╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝╚══════╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝╚══════╝     ");
+        for (int i = 0; i < logo.length; i++){
+            for (int j = 0; j < logo[i].length; j++) {
+                System.out.print((stringLogo.get(i).charAt(j) == ' ' ? BackColour.ANSI_BG_CYAN.getCode() : (BackColour.ANSI_BG_BLUE.getCode() + Colour.ANSI_BLUE.getCode())) + stringLogo.get(i).charAt(j) + Colour.ANSI_RESET);
+            }
+            System.out.print("\n");
+        }*/
+
+        System.out.println(Colour.ANSI_BLUE.getCode() + "███╗   ███╗ █████╗ ███████╗████████╗███████╗██████╗      ██████╗ ███████╗    ██████╗ ███████╗███╗   ██╗ █████╗ ██╗███████╗███████╗ █████╗ ███╗   ██╗ ██████╗███████╗    \n" +
                 "████╗ ████║██╔══██╗██╔════╝╚══██╔══╝██╔════╝██╔══██╗    ██╔═══██╗██╔════╝    ██╔══██╗██╔════╝████╗  ██║██╔══██╗██║██╔════╝██╔════╝██╔══██╗████╗  ██║██╔════╝██╔════╝    \n" +
                 "██╔████╔██║███████║███████╗   ██║   █████╗  ██████╔╝    ██║   ██║█████╗      ██████╔╝█████╗  ██╔██╗ ██║███████║██║███████╗███████╗███████║██╔██╗ ██║██║     █████╗      \n" +
                 "██║╚██╔╝██║██╔══██║╚════██║   ██║   ██╔══╝  ██╔══██╗    ██║   ██║██╔══╝      ██╔══██╗██╔══╝  ██║╚██╗██║██╔══██║██║╚════██║╚════██║██╔══██║██║╚██╗██║██║     ██╔══╝      \n" +
                 "██║ ╚═╝ ██║██║  ██║███████║   ██║   ███████╗██║  ██║    ╚██████╔╝██║         ██║  ██║███████╗██║ ╚████║██║  ██║██║███████║███████║██║  ██║██║ ╚████║╚██████╗███████╗    \n" +
                 "╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝     ╚═════╝ ╚═╝         ╚═╝  ╚═╝╚══════╝╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝╚══════╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝╚══════╝    \n" +
-                "                                                                                                                                                                        " + Colour.ANSI_RESET + "\nWelcome to Master Of Renaissance, a game realized by Raffaele Berzoini, Elia Fantini and Elisabetta Fedele.\n" +
-                "Before starting playing you need to setup some things:\n" + Colour.ANSI_RESET );
+                "                                                                                                                                                                        " + Colour.ANSI_BLUE.getCode() + "\nWelcome to Master Of Renaissance Board-Game \nThis video-game adaption was created by Raffaele Berzoini, Elia Fantini and Elisabetta Fedele\n\n" + Colour.ANSI_RESET +
+                "Before starting playing you need to setup some things:\n" );
     }
 }
