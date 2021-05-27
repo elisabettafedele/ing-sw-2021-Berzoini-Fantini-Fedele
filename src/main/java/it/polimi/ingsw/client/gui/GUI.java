@@ -135,7 +135,7 @@ public class GUI extends Application implements View {
 
     @Override
     public void displayResourcesToStore(List<Resource> resourcesToStore){
-        gameSceneController.displayResourcesInsertion(resourcesToStore);
+        gameSceneController.displayNotifyResourcesToStore(resourcesToStore);
     }
     @Override
     public void displayChooseStorageTypeRequest(Resource resource, List<String> availableDepots, boolean canDiscard, boolean canReorganize) {
@@ -146,7 +146,7 @@ public class GUI extends Application implements View {
         for(String s: availableDepots){
             interactableDepots.put(ResourceStorageType.valueOf(s),true);
         }
-        gameSceneController.startResourceInsertion(resource,interactableDepots,canDiscard,canReorganize);
+        gameSceneController.displayChooseStorageTypeRequest(resource,interactableDepots,canDiscard,canReorganize);
     }
 
     @Override
@@ -170,8 +170,8 @@ public class GUI extends Application implements View {
     }
 
     @Override
-    public void displaySelectCardRequest(List<Integer> leaderCards, boolean leaderORdevelopment) {
-
+    public void displaySelectCardRequest(List<Integer> cardIDs, boolean leaderORdevelopment) {
+            gameSceneController.displaySelectCardRequest(cardIDs,leaderORdevelopment);
     }
 
     @Override
@@ -233,18 +233,18 @@ public class GUI extends Application implements View {
 
     @Override
     public void displaySelectStorageRequest(Resource resource, boolean isInWarehouse, boolean isInStrongbox, boolean isInLeaderDepot) {
-
-
+        gameSceneController.displaySelectStorageRequest(resource,isInWarehouse,isInStrongbox,isInLeaderDepot);
     }
 
     @Override
     public void displayChooseActionRequest(Map<ActionType, Boolean> executableActions, boolean standardActionDone) {
         gameSceneController.displayChooseActionRequest(executableActions,standardActionDone);
+        gameSceneController.enableNextPreviousButtons();
     }
 
     @Override
     public void displaySelectDevelopmentCardSlotRequest(boolean firstSlotAvailable, boolean secondSlotAvailable, boolean thirdSlotAvailable) {
-
+        gameSceneController.displaySelectDevelopmentCardSlotRequest(firstSlotAvailable,secondSlotAvailable,thirdSlotAvailable);
     }
 
     public void setNicknames(String playerNickname, List<String> otherPlayersNicknames){

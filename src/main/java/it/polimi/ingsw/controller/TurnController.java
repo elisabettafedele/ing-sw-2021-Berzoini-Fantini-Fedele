@@ -235,15 +235,16 @@ public class TurnController {
                     currentPlayer.getPersonalBoard().removeAll(resource);
                     resourcesToRemove.replace(resource, 0);
                 } else {
+                    getController().sendMessageToAll(new UpdateDepotsStatus(currentPlayer.getNickname(), currentPlayer.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), currentPlayer.getPersonalBoard().getStrongboxStatus(), currentPlayer.getPersonalBoard().getLeaderStatus()));
                     clientHandler.sendMessageToClient(new SelectStorageRequest(resource, currentPlayer.getPersonalBoard().isResourceAvailableAndRemove(ResourceStorageType.WAREHOUSE, resource, 1, false), currentPlayer.getPersonalBoard().isResourceAvailableAndRemove(ResourceStorageType.STRONGBOX, resource, 1, false), currentPlayer.getPersonalBoard().isResourceAvailableAndRemove(ResourceStorageType.LEADER_DEPOT, resource, 1, false)));
                     return;
                 }
             }
         }
+        getController().sendMessageToAll(new UpdateDepotsStatus(currentPlayer.getNickname(), currentPlayer.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), currentPlayer.getPersonalBoard().getStrongboxStatus(), currentPlayer.getPersonalBoard().getLeaderStatus()));
         if (standardActionDone)
             return;
         resourcesToRemove = new HashMap<>();
-        getController().sendMessageToAll(new UpdateDepotsStatus(currentPlayer.getNickname(), currentPlayer.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), currentPlayer.getPersonalBoard().getStrongboxStatus(), currentPlayer.getPersonalBoard().getLeaderStatus()));
         setStandardActionDoneToTrue();
         setNextAction();
     }
