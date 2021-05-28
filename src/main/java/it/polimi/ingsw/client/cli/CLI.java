@@ -273,11 +273,14 @@ public class CLI implements View {
     @Override
     public void displayChooseProduction(List<Integer> availableProductionIDs, Map<Resource, Integer> availableResources, boolean addORremove ) {
         if(availableProductionIDs.size() == 0){
+            System.out.println("You can't choose any other production at the moment. ");
             chooseNextProductionAction();
             return;
         }
-
-        System.out.print("Insert the number of the production you want to activate: ");
+        if(addORremove)
+            System.out.print("Insert the number of the production you want to activate: ");
+        else
+            System.out.print("Insert the number of the production you want to eliminate: ");
         Integer selection = InputParser.getInt(
                 "Error: the ID provided is not available. Provide a valid ID: ", CLI.conditionOnInteger(availableProductionIDs));
         if(addORremove){
