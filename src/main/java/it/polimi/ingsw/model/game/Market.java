@@ -13,7 +13,7 @@ import java.util.Random;
  * The class represents the Market Tray with the {@link Marble} that can be taken during the {@link it.polimi.ingsw.controller.actions.TakeResourcesFromMarketAction}
  * action
  */
-public class Market implements Serializable {
+public class Market {
 
     private static final int ROW = 3;
     private static final int COL = 4;

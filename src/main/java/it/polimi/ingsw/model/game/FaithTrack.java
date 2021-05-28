@@ -9,7 +9,7 @@ import java.util.*;
  * The class represents the Game's FaithTrack. It includes all the attributes that FaithTrack has.
  */
 
-public class FaithTrack implements Serializable {
+public class FaithTrack {
     private transient Iterator<VaticanReportSection> vaticanReportSectionIterator;
     private final int length;
     private LinkedHashMap< Integer , Integer > trackVictoryPoints;

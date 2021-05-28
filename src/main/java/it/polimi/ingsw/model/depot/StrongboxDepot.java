@@ -7,7 +7,7 @@ import it.polimi.ingsw.exceptions.InvalidDepotException;
 
 import java.io.Serializable;
 
-public class StrongboxDepot extends Depot implements Serializable {
+public class StrongboxDepot extends Depot {
     public StrongboxDepot(Resource res) {
         super(res);
     }

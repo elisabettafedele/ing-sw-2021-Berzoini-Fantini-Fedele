@@ -10,7 +10,7 @@ import java.io.Serializable;
 /**
  * This class represents a single Warehouse Depot. It has a limited capacity, reported in maxResourceQuantity
  */
-public class WarehouseDepot extends Depot implements Serializable {
+public class WarehouseDepot extends Depot {
     private final int maxResourceQuantity;
 
     /**

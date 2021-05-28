@@ -12,7 +12,7 @@ import java.io.Serializable;
  * Abstract class extended by all the possible kind of depots in the game, that are: WarehouseDepot, StrongboxDepot and LeaderDepot
  */
 
-public abstract class Depot implements Serializable {
+public abstract class Depot {
     
     protected Resource resourceType;
     protected int resourceQuantity;

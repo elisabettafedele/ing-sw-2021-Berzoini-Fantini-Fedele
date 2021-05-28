@@ -8,9 +8,8 @@ import java.util.Objects;
 /**
  * The class represents the Leader Cards of the game
  */
-public class LeaderCard extends Card implements Serializable {
+public class LeaderCard extends Card {
 
-    private static final long serialVersionUID = -5121414682747056044L;
     private boolean active;
     private Effect effect;
 
@@ -73,10 +72,5 @@ public class LeaderCard extends Card implements Serializable {
         if (!super.equals(o)) return false;
         LeaderCard that = (LeaderCard) o;
         return active == that.active && effect.equals(that.effect);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), active, effect);
     }
 }

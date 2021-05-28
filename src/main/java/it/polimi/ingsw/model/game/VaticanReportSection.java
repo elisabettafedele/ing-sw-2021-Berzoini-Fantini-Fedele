@@ -14,7 +14,6 @@ public class VaticanReportSection implements Serializable {
     private final int  start;
     private final int  end;
     private final int  popeFavorPoints;
-    //private boolean vaticanReportAvailable;
 
     /**
      *
@@ -30,7 +29,6 @@ public class VaticanReportSection implements Serializable {
         this.start = start;
         this.end = end;
         this.popeFavorPoints = popesFavorPoints;
-        //this.vaticanReportAvailable = true;
     }
 
     /**
@@ -57,24 +55,4 @@ public class VaticanReportSection implements Serializable {
         return popeFavorPoints;
     }
 
-    /**
-     *
-     * @return returns true is vatican report is available, false otherwise
-     */
-    /*
-    public boolean isVaticanReportAvailable() {
-        return vaticanReportAvailable;
-    }
-
-     */
-
-    /**
-     * Makes vatican report unavailable
-     */
-    /*
-    public void setVaticanReportUnavailable() {
-        vaticanReportAvailable=false;
-    }
-
-     */
 }

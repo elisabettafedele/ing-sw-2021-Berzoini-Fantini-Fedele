@@ -11,9 +11,8 @@ import java.io.Serializable;
  * This class represents an extra depot contained in a Leader Card. It has a limited capacity of maximum 2 resources of a set type.
  */
 
-public class LeaderDepot extends Depot implements Serializable {
+public class LeaderDepot extends Depot {
 
-    private static final long serialVersionUID = 2202131664390857395L;
     private final int maxResourceQuantity = 2;
 
     public LeaderDepot(Resource resourceType) {

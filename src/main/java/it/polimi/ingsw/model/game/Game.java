@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Game implements Serializable, Cloneable {
+public class Game {
     private DevelopmentCardGrid developmentCardGrid;
     private Market market;
     private GameMode gameMode;

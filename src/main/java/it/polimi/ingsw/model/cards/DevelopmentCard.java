@@ -13,9 +13,8 @@ import java.util.Objects;
 /**
  * A development card that can be used to produce resources and faith points
  */
-public class DevelopmentCard extends Card implements Serializable {
+public class DevelopmentCard extends Card {
 
-    private static final long serialVersionUID = -7585665187979106207L;
     private Flag flag;
     private Production production;
 

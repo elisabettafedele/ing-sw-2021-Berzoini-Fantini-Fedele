@@ -35,6 +35,7 @@ public class DevelopmentCardTest {
         pathImageFront = "/img/Cards/DevelopmentCards/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-1";
         pathImageBack = "/img/Cards/DevelopmentCards/back/Masters of Renaissance_Cards_BACK_3mmBleed_1-1";
         developmentCard = new DevelopmentCard(victoryPoints, cost, flag, production, pathImageFront, pathImageBack);
+        developmentCard.setID(1);
     }
 
     @After
@@ -61,6 +62,11 @@ public class DevelopmentCardTest {
     @Test
     public void getCost() {
         assertEquals(cost, developmentCard.getCost());
+    }
+
+    @Test
+    public void testGetId(){
+        assertEquals(developmentCard.getID(), 1);
     }
 
     @Test
