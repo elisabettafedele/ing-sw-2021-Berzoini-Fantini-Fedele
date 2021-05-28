@@ -140,9 +140,9 @@ public class GUI extends Application implements View {
     }
 
     @Override
-<<<<<<< HEAD
     public void displayLorenzoAction(int id) {
-=======
+    }
+
     public void displayProductionCardYouCanSelect(List<Integer> IDs, List<Value> basicProduction) {
 
     }
@@ -159,7 +159,6 @@ public class GUI extends Application implements View {
 
     @Override
     public void chooseNextProductionAction() {
->>>>>>> c9e3bea09ac47893f9db4dac124258be2fc40c64
 
     }
 

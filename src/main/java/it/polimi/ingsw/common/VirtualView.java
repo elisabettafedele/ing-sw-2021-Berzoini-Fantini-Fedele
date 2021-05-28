@@ -33,15 +33,12 @@ public interface VirtualView {
     void displaySelectDevelopmentCardSlotRequest(boolean firstSlotAvailable, boolean secondSlotAvailable, boolean thirdSlotAvailable);
     void displaySelectStorageRequest(Resource resource, boolean isInWarehouse, boolean isInStrongbox, boolean isInLeaderDepot);
     void displayResourcesToStore(List<Resource> resourcesToStore);
-<<<<<<< HEAD
     void displayLorenzoAction(int id);
-=======
     void displayProductionCardYouCanSelect(List<Integer> IDs, List<Value> basicProduction);
     void displayChooseProduction(List<Integer> availableProductionIDs, Map<Resource, Integer> availableResources, boolean addORremove);
     void displayCurrentSelectedProductions(Set<Integer> productionIDs, List<Value> basicProduction);
     void chooseNextProductionAction();
 
->>>>>>> c9e3bea09ac47893f9db4dac124258be2fc40c64
 
     //SETUP
     void loadLeaderCards(List<LightLeaderCard> leaderCards);
