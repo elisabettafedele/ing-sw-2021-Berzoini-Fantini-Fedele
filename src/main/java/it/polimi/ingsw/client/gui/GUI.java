@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class GUI extends Application implements View {
 
@@ -139,7 +140,26 @@ public class GUI extends Application implements View {
     }
 
     @Override
+<<<<<<< HEAD
     public void displayLorenzoAction(int id) {
+=======
+    public void displayProductionCardYouCanSelect(List<Integer> IDs, List<Value> basicProduction) {
+
+    }
+
+    @Override
+    public void displayChooseProduction(List<Integer> availableProductionIDs, Map<Resource, Integer> availableResources, boolean addORremove) {
+
+    }
+
+    @Override
+    public void displayCurrentSelectedProductions(Set<Integer> productionIDs, List<Value> basicProduction) {
+
+    }
+
+    @Override
+    public void chooseNextProductionAction() {
+>>>>>>> c9e3bea09ac47893f9db4dac124258be2fc40c64
 
     }
 
