@@ -10,6 +10,7 @@ import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.messages.toServer.game.ChooseWhiteMarbleConversionResponse;
 import it.polimi.ingsw.messages.toServer.game.MarbleInsertionPositionResponse;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,12 +29,16 @@ public class TakeResourcesFromMarketCLI {
         for (int i = 0; i < numberOfMarbles; i++){
             if (numberOfMarbles > 1)
                 System.out.printf("White marble #%d\n", i+1);
-            resourcesChosen.add(getMarbleColor(resources));
+            try {
+                resourcesChosen.add(getMarbleColor(resources));
+            } catch (IOException e) {
+                return;
+            }
         }
         client.sendMessageToServer(new ChooseWhiteMarbleConversionResponse(resourcesChosen));
     }
 
-    private static Resource getMarbleColor(List<Resource> conversions){
+    private static Resource getMarbleColor(List<Resource> conversions) throws IOException {
         return Resource.valueOf(InputParser.getCommandFromList(conversions.stream().map(Enum :: name).collect(Collectors.toList())));
     }
 

@@ -56,7 +56,10 @@ public class LobbyCLI {
         else {
             System.out.println("Your nickname has already been taken, insert another one");
         }
-        client.sendMessageToServer(new NicknameResponse(InputParser.getLine()));
+        String selection = InputParser.getLine();
+        if (selection == null)
+            return;
+        client.sendMessageToServer(new NicknameResponse(selection));
     }
 
     public static void displayGameModeRequest(Client client) {

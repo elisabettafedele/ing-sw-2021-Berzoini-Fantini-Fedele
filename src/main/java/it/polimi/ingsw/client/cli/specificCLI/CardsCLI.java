@@ -13,7 +13,7 @@ import java.util.List;
 public class CardsCLI {
 
     public static void displaySelectDevelopmentCardSlotRequest(Client client, boolean firstSlotAvailable, boolean secondSlotAvailable, boolean thirdSlotAvailable) {
-        int selection = -1;
+        Integer selection = -1;
         System.out.println("Select a development card slot");
         if(firstSlotAvailable){
             System.out.println("Slot number 0 is available");
@@ -27,6 +27,8 @@ public class CardsCLI {
         boolean done=false;
         while(!done){
             selection = InputParser.getInt("Error: write a number.");
+            if (selection == null)
+                return;
             if(selection>=0&&selection<3){
                 if((selection==0&&firstSlotAvailable)||(selection==1&&secondSlotAvailable)||(selection==2&&thirdSlotAvailable)){
                     done=true;
@@ -52,6 +54,8 @@ public class CardsCLI {
 
         System.out.print("Insert the ID of the card you want to select: ");
         Integer selection = InputParser.getInt("Error: the ID provided is not available. Provide a valid ID", CLI.conditionOnInteger(cardsIDs));
+        if (selection == null)
+            return;
         client.sendMessageToServer( new SelectCardResponse(selection));
     }
 }

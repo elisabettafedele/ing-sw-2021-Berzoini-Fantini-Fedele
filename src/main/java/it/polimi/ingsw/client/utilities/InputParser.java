@@ -213,15 +213,19 @@ public class InputParser {
         return num;
     }
 
-    public static String getCommandFromList(List<String> commands){
-        return commands.get(getInt("Please insert a valid command", CLI.conditionOnIntegerRange(1, commands.size()))-1);
+    public static String getCommandFromList(List<String> commands) throws IOException {
+        Integer selection = getInt("Please insert a valid command", CLI.conditionOnIntegerRange(1, commands.size()));
+        if (selection == null){
+            throw new IOException();
+        }
+        return commands.get(selection-1);
     }
 
-    public static String getCommandFromList(List<String> textCommands, List<String> intCommands){
+    public static String getCommandFromList(List<String> textCommands, List<String> intCommands) throws IOException {
         return getCommand(CLI.conditionOnIntegerRange(1, intCommands.size()), textCommands, intCommands, "Please insert a valid command");
     }
 
-    public static String getCommand(Predicate integerPredicate, List<String> textCommands, List<String> intCommands, String errorMessage){
+    public static String getCommand(Predicate integerPredicate, List<String> textCommands, List<String> intCommands, String errorMessage) throws IOException {
         if (textCommands.isEmpty())
             return getCommandFromList(intCommands);
         String command;

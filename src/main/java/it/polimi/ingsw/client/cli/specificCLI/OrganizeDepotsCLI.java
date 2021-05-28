@@ -11,6 +11,7 @@ import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.enumerations.ResourceStorageType;
 import it.polimi.ingsw.messages.toServer.game.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,7 +34,12 @@ public class OrganizeDepotsCLI {
             if (canReorganize)
                 textCommands.add(Command.REORGANIZE.command);
         }
-        String choiceString = InputParser.getCommandFromList(textCommands, availableDepots);
+        String choiceString = null;
+        try {
+            choiceString = InputParser.getCommandFromList(textCommands, availableDepots);
+        } catch (IOException e) {
+            return;
+        }
         if (choiceString.equals(Command.DISCARD.command))
             client.sendMessageToServer(new DiscardResourceRequest(resource));
         else if (choiceString.equals(Command.REORGANIZE.command))
@@ -99,10 +105,20 @@ public class OrganizeDepotsCLI {
         }
         System.out.println("Select the " + (commandType.equals(Command.SWAP.command) ? "first" : "origin") + " depot:");
         UtilityPrinter.printNumericList(depots);
-        String originDepot = InputParser.getCommandFromList(depots);
+        String originDepot = null;
+        try {
+            originDepot = InputParser.getCommandFromList(depots);
+        } catch (IOException e) {
+            return;
+        }
         System.out.println("Select the " + (commandType.equals(Command.SWAP.command) ? "second" : "destination") + " depot:");
         UtilityPrinter.printNumericList(depots);
-        String destinationDepot = InputParser.getCommandFromList(depots);
+        String destinationDepot = null;
+        try {
+            destinationDepot = InputParser.getCommandFromList(depots);
+        } catch (IOException e) {
+            return;
+        }
         if (commandType.equals(Command.SWAP.command))
             client.sendMessageToServer(new SwapWarehouseDepotsRequest(originDepot, destinationDepot));
         else {

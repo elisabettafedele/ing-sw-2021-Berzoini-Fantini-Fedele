@@ -10,6 +10,7 @@ import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.messages.toServer.game.ChooseLeaderCardsResponse;
 import it.polimi.ingsw.messages.toServer.game.ChooseResourceTypeResponse;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,7 +43,11 @@ public class SetUpCLI {
                 System.out.print("Choice " + i+1 + ": ");
             else
                 System.out.print("Your choice: ");
-            selectedResources.add(Resource.valueOf(InputParser.getCommandFromList(resourcesToString)));
+            try {
+                selectedResources.add(Resource.valueOf(InputParser.getCommandFromList(resourcesToString)));
+            } catch (IOException e) {
+                return;
+            }
         }
         client.sendMessageToServer(new ChooseResourceTypeResponse(selectedResources));
     }

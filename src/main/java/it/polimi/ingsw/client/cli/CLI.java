@@ -97,6 +97,8 @@ public class CLI implements View {
     private void outOfTurnInput(){
         while (!myTurn.get()) {
             String line = InputParser.getLine();
+            if (line == null)
+                return;
             analyzeOutOfTurnMessage(line);
         }
     }
