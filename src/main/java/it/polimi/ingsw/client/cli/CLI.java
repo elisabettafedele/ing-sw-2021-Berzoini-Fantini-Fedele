@@ -8,6 +8,8 @@ import it.polimi.ingsw.client.cli.graphical.Colour;
 import it.polimi.ingsw.client.cli.graphical.GraphicalLogo;
 import it.polimi.ingsw.client.cli.graphical.Screen;
 import it.polimi.ingsw.client.cli.specificCLI.*;
+import it.polimi.ingsw.client.utilities.InputParser;
+import it.polimi.ingsw.client.utilities.UtilityProduction;
 import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.common.LightLeaderCard;
 import it.polimi.ingsw.enumerations.*;
@@ -207,7 +209,108 @@ public class CLI implements View {
 
     @Override
     public void displayChooseProductionPowersRequest(Map<Integer, List<Value>> availableProductionPowers, Map<Resource, Integer> availableResources) {
-        ProductionCLI.displayChooseProductionPowersRequest(client, availableProductionPowers, availableResources);
+        UtilityProduction.initialize(this, client, availableProductionPowers, availableResources);
+        //ProductionCLI.displayChooseProductionPowersRequest(client, availableProductionPowers, availableResources);
+    }
+
+    @Override
+    public void displayProductionCardYouCanSelect(List<Integer> IDs, List<Value> basicProduction){
+        Screen.getInstance().displayCardSelection(IDs, basicProduction);
+    }
+
+    @Override
+    public void displayChooseProduction(List<Integer> availableProductionIDs, Map<Resource, Integer> availableResources, boolean addORremove ) {
+        if(availableProductionIDs.size() == 0){
+            chooseNextProductionAction();
+            return;
+        }
+
+        System.out.print("Insert the number of the production you want to activate: ");
+        Integer selection = InputParser.getInt(
+                "Error: the ID provided is not available. Provide a valid ID: ", CLI.conditionOnInteger(availableProductionIDs));
+        if(addORremove){
+            if(selection == 0){
+                createBasicProduction(availableResources);
+            }else{
+                UtilityProduction.addProductionPower(selection);
+            }
+        }
+        else{
+            UtilityProduction.removeProduction(selection);
+        }
+    }
+
+    private void createBasicProduction(Map<Resource, Integer> availableResources){
+        List<Resource> usableResources = new ArrayList<Resource>();
+        List<Resource> chosenResources = new ArrayList<Resource>();
+        //Saving in usableResources which Resource has a quantity > 0
+        for(Map.Entry<Resource, Integer> entry : availableResources.entrySet()){
+            if(entry.getValue() > 0){
+                usableResources.add(entry.getKey());
+            }
+        }
+        if(usableResources.size() > 0){
+            for(int j = 0; j < 2; j++){
+                System.out.print("Choose the");
+                if(j == 0){
+                    System.out.print(" first");
+                }else{
+                    System.out.print(" second");
+                }
+                System.out.println(" resource to be used in the basic production power");
+                //Displaying the usableResources for the basic production power
+                for(int i = 0; i < usableResources.size(); i++) {
+                    System.out.printf("%d. " + usableResources.get(i) + " \n", i+1);
+                }
+                //Selecting the resource to be used for the basic production power
+                Integer selection = InputParser.getInt(
+                        "Error: the given number is not present in the list. Provide a valid number",
+                        CLI.conditionOnIntegerRange(1, usableResources.size()));
+                //Adding the chosen resource to the chosenResources List
+                chosenResources.add(usableResources.get(selection - 1));
+                //If that Resource type had quantity equal to 1 it is removed from the usableResources list
+                if(availableResources.get(usableResources.get(selection - 1)) <= 1){
+                    usableResources.remove(usableResources.get(selection-1));
+                }
+            }
+
+            //displaying the resources that can be produced
+            List<Resource> realValues = Resource.realValues();
+            System.out.println("Choose the resource you want to produce");
+            for(int k = 0; k < realValues.size(); k++){
+                System.out.printf("%d. " + realValues.get(k) +"\n", k+1);
+            }
+            //Selecting the desired resource
+            Integer selection = InputParser.getInt(
+                    "Error: the given number is not present in the list. Provide a valid number",
+                    CLI.conditionOnIntegerRange(1, realValues.size()));
+            chosenResources.add(realValues.get(selection - 1));
+        }else{
+            System.out.println("You don't have enough resources for this production");
+        }
+        UtilityProduction.manageBasicProductionPower(chosenResources);
+    }
+
+    public void displayCurrentSelectedProductions(Set<Integer> productionIDs, List<Value> basicProduction){
+        System.out.println("Your current selections are:");
+        List<Integer> IDs = new ArrayList<>();
+        IDs.addAll(productionIDs);
+        Screen.getInstance().displayCardSelection(IDs, basicProduction);
+    }
+
+    @Override
+    public void chooseNextProductionAction() {
+        System.out.printf("What do you want to do:\n1. Select another production\n" +
+                "2. Remove an already chosen production\n3. Confirm your list of production(s)\n");
+        Integer selection = InputParser.getInt(
+                "Error: the ID provided is not available. Provide a valid ID", CLI.conditionOnIntegerRange(1, 3));
+        if(selection == 3){
+            UtilityProduction.confirmChoices();
+        }else if(selection == 2){
+            UtilityProduction.chooseProductionToRemove();
+        }else{
+            UtilityProduction.displayAvailableProductions();
+        }
     }
 
     // *********************************************************************  //
