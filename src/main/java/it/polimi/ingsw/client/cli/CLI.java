@@ -69,7 +69,8 @@ public class CLI implements View {
                     this.inputObserverOutOfTurn.interrupt();
             } else {
                 this.inputObserverOutOfTurn = new Thread(this::outOfTurnInput);
-                System.out.println("From now on you can use the command -pb to move to another player's view (EG. -pb betti shows you the view of the player named \"betti\")");
+                if (!MatchData.getInstance().getOtherClientsNicknames().isEmpty())
+                    System.out.println("From now on you can use the command -pb to move to another player's view (EG. -pb betti shows you the view of the player named \"betti\")");
                 inputObserverOutOfTurn.start();
             }
         } else {
@@ -241,6 +242,11 @@ public class CLI implements View {
     @Override
     public void displayResourcesToStore(List<Resource> resourcesToStore) {
         OrganizeDepotsCLI.displayResourcesToStore(resourcesToStore);
+    }
+
+    @Override
+    public void displayLorenzoAction(int id) {
+        System.out.println("Lorenzo used token " + id);
     }
 
     @Override

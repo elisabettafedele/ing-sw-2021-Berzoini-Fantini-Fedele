@@ -1,6 +1,7 @@
 package it.polimi.ingsw.controller.actions;
 
 import it.polimi.ingsw.controller.game_phases.SinglePlayerPlayPhase;
+import it.polimi.ingsw.messages.toClient.matchData.UpdateMarkerPosition;
 
 import java.util.Objects;
 
@@ -18,6 +19,7 @@ public class BlackCrossMoveToken extends SoloActionToken{
     @Override
     public void useActionToken(SinglePlayerPlayPhase singlePlayerPlayPhase) {
         singlePlayerPlayPhase.moveBlackCross(numOfMoves);
+        singlePlayerPlayPhase.getController().sendMessageToAll(new UpdateMarkerPosition(SinglePlayerPlayPhase.LORENZO, numOfMoves));
         if(shuffle)
             singlePlayerPlayPhase.shuffleTokens();
     }

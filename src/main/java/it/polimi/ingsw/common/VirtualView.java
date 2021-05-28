@@ -32,6 +32,7 @@ public interface VirtualView {
     void displaySelectDevelopmentCardSlotRequest(boolean firstSlotAvailable, boolean secondSlotAvailable, boolean thirdSlotAvailable);
     void displaySelectStorageRequest(Resource resource, boolean isInWarehouse, boolean isInStrongbox, boolean isInLeaderDepot);
     void displayResourcesToStore(List<Resource> resourcesToStore);
+    void displayLorenzoAction(int id);
 
     //SETUP
     void loadLeaderCards(List<LightLeaderCard> leaderCards);

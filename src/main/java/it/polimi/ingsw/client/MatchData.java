@@ -108,9 +108,13 @@ public class MatchData {
 
             //TODO just temporary, decide when to show. Qua sarà qualcosa del tipo "se è la view selezionata dal client, ristampala"
         }
-        if (message instanceof UpdateMarkerPosition)
-            getLightClientByNickname(message.getNickname()).updateMarkerPosition(((UpdateMarkerPosition) message).getMarkerPosition());
-
+        if (message instanceof UpdateMarkerPosition) {
+            if (message.getNickname().equals(LORENZO)){
+                //TODO
+            } else {
+                getLightClientByNickname(message.getNickname()).updateMarkerPosition(((UpdateMarkerPosition) message).getMarkerPosition());
+            }
+        }
         if (message instanceof NotifyLeaderAction) {
             //I remove the card only if it is my card
             if (((NotifyLeaderAction) message).isDiscard() && thisClient.getNickname().equals(message.getNickname()))

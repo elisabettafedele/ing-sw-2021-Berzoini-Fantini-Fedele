@@ -137,6 +137,12 @@ public class GUI extends Application implements View {
     public void displayResourcesToStore(List<Resource> resourcesToStore){
         gameSceneController.displayNotifyResourcesToStore(resourcesToStore);
     }
+
+    @Override
+    public void displayLorenzoAction(int id) {
+
+    }
+
     @Override
     public void displayChooseStorageTypeRequest(Resource resource, List<String> availableDepots, boolean canDiscard, boolean canReorganize) {
         HashMap<ResourceStorageType,Boolean> interactableDepots=new HashMap<>();

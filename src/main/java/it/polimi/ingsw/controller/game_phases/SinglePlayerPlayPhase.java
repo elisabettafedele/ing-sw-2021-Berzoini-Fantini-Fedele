@@ -8,6 +8,9 @@ import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.InvalidMethodException;
 import it.polimi.ingsw.exceptions.ZeroPlayerException;
 import it.polimi.ingsw.messages.toClient.TurnMessage;
+import it.polimi.ingsw.messages.toClient.game.NotifyLorenzoAction;
+import it.polimi.ingsw.messages.toClient.matchData.LoadDevelopmentCardGrid;
+import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.DevelopmentCard;
 import it.polimi.ingsw.model.persistency.GameHistory;
 import it.polimi.ingsw.model.persistency.PersistentControllerPlayPhase;
@@ -55,6 +58,7 @@ public class SinglePlayerPlayPhase extends PlayPhase {
         SoloActionToken token = tokens.remove(); //removing the first of the queue;
         tokens.add(token); //saving the used token at the end of the queue;
         token.useActionToken(this);
+        getController().sendMessageToAll(new NotifyLorenzoAction(token.getId()));
         lastPlayer = LORENZO;
         getController().sendMessageToAll(new TurnMessage(getPlayer().getNickname(), true));
         getTurnController().start(getPlayer());
@@ -84,6 +88,7 @@ public class SinglePlayerPlayPhase extends PlayPhase {
             }
 
         }
+        getController().sendMessageToAll(new LoadDevelopmentCardGrid(getController().getGame().getDevelopmentCardGrid().getAvailableCards().stream().map(Card:: getID).collect(Collectors.toList())));
     }
 
     private DevelopmentCard getLowerCard(List<DevelopmentCard> availableCards) {
