@@ -8,18 +8,26 @@ import it.polimi.ingsw.client.cli.graphical.Colour;
 import it.polimi.ingsw.client.cli.graphical.GraphicalLogo;
 import it.polimi.ingsw.client.cli.graphical.Screen;
 import it.polimi.ingsw.client.cli.specificCLI.*;
+import it.polimi.ingsw.client.utilities.InputParser;
 import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.common.LightLeaderCard;
 import it.polimi.ingsw.enumerations.*;
+import it.polimi.ingsw.messages.toClient.TurnMessage;
 import it.polimi.ingsw.messages.toClient.matchData.MatchDataMessage;
 import it.polimi.ingsw.model.cards.Value;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 
 public class CLI implements View {
 
     private Client client;
+    private Thread inputObserverOutOfTurn;
+    private AtomicBoolean myTurn = new AtomicBoolean(false);
 
     public static void main(String[] args) {
         CLI cli= new CLI();
@@ -45,6 +53,47 @@ public class CLI implements View {
     @Override
     public void update(MatchDataMessage message) {
         MatchData.getInstance().update(message);
+        if (message instanceof TurnMessage)
+            update((TurnMessage) message);
+        //TODO update of views
+    }
+
+    public void update(TurnMessage message){
+        MatchData.getInstance().update(message);
+        if (MatchData.getInstance().getThisClientNickname().equals(message.getNickname())) {
+            MatchData.getInstance().setCurrentViewNickname(MatchData.getInstance().getThisClientNickname());
+            System.out.println((message).isStarted() ? "It's your turn! " : "Turn ended ");
+            myTurn.set(message.isStarted());
+            if (message.isStarted()) {
+                if (inputObserverOutOfTurn != null && inputObserverOutOfTurn.isAlive())
+                    this.inputObserverOutOfTurn.interrupt();
+            } else {
+                this.inputObserverOutOfTurn = new Thread(this::outOfTurnInput);
+                System.out.println("From now on you can use the command -pb to move to another player's view (EG. -pb betti shows you the view of the player named \"betti\")");
+                inputObserverOutOfTurn.start();
+            }
+        } else {
+            if (inputObserverOutOfTurn == null || !inputObserverOutOfTurn.isAlive()) {
+                this.inputObserverOutOfTurn = new Thread(this::outOfTurnInput);
+                inputObserverOutOfTurn.start();
+            }
+            System.out.println(message.getNickname() + ((message).isStarted() ? " started " : " ended ") + "his turn");
+        }
+    }
+
+    private void analyzeOutOfTurnMessage(String input) {
+        if (input != null && input.contains("-pb") && (MatchData.getInstance().getThisClientNickname().contains(input.substring(4)) || MatchData.getInstance().getOtherClientsNicknames().contains(input.substring(4)))) {
+            MatchData.getInstance().setCurrentViewNickname(input.substring(4));
+            displayStandardView();
+        }
+
+    }
+
+    private void outOfTurnInput(){
+        while (!myTurn.get()) {
+            String line = InputParser.getLine();
+            analyzeOutOfTurnMessage(line);
+        }
     }
 
     @Override
@@ -152,6 +201,7 @@ public class CLI implements View {
 
     @Override
     public void displayChooseActionRequest(Map<ActionType, Boolean> executableActions, boolean standardActionDone) {
+        myTurn.set(true);
         ChooseActionCLI.displayChooseActionRequest(client, executableActions, standardActionDone);
     }
 
@@ -235,7 +285,7 @@ public class CLI implements View {
 
     @Override
     public void displayStandardView() {
-        Screen.getInstance().setClientToDisplay(MatchData.getInstance().getThisClientNickname());
+        Screen.getInstance().setClientToDisplay(MatchData.getInstance().getCurrentViewNickname());
         Screen.getInstance().displayStandardView();
     }
 

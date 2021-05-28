@@ -3,6 +3,8 @@ package it.polimi.ingsw.controller.game_phases;
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.controller.TurnController;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
+import it.polimi.ingsw.messages.toClient.TextMessage;
+import it.polimi.ingsw.messages.toClient.TurnMessage;
 import it.polimi.ingsw.messages.toClient.matchData.UpdateMarkerPosition;
 import it.polimi.ingsw.model.persistency.GameHistory;
 import it.polimi.ingsw.model.persistency.PersistentControllerPlayPhase;
@@ -25,12 +27,12 @@ public class MultiplayerPlayPhase extends PlayPhase {
         setController(controller);
         this.turnIndex = controller.getPlayers().stream().map(Player::getNickname).collect(Collectors.toList()).indexOf(lastPlayerNickname);
         pickNextPlayer();
-        setTurnController(new TurnController(controller, controller.getPlayers().get(turnIndex)));
-        getTurnController().setEndTrigger(endTrigger);
+        setTurnController(new TurnController(controller, controller.getPlayers().get(turnIndex), endTrigger));
     }
 
     @Override
     public void restartLastTurn(){
+        getController().sendMessageToAll(new TurnMessage(getController().getPlayers().get(turnIndex).getNickname(), true));
         getTurnController().start(getController().getPlayers().get(turnIndex));
     }
 
@@ -45,15 +47,17 @@ public class MultiplayerPlayPhase extends PlayPhase {
         }
         if (getTurnController().isEndTriggered() && getTurnController().getController().getPlayers().get(turnIndex).hasInkwell())
             getController().endMatch(); //In theory this is not needed since this work is done by pickNextPlayer. Just an extra check
-        else
+        else {
+            getController().sendMessageToAll(new TurnMessage(getController().getPlayers().get(turnIndex).getNickname(), true));
             getTurnController().start(getController().getPlayers().get(turnIndex));
+        }
     }
 
     /**
      * Method used to set the next player index. It also checks whether the match should end and, in that case, it makes it end.
      */
     public void pickNextPlayer(){
-        if (turnIndex == getController().getPlayers().size() - 1 && getTurnController().isEndTriggered())
+        if (turnIndex == getController().getPlayers().size() - 1 && (getTurnController() != null && getTurnController().isEndTriggered()))
             getController().endMatch();
         else
             turnIndex = turnIndex == getController().getPlayers().size() - 1 ? 0 : turnIndex + 1;
@@ -90,9 +94,11 @@ public class MultiplayerPlayPhase extends PlayPhase {
 
     @Override
     public void executePhase(Controller controller) {
+        controller.sendMessageToAll(new TextMessage("From now on, when you are not the turn owner, you can use the command -pb to move to another player's view \nEG. -pb betti shows you the view of the player named \"betti\")"));
         setTurnController(new TurnController(controller,getPlayer()));
         //TODO check why I am doing this
         reloadGameCopy(false);
+        controller.sendMessageToAll(new TurnMessage(getPlayer().getNickname(), true));
         getTurnController().start(getPlayer());
     }
 

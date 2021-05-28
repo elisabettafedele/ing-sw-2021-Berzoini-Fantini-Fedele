@@ -3,9 +3,11 @@ package it.polimi.ingsw.client;
 import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.common.LightLeaderCard;
 import it.polimi.ingsw.enumerations.Marble;
+import it.polimi.ingsw.messages.toClient.TurnMessage;
 import it.polimi.ingsw.messages.toClient.matchData.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class MatchData {
 
@@ -19,6 +21,7 @@ public class MatchData {
     public static final int EMPTY_SLOT = -1;
     public static final String LORENZO = "Lorenzo";
     private String currentViewNickname;
+    private String turnOwnerNickname;
     private View view;
 
     private static MatchData instance;
@@ -146,6 +149,12 @@ public class MatchData {
         if (message instanceof LoadDevelopmentCardSlots){
             getLightClientByNickname(message.getNickname()).setDevelopmentCardSlots(((LoadDevelopmentCardSlots) message).getSlots());
         }
+
+        if (message instanceof TurnMessage){
+            if (((TurnMessage) message).isStarted())
+                this.turnOwnerNickname = message.getNickname();
+        }
+
     }
 
     public List<String> getAllNicknames(){
@@ -171,5 +180,17 @@ public class MatchData {
 
     public String getThisClientNickname(){
         return thisClient.getNickname();
+    }
+
+    public List<String> getOtherClientsNicknames(){
+        return otherClients.stream().map(LightClient::getNickname).collect(Collectors.toList());
+    }
+
+    public void setCurrentViewNickname(String nickname){
+        this.currentViewNickname = nickname;
+    }
+
+    public String getCurrentViewNickname(){
+        return currentViewNickname;
     }
 }

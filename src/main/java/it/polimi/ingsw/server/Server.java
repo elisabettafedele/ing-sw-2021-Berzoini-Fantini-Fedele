@@ -146,12 +146,6 @@ public class Server implements ServerInterface {
 
     public boolean handleKnownClientReconnection(ClientHandler clientHandler){
         boolean gameFinished = clientsDisconnectedGameFinished.containsKey(clientHandler.getNickname());
-        //If there are no more player in the game
-        /*
-        if (!gameFinished && clientsDisconnected.get(clientHandler.getNickname()).getClientHandlers().isEmpty()) {
-            clientsDisconnected.remove(clientHandler.getNickname());
-            return true;
-        }*/
         clientHandler.sendMessageToClient(new WelcomeBackMessage(clientHandler.getNickname(), gameFinished));
 
         if (gameFinished){
@@ -239,6 +233,8 @@ public class Server implements ServerInterface {
      * Method used to manage the start of a multiplayer game
      */
     private void startNewGame() {
+        if (clientsInLobby.size() < numberOfPlayersForNextGame)
+            return;
         Controller controller = null;
         try {
             controller = new Controller(GameMode.MULTI_PLAYER);
@@ -354,14 +350,14 @@ public class Server implements ServerInterface {
      * @param connection the {@link ClientHandler} to be removed from the controller
      * @return true iff the game still exist
      */
-    public boolean removeConnectionGame(ClientHandler connection, boolean forced){
+    public synchronized boolean removeConnectionGame(ClientHandler connection, boolean forced){
         //If he was the last player remained in the game, I delete the game and I remove all the players from disconnectedPlayers -> the game is not finished, but is not playable anymore
         if (connection.getController().getClientHandlers().size() == 1) {
             for (String nickname : connection.getController().getPlayers().stream().map(Player::getNickname).collect(Collectors.toList())) {
                 clientsDisconnected.remove(nickname);
                 takenNicknames.remove(nickname);
-                GameHistory.removeOldGame(connection.getController().getControllerID());
             }
+            GameHistory.removeOldGame(connection.getController().getControllerID());
             activeGames.remove(connection.getController());
             return false;
         } else {
@@ -378,17 +374,6 @@ public class Server implements ServerInterface {
         this.numberOfPlayersForNextGame = numberOfPlayersForNextGame;
         Server.SERVER_LOGGER.log(Level.INFO, "New message from "+ clientHandler.getNickname() + " that has chosen the number of players: "+ numberOfPlayersForNextGame);
         NewGameManager();
-    }
-
-    public void handleDisconnection(ClientHandler clientHandler){
-        if (clientHandler.isGameStarted())
-            clientsDisconnected.put(clientHandler.getNickname(), clientHandler.getController());
-        else
-            removeConnectionLobby(clientHandler);
-    }
-
-    public void handleReconnection(ClientHandler clientHandler){
-
     }
 
     /**

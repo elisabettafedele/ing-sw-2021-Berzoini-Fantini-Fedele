@@ -66,6 +66,7 @@ public class Screen extends GraphicalElement{
     }
 
     public void displayStandardView(){
+        nickname = MatchData.getInstance().getCurrentViewNickname();
         System.out.print("\u001b[2J");
         System.out.flush();
         reset();
