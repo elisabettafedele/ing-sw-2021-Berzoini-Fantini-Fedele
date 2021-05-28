@@ -29,9 +29,12 @@ public class ProductionCLI {
             if(!wantsToRemove){
                 List<Integer> IDs = displayAvailableProductions(availableProductionPowers, availableResources);
                 if(IDs.size() > 0){
+                    //TODO**********************************************************************
                     System.out.print("Insert the number of the production you want to activate: ");
                     Integer selection = InputParser.getInt(
                             "Error: the ID provided is not available. Provide a valid ID: ", CLI.conditionOnInteger(IDs));
+                    //TODO**********************************************************************
+                    //questa parte deve stare in un altra funzione da chiamare
                     if(selection == BASIC_PRODUCTION_POWER){
                         actualChosenProduction = manageBasicProductionPower(availableResources);
                     }else{
@@ -42,13 +45,11 @@ public class ProductionCLI {
                     subtractResources(actualChosenProduction.get(0), availableResources);
                     //delete the production chosen from the available and save it in another list
 
-                }else{
-                    System.out.println("You don't have enough resources for any production, do you want to buy resources for 0.99€?");
                 }
             }else{
                 manageRemoveProduction(availableProductionPowers, selectedProductions, availableResources);
             }
-
+            //TODO**********************************************************************
             System.out.println("Your current selections are:");
             List<Integer> IDs = new ArrayList<>();
             for(Map.Entry<Integer, List<Value>> entry : selectedProductions.entrySet()){
@@ -68,6 +69,7 @@ public class ProductionCLI {
                 wantsToRemove = false;
                 confirmed = false; //Useless but leave it here for now
             }
+            //TODO**********************************************************************
         }while(!confirmed);
         List<Integer> productionPowersSelected= new ArrayList<>(selectedProductions.keySet());
         if(productionPowersSelected.contains(BASIC_PRODUCTION_POWER)){
@@ -95,7 +97,9 @@ public class ProductionCLI {
             //System.out.println("0. Basic Production Power: " + availableProductionPowers.get(0));
             availableProductionIDs.add(BASIC_PRODUCTION_POWER);
         }
-        Screen.getInstance().displayCardSelection(availableProductionIDs, availableProductionPowers.get(0));
+        //TODO**********************************************************************
+        Screen.getInstance().displayCardSelection(availableProductionIDs, availableProductionPowers.get(0));//**********************************************************************
+        //TODO**********************************************************************
         return availableProductionIDs;
     }
 
@@ -103,6 +107,7 @@ public class ProductionCLI {
                                         Map<Integer, List<Value>> selectedProductions,
                                         Map<Resource, Integer> availableResources) {
         List<Integer> selectedIDs = new ArrayList<>();
+        //TODO**********************************************************************
         System.out.println("Your current productions are:");
         for(Map.Entry<Integer, List<Value>> entry : selectedProductions.entrySet()){
             //System.out.println(entry.getKey() + ", " + entry.getValue());
@@ -113,6 +118,7 @@ public class ProductionCLI {
         Integer selection = InputParser.getInt(
                 "Error: the ID provided is not available. Provide a valid ID", CLI.conditionOnInteger(selectedIDs));
         //Re-adding the selected production to the available ones
+        //TODO**********************************************************************
         if(selection == BASIC_PRODUCTION_POWER){
             Map<Resource, Integer> cost = new HashMap<>();
             cost.put(Resource.ANY, 2);
@@ -145,6 +151,8 @@ public class ProductionCLI {
     }
 
     private static List<Value> manageBasicProductionPower(Map<Resource, Integer> availableResources) {
+        //TODO**********************************************************************
+        //TODO**********************************************************************
         List<Resource> usableResources = new ArrayList<Resource>();
         List<Resource> chosenResources = new ArrayList<Resource>();
         //Saving in usableResources which Resource has a quantity > 0
@@ -192,6 +200,8 @@ public class ProductionCLI {
         }else{
             System.out.println("You don't have enough resources for this production");
         }
+        //TODO**********************************************************************
+        //TODO**********************************************************************
 
         //TODO: do directly the chosenResource.add() above with the following variables.
         List<Value> production= new ArrayList<>();

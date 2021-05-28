@@ -9,6 +9,7 @@ import it.polimi.ingsw.model.cards.Value;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface VirtualView {
     //LOBBY
@@ -52,4 +53,7 @@ public interface VirtualView {
     //DISCONNECTIONS
     void displayDisconnection(String nickname, boolean setUp, boolean gameCancelled);
     void displayWelcomeBackMessage(String nickname, boolean gameFinished);
+
+
+
 }

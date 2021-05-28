@@ -13,8 +13,8 @@ import it.polimi.ingsw.common.LightLeaderCard;
 import it.polimi.ingsw.enumerations.*;
 import it.polimi.ingsw.messages.toClient.matchData.MatchDataMessage;
 import it.polimi.ingsw.model.cards.Value;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 import java.util.function.Predicate;
 
 public class CLI implements View {
@@ -80,6 +80,9 @@ public class CLI implements View {
     public void displayWelcomeBackMessage(String nickname, boolean gameFinished) {
         System.out.println("Welcome back " + nickname + (gameFinished ? "!\nThe game you were playing in is finished, we are loading the results for you..." : ".\nYou have to finish an old game, we are logging you in the room..."));
     }
+
+
+
 
     @Override
     public void displayMessage(String message) {

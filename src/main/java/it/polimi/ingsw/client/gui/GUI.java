@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class GUI extends Application implements View {
 
@@ -137,6 +138,27 @@ public class GUI extends Application implements View {
     public void displayResourcesToStore(List<Resource> resourcesToStore){
         gameSceneController.displayNotifyResourcesToStore(resourcesToStore);
     }
+
+    @Override
+    public void displayProductionCardYouCanSelect(List<Integer> IDs, List<Value> basicProduction) {
+
+    }
+
+    @Override
+    public void displayChooseProduction(List<Integer> availableProductionIDs, Map<Resource, Integer> availableResources, boolean addORremove) {
+
+    }
+
+    @Override
+    public void displayCurrentSelectedProductions(Set<Integer> productionIDs, List<Value> basicProduction) {
+
+    }
+
+    @Override
+    public void chooseNextProductionAction() {
+
+    }
+
     @Override
     public void displayChooseStorageTypeRequest(Resource resource, List<String> availableDepots, boolean canDiscard, boolean canReorganize) {
         HashMap<ResourceStorageType,Boolean> interactableDepots=new HashMap<>();
