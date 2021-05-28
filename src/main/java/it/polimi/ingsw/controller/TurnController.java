@@ -4,6 +4,7 @@ import it.polimi.ingsw.controller.game_phases.PlayPhase;
 import it.polimi.ingsw.controller.game_phases.SinglePlayerPlayPhase;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.enumerations.ResourceStorageType;
+import it.polimi.ingsw.messages.toClient.TurnMessage;
 import it.polimi.ingsw.messages.toClient.game.SelectStorageRequest;
 import it.polimi.ingsw.messages.toClient.matchData.NotifyTakenPopesFavorTile;
 import it.polimi.ingsw.messages.toClient.matchData.UpdateDepotsStatus;
@@ -56,6 +57,11 @@ public class TurnController {
         executableActions.put(ActionType.ACTIVATE_PRODUCTION,true);
         executableActions.put(ActionType.BUY_DEVELOPMENT_CARD,true);
         executableActions.put(ActionType.TAKE_RESOURCE_FROM_MARKET,true);
+    }
+
+    public TurnController(Controller controller, Player currentPlayer, boolean endTrigger){
+        this(controller, currentPlayer);
+        this.endTrigger = endTrigger;
     }
 
     public void start(Player currentPlayer){
@@ -284,7 +290,7 @@ public class TurnController {
         //I set a copy of the game at the end of each turn
         ((PlayPhase)controller.getGamePhase()).saveGame();
         ((PlayPhase) controller.getGamePhase()).setLastTurnGameCopy(new PersistentGame(controller.getGame()));
-        clientHandler.sendMessageToClient(new TextMessage("Turn ended"));
+        controller.sendMessageToAll(new TurnMessage(clientHandler.getNickname(), false));
         ((PlayPhase) controller.getGamePhase()).nextTurn();
     }
 

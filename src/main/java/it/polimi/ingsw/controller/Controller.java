@@ -97,7 +97,6 @@ public class Controller {
             if (clientHandlers.size() < 1){
                 //The game is cancelled
                 server.removeConnectionGame(connection, false);
-                return;
             } else {
                 //The game will still be played
                 getPlayerByNickname(nickname).setActive(false);

@@ -7,6 +7,7 @@ import it.polimi.ingsw.enumerations.FlagColor;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.InvalidMethodException;
 import it.polimi.ingsw.exceptions.ZeroPlayerException;
+import it.polimi.ingsw.messages.toClient.TurnMessage;
 import it.polimi.ingsw.model.cards.DevelopmentCard;
 import it.polimi.ingsw.model.persistency.GameHistory;
 import it.polimi.ingsw.model.persistency.PersistentControllerPlayPhase;
@@ -50,10 +51,12 @@ public class SinglePlayerPlayPhase extends PlayPhase {
     }
 
     private void useActionToken() {
+        getController().sendMessageToAll(new TurnMessage(LORENZO, true));
         SoloActionToken token = tokens.remove(); //removing the first of the queue;
         tokens.add(token); //saving the used token at the end of the queue;
         token.useActionToken(this);
         lastPlayer = LORENZO;
+        getController().sendMessageToAll(new TurnMessage(getPlayer().getNickname(), true));
         getTurnController().start(getPlayer());
     }
 
