@@ -2,13 +2,7 @@ package it.polimi.ingsw.model.persistency;
 
 import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
-import it.polimi.ingsw.controller.game_phases.PlayPhase;
-import it.polimi.ingsw.controller.game_phases.SetUpPhase;
-import it.polimi.ingsw.enumerations.GameMode;
-import it.polimi.ingsw.enumerations.Marble;
-import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.jsonParsers.JsonAdapter;
-import it.polimi.ingsw.model.game.VaticanReportSection;
 
 import java.io.*;
 import java.util.*;
@@ -36,11 +30,6 @@ public class GameHistory {
             }
         } catch (IOException e) { return jsonObjectOfOldMatch;}
         return jsonObjectOfOldMatch;
-    }
-
-    public synchronized static PersistentGame retrieveGame(int controllerID){
-        JsonObject controller = retrieveGameFromControllerId(controllerID);
-        return new Gson().fromJson(controller.get("game").getAsJsonObject(), PersistentGame.class);
     }
 
     public synchronized static PersistentControllerSetUpPhase retrieveSetUpController(int controllerID){
@@ -142,60 +131,6 @@ public class GameHistory {
 
         if (jsonArray == null) jsonArray = new JsonArray();
         return jsonArray;
-    }
-
-    private static PersistentGame getPersistentGame(JsonObject gameObject){
-        JsonArray gameArray = gameObject.getAsJsonArray();
-        PersistentGame game = new PersistentGame();
-        for (JsonElement elementOfGameArray : gameArray){
-            JsonObject objectOfGameArray = elementOfGameArray.getAsJsonObject();
-            game.setGameMode(GameMode.valueOf(objectOfGameArray.get("gameMode").getAsString()));
-            game.setCurrentSection(getVaticanReportSection(objectOfGameArray.get("currentSection").getAsJsonArray()));
-            game.setMarketTray(getMarketTray(objectOfGameArray.get("marketTray").getAsJsonArray()));
-            game.setSlideMarble(Marble.valueOf(objectOfGameArray.get("slideMarble").getAsString()));
-            game.setDevelopmentCardGrid(getDevelopmentCardGrid(objectOfGameArray.get("developmentCardGrid").getAsJsonArray()));
-            //game.setPlayers();
-
-        }
-        return game;
-    }
-
-    private static VaticanReportSection getVaticanReportSection(JsonArray vaticanReportSectionArray){
-        int start = vaticanReportSectionArray.get(0).getAsInt();
-        int end = vaticanReportSectionArray.get(1).getAsInt();
-        int popesFavorPoints = vaticanReportSectionArray.get(2).getAsInt();
-        VaticanReportSection vaticanReportSection = null;
-        try {
-            vaticanReportSection = new VaticanReportSection(start, end, popesFavorPoints);
-        } catch (InvalidArgumentException e) {
-            e.printStackTrace();
-        }
-        return vaticanReportSection;
-    }
-
-    private static Marble[][] getMarketTray(JsonArray marketTrayArray){
-        Marble[][] marketTray = new Marble[3][4];
-        for (int i = 0; i < marketTray.length; i++){
-            JsonArray marketRowArray = marketTrayArray.get(i).getAsJsonArray();
-            for (int j = 0; j < marketTray[i].length; j++){
-                marketTray[i][j] = Marble.valueOf(marketRowArray.get(j).getAsString());
-            }
-        }
-        return marketTray;
-    }
-
-    private static Stack<Integer>[][] getDevelopmentCardGrid(JsonArray developmentCardGridArray){
-        Stack<Integer>[][] developmentCardGrid = new Stack[3][4];
-        for (int i = 0; i < developmentCardGrid.length; i++){
-            JsonArray row = developmentCardGridArray.get(i).getAsJsonArray();
-            for (int j = 0; j < developmentCardGrid[i].length; j++){
-                JsonArray cell = row.get(j).getAsJsonArray();
-                developmentCardGrid[i][j] = new Stack<>();
-                for (JsonElement element : cell)
-                    developmentCardGrid[i][j].push(element.getAsInt());
-            }
-        }
-        return developmentCardGrid;
     }
 
     public static void removeOldGame(int controllerID){

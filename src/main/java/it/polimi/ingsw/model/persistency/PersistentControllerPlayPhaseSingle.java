@@ -1,9 +1,7 @@
 package it.polimi.ingsw.model.persistency;
 
-import it.polimi.ingsw.controller.actions.SoloActionToken;
 
 import java.util.List;
-import java.util.Queue;
 
 public class PersistentControllerPlayPhaseSingle extends PersistentControllerPlayPhase{
     private List<Integer> tokens;

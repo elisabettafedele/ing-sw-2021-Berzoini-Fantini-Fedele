@@ -41,4 +41,11 @@ public class FaithTrackTest {
         assertTrue(vaticanReportSection.getPopeFavorPoints()==3);
 
     }
+    @Test
+    public void testSetIterator() throws InvalidArgumentException {
+        VaticanReportSection vaticanReportSection = new VaticanReportSection(5, 8, 2);
+        assertEquals(faithTrack.getVaticanReportSectionNumberByStart(5), 0);
+        faithTrack.setVaticanReportSectionIterator(vaticanReportSection);
+        assertEquals(vaticanReportSection.getStart(), faithTrack.getCurrentSection(false).getStart());
+    }
 }

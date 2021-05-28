@@ -30,8 +30,14 @@ public class EffectTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         effect = null;
+    }
+
+    @Test
+    public void testGetWhiteMarbleEffectResource() throws InvalidArgumentException, DifferentEffectTypeException {
+        effect = new Effect(whiteMarbleEffect);
+        assertEquals(effect.getWhiteMarbleEffectResource(), Resource.SERVANT);
     }
 
     @Test

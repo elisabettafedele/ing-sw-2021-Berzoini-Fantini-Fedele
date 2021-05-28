@@ -87,9 +87,4 @@ public class DevelopmentCard extends Card {
         DevelopmentCard that = (DevelopmentCard) o;
         return Objects.equals(flag, that.flag) && Objects.equals(production, that.production);
     }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(flag, production);
-    }
 }

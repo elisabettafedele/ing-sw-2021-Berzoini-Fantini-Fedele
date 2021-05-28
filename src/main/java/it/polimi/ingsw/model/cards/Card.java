@@ -114,8 +114,4 @@ public abstract class Card implements Serializable {
                 pathImageFront.equals(card.pathImageFront)) && ((pathImageBack == null && card.pathImageBack == null) || pathImageBack.equals(card.pathImageBack));
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(victoryPoints, cost, pathImageFront, pathImageBack, used);
-    }
 }

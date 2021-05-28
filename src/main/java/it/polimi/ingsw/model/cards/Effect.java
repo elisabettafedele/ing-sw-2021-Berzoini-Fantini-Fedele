@@ -174,9 +174,4 @@ public class Effect implements Serializable {
         Effect effect = (Effect) o;
         return discountEffect == effect.discountEffect && whiteMarbleEffect == effect.whiteMarbleEffect && ((extraDepotEffect==null && effect.extraDepotEffect == null) ||Objects.equals(extraDepotEffect, effect.extraDepotEffect)) && ((productionEffect == null && effect.productionEffect == null) || Objects.equals(productionEffect, effect.productionEffect)) && effectType == effect.effectType;
     }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(discountEffect, whiteMarbleEffect, extraDepotEffect, productionEffect, effectType);
-    }
 }

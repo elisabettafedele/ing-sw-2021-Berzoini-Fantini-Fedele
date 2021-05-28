@@ -13,6 +13,8 @@ import org.junit.Test;
 import java.io.UnsupportedEncodingException;
 import java.util.EmptyStackException;
 import java.util.List;
+import java.util.Random;
+import java.util.Stack;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
@@ -21,7 +23,7 @@ public class DevelopmentCardGridTest {
 
 
     @Test
-    public void test_Constructor_has_all_the_cards() throws UnsupportedEncodingException, InvalidArgumentException {
+    public void testConstructorHasAllTheCards() throws UnsupportedEncodingException, InvalidArgumentException {
         List<DevelopmentCard> cards = DevelopmentCardParser.parseCards();
         DevelopmentCardGrid grid = new DevelopmentCardGrid();
         int cont = 0;
@@ -36,7 +38,7 @@ public class DevelopmentCardGridTest {
     }
 
     @Test
-    public void test_getAvailableCards() throws UnsupportedEncodingException, InvalidArgumentException {
+    public void testGetAvailableCards() throws UnsupportedEncodingException, InvalidArgumentException {
         DevelopmentCardGrid grid = new DevelopmentCardGrid();
         for(int j = 0; j < 4; j++) {
             List<DevelopmentCard> availableCards = grid.getAvailableCards();
@@ -48,7 +50,7 @@ public class DevelopmentCardGridTest {
     }
 
     @Test
-    public void test_checkEmptyColumn() throws UnsupportedEncodingException, InvalidArgumentException {
+    public void testCheckEmptyColumn() throws UnsupportedEncodingException, InvalidArgumentException {
         DevelopmentCardGrid grid = new DevelopmentCardGrid();
         for(int i = 0; i < 12; i++){
             List<DevelopmentCard> availableCards = grid.getAvailableCards();
@@ -63,13 +65,13 @@ public class DevelopmentCardGridTest {
     }
 
     @Test
-    public void test_checkEmptyColumn_returnFalse() throws UnsupportedEncodingException, InvalidArgumentException {
+    public void testCheckEmptyColumnReturnFalse() throws UnsupportedEncodingException, InvalidArgumentException {
         DevelopmentCardGrid grid = new DevelopmentCardGrid();
         assertFalse(grid.checkEmptyColumn());
     }
 
     @Test (expected = InvalidArgumentException.class)
-    public void test_removeCard_InvalidArgumentException() throws UnsupportedEncodingException, InvalidArgumentException {
+    public void testRemoveCardInvalidArgumentException() throws UnsupportedEncodingException, InvalidArgumentException {
         DevelopmentCardGrid grid = new DevelopmentCardGrid();
         List<DevelopmentCard> availableCards;
         List<DevelopmentCard> cards;
@@ -88,7 +90,7 @@ public class DevelopmentCardGridTest {
     }
 
     @Test (expected = EmptyStackException.class)
-    public void test_removeCard_EmptyStackException() throws InvalidArgumentException, UnsupportedEncodingException {
+    public void testRemoveCardEmptyStackException() throws InvalidArgumentException, UnsupportedEncodingException {
         DevelopmentCardGrid grid = new DevelopmentCardGrid();
         List<DevelopmentCard> availableCards;
         List<DevelopmentCard> cards;
@@ -104,5 +106,28 @@ public class DevelopmentCardGridTest {
                 new Flag(FlagColor.GREEN, Level.ONE), new Production(new Value(null,null,3), new
                 Value(null,null,2)), "a", "b");
         grid.removeCard(testCard);
+    }
+
+    @Test
+    public void testCardGridOfInteger(){
+        Stack<Integer>[][] oldCardsGrid = new Stack[3][4];
+        Random random = new Random();
+        for (int i = 0; i < 3; i++){
+            for (int j = 0; j < 4; j++){
+                oldCardsGrid[i][j] = new Stack<>();
+                if (j != 1){
+                    oldCardsGrid[i][j].push(1 + random.nextInt(30));
+                }
+            }
+        }
+        DevelopmentCardGrid grid = new DevelopmentCardGrid(oldCardsGrid);
+        for (int i = 0; i < 3; i++){
+            for(int j = 0; j < 4; j++){
+                assertEquals(grid.getCardGrid()[i][j].size(), oldCardsGrid[i][j].size());
+                for (int k = 0; k < oldCardsGrid[i][j].size(); k++){
+                    assertEquals(grid.getCardGrid()[i][j].get(k).getID(), (int) oldCardsGrid[i][j].get(k));
+                }
+            }
+        }
     }
 }

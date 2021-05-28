@@ -72,5 +72,10 @@ public class WarehouseDepotTest {
         depot.addResources(-2);
     }
 
+    @Test (expected = InvalidDepotException.class)
+    public void testAddToInvalidDepot() throws InvalidArgumentException, InvalidDepotException, InsufficientSpaceException {
+        depot = new WarehouseDepot(3);
+        depot.addResources(2);
+    }
 
 }
