@@ -164,7 +164,7 @@ public class Server implements ServerInterface {
                 clientHandler.setClientHandlerPhase(ClientHandlerPhase.SET_UP_FINISHED);
                 ((SetUpPhase) clientsDisconnected.get(clientHandler.getNickname()).getGamePhase()).endPhaseManager(clientHandler);
             } else {
-                ((PlayPhase) clientsDisconnected.get(clientHandler.getNickname()).getGamePhase()).reloadGameCopy(false);
+                clientHandler.getController().sendMatchData(clientHandler.getController().getGame(), clientHandler, false);
                 clientsDisconnected.remove(clientHandler.getNickname());
             }
             return false;

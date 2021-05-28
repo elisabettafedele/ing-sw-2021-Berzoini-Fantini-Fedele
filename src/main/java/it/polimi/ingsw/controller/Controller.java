@@ -280,39 +280,41 @@ public class Controller {
         }
     }
 
+    public void sendMatchData(Game game, ClientHandler connection, boolean disconnection){
+        connection.sendMessageToClient(new ReloadMatchData(true, disconnection));
+        connection.sendMessageToClient(new LoadDevelopmentCardGrid(game.getDevelopmentCardGrid().getAvailableCards().stream().map(Card::getID).collect(Collectors.toList())));
+        connection.sendMessageToClient(new UpdateMarketView(RELOAD, game.getMarket().getMarketTray(), game.getMarket().getSlideMarble()));
+        for (Player gamePlayer : getPlayers()) {
+
+                // 1. I create a map with the leader cards of the gamePlayer I am analyzing
+                Map<Integer, Boolean> leaderCards = gamePlayer.getPersonalBoard().getLeaderCardsMap();
+                connection.sendMessageToClient(new ReloadLeaderCardsOwned(gamePlayer.getNickname(), leaderCards));
+
+                //2. Development cards
+                //TODO remove next row when raffa has finished
+                connection.sendMessageToClient(new ReloadDevelopmentCardOwned(gamePlayer.getNickname(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getHiddenDevelopmentCardColours(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getDevelopmentCardIdFirstRow()));
+                connection.sendMessageToClient(new LoadDevelopmentCardSlots(gamePlayer.getNickname(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getDevelopmentCardIdSlots()));
+                connection.sendMessageToClient(new ReloadDevelopmentCardsVictoryPoints(gamePlayer.getNickname(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getVictoryPointsDevelopmentCardSlots()));
+
+                //3. Marker position
+                connection.sendMessageToClient(new UpdateMarkerPosition(gamePlayer.getNickname(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getMarkerPosition()));
+
+                //4. Depots status
+                connection.sendMessageToClient(new UpdateDepotsStatus(gamePlayer.getNickname(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getStrongboxStatus(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getLeaderStatus()));
+
+                //5. Pope tiles
+                connection.sendMessageToClient(new ReloadPopesFavorTiles(gamePlayer.getNickname(), gamePlayer.getPersonalBoard().getPopesTileStates()));
+        }
+        connection.sendMessageToClient(new ReloadMatchData(false, disconnection));
+    }
+
     public void sendMatchData(Game game, boolean disconnection){
         assert game!=null;
-        //Inform all the clients that a previous game status is being restored
-        sendMessageToAll(new ReloadMatchData(true, disconnection));
-        sendMessageToAll(new LoadDevelopmentCardGrid(game.getDevelopmentCardGrid().getAvailableCards().stream().map(Card::getID).collect(Collectors.toList())));
-        sendMessageToAll(new UpdateMarketView(RELOAD, game.getMarket().getMarketTray(), game.getMarket().getSlideMarble()));
         lockConnections.lock();
         for (ClientHandler player : clientHandlers){
-                for (Player gamePlayer : getPlayers()) {
-
-                    // 1. I create a map with the leader cards of the gamePlayer I am analyzing
-                    Map<Integer, Boolean> leaderCards = gamePlayer.getPersonalBoard().getLeaderCardsMap();
-                    player.sendMessageToClient(new ReloadLeaderCardsOwned(gamePlayer.getNickname(), leaderCards));
-
-                    //2. Development cards
-                    //TODO remove next row when raffa has finished
-                    player.sendMessageToClient(new ReloadDevelopmentCardOwned(gamePlayer.getNickname(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getHiddenDevelopmentCardColours(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getDevelopmentCardIdFirstRow()));
-                    player.sendMessageToClient(new LoadDevelopmentCardSlots(gamePlayer.getNickname(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getDevelopmentCardIdSlots()));
-                    player.sendMessageToClient(new ReloadDevelopmentCardsVictoryPoints(gamePlayer.getNickname(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getVictoryPointsDevelopmentCardSlots()));
-
-                    //3. Marker position
-                    player.sendMessageToClient(new UpdateMarkerPosition(gamePlayer.getNickname(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getMarkerPosition()));
-
-                    //4. Depots status
-                    player.sendMessageToClient(new UpdateDepotsStatus(gamePlayer.getNickname(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getStrongboxStatus(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getLeaderStatus()));
-
-                    //5. Pope tiles
-                    player.sendMessageToClient(new ReloadPopesFavorTiles(gamePlayer.getNickname(), gamePlayer.getPersonalBoard().getPopesTileStates()));
-                }
-
+            sendMatchData(game, player, disconnection);
         }
         lockConnections.unlock();
-        sendMessageToAll(new ReloadMatchData(false, disconnection));
     }
 
 

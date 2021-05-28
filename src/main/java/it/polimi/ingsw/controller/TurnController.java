@@ -5,6 +5,8 @@ import it.polimi.ingsw.controller.game_phases.SinglePlayerPlayPhase;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.enumerations.ResourceStorageType;
 import it.polimi.ingsw.messages.toClient.TurnMessage;
+import it.polimi.ingsw.messages.toClient.game.DisplayStandardView;
+import it.polimi.ingsw.messages.toClient.game.NotifyEndRemoveResources;
 import it.polimi.ingsw.messages.toClient.game.SelectStorageRequest;
 import it.polimi.ingsw.messages.toClient.matchData.NotifyTakenPopesFavorTile;
 import it.polimi.ingsw.messages.toClient.matchData.UpdateDepotsStatus;
@@ -228,8 +230,8 @@ public class TurnController {
                 end = false;
         //If I do not have any other resource to remove
         if (end){
+            getController().getConnectionByNickname(currentPlayer.getNickname()).getCurrentAction().handleMessage(new NotifyEndRemoveResources());
             resourcesToRemove = new HashMap<>();
-            getController().sendMessageToAll(new UpdateDepotsStatus(currentPlayer.getNickname(), currentPlayer.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), currentPlayer.getPersonalBoard().getStrongboxStatus(), currentPlayer.getPersonalBoard().getLeaderStatus()));
             setStandardActionDoneToTrue();
             setNextAction();
             return;
@@ -239,19 +241,20 @@ public class TurnController {
                 //Automatic remove
                 if (currentPlayer.getPersonalBoard().countResources().get(resource).equals(resourcesToRemove.get(resource))) {
                     currentPlayer.getPersonalBoard().removeAll(resource);
+                    controller.sendMessageToAll(new UpdateDepotsStatus(currentPlayer.getNickname(), currentPlayer.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), currentPlayer.getPersonalBoard().getStrongboxStatus(), currentPlayer.getPersonalBoard().getLeaderStatus()));
                     resourcesToRemove.replace(resource, 0);
                 } else {
-                    getController().sendMessageToAll(new UpdateDepotsStatus(currentPlayer.getNickname(), currentPlayer.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), currentPlayer.getPersonalBoard().getStrongboxStatus(), currentPlayer.getPersonalBoard().getLeaderStatus()));
                     clientHandler.sendMessageToClient(new SelectStorageRequest(resource, currentPlayer.getPersonalBoard().isResourceAvailableAndRemove(ResourceStorageType.WAREHOUSE, resource, 1, false), currentPlayer.getPersonalBoard().isResourceAvailableAndRemove(ResourceStorageType.STRONGBOX, resource, 1, false), currentPlayer.getPersonalBoard().isResourceAvailableAndRemove(ResourceStorageType.LEADER_DEPOT, resource, 1, false)));
                     return;
                 }
             }
         }
-        getController().sendMessageToAll(new UpdateDepotsStatus(currentPlayer.getNickname(), currentPlayer.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), currentPlayer.getPersonalBoard().getStrongboxStatus(), currentPlayer.getPersonalBoard().getLeaderStatus()));
         if (standardActionDone)
             return;
         resourcesToRemove = new HashMap<>();
+        getController().getConnectionByNickname(currentPlayer.getNickname()).getCurrentAction().handleMessage(new NotifyEndRemoveResources());
         setStandardActionDoneToTrue();
+        clientHandler.sendMessageToClient(new DisplayStandardView());
         setNextAction();
     }
 
@@ -260,6 +263,7 @@ public class TurnController {
         assert (previousValue > 0);
         resourcesToRemove.replace(resource, previousValue-1);
         currentPlayer.getPersonalBoard().isResourceAvailableAndRemove( resourceStorageType,resource,1,true);
+        controller.sendMessageToAll(new UpdateDepotsStatus(currentPlayer.getNickname(), currentPlayer.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), currentPlayer.getPersonalBoard().getStrongboxStatus(), currentPlayer.getPersonalBoard().getLeaderStatus()));
         handleRemoveResources();
     }
 

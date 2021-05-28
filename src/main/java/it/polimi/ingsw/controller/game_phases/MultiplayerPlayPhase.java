@@ -96,8 +96,6 @@ public class MultiplayerPlayPhase extends PlayPhase {
     public void executePhase(Controller controller) {
         controller.sendMessageToAll(new TextMessage("From now on, when you are not the turn owner, you can use the command -pb to move to another player's view \nEG. -pb betti shows you the view of the player named \"betti\")"));
         setTurnController(new TurnController(controller,getPlayer()));
-        //TODO check why I am doing this
-        reloadGameCopy(false);
         controller.sendMessageToAll(new TurnMessage(getPlayer().getNickname(), true));
         getTurnController().start(getPlayer());
     }

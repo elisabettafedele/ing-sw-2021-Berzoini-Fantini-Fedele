@@ -2,6 +2,7 @@ package it.polimi.ingsw.controller.actions;
 
 import it.polimi.ingsw.enumerations.ActionType;
 import it.polimi.ingsw.messages.toClient.game.DisplayStandardView;
+import it.polimi.ingsw.messages.toClient.game.NotifyEndRemoveResources;
 import it.polimi.ingsw.messages.toClient.matchData.UpdateDepotsStatus;
 import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.server.Server;
@@ -29,6 +30,7 @@ public class ActivateProductionAction implements Action{
     private List<LeaderCard> availableProductionLeaderCards;
     private List<DevelopmentCard> availableDevelopmentCards;
     private ClientHandler clientHandler;
+    private Map<Resource, Integer> resourceToAdd;
     private final int BASIC_PRODUCTION_POWER = 0;
     private TurnController turnController;
 
@@ -192,7 +194,7 @@ public class ActivateProductionAction implements Action{
             List<Integer> productionPowerSelected = ((ChooseProductionPowersResponse) message).getProductionPowersSelected();
             List<Value> basicProductionPower;
             Map<Resource, Integer> resourceToRemove = new HashMap<>();
-            Map<Resource, Integer> resourceToAdd = new HashMap<>();
+            resourceToAdd = new HashMap<>();
             int faithPoints = 0;
             initializeResourceMaps(resourceToAdd, resourceToRemove);
             List<Value> productionPower;
@@ -218,12 +220,7 @@ public class ActivateProductionAction implements Action{
 
             turnController.removeResources(resourceToRemove);
 
-            try {
-                personalBoard.addResourcesToStrongbox(resourceToAdd);
-                turnController.getController().sendMessageToAll(new UpdateDepotsStatus(player.getNickname(), player.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), player.getPersonalBoard().getStrongboxStatus(), player.getPersonalBoard().getLeaderStatus()));
-            } catch (InvalidDepotException | InvalidArgumentException e) {
-                e.printStackTrace();
-            }
+
 
             if(faithPoints > 0){
                 try {
@@ -239,7 +236,16 @@ public class ActivateProductionAction implements Action{
         if(message instanceof SelectStorageResponse){
             turnController.removeResource(((SelectStorageResponse) message).getResourceStorageType(), ((SelectStorageResponse) message).getResource());
         }
-        clientHandler.sendMessageToClient(new DisplayStandardView());
+        if (message instanceof NotifyEndRemoveResources) {
+            try {
+                personalBoard.addResourcesToStrongbox(resourceToAdd);
+                turnController.getController().sendMessageToAll(new UpdateDepotsStatus(player.getNickname(), player.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), player.getPersonalBoard().getStrongboxStatus(), player.getPersonalBoard().getLeaderStatus()));
+            } catch (InvalidDepotException | InvalidArgumentException e) {
+                e.printStackTrace();
+            }
+        }
+
+
     }
 
     private void initializeResourceMaps(Map<Resource, Integer> resourceToAdd, Map<Resource, Integer> resourceToRemove) {

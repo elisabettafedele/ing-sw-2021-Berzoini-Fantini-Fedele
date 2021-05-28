@@ -142,7 +142,7 @@ public class SetUpPhase implements GamePhase {
         for (Integer id : discardedCards)
             player.getPersonalBoard().removeLeaderCard(id);
         GameHistory.saveSetupPhase(new PersistentControllerSetUpPhase(new PersistentGame(controller.getGame()), controller.getControllerID(), resourcesToStoreByNickname));
-        clientHandler.sendMessageToClient(new ReloadLeaderCardsOwned(nickname, player.getPersonalBoard().getLeaderCardsMap()));
+        controller.sendMessageToAll(new ReloadLeaderCardsOwned(nickname, player.getPersonalBoard().getLeaderCardsMap()));
         if (getNumberOfInitialResourcesByNickname(nickname) == 0) {
             endPhaseManager(clientHandler);
         } else {
