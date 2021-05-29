@@ -486,7 +486,50 @@ public class PersonalBoardTest {
             if (card.getEffect().getExtraDepotEffect().getLeaderDepot().getResourceType() == Resource.SHIELD)
                 assertEquals(card.getEffect().getExtraDepotEffect().getLeaderDepot().getResourceQuantity(), 1);
         }
+    }
 
+    @Test
+    public void testRemoveLeaderCards() throws InvalidArgumentException {
+        List<LeaderCard> lcl = LeaderCardParser.parseCards();
+        List<LeaderCard> leaderCardsBis = LeaderCardParser.parseCards();
+        lcl = lcl.stream().filter(x-> x.getEffect().getEffectType() == EffectType.EXTRA_DEPOT).collect(Collectors.toList());
+        leaderCardsBis = lcl.stream().filter(x-> x.getEffect().getEffectType() == EffectType.EXTRA_DEPOT).collect(Collectors.toList());
+        lcl.forEach(LeaderCard::activate);
+        PersonalBoard pb = new PersonalBoard(lcl);
+        pb.removeLeaderCard(53);
+        pb.removeLeaderCard(54);
+        assertEquals(pb.getLeaderCards().get(0).getID(), 55);
+        assertEquals(pb.getLeaderCards().get(1).getID(), 56);
+    }
+
+    @Test
+    public void testGetLeaderCardMap() throws InvalidArgumentException {
+        List<LeaderCard> lcl = LeaderCardParser.parseCards();
+        lcl = lcl.stream().filter(x-> x.getEffect().getEffectType() == EffectType.EXTRA_DEPOT).collect(Collectors.toList());
+        lcl.forEach(LeaderCard::activate);
+        PersonalBoard pb = new PersonalBoard(lcl);
+        Map<Integer, Boolean> result = new HashMap<>();
+        result.put(53, true);
+        result.put(54, true);
+        result.put(55, true);
+        result.put(56, true);
+        assertEquals(result.size(), pb.getLeaderCardsMap().size());
+        for (Integer num : result.keySet())
+            assertEquals(result.get(num), pb.getLeaderCardsMap().get(num));
+    }
+
+    @Test
+    public void testGetLeaderStatus() throws InvalidArgumentException, InvalidDepotException, InvalidResourceTypeException, InsufficientSpaceException {
+        List<LeaderCard> lcl = LeaderCardParser.parseCards();
+        lcl = lcl.stream().filter(x-> x.getEffect().getEffectType() == EffectType.EXTRA_DEPOT).collect(Collectors.toList());
+        lcl.forEach(LeaderCard::activate);
+        PersonalBoard pb = new PersonalBoard(lcl);
+        pb.addResources(ResourceStorageType.LEADER_DEPOT, Resource.STONE, 2);
+        assertEquals(pb.getLeaderStatus().size(), 4);
+        assertEquals(2, pb.getLeaderStatus().get(53).intValue());
+        assertEquals(0, pb.getLeaderStatus().get(54).intValue());
+        assertEquals(0, pb.getLeaderStatus().get(55).intValue());
+        assertEquals(0, pb.getLeaderStatus().get(56).intValue());
 
     }
 }

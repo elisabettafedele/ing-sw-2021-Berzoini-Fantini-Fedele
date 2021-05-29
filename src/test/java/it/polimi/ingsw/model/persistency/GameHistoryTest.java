@@ -18,7 +18,7 @@ import org.junit.Test;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class PersistentControllerPlayPhaseTest extends TestCase {
+public class GameHistoryTest extends TestCase {
     PersistentGame persistentGame;
 
     @BeforeClass
@@ -173,6 +173,14 @@ public class PersistentControllerPlayPhaseTest extends TestCase {
         assertEquals(reload.getBlackCrossPosition(), 3);
 
 
+    }
+
+    @Test
+    public void testRetrieveAnOldGame(){
+        if (GameHistory.retrieveGameFromControllerId(0) != null){
+            if (GameHistory.isSetUpPhase(0))
+                assertTrue(GameHistory.retrieveSetUpController(0) != null);
+        }
     }
 
 }

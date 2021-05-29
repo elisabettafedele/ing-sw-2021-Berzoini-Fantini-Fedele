@@ -50,6 +50,56 @@ public class WarehouseTest {
         warehouse.addResourcesToDepot(1, Resource.SHIELD, 1);
         warehouse.addResourcesToDepot(2, Resource.SERVANT, 1);
         assertTrue(warehouse.getAvailableWarehouseDepotsForResourceType(Resource.COIN).isEmpty());
+        assertEquals(warehouse.getAvailableWarehouseDepotsForResourceType(Resource.SHIELD).get(0), ResourceStorageType.WAREHOUSE_SECOND_DEPOT);
+    }
+
+    @Test
+    public void testGetWarehouseDepotsStatus() throws InvalidDepotException, InvalidArgumentException, InvalidResourceTypeException, InsufficientSpaceException {
+        warehouse.addResourcesToDepot(0, Resource.SHIELD, 1);
+        warehouse.addResourcesToDepot(1, Resource.COIN, 2);
+        List<Resource>[] theoreticalStatus = new List[]{new ArrayList(), new ArrayList(), new ArrayList()};
+        theoreticalStatus[0].add(Resource.SHIELD);
+        theoreticalStatus[1].add(Resource.COIN);
+        theoreticalStatus[1].add(Resource.COIN);
+        assertEquals(warehouse.getWarehouseDepotsStatus()[0], theoreticalStatus[0]);
+        assertEquals(warehouse.getWarehouseDepotsStatus()[1], theoreticalStatus[1]);
+        assertEquals(warehouse.getWarehouseDepotsStatus()[2], theoreticalStatus[2]);
+
+
+    }
+
+    @Test
+    public void testRemoveResourcesFromDepot() throws InvalidArgumentException, InsufficientQuantityException, InvalidResourceTypeException, InvalidDepotException, InsufficientSpaceException {
+        warehouse.addResourcesToDepot(0, Resource.SHIELD, 1);
+        warehouse.addResourcesToDepot(1, Resource.COIN, 2);
+        warehouse.removeResourcesFromDepot(Resource.COIN, 1);
+        warehouse.removeResourcesFromDepot(Resource.SHIELD, 1);
+        assertEquals(warehouse.getResourceQuantityOfDepot(0), 0);
+        assertEquals(warehouse.getResourceQuantityOfDepot(1), 1);
+    }
+
+    @Test
+    public void testRemoveAll() throws InvalidDepotException, InvalidArgumentException, InvalidResourceTypeException, InsufficientSpaceException {
+        warehouse.addResourcesToDepot(0, Resource.SHIELD, 1);
+        warehouse.addResourcesToDepot(1, Resource.COIN, 2);
+        warehouse.removeAll(Resource.SHIELD);
+        warehouse.removeAll(Resource.STONE);
+        assertEquals(warehouse.getResourceQuantityOfDepot(0), 0);
+
+    }
+
+    @Test
+    public void testFromListToWarehouse() throws InvalidArgumentException {
+        List<Resource>[] depots = new List[]{new ArrayList(), new ArrayList(), new ArrayList()};
+        depots[0].add(Resource.SHIELD);
+        depots[1].add(Resource.COIN);
+        depots[1].add(Resource.COIN);
+        Warehouse newWarehouse = new Warehouse(depots);
+        assertEquals(newWarehouse.getResourceQuantityOfDepot(0), 1);
+        assertEquals(newWarehouse.getResourceQuantityOfDepot(1), 2);
+        assertEquals(newWarehouse.getResourceQuantityOfDepot(2), 0);
+
+
     }
 
     @Test(expected = InvalidArgumentException.class)

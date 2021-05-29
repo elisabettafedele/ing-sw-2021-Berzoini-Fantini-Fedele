@@ -123,10 +123,6 @@ public class Warehouse implements Serializable {
         return depots[row].getResourceQuantity();
     }
 
-    public Depot getWarehouseDepot(int row) {
-        return depots[row];
-    }
-
     /**
      * Method used to find where a specific resource type is located in the Warehouse
      *
@@ -238,12 +234,5 @@ public class Warehouse implements Serializable {
         } catch (InvalidArgumentException | InsufficientQuantityException e) {
             e.printStackTrace();
         }
-    }
-
-    public void removeAllResources(){
-        removeAll(Resource.COIN);
-        removeAll(Resource.SHIELD);
-        removeAll(Resource.STONE);
-        removeAll(Resource.SERVANT);
     }
 }

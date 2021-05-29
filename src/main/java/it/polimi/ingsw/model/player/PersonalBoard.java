@@ -50,16 +50,22 @@ public class PersonalBoard implements Serializable {
             developmentCardSlots[i]=new Stack<>();
         }
         this.leaderCards = leaderCards;
-        Map input = new HashMap();
+        Map<Resource, Integer> input = new HashMap<Resource, Integer>();
         input.put(Resource.ANY,2);
-        Map output = new HashMap();
+        Map<Resource, Integer> output = new HashMap<Resource, Integer>();
         output.put(Resource.ANY,1);
         defaultProduction = new Production(new Value(null,input,0),new Value( null,output,0));
     }
 
+
+    /**
+     * Method to retrieve the {@link PersonalBoard} of a {@link PersistentPlayer}, a light version of a {@link Player} used to save the game state in a json file
+     * @param persistentPlayer the owner of the {@link PersonalBoard} that will be retrieved
+     */
     public PersonalBoard(PersistentPlayer persistentPlayer){
         markerPosition = persistentPlayer.getFaithTrackPosition();
         popesTileStates = persistentPlayer.getPopesTileStates();
+
         //LEADER CARDS
         this.leaderCards = new ArrayList<>();
         List<LeaderCard> leaderCards = LeaderCardParser.parseCards();
@@ -72,7 +78,7 @@ public class PersonalBoard implements Serializable {
 
         //DEVELOPMENT CARD
         List<DevelopmentCard> developmentCards = DevelopmentCardParser.parseCards();
-        this.developmentCardSlots = new Stack[3];
+        this.developmentCardSlots = new Stack[numberOfDevelopmentCardSlots];
         for (int i = 0; i < persistentPlayer.getDevelopmentCardSlots().length; i++){
             developmentCardSlots[i] = new Stack<>();
             if (!persistentPlayer.getDevelopmentCardSlots()[i].isEmpty()){
@@ -117,16 +123,16 @@ public class PersonalBoard implements Serializable {
             }
         }
 
-        Map input = new HashMap();
+        //RESTORE DEFAULT PRODUCTION
+        Map<Resource, Integer> input = new HashMap<Resource, Integer>();
         input.put(Resource.ANY,2);
-        Map output = new HashMap();
+        Map<Resource, Integer> output = new HashMap<Resource, Integer>();
         output.put(Resource.ANY,1);
         try {
             defaultProduction = new Production(new Value(null,input,0),new Value( null,output,0));
         } catch (InvalidArgumentException e) {
             e.printStackTrace();
         }
-
     }
 
     /**
@@ -221,9 +227,7 @@ public class PersonalBoard implements Serializable {
     public List<DevelopmentCard> getDevelopmentCards(){
         List<DevelopmentCard> developmentCards=new ArrayList<>();
         for(int i=0;i<developmentCardSlots.length;i++){
-            for(int ii=0; ii<developmentCardSlots[i].size();ii++){
-                developmentCards.add(developmentCardSlots[i].get(ii));
-            }
+            developmentCards.addAll(developmentCardSlots[i]);
         }
         return developmentCards;
     }
@@ -269,7 +273,7 @@ public class PersonalBoard implements Serializable {
         for (int i = 0; i < numberOfDevelopmentCardSlots; i++) {
             try {
                 tempList.add(developmentCardSlots[i].peek());
-            } catch ( EmptyStackException emptyStackException){ }
+            } catch ( EmptyStackException ignored){ }
         }
         return tempList;
     }
@@ -335,7 +339,7 @@ public class PersonalBoard implements Serializable {
         Map<Resource,Integer> availableResources=new HashMap<>();
         int[] resources=new int[4] ;
         for(int i=0;i<numberOfStrongboxDepots;i++){
-            resources[i]=0+strongbox[i].getResourceQuantity();
+            resources[i] = strongbox[i].getResourceQuantity();
         }
         for(LeaderCard lc : availableLeaderCards()){
             if(lc.getEffect().getEffectType()== EffectType.EXTRA_DEPOT){
@@ -346,7 +350,7 @@ public class PersonalBoard implements Serializable {
                 }
             }
         }
-        for(int i=0;i < warehouse.getNumberOfDepots();i++){
+        for(int i = 0;i < warehouse.getNumberOfDepots(); i++){
             try {
                 if(!warehouse.getResourceTypeOfDepot(i).equals(Resource.ANY)) {
                     resources[warehouse.getResourceTypeOfDepot(i).getValue()]+= warehouse.getResourceQuantityOfDepot(i);
@@ -431,10 +435,7 @@ public class PersonalBoard implements Serializable {
         return false;
     }
     public boolean cardInsertionIsLegal(DevelopmentCard card, int slotNum) {
-            if ((developmentCardSlots[slotNum].isEmpty() && card.getFlag().getFlagLevel() == Level.ONE) || (!developmentCardSlots[slotNum].isEmpty() && developmentCardSlots[slotNum].peek().getFlag().getFlagLevel().getValue() == card.getFlag().getFlagLevel().getValue() - 1)){
-                return true;
-            }
-            return false;
+        return (developmentCardSlots[slotNum].isEmpty() && card.getFlag().getFlagLevel() == Level.ONE) || (!developmentCardSlots[slotNum].isEmpty() && developmentCardSlots[slotNum].peek().getFlag().getFlagLevel().getValue() == card.getFlag().getFlagLevel().getValue() - 1);
     }
 
     /**
