@@ -233,6 +233,7 @@ public class Server implements ServerInterface {
      * Method used to manage the start of a multiplayer game
      */
     private void startNewGame() {
+        //if (clientsInLobby.size() < numberOfPlayersForNextGame || !invalidNicknameForNextMatch()) maybe
         if (clientsInLobby.size() < numberOfPlayersForNextGame)
             return;
         Controller controller = null;

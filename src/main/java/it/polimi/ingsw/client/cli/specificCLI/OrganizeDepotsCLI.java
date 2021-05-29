@@ -40,6 +40,8 @@ public class OrganizeDepotsCLI {
         } catch (IOException e) {
             return;
         }
+        if (choiceString == null)
+            return;
         if (choiceString.equals(Command.DISCARD.command))
             client.sendMessageToServer(new DiscardResourceRequest(resource));
         else if (choiceString.equals(Command.REORGANIZE.command))

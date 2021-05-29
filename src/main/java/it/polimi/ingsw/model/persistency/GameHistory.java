@@ -53,38 +53,24 @@ public class GameHistory {
         return retrieveGameFromControllerId(controlledID).get("gamePhase").getAsString().equals(SETUP_PHASE);
     }
 
-    public synchronized static void saveGame(PersistentControllerPlayPhase controller){
+    public static synchronized void saveSetupPhase(PersistentControllerSetUpPhase controller){
         if (!saveGames)
             return;
-        JsonArray jsonArray = getJsonArray(controller.getControllerID());
-
         try (Writer writer = new FileWriter("backupOfGames.json", false)) {
             Gson gson = JsonAdapter.getGsonBuilder();
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("controllerID", controller.getControllerID());
-            jsonObject.addProperty("gamePhase", PLAY_PHASE);
-            jsonObject.add("game", JsonParser.parseString(JsonAdapter.toJsonClass(controller.getGame())));
-            jsonObject.addProperty("lastPlayer", controller.getLastPlayer());
-            jsonArray.add(jsonObject);
-            gson.toJson(jsonArray, writer);
+            gson.toJson(createJsonArraySetUp(controller), writer);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static synchronized void saveSetupPhase(PersistentControllerSetUpPhase controller){
+    public synchronized static void saveGame(PersistentControllerPlayPhase controller){
         if (!saveGames)
             return;
-        JsonArray jsonArray = getJsonArray(controller.getControllerID());
+        Gson gson = JsonAdapter.getGsonBuilder();
+
         try (Writer writer = new FileWriter("backupOfGames.json", false)) {
-            Gson gson = JsonAdapter.getGsonBuilder();
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("controllerID", controller.getControllerID());
-            jsonObject.addProperty("gamePhase", SETUP_PHASE);
-            jsonObject.add("game", JsonParser.parseString(JsonAdapter.toJsonClass(controller.getGame())));
-            jsonObject.add("resourcesToStore", JsonParser.parseString(JsonAdapter.toJsonClass(controller.getResourcesToStore())));
-            jsonArray.add(jsonObject);
-            gson.toJson(jsonArray, writer);
+            gson.toJson(createJsonArrayMultiplayer(controller), writer);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -93,18 +79,9 @@ public class GameHistory {
     public static synchronized void saveGame(PersistentControllerPlayPhaseSingle controller){
         if (!saveGames)
             return;
-        JsonArray jsonArray = getJsonArray(controller.getControllerID());
         try (Writer writer = new FileWriter("backupOfGames.json", false)) {
             Gson gson = JsonAdapter.getGsonBuilder();
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("controllerID", controller.getControllerID());
-            jsonObject.addProperty("gamePhase", PLAY_PHASE);
-            jsonObject.add("game", JsonParser.parseString(JsonAdapter.toJsonClass(controller.getGame())));
-            jsonObject.addProperty("lastPlayer", controller.getLastPlayer());
-            jsonObject.add("tokens", JsonParser.parseString(JsonAdapter.toJsonClass(controller.getTokens())));
-            jsonObject.addProperty("blackCrossPosition", controller.getBlackCrossPosition());
-            jsonArray.add(jsonObject);
-            gson.toJson(jsonArray, writer);
+            gson.toJson(createJsonArraySinglePlayer(controller), writer);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -132,6 +109,43 @@ public class GameHistory {
         if (jsonArray == null) jsonArray = new JsonArray();
         return jsonArray;
     }
+
+    public static synchronized JsonArray createJsonArrayMultiplayer(PersistentControllerPlayPhase controller){
+        JsonArray jsonArray = getJsonArray(controller.getControllerID());
+        JsonObject jsonObject = getBasicJsonObject(controller.getControllerID(), PLAY_PHASE);
+        jsonObject.add("game", JsonParser.parseString(JsonAdapter.toJsonClass(controller.getGame())));
+        jsonObject.addProperty("lastPlayer", controller.getLastPlayer());
+        jsonArray.add(jsonObject);
+        return jsonArray;
+    }
+
+    public static synchronized JsonArray createJsonArraySinglePlayer(PersistentControllerPlayPhaseSingle controller){
+        JsonArray jsonArray = getJsonArray(controller.getControllerID());
+        JsonObject jsonObject = getBasicJsonObject(controller.getControllerID(), PLAY_PHASE);
+        jsonObject.add("game", JsonParser.parseString(JsonAdapter.toJsonClass(controller.getGame())));
+        jsonObject.addProperty("lastPlayer", controller.getLastPlayer());
+        jsonObject.add("tokens", JsonParser.parseString(JsonAdapter.toJsonClass(controller.getTokens())));
+        jsonObject.addProperty("blackCrossPosition", controller.getBlackCrossPosition());
+        jsonArray.add(jsonObject);
+        return jsonArray;
+    }
+
+    public static synchronized JsonArray createJsonArraySetUp(PersistentControllerSetUpPhase controller){
+        JsonArray jsonArray = getJsonArray(controller.getControllerID());
+        JsonObject jsonObject = getBasicJsonObject(controller.getControllerID(), SETUP_PHASE);
+        jsonObject.add("game", JsonParser.parseString(JsonAdapter.toJsonClass(controller.getGame())));
+        jsonObject.add("resourcesToStore", JsonParser.parseString(JsonAdapter.toJsonClass(controller.getResourcesToStore())));
+        jsonArray.add(jsonObject);
+        return jsonArray;
+    }
+
+    private static synchronized JsonObject getBasicJsonObject(int controllerID, String gamePhase){
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("controllerID", controllerID);
+        jsonObject.addProperty("gamePhase", gamePhase);
+        return jsonObject;
+    }
+
 
     public static void removeOldGame(int controllerID){
         JsonArray jsonArray = getJsonArray(controllerID);

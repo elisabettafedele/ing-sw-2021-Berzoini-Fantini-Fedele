@@ -10,7 +10,6 @@ import it.polimi.ingsw.model.cards.*;
 import it.polimi.ingsw.model.depot.Depot;
 import it.polimi.ingsw.model.depot.LeaderDepot;
 import it.polimi.ingsw.model.depot.StrongboxDepot;
-
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -169,11 +168,7 @@ public class PersonalBoard implements Serializable {
                     if(wantToRemove){
                         try {
                             strongbox[i].removeResources(quantity);
-                        } catch (InsufficientQuantityException e) {
-                            e.printStackTrace();
-                        } catch (InvalidArgumentException e) {
-                            e.printStackTrace();
-                        }
+                        } catch (InsufficientQuantityException | InvalidArgumentException ignored) { } //is checked before
                     }
                     return true;
                 }
@@ -190,11 +185,7 @@ public class PersonalBoard implements Serializable {
                         if(wantToRemove){
                             try {
                                 effect.getExtraDepotEffect().getLeaderDepot().removeResources(quantity);
-                            } catch (InsufficientQuantityException e) {
-                                e.printStackTrace();
-                            } catch (InvalidArgumentException e) {
-                                e.printStackTrace();
-                            }
+                            } catch (InsufficientQuantityException | InvalidArgumentException ignored) { } //is checked before
                         }
                         return true;
                     }
@@ -210,11 +201,7 @@ public class PersonalBoard implements Serializable {
                         if(wantToRemove){
                             try {
                                 warehouse.removeResourcesFromDepot(resource,quantity);
-                            } catch (InvalidResourceTypeException e) {
-                                e.printStackTrace();
-                            } catch (InsufficientQuantityException e) {
-                                e.printStackTrace();
-                            }
+                            } catch (InvalidResourceTypeException | InsufficientQuantityException ignored) { } //is checked before
                         }
                         return true;
                     }

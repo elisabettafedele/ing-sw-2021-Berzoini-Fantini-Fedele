@@ -6,6 +6,7 @@ import it.polimi.ingsw.jsonParsers.DevelopmentCardParser;
 import it.polimi.ingsw.model.cards.*;
 import it.polimi.ingsw.model.depot.LeaderDepot;
 import it.polimi.ingsw.jsonParsers.LeaderCardParser;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -461,7 +462,31 @@ public class PersonalBoardTest {
             pb.addDevelopmentCard(developmentCards.get(i + 16), i % 3);
             pb.addDevelopmentCard(developmentCards.get(i + 32), i % 3);
         }
-        //TODO finish
+    }
+
+    @Test
+    public void testRemove() throws InvalidDepotException, InvalidArgumentException, InvalidResourceTypeException, InsufficientSpaceException, DifferentEffectTypeException {
+        List<LeaderCard> lcl = LeaderCardParser.parseCards();
+        lcl = lcl.stream().filter(x-> x.getEffect().getEffectType() == EffectType.EXTRA_DEPOT).collect(Collectors.toList());
+        lcl.forEach(LeaderCard::activate);
+        PersonalBoard pb = new PersonalBoard(lcl);
+        pb.addResources(ResourceStorageType.LEADER_DEPOT, Resource.COIN, 1);
+        pb.addResources(ResourceStorageType.LEADER_DEPOT, Resource.SHIELD, 2);
+        pb.addResources(ResourceStorageType.STRONGBOX, Resource.SERVANT, 2);
+        assertTrue(pb.isResourceAvailableAndRemove(ResourceStorageType.STRONGBOX, Resource.SERVANT, 1, true));
+        assertEquals(pb.getStrongbox()[Resource.SERVANT.getValue()].getResourceQuantity(), 1);
+        assertFalse(pb.isResourceAvailableAndRemove(ResourceStorageType.STRONGBOX, Resource.SERVANT, 2, true));
+        assertFalse(pb.isResourceAvailableAndRemove(ResourceStorageType.LEADER_DEPOT, Resource.SERVANT, 2, true));
+        pb.addResources(ResourceStorageType.WAREHOUSE_FIRST_DEPOT, Resource.SERVANT, 1);
+        assertTrue(pb.isResourceAvailableAndRemove(ResourceStorageType.WAREHOUSE, Resource.SERVANT, 1, true));
+        assertFalse(pb.isResourceAvailableAndRemove(ResourceStorageType.WAREHOUSE, Resource.SERVANT, 1, true));
+        assertTrue(pb.isResourceAvailableAndRemove(ResourceStorageType.LEADER_DEPOT, Resource.SHIELD, 1, true));
+        List<LeaderCard> depotsCard = pb.getLeaderCards().stream().filter(x -> x.getEffect().getEffectType() == EffectType.EXTRA_DEPOT).collect(Collectors.toList());
+        for (LeaderCard card : depotsCard){
+            if (card.getEffect().getExtraDepotEffect().getLeaderDepot().getResourceType() == Resource.SHIELD)
+                assertEquals(card.getEffect().getExtraDepotEffect().getLeaderDepot().getResourceQuantity(), 1);
+        }
+
 
     }
 }
