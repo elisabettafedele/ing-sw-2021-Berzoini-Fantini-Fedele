@@ -293,11 +293,30 @@
             </Pane>
             <Pane fx:id="activateProductionPane" layoutX="207.0" layoutY="201.0" prefHeight="386.0" prefWidth="618.0">
                <children>
-                  <ImageView fx:id="basicProduction" fitHeight="128.0" fitWidth="141.0" layoutX="-15.0" layoutY="189.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../img/punchboard/basicProduction.png" />
-                     </image>
-                  </ImageView>
+                  <Pane layoutY="206.0" prefHeight="109.0" prefWidth="117.0">
+                     <children>
+                        <ImageView fx:id="basicProduction" fitHeight="128.0" fitWidth="141.0" layoutX="-15.0" layoutY="-17.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/punchboard/basicProduction.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fitHeight="150.0" fitWidth="32.0" layoutX="20.0" layoutY="28.0" pickOnBounds="true" preserveRatio="true" visible="false">
+                           <image>
+                              <Image url="@../img/punchboard/stone.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fitHeight="150.0" fitWidth="32.0" layoutX="20.0" layoutY="55.0" pickOnBounds="true" preserveRatio="true" visible="false">
+                           <image>
+                              <Image url="@../img/punchboard/stone.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fitHeight="150.0" fitWidth="32.0" layoutX="74.0" layoutY="41.0" pickOnBounds="true" preserveRatio="true" visible="false">
+                           <image>
+                              <Image url="@../img/punchboard/stone.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </Pane>
                   <ImageView fitHeight="364.0" fitWidth="305.0" layoutX="123.0" layoutY="19.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../img/punchboard/firstSlot.png" />
@@ -383,7 +402,7 @@
                </image>
             </ImageView>
             <Label fx:id="currentPBNicknameLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="736.0" layoutY="103.0" prefHeight="51.0" prefWidth="101.0" />
-            <VBox fx:id="popupVbox" alignment="CENTER" layoutX="54.0" layoutY="19.0" prefHeight="166.0" prefWidth="341.0" styleClass="popup-box" stylesheets="@../css/style.css">
+            <VBox fx:id="popupVbox" alignment="CENTER" layoutX="54.0" layoutY="19.0" prefHeight="166.0" prefWidth="341.0" styleClass="popup-box" stylesheets="@../css/style.css" visible="false">
                <children>
                   <Label alignment="CENTER" prefHeight="71.0" prefWidth="341.0">
                      <font>
@@ -412,6 +431,19 @@
                         <Button mnemonicParsing="false" text="Move" />
                         <Button mnemonicParsing="false" text="Swap" />
                         <Button mnemonicParsing="false" text="End reorganization" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <VBox fx:id="productionVbox" alignment="CENTER" layoutX="80.0" layoutY="23.0" prefHeight="201.0" prefWidth="346.0" styleClass="popup-box" stylesheets="@../css/style.css">
+               <children>
+                  <Label alignment="CENTER" prefHeight="85.0" prefWidth="346.0" />
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" />
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Button mnemonicParsing="false" text="Add production" />
+                        <Button mnemonicParsing="false" text="Remove Production" />
+                        <Button mnemonicParsing="false" text="Confirm" />
                      </children>
                   </HBox>
                </children>

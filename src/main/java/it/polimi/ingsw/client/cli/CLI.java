@@ -348,10 +348,9 @@ public class CLI implements View {
                     "Error: the given number is not present in the list. Provide a valid number",
                     CLI.conditionOnIntegerRange(1, realValues.size()));
             chosenResources.add(realValues.get(selection - 1));
-        }else{
-            System.out.println("You don't have enough resources for this production");
+            UtilityProduction.manageBasicProductionPower(chosenResources);
         }
-        UtilityProduction.manageBasicProductionPower(chosenResources);
+
     }
 
     public void displayCurrentSelectedProductions(Set<Integer> productionIDs, List<Value> basicProduction){

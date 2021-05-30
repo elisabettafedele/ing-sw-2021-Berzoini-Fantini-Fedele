@@ -3,6 +3,9 @@ package it.polimi.ingsw.client.gui;
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.client.PopesTileState;
+import it.polimi.ingsw.client.cli.CLI;
+import it.polimi.ingsw.client.utilities.InputParser;
+import it.polimi.ingsw.client.utilities.UtilityProduction;
 import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.common.LightLeaderCard;
 import it.polimi.ingsw.enumerations.*;
@@ -99,6 +102,8 @@ public class GameSceneController {
     @FXML
     private VBox reorganizationVbox;
     @FXML
+    private VBox productionVbox;
+    @FXML
     private HBox buttonsHbox;
     @FXML
     private Button reorganizeButton;
@@ -123,6 +128,7 @@ public class GameSceneController {
     List<Resource> selectedResources;
     List<Integer> selectedLeaderCards;
     List<ResourceStorageType> reorganizeChosenDepots;
+    List<Node> selectedProductions;
 
     boolean isYourTurn;
     // *********************************************************************  //
@@ -183,6 +189,38 @@ public class GameSceneController {
                 client.sendMessageToServer(new NotifyEndDepotsReorganization());
             }
         });
+        //set behaviour of productionVbox buttons
+        selectedProductions=new ArrayList<>();
+        productionVbox.setVisible(false);
+        ((Button)((HBox)productionVbox.getChildren().get(2)).getChildren().get(0)).setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                UtilityProduction.displayAvailableProductions();
+                actionEvent.consume();
+            }
+        });
+        ((Button)((HBox)productionVbox.getChildren().get(2)).getChildren().get(1)).setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                UtilityProduction.chooseProductionToRemove();
+                actionEvent.consume();
+            }
+        });
+        ((Button)((HBox)productionVbox.getChildren().get(2)).getChildren().get(2)).setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                UtilityProduction.confirmChoices();
+                productionVbox.setVisible(false);
+                for(int i=1;i<4;i++){
+                    ((Pane)basicProduction.getParent()).getChildren().get(i).setVisible(false);
+                }
+               for(Node node : selectedProductions){
+                   node.setEffect(null);
+               }
+                actionEvent.consume();
+            }
+        });
+
     }
 
     public void setGUI(GUI gui) {
@@ -1369,6 +1407,8 @@ public class GameSceneController {
                 reorganizeButton.setVisible(false);
                 ((Label)popupVbox.getChildren().get(0)).setText("Where do you want to take this resource from?");
                 ImageView resourceImage= new ImageView(new Image(SetupSceneController.class.getResource("/img/punchboard/" + resource.toString().toLowerCase(Locale.ROOT) + ".png").toString()));
+                resourceImage.setPreserveRatio(true);
+                resourceImage.setFitHeight(((ImageView)warehouse_first_depot.getChildren().get(0)).getFitHeight());
                 ((HBox)popupVbox.getChildren().get(1)).getChildren().add(resourceImage);
                 Map<Node,ResourceStorageType> nodeAndStorageType= new HashMap<>();
                 if(isInLeaderDepot){
@@ -1415,6 +1455,195 @@ public class GameSceneController {
             }
         });
 
+    }
+
+    public void displayChooseProduction(List<Integer> iDs, Map<Resource, Integer> availableResources, boolean addORremove) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                productionVbox.setVisible(true);
+                productionVbox.getChildren().get(1).setVisible(false);
+                productionVbox.getChildren().get(2).setVisible(false);
+                productionVbox.getChildren().get(1).setManaged(false);
+                productionVbox.getChildren().get(2).setManaged(false);
+                ((Label) productionVbox.getChildren().get(0)).setText("Select a production");
+
+
+                Map<Node,Integer> nodeIntMap= new HashMap<>();
+                if(iDs.contains(0)){
+                    nodeIntMap.put(basicProduction,0);
+                }
+                int i=0;
+                for(Stack<Integer> stack:matchData.getLightClientByNickname(players.get(0)).getDevelopmentCardSlots()){
+                    if(!stack.empty()){
+                        if(iDs.contains(stack.peek())) nodeIntMap.put(activateProductionPane.getChildren().get(i+4),stack.peek());
+                    }
+                    i++;
+                }
+                for(Node node : nodeIntMap.keySet()){
+                    if(addORremove)glowNode(node,Color.AQUA);
+                    node.setOnMouseEntered(new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent mouseEvent) {
+                            createTooltip(node,"CLICK TO SELECT THIS PRODUCTION");
+                            mouseEvent.consume();
+                        }
+                    });
+                    node.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent mouseEvent) {
+                            for(Node toRemoveGlowNode: nodeIntMap.keySet()){
+                                toRemoveGlowNode.setOnMouseEntered(new EventHandler<MouseEvent>() {
+                                    @Override
+                                    public void handle(MouseEvent mouseEvent) {
+                                        mouseEvent.consume();
+                                    }
+                                });
+                                toRemoveGlowNode.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                                    @Override
+                                    public void handle(MouseEvent mouseEvent) {
+                                        mouseEvent.consume();
+                                    }
+                                });
+                            }
+                            if(addORremove){
+                                for(Node toRemoveGlowNode: nodeIntMap.keySet()){
+                                    node.setEffect(null);
+                                }
+                                glowNode(node,Color.BLUEVIOLET);
+                                selectedProductions.add(node);
+                                if(nodeIntMap.get(node)==0){
+                                    createBasicProduction(availableResources);
+                                }
+                                else{
+                                    UtilityProduction.addProductionPower(nodeIntMap.get(node));
+                                }
+                            }
+                            else{
+                                selectedProductions.remove(node);
+                                node.setEffect(null);
+                                if(nodeIntMap.get(node)==0){
+                                    for(int i=1;i<4;i++){
+                                        ((Pane)basicProduction.getParent()).getChildren().get(i).setVisible(false);
+                                    }
+                                }
+                                UtilityProduction.removeProduction(nodeIntMap.get(node));
+                            }
+
+                            mouseEvent.consume();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    private void createBasicProduction(Map<Resource, Integer> availableResources){
+        HBox resourcesHBox = (HBox) productionVbox.getChildren().get(1);
+        resourcesHBox.setVisible(true);
+        resourcesHBox.setManaged(true);
+        resourcesHBox.getChildren().clear();
+        ((Label) productionVbox.getChildren().get(0)).setText("Select the first basic production input.");
+        List<Resource> usableResources = new ArrayList<Resource>();
+        List<Resource> chosenResources = new ArrayList<Resource>();
+        //Saving in usableResources which Resource has a quantity > 0
+        for(Map.Entry<Resource, Integer> entry : availableResources.entrySet()){
+            if(entry.getValue() > 0){
+                usableResources.add(entry.getKey());
+            }
+        }
+        if(usableResources.size() > 0){
+            for(Resource resource : Resource.realValues()){
+                ImageView resourceImage = new ImageView(new Image(SetupSceneController.class.getResource("/img/punchboard/" + resource.toString().toLowerCase(Locale.ROOT) + ".png").toString()));
+                resourceImage.setPreserveRatio(true);
+                resourceImage.setFitHeight(((ImageView)warehouse_first_depot.getChildren().get(0)).getFitHeight());
+                resourceImage.setId(resource.toString());
+                if(!usableResources.contains(resource)){
+                    resourceImage.setVisible(false);
+                    resourceImage.setManaged(false);
+                }
+                resourcesHBox.getChildren().add(resourceImage);
+            }
+            for(Node node : resourcesHBox.getChildren()){
+                node.setOnMouseEntered(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent mouseEvent) {
+                        glowNode(node,Color.CYAN);
+                        mouseEvent.consume();
+                    }
+                });
+                node.setOnMouseExited(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent mouseEvent) {
+                        node.setEffect(null);
+                        mouseEvent.consume();
+                    }
+                });
+                node.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent mouseEvent) {
+                        ((ImageView)((Pane)basicProduction.getParent()).getChildren().get(1+chosenResources.size())).setImage(((ImageView) node).getImage());
+                        ((ImageView)((Pane)basicProduction.getParent()).getChildren().get(1+chosenResources.size())).setVisible(true);
+                        chosenResources.add(Resource.valueOf(node.getId().toUpperCase()));
+                        if(chosenResources.size()==3){
+                            UtilityProduction.manageBasicProductionPower(chosenResources);
+                            resourcesHBox.getChildren().clear();
+                            mouseEvent.consume();
+                        }
+                        if(chosenResources.size()==2){
+                            for(Node node : resourcesHBox.getChildren()){
+                                node.setVisible(true);
+                                node.setManaged(true);
+                            }
+                            ((Label) productionVbox.getChildren().get(0)).setText("Select the basic production output");
+                            mouseEvent.consume();
+                        }
+                        else{
+                            ((Label) productionVbox.getChildren().get(0)).setText("Select the second basic production input.");
+                            if(availableResources.get(Resource.valueOf(node.getId().toUpperCase()))==1){
+                                node.setVisible(false);
+                                node.setManaged(false);
+                            }
+                            mouseEvent.consume();
+                        }
+                    }
+                });
+            }
+        }
+
+    }
+
+
+    public void displayProductionCardYouCanSelect(List<Integer> iDs) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                if(iDs.size()==0){
+                    productionVbox.setVisible(true);
+                    productionVbox.getChildren().get(1).setVisible(false);
+                    productionVbox.getChildren().get(2).setVisible(false);
+                    productionVbox.getChildren().get(1).setManaged(false);
+                    productionVbox.getChildren().get(2).setManaged(false);
+                    ((Label) productionVbox.getChildren().get(0)).setText("You can't choose any other production at the moment. ");
+                }
+            }
+        });
+
+    }
+
+    public void chooseNextProductionAction() {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                productionVbox.setVisible(true);
+                productionVbox.getChildren().get(1).setVisible(false);
+                productionVbox.getChildren().get(2).setVisible(true);
+                productionVbox.getChildren().get(1).setManaged(false);
+                productionVbox.getChildren().get(2).setManaged(true);
+                ((Label) productionVbox.getChildren().get(0)).setText("What do you want to do?");
+            }
+
+        });
     }
 
     /*   Use this to avoid Thread exception

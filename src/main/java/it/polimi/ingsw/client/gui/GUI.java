@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.gui;
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.client.View;
+import it.polimi.ingsw.client.utilities.UtilityProduction;
 import it.polimi.ingsw.common.FunctionInterface;
 import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.common.LightLeaderCard;
@@ -144,12 +145,16 @@ public class GUI extends Application implements View {
     }
 
     public void displayProductionCardYouCanSelect(List<Integer> IDs, List<Value> basicProduction) {
-
+        gameSceneController.displayProductionCardYouCanSelect(IDs);
     }
 
     @Override
     public void displayChooseProduction(List<Integer> availableProductionIDs, Map<Resource, Integer> availableResources, boolean addORremove) {
-
+        if(availableProductionIDs.size() == 0){
+            chooseNextProductionAction();
+            return;
+        }
+        gameSceneController.displayChooseProduction(availableProductionIDs,availableResources,addORremove);
     }
 
     @Override
@@ -159,7 +164,7 @@ public class GUI extends Application implements View {
 
     @Override
     public void chooseNextProductionAction() {
-
+        gameSceneController.chooseNextProductionAction();
     }
 
     @Override
@@ -216,7 +221,7 @@ public class GUI extends Application implements View {
 
     @Override
     public void displayChooseProductionPowersRequest(Map<Integer, List<Value>> availableProductionPowers, Map<Resource, Integer> availableResources) {
-
+        UtilityProduction.initialize(this, client, availableProductionPowers, availableResources);
     }
     @Override
     public void displayMessage(String message) {
