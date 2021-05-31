@@ -51,6 +51,7 @@ public interface VirtualView {
     void setNicknames(String playerNickname, List<String> otherPlayersNicknames);
     void update(MatchDataMessage message);
     void displayStandardView();
+    void setIsReloading(boolean reloading);
 
     //END
     void displayResults(Map<String, Integer> results, boolean readyForAnotherGame);

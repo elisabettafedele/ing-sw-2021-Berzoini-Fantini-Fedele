@@ -43,6 +43,7 @@ public class GUI extends Application implements View {
             System.exit(0);
 
         });
+        MatchData.getInstance().setView(this);
         askConnectionParameters();
     }
 
@@ -285,5 +286,10 @@ public class GUI extends Application implements View {
             gameSceneController.updateView();
             gameSceneController.enableNextPreviousButtons();
         }
+    }
+
+    @Override
+    public void setIsReloading(boolean reloading) {
+
     }
 }

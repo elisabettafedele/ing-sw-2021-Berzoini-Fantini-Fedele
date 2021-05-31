@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client;
 
+import it.polimi.ingsw.client.cli.graphical.Screen;
 import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.common.LightLeaderCard;
 import it.polimi.ingsw.enumerations.Marble;
@@ -23,6 +24,7 @@ public class MatchData {
     private String currentViewNickname;
     private String turnOwnerNickname;
     private View view;
+    private boolean isReloading;
 
     private static MatchData instance;
 
@@ -34,14 +36,18 @@ public class MatchData {
     }
 
     private MatchData(){
+        this.isReloading = false;
         this.lightLeaderCards = new ArrayList<>();
         this.thisClient = new LightClient();
         this.otherClients = new ArrayList<>();
     }
 
+    /**
+     * Set the nickname of the client that is playing from this session
+     * @param nickname the nickname chosen by the player
+     */
     public void setThisClient(String nickname){
         thisClient.setNickname(nickname);
-        //Just temporary, later the user will be able to choose which view he wants to see
         currentViewNickname = nickname;
     }
 
@@ -49,6 +55,10 @@ public class MatchData {
         this.view = view;
     }
 
+    /**
+     * Set the nickname of other players of the game, if any
+     * @param nickname the nickname of the player
+     */
     public void addLightClient(String nickname){
         LightClient lc = new LightClient();
         lc.setNickname(nickname);
@@ -62,6 +72,14 @@ public class MatchData {
                 return lc;
         }
         return thisClient;
+    }
+
+    public void setReloading(boolean reloading) {
+        isReloading = reloading;
+    }
+
+    public boolean isReloading() {
+        return isReloading;
     }
 
     public void addChosenLeaderCard(Integer ID, boolean active){
@@ -103,10 +121,6 @@ public class MatchData {
 
         if (message instanceof UpdateDepotsStatus) {
             getLightClientByNickname(message.getNickname()).updateDepotStatus(((UpdateDepotsStatus) message).getWarehouseDepots(), ((UpdateDepotsStatus) message).getStrongboxDepots(), ((UpdateDepotsStatus) message).getLeaderDepots());
-            //if (message.getNickname().equals(currentViewNickname))
-                //view.displayStandardView();
-
-            //TODO just temporary, decide when to show. Qua sarà qualcosa del tipo "se è la view selezionata dal client, ristampala"
         }
         if (message instanceof UpdateMarkerPosition) {
             if (message.getNickname().equals(LORENZO)){
@@ -120,7 +134,7 @@ public class MatchData {
             if (((NotifyLeaderAction) message).isDiscard() && thisClient.getNickname().equals(message.getNickname()))
                 thisClient.removeLeaderCard(((NotifyLeaderAction) message).getId());
             else if (((NotifyLeaderAction) message).isDiscard() && !thisClient.getNickname().equals(message.getNickname())){
-                return; //TODO maybe we can show that a specific player has discarded a specific card...
+                getLightClientByNickname(message.getNickname()).removeLeaderCard(((NotifyLeaderAction) message).getId());
             }
             else if (!((NotifyLeaderAction) message).isDiscard())
                 getLightClientByNickname(message.getNickname()).activateLeader(((NotifyLeaderAction) message).getId());
@@ -133,9 +147,6 @@ public class MatchData {
         if (message instanceof UpdateMarketView){
             marketTray = ((UpdateMarketView) message).getMarbles();
             slideMarble = ((UpdateMarketView) message).getSideMarble();
-            //TODO just temporary, decide when to show...stesso discorso di prima
-            //if (message.getNickname().equals(thisClient.getNickname()) || message.getNickname().equals("SETUP"))
-            //    GraphicalMarket.printMarket(((UpdateMarketView) message).getMarbles(), ((UpdateMarketView) message).getSideMarble());
         }
 
         if (message instanceof NotifyTakenPopesFavorTile)
@@ -159,6 +170,14 @@ public class MatchData {
                 this.turnOwnerNickname = message.getNickname();
         }
 
+        display(message.getNickname());
+
+    }
+
+    public void display(String nicknameMessage){
+        if(currentViewNickname.equals(nicknameMessage) && !isReloading){
+            view.displayStandardView();
+        }
     }
 
     public List<String> getAllNicknames(){

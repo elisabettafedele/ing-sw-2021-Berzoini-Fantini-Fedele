@@ -17,6 +17,7 @@ import it.polimi.ingsw.enumerations.*;
 import it.polimi.ingsw.messages.toClient.TurnMessage;
 import it.polimi.ingsw.messages.toClient.matchData.MatchDataMessage;
 import it.polimi.ingsw.model.cards.Value;
+import javafx.css.Match;
 
 import java.util.*;
 
@@ -404,8 +405,14 @@ public class CLI implements View {
 
     @Override
     public void displayStandardView() {
+
         Screen.getInstance().setClientToDisplay(MatchData.getInstance().getCurrentViewNickname());
         Screen.getInstance().displayStandardView();
+    }
+
+    @Override
+    public void setIsReloading(boolean reloading){
+        MatchData.getInstance().setReloading(reloading);
     }
 
     // *********************************************************************  //
