@@ -44,12 +44,10 @@ public class UtilityProduction {
                 //skip
             }
             if(hasResourcesForThisProduction(activationCost, availableResources) && entry.getKey() != 0){
-                //System.out.println(entry.getKey());
                 availableProductionIDs.add(entry.getKey());
             }
         }
         if(availableResources.values().stream().mapToInt(Integer::intValue).sum() >= 2 && availableProductionPowers.containsKey(0)){
-            //System.out.println("0. Basic Production Power: " + availableProductionPowers.get(0));
             availableProductionIDs.add(BASIC_PRODUCTION_POWER);
         }
         if(view instanceof CLI) ((CLI) view).displayCurrentSelectedProductions(selectedProductions.keySet(),selectedProductions.get(0));
