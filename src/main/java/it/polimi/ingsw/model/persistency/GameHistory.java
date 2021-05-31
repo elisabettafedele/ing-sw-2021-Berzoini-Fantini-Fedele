@@ -8,13 +8,19 @@ import java.io.*;
 import java.util.*;
 
 public class GameHistory {
+    /**
+     * Utility class used to handle the saving of a {@link it.polimi.ingsw.model.game.Game} in the server and to retrieve and old one
+     */
 
     public static boolean saveGames;
     public static final String PLAY_PHASE = "PLAY_PHASE";
     public static final String SETUP_PHASE = "SETUP_PHASE";
 
-
-
+    /**
+     * Method to retrieve an old game knowing its controller ID (if any matches)
+     * @param id the controller id. It is the hash code of the concatenation of the string of players' names ordered alphabetically.
+     * @return a JsonObject corresponding to the game wanted if any exists, null if no game with that id is present in the json file
+     */
     public synchronized static JsonObject retrieveGameFromControllerId(int id) {
         JsonObject jsonObjectOfOldMatch = null;
         try (JsonReader jsonReader = new JsonReader(new FileReader("backupOfGames.json"))) {
