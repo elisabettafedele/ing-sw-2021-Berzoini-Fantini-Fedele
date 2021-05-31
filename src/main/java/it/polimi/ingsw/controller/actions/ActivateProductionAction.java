@@ -1,7 +1,6 @@
 package it.polimi.ingsw.controller.actions;
 
 import it.polimi.ingsw.enumerations.ActionType;
-import it.polimi.ingsw.messages.toClient.game.DisplayStandardView;
 import it.polimi.ingsw.messages.toClient.game.NotifyEndRemoveResources;
 import it.polimi.ingsw.messages.toClient.matchData.UpdateDepotsStatus;
 import it.polimi.ingsw.server.ClientHandler;
@@ -201,7 +200,7 @@ public class ActivateProductionAction implements Action{
 
             if(productionPowerSelected.size() < 1){
                 turnController.setNextAction();
-                clientHandler.sendMessageToClient(new DisplayStandardView());
+                //clientHandler.sendMessageToClient(new DisplayStandardView());
                 return;
             }
 

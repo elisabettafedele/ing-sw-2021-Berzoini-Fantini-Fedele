@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.cli.graphical;
 
 import it.polimi.ingsw.client.MatchData;
+import it.polimi.ingsw.enumerations.GameMode;
 
 import java.util.List;
 
@@ -24,7 +25,13 @@ public class GraphicalScoreBoard extends GraphicalElement{
             for (int i = 0; i < nickname.length(); i++) {
                 symbols[x_begin][i+1] = nickname.charAt(i);
             }
-            int faithTrackPosition = MatchData.getInstance().getLightClientByNickname(nickname).getFaithTrackPosition();
+
+            int faithTrackPosition;
+            if(MatchData.getInstance().getGameMode() == GameMode.SINGLE_PLAYER && nickname.equals(MatchData.LORENZO)){
+                faithTrackPosition = MatchData.getInstance().getBlackCrossPosition();
+            }else{
+                faithTrackPosition = MatchData.getInstance().getLightClientByNickname(nickname).getFaithTrackPosition();
+            }
             if(faithTrackPosition > 9){
                 symbols[x_begin][max_length + 2] = String.valueOf(faithTrackPosition/10).charAt(0);
             }

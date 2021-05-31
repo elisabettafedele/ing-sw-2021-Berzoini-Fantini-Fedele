@@ -3,6 +3,7 @@ package it.polimi.ingsw.client;
 import it.polimi.ingsw.client.cli.graphical.Screen;
 import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.common.LightLeaderCard;
+import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.enumerations.Marble;
 import it.polimi.ingsw.messages.toClient.TurnMessage;
 import it.polimi.ingsw.messages.toClient.matchData.*;
@@ -21,10 +22,12 @@ public class MatchData {
     private List<Integer> developmentCardGrid;
     public static final int EMPTY_SLOT = -1;
     public static final String LORENZO = "Lorenzo";
+    private int blackCrossPosition;
     private String currentViewNickname;
     private String turnOwnerNickname;
     private View view;
     private boolean isReloading;
+    GameMode gameMode; //TODO: initialize
 
     private static MatchData instance;
 
@@ -36,6 +39,7 @@ public class MatchData {
     }
 
     private MatchData(){
+        this.blackCrossPosition = 0;
         this.isReloading = false;
         this.lightLeaderCards = new ArrayList<>();
         this.thisClient = new LightClient();
@@ -51,6 +55,10 @@ public class MatchData {
         currentViewNickname = nickname;
     }
 
+    /**
+     * Set the {@link View} of the ongoing match
+     * @param view the {@link it.polimi.ingsw.client.cli.CLI} or the {@link it.polimi.ingsw.client.gui.GUI} used
+     */
     public void setView(View view){
         this.view = view;
     }
@@ -66,6 +74,11 @@ public class MatchData {
 
     }
 
+    /**
+     * Return the {@link LightClient} object corresponding to a nickname of the players in game
+     * @param nickname String containing the nickname of the player
+     * @return {@link LightClient}
+     */
     public LightClient getLightClientByNickname(String nickname) {
         for(LightClient lc : otherClients){
             if(lc.getNickname().equals(nickname))
@@ -74,14 +87,19 @@ public class MatchData {
         return thisClient;
     }
 
+    /**
+     * Setter to set the boolean isReloading to "inform" the view to not display any scene when isReloading is True
+     * @param reloading True if the reloading of all the information of the match is going on, false if it's not
+     */
     public void setReloading(boolean reloading) {
         isReloading = reloading;
     }
 
-    public boolean isReloading() {
-        return isReloading;
-    }
-
+    /**
+     * Add to thisClient the {@link it.polimi.ingsw.model.cards.LeaderCard}
+     * @param ID
+     * @param active
+     */
     public void addChosenLeaderCard(Integer ID, boolean active){
         thisClient.addLeaderCard(ID, active);
     }
@@ -119,12 +137,16 @@ public class MatchData {
 
     public void update(MatchDataMessage message){
 
+        if (message instanceof LoadDevelopmentCardGrid){
+            this.developmentCardGrid = ((LoadDevelopmentCardGrid) message).getAvailableCardsIds();
+        }
+
         if (message instanceof UpdateDepotsStatus) {
             getLightClientByNickname(message.getNickname()).updateDepotStatus(((UpdateDepotsStatus) message).getWarehouseDepots(), ((UpdateDepotsStatus) message).getStrongboxDepots(), ((UpdateDepotsStatus) message).getLeaderDepots());
         }
         if (message instanceof UpdateMarkerPosition) {
             if (message.getNickname().equals(LORENZO)){
-                //TODO
+                this.blackCrossPosition = ((UpdateMarkerPosition) message).getMarkerPosition();
             } else {
                 getLightClientByNickname(message.getNickname()).updateMarkerPosition(((UpdateMarkerPosition) message).getMarkerPosition());
             }
@@ -168,14 +190,14 @@ public class MatchData {
         if (message instanceof TurnMessage){
             if (((TurnMessage) message).isStarted())
                 this.turnOwnerNickname = message.getNickname();
+        }else {
+            display(message.getNickname());
         }
-
-        display(message.getNickname());
 
     }
 
     public void display(String nicknameMessage){
-        if(currentViewNickname.equals(nicknameMessage) && !isReloading){
+        if((currentViewNickname.equals(nicknameMessage) || LORENZO.equals(nicknameMessage)) && !isReloading){
             view.displayStandardView();
         }
     }
@@ -183,8 +205,12 @@ public class MatchData {
     public List<String> getAllNicknames(){
         List<String> nicknames = new ArrayList<>();
         nicknames.add(thisClient.getNickname());
-        for(LightClient lc : otherClients){
-            nicknames.add(lc.getNickname());
+        if(gameMode == GameMode.SINGLE_PLAYER){
+            nicknames.add(LORENZO);
+        }else{
+            for(LightClient lc : otherClients){
+                nicknames.add(lc.getNickname());
+            }
         }
         return nicknames;
     }
@@ -215,5 +241,17 @@ public class MatchData {
 
     public String getCurrentViewNickname(){
         return currentViewNickname;
+    }
+
+    public void setGameMode(GameMode gameMode) {
+        this.gameMode = gameMode;
+    }
+
+    public GameMode getGameMode() {
+        return gameMode;
+    }
+
+    public int getBlackCrossPosition() {
+        return blackCrossPosition;
     }
 }

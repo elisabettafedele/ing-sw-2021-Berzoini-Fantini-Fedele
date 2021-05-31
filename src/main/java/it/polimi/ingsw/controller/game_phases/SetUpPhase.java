@@ -35,7 +35,7 @@ public class SetUpPhase implements GamePhase {
         resourcesToStoreByNickname = new HashMap<>();
         controller.sendLightCards();
         setUpLeaderCards();
-        controller.sendMessageToAll(new LoadDevelopmentCardGrid(controller.getGame().getDevelopmentCardGrid().getAvailableCards().stream().map(Card::getID).collect(Collectors.toList())));
+        controller.sendMessageToAll(new LoadDevelopmentCardGrid(null, controller.getGame().getDevelopmentCardGrid().getAvailableCards().stream().map(Card::getID).collect(Collectors.toList())));
     }
 
     public SetUpPhase(Map<String, List<Resource>> resourcesToStoreByNickname, Controller controller){

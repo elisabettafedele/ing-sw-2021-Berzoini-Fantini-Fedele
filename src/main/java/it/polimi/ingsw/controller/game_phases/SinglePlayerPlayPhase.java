@@ -10,6 +10,7 @@ import it.polimi.ingsw.exceptions.ZeroPlayerException;
 import it.polimi.ingsw.messages.toClient.TurnMessage;
 import it.polimi.ingsw.messages.toClient.game.NotifyLorenzoAction;
 import it.polimi.ingsw.messages.toClient.matchData.LoadDevelopmentCardGrid;
+import it.polimi.ingsw.messages.toClient.matchData.UpdateMarkerPosition;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.DevelopmentCard;
 import it.polimi.ingsw.model.persistency.GameHistory;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 public class SinglePlayerPlayPhase extends PlayPhase {
     private int blackCrossPosition;
     private Queue<SoloActionToken> tokens;
-    public static String LORENZO = "LORENZO";
+    public static String LORENZO = "Lorenzo";
     private String lastPlayer;
     private boolean endTriggered = false;
 
@@ -88,7 +89,8 @@ public class SinglePlayerPlayPhase extends PlayPhase {
             }
 
         }
-        getController().sendMessageToAll(new LoadDevelopmentCardGrid(getController().getGame().getDevelopmentCardGrid().getAvailableCards().stream().map(Card:: getID).collect(Collectors.toList())));
+        getController().sendMessageToAll(new LoadDevelopmentCardGrid(getPlayer().getNickname(),getController().getGame().getDevelopmentCardGrid().getAvailableCards().stream().map(Card:: getID).collect(Collectors.toList())));
+
     }
 
     private DevelopmentCard getLowerCard(List<DevelopmentCard> availableCards) {
@@ -103,7 +105,7 @@ public class SinglePlayerPlayPhase extends PlayPhase {
 
     public void moveBlackCross(int step){
         blackCrossPosition += step;
-        getTurnController().checkFaithTrack(); //TODO: need to be the checked for the black cross
+        getTurnController().checkFaithTrack();
         //TODO, manage eventual Lorenzo's victory.
     }
 
@@ -116,6 +118,7 @@ public class SinglePlayerPlayPhase extends PlayPhase {
     @Override
     public void handleResourceDiscard(String nickname) {
         moveBlackCross(1);
+        getController().getConnectionByNickname(getPlayer().getNickname()).sendMessageToClient(new UpdateMarkerPosition(LORENZO, blackCrossPosition));
     }
 
 

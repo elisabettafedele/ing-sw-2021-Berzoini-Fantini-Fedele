@@ -1,19 +1,16 @@
 package it.polimi.ingsw.messages.toClient.matchData;
 
-import it.polimi.ingsw.common.VirtualView;
-import it.polimi.ingsw.messages.toClient.MessageToClient;
-
 import java.util.List;
 
-public class LoadDevelopmentCardGrid implements MessageToClient {
+public class LoadDevelopmentCardGrid extends MatchDataMessage {
     private List<Integer> availableCardsIds;
 
-    public LoadDevelopmentCardGrid(List<Integer> availableCardsIds) {
+    public LoadDevelopmentCardGrid(String nickname, List<Integer> availableCardsIds) {
+        super(nickname);
         this.availableCardsIds = availableCardsIds;
     }
 
-    @Override
-    public void handleMessage(VirtualView view) {
-        view.loadDevelopmentCardGrid(availableCardsIds);
+    public List<Integer> getAvailableCardsIds() {
+        return availableCardsIds;
     }
 }

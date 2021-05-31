@@ -400,6 +400,12 @@ public class CLI implements View {
         for(String nickname : otherPlayersNicknames){
             MatchData.getInstance().addLightClient(nickname);
         }
+
+        if (otherPlayersNicknames.size() == 0){
+            MatchData.getInstance().setGameMode(GameMode.SINGLE_PLAYER);
+        }else{
+            MatchData.getInstance().setGameMode(GameMode.MULTI_PLAYER);
+        }
     }
 
     @Override

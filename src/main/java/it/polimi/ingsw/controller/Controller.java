@@ -282,7 +282,7 @@ public class Controller {
 
     public void sendMatchData(Game game, ClientHandler connection, boolean disconnection){
         connection.sendMessageToClient(new ReloadMatchData(true, disconnection));
-        connection.sendMessageToClient(new LoadDevelopmentCardGrid(game.getDevelopmentCardGrid().getAvailableCards().stream().map(Card::getID).collect(Collectors.toList())));
+        connection.sendMessageToClient(new LoadDevelopmentCardGrid(connection.getNickname(), game.getDevelopmentCardGrid().getAvailableCards().stream().map(Card::getID).collect(Collectors.toList())));
         connection.sendMessageToClient(new UpdateMarketView(RELOAD, game.getMarket().getMarketTray(), game.getMarket().getSlideMarble()));
         for (Player gamePlayer : getPlayers()) {
 

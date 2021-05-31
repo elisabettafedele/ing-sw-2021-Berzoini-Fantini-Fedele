@@ -1,7 +1,6 @@
 package it.polimi.ingsw.controller.actions;
 
 import it.polimi.ingsw.enumerations.ActionType;
-import it.polimi.ingsw.messages.toClient.game.DisplayStandardView;
 import it.polimi.ingsw.messages.toClient.matchData.NotifyLeaderAction;
 import it.polimi.ingsw.messages.toClient.matchData.UpdateMarkerPosition;
 import it.polimi.ingsw.server.ClientHandler;
@@ -88,7 +87,7 @@ public class LeaderCardAction implements Action{
             }
         turnController.getController().sendMessageToAll(new NotifyLeaderAction(clientHandler.getNickname(), ((SelectCardResponse) message).getSelectedCard(), !activateORdiscard));
         turnController.incrementNumberOfLeaderActionDone();
-        clientHandler.sendMessageToClient(new DisplayStandardView());
+        //clientHandler.sendMessageToClient(new DisplayStandardView());
         turnController.setNextAction();
     }
 

@@ -5,13 +5,10 @@ import it.polimi.ingsw.controller.game_phases.SinglePlayerPlayPhase;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.enumerations.ResourceStorageType;
 import it.polimi.ingsw.messages.toClient.TurnMessage;
-import it.polimi.ingsw.messages.toClient.game.DisplayStandardView;
 import it.polimi.ingsw.messages.toClient.game.NotifyEndRemoveResources;
 import it.polimi.ingsw.messages.toClient.game.SelectStorageRequest;
 import it.polimi.ingsw.messages.toClient.matchData.NotifyTakenPopesFavorTile;
 import it.polimi.ingsw.messages.toClient.matchData.UpdateDepotsStatus;
-import it.polimi.ingsw.model.persistency.GameHistory;
-import it.polimi.ingsw.model.persistency.PersistentControllerPlayPhase;
 import it.polimi.ingsw.model.persistency.PersistentGame;
 import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.controller.actions.*;
@@ -21,7 +18,6 @@ import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.InvalidMethodException;
 import it.polimi.ingsw.exceptions.ZeroPlayerException;
 import it.polimi.ingsw.messages.toClient.game.ChooseActionRequest;
-import it.polimi.ingsw.messages.toClient.TextMessage;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.model.game.VaticanReportSection;
 
@@ -254,7 +250,7 @@ public class TurnController {
         resourcesToRemove = new HashMap<>();
         getController().getConnectionByNickname(currentPlayer.getNickname()).getCurrentAction().handleMessage(new NotifyEndRemoveResources());
         setStandardActionDoneToTrue();
-        clientHandler.sendMessageToClient(new DisplayStandardView());
+        //clientHandler.sendMessageToClient(new DisplayStandardView());
         setNextAction();
     }
 
