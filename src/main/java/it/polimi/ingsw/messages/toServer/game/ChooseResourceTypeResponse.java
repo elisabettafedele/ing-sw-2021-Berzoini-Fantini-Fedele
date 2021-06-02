@@ -23,6 +23,6 @@ public class ChooseResourceTypeResponse implements MessageToServer {
     @Override
     public void handleMessage(ServerInterface server, ClientHandlerInterface clientHandler) {
         Server.SERVER_LOGGER.log(Level.INFO, "New message from " + clientHandler.getNickname() + " that has choosen his resource types");
-        clientHandler.getController().handleMessage(this, clientHandler);
-    }
+        if (clientHandler.getController() != null)
+            clientHandler.getController().handleMessage(this, clientHandler);    }
 }

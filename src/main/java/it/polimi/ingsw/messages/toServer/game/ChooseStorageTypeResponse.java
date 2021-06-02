@@ -24,8 +24,9 @@ public class ChooseStorageTypeResponse implements MessageToServer {
     @Override
     public void handleMessage(ServerInterface server, ClientHandlerInterface clientHandler) {
         Server.SERVER_LOGGER.log(Level.INFO, "New message from " + clientHandler.getNickname() + " that has chosen to store the " + resource + " in " + storageType);
-        if (!canDiscard)
-            clientHandler.getController().handleMessage(this,clientHandler);
+        if (!canDiscard) {
+            if (clientHandler.getController() != null)
+                clientHandler.getController().handleMessage(this, clientHandler);        }
         else
             clientHandler.getCurrentAction().handleMessage(this);
     }

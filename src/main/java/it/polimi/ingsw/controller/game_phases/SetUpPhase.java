@@ -92,6 +92,8 @@ public class SetUpPhase implements GamePhase {
 
 
     public void handleMessage(MessageToServer message, ClientHandler clientHandler) {
+        if (!clientHandler.isGameStarted())
+            return;
         if (message instanceof ChooseLeaderCardsResponse && clientHandler.getClientHandlerPhase() == ClientHandlerPhase.WAITING_DISCARDED_LEADER_CARDS)
             removeLeaderCards(((ChooseLeaderCardsResponse) message).getDiscardedLeaderCards(), clientHandler);
 
