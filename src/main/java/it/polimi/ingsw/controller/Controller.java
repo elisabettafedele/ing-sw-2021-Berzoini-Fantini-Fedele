@@ -57,11 +57,7 @@ public class Controller {
         //SINGLE PLAYER
         if (connection.getGameMode() == GameMode.SINGLE_PLAYER){
             getPlayerByNickname(nickname).setActive(false);
-            if (gamePhase instanceof SetUpPhase)
-                connection.getServer().removeConnectionGame(connection, true);
-            if (gamePhase instanceof PlayPhase) {
-                server.removeConnectionGame(connection, false);
-            }
+            server.removeConnectionGame(connection, false);
             return;
         }
 
@@ -80,16 +76,18 @@ public class Controller {
                     ((SetUpPhase) gamePhase).endPhaseManager(connection);
             } else {
                 //CASE 2: THE CLIENT HAS NOT FINISHED THE SETUP PHASE YET
-                connection.getServer().removeConnectionGame(connection, true);
+                connection.getServer().removeNickname(connection.getNickname());
                 lockConnections.lock();
+                connection.getServer().removeGame(this);
+                GameHistory.removeOldGame(controllerID);
                 for (ClientHandler other : getClientHandlers()) {
-                    server.removeConnectionGame(other, true);
                     if (other.isGameStarted() && other.isActive()) {
                         other.sendMessageToClient(new NotifyClientDisconnection(nickname, true, true));
                         other.setGameStarted(false);
-                        other.setClientHandlerPhase(ClientHandlerPhase.WAITING_NICKNAME);
-                        server.handleNicknameChoice(other);
+                        other.setClientHandlerPhase(ClientHandlerPhase.WAITING_IN_THE_LOBBY);
+                        server.addClientHandler(other);
                     }
+                    server.NewGameManager();
                 }
                 lockConnections.unlock();
                 connection.setController(null);
@@ -179,7 +177,10 @@ public class Controller {
         clientHandlers.forEach(x -> x.sendMessageToClient(new WelcomeBackMessage(x.getNickname(), false)));
         sendMatchData(game, false);
         gamePhase = new SinglePlayerPlayPhase(this, controller.getLastPlayer(), controller.isEndTriggered(), controller.getBlackCrossPosition(), controller.getTokens());
-        ((PlayPhase)gamePhase).restartLastTurn();
+        if (((SinglePlayerPlayPhase) gamePhase).wasEndTriggered())
+            endMatch();
+        else
+            ((PlayPhase)gamePhase).restartLastTurn();
     }
 
 

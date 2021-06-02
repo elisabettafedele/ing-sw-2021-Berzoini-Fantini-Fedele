@@ -107,8 +107,16 @@ public class CLI implements View {
     @Override
     public void displayResults(Map<String, Integer> results, boolean readyForAnotherGame) {
         int i = 1;
-        for (String name : results.keySet()){
-            System.out.println((results.keySet().size() > 1 ? (i++ + ". ") : "")+ name + ": " + results.get(name) + " victory points");
+        if (results.size() == 1){
+            int points = -1;
+            for (String name : results.keySet())
+                points = results.get(name);
+            displayResults(points);
+        }
+        else {
+            for (String name : results.keySet()) {
+                System.out.println((results.keySet().size() > 1 ? (i++ + ". ") : "") + name + ": " + results.get(name) + " victory points");
+            }
         }
         if (!readyForAnotherGame)
             client.closeSocket();
@@ -118,7 +126,10 @@ public class CLI implements View {
 
     @Override
     public void displayResults(int victoryPoints) {
-        System.out.println("Game over, you got " + victoryPoints + " victory points!");
+        if (victoryPoints == -1)
+            System.out.println("You lost against Lorenzo");
+        else
+            System.out.println("You got " + victoryPoints + " victory points!");
         client.closeSocket();
     }
 
@@ -397,6 +408,7 @@ public class CLI implements View {
 
     public void setNicknames(String playerNickname, List<String> otherPlayersNicknames){
         MatchData.getInstance().setThisClient(playerNickname);
+        MatchData.getInstance().resetOtherClients();
         for(String nickname : otherPlayersNicknames){
             MatchData.getInstance().addLightClient(nickname);
         }

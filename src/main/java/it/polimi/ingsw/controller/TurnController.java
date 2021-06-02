@@ -190,11 +190,11 @@ public class TurnController {
         }
         for(Player p: controller.getPlayers()){
             if(p.getPersonalBoard().getMarkerPosition()>=controller.getGame().getFaithTrack().getLength()){
-                endTrigger = true;
+                setEndTrigger(true);
             }
         }
         if(isInterruptible&&((SinglePlayerPlayPhase)controller.getGamePhase()).getBlackCrossPosition()>=controller.getGame().getFaithTrack().getLength()){
-            endTrigger = true;
+            setEndTrigger(true);
         }
 
     }

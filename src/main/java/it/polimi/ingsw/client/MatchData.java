@@ -30,7 +30,7 @@ public class MatchData {
     private String turnOwnerNickname;
     private View view;
     private boolean isReloading;
-    GameMode gameMode; //TODO: initialize
+    private GameMode gameMode;
 
     private static MatchData instance;
 
@@ -46,6 +46,13 @@ public class MatchData {
         this.isReloading = false;
         this.lightLeaderCards = new ArrayList<>();
         this.thisClient = new LightClient();
+        this.otherClients = new ArrayList<>();
+    }
+
+    /**
+     * Method to reset other clients when a new list of nicknames is received (the {@link MatchData} will be reloaded}
+     */
+    public void resetOtherClients(){
         this.otherClients = new ArrayList<>();
     }
 

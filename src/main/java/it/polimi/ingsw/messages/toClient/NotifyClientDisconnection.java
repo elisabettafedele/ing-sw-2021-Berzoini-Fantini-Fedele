@@ -18,4 +18,8 @@ public class NotifyClientDisconnection implements MessageToClient{
     public void handleMessage(VirtualView view) {
         view.displayDisconnection(nickname, setUp, gameCancelled);
     }
+
+    public boolean isGameCancelled() {
+        return gameCancelled;
+    }
 }

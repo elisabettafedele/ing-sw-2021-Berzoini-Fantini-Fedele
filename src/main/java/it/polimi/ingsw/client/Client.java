@@ -4,7 +4,10 @@ import it.polimi.ingsw.client.cli.graphical.Colour;
 import it.polimi.ingsw.common.ClientInterface;
 import it.polimi.ingsw.messages.ConnectionMessage;
 import it.polimi.ingsw.messages.toClient.MessageToClient;
+import it.polimi.ingsw.messages.toClient.NotifyClientDisconnection;
 import it.polimi.ingsw.messages.toClient.TimeoutExpiredMessage;
+import it.polimi.ingsw.messages.toClient.game.ChooseLeaderCardsRequest;
+import it.polimi.ingsw.messages.toClient.lobby.NumberOfPlayersRequest;
 
 import java.io.*;
 import java.net.InetSocketAddress;
@@ -38,6 +41,8 @@ public class Client implements ClientInterface {
     private final Thread pinger;
 
     private boolean connectionClosed = false;
+
+    private boolean gameCanceled = false;
 
     public Client(String IPAddress, int port, View view) {
         this.IPAddress = IPAddress;
@@ -90,11 +95,14 @@ public class Client implements ClientInterface {
                     packetReceiver.interrupt();
                     pinger.interrupt();
                     ((TimeoutExpiredMessage) message).handleMessage(view);
-                    break;
+                    return;
                 }
                 else if(message != null && !(message == ConnectionMessage.PING)) {
                     incomingPackets.add(message);
                 }
+                if (message instanceof NotifyClientDisconnection && ((NotifyClientDisconnection)message).isGameCancelled())
+                    gameCanceled = true;
+
 
             }
         } catch (IOException | ClassNotFoundException e){
@@ -106,7 +114,7 @@ public class Client implements ClientInterface {
 
     @Override
     public void sendMessageToServer(Serializable message){
-        if (connected.get()){
+        if (connected.get() && !gameCanceled){
             try {
                 os.writeObject(message);
                 os.flush();
@@ -126,6 +134,8 @@ public class Client implements ClientInterface {
                 break;
             }
             System.out.println(message.toString());
+            if (message instanceof ChooseLeaderCardsRequest || message instanceof NumberOfPlayersRequest)
+                gameCanceled = false;
             ((MessageToClient) message).handleMessage(view);
         }
     }

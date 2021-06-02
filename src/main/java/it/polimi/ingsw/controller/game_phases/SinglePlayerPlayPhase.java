@@ -25,6 +25,10 @@ public class SinglePlayerPlayPhase extends PlayPhase {
     private String lastPlayer;
     private boolean endTriggered = false;
 
+    /**
+     * Standard class constructor
+     * @param controller the {@link Controller} of the {@link it.polimi.ingsw.model.game.Game}
+     */
     public SinglePlayerPlayPhase(Controller controller){
         setController(controller);
         this.blackCrossPosition = 0;
@@ -34,6 +38,14 @@ public class SinglePlayerPlayPhase extends PlayPhase {
         this.lastPlayer = LORENZO;
     }
 
+    /**
+     * Class constructor after a {@link it.polimi.ingsw.server.Server} or {@link it.polimi.ingsw.client.Client} disconnection
+     * @param controller the {@link Controller} that has been retrieved from the {@link PersistentControllerPlayPhaseSingle} saved in the file backupOfGames.json
+     * @param lastPlayer it represents the last player that has performed a valid turn. It can be LORENZO or the nickname of the single player
+     * @param isEndTriggered true if the game was end triggered before the disconnection
+     * @param blackCrossPosition the position of the black cross
+     * @param tokens
+     */
     public SinglePlayerPlayPhase(Controller controller, String lastPlayer, boolean isEndTriggered, int blackCrossPosition, List<Integer> tokens){
         setController(controller);
         this.lastPlayer = lastPlayer;
@@ -56,6 +68,7 @@ public class SinglePlayerPlayPhase extends PlayPhase {
         token.useActionToken(this);
         getController().sendMessageToAll(new NotifyLorenzoAction(token.getId()));
         lastPlayer = LORENZO;
+        saveGame();
         getController().sendMessageToAll(new TurnMessage(getPlayer().getNickname(), true));
         getTurnController().start(getPlayer());
     }
@@ -123,6 +136,7 @@ public class SinglePlayerPlayPhase extends PlayPhase {
 
     @Override
     public void handleEndTriggered() {
+        getPlayer().setWinner(!getController().getGame().getDevelopmentCardGrid().checkEmptyColumn() && blackCrossPosition != getController().getGame().getFaithTrack().getLength());
         getController().endMatch();
     }
 
@@ -160,11 +174,7 @@ public class SinglePlayerPlayPhase extends PlayPhase {
         }
     }
 
-    public void handleReconnection(){
-
-    }
-
-    public String getLastPlayer() {
-        return lastPlayer;
+    public boolean wasEndTriggered(){
+        return  (endTriggered || getController().getGame().getDevelopmentCardGrid().checkEmptyColumn() || blackCrossPosition == getController().getGame().getFaithTrack().getLength() || getController().getPlayers().get(0).getPersonalBoard().getDevelopmentCards().size() >= 7);
     }
 }

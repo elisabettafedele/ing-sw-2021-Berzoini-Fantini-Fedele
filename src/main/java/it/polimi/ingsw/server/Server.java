@@ -3,6 +3,7 @@ package it.polimi.ingsw.server;
 import it.polimi.ingsw.common.ClientHandlerInterface;
 import it.polimi.ingsw.common.ServerInterface;
 import it.polimi.ingsw.controller.Controller;
+import it.polimi.ingsw.controller.game_phases.EndPhase;
 import it.polimi.ingsw.controller.game_phases.PlayPhase;
 import it.polimi.ingsw.controller.game_phases.SetUpPhase;
 import it.polimi.ingsw.enumerations.ClientHandlerPhase;
@@ -113,6 +114,10 @@ public class Server implements ServerInterface {
         }
 
         if (takenNicknames.contains(connection.getNickname())){
+            if (connection.getGameMode() == GameMode.SINGLE_PLAYER && GameHistory.retrieveGameFromControllerId(connection.getNickname().hashCode()) != null){
+                startNewGame(connection);
+                return;
+            }
             connection.setClientHandlerPhase(ClientHandlerPhase.WAITING_NICKNAME);
             connection.sendMessageToClient(new NicknameRequest(true, true));
             return;
@@ -123,6 +128,7 @@ public class Server implements ServerInterface {
 
         //SOLO MODE -> start the game
         if (connection.getGameMode() == GameMode.SINGLE_PLAYER) {
+            takenNicknames.add(connection.getNickname());
             startNewGame(connection);
             return;
         }
@@ -184,7 +190,7 @@ public class Server implements ServerInterface {
     public synchronized void NewGameManager() {
         lockLobby.lock();
         try{
-            if(numberOfPlayersForNextGame == -1 && clientsInLobby.get(0).getClientHandlerPhase() != ClientHandlerPhase.WAITING_NUMBER_OF_PLAYERS){
+            if(numberOfPlayersForNextGame == -1 && clientsInLobby.size() > 0 && clientsInLobby.get(0).getClientHandlerPhase() != ClientHandlerPhase.WAITING_NUMBER_OF_PLAYERS){
                 clientsInLobby.get(0).setClientHandlerPhase(ClientHandlerPhase.WAITING_NUMBER_OF_PLAYERS);
                 clientsInLobby.get(0).sendMessageToClient(new NumberOfPlayersRequest());
             }else if(numberOfPlayersForNextGame != -1 && clientsInLobby.size() >= numberOfPlayersForNextGame){
@@ -354,8 +360,15 @@ public class Server implements ServerInterface {
     public synchronized boolean removeConnectionGame(ClientHandler connection, boolean forced){
         //if the client comes back I retrieve the game from the json file
         if (connection.getController().getGame().getGameMode() == GameMode.SINGLE_PLAYER) {
-            activeGames.remove(connection.getController());
-            takenNicknames.remove(connection.getNickname());
+            if (connection.getController().getGamePhase() instanceof EndPhase) {
+                Map <String, Integer> results = new HashMap<>();
+                results.put (connection.getNickname(), connection.getController().getPlayers().get(0).isWinner() ? connection.getController().getPlayers().get(0).getVictoryPoints() : -1);
+                takenNicknames.remove(connection.getNickname());
+                clientsDisconnectedGameFinished.put(connection.getNickname(), new GameOverMessage(results, true));
+                return false;
+            } else {
+                activeGames.remove(connection.getController());
+            }
             return true;
         }
         //If he was the last player remained in the game, I delete the game and I remove all the players from disconnectedPlayers -> the game is not finished, but is not playable anymore
@@ -373,6 +386,10 @@ public class Server implements ServerInterface {
             connection.getController().removeConnection(connection);
             return true;
         }
+    }
+
+    public void removeNickname (String nickname){
+        takenNicknames.remove(nickname);
     }
 
 
@@ -409,6 +426,16 @@ public class Server implements ServerInterface {
 
     private boolean knownClient(String nickname) {
         return clientsDisconnected.containsKey(nickname) || clientsDisconnectedGameFinished.containsKey(nickname);
+    }
+
+    public void removeGame(Controller controller){
+        activeGames.remove(controller);
+    }
+
+    public void addClientHandler(ClientHandler clientHandler){
+        lockLobby.lock();
+        clientsInLobby.add(clientHandler);
+        lockLobby.unlock();
     }
 
 }
