@@ -26,6 +26,11 @@ public class MatchData {
     private String currentViewNickname;
     private String turnOwnerNickname;
     private View view;
+
+    public boolean isReloading() {
+        return isReloading;
+    }
+
     private boolean isReloading;
     GameMode gameMode; //TODO: initialize
 

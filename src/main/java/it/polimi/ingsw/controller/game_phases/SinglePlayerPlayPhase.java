@@ -99,7 +99,7 @@ public class SinglePlayerPlayPhase extends PlayPhase {
     }
 
     public void moveBlackCross(int step){
-        blackCrossPosition += step;
+        blackCrossPosition = blackCrossPosition + step;
         getTurnController().checkFaithTrack();
         //TODO, manage eventual Lorenzo's victory.
     }

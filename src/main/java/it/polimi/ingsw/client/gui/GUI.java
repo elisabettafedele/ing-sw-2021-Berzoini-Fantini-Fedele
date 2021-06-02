@@ -11,6 +11,7 @@ import it.polimi.ingsw.enumerations.ActionType;
 import it.polimi.ingsw.enumerations.Marble;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.enumerations.ResourceStorageType;
+import it.polimi.ingsw.messages.toClient.TurnMessage;
 import it.polimi.ingsw.messages.toClient.matchData.MatchDataMessage;
 import it.polimi.ingsw.model.cards.Value;
 import javafx.application.Application;
@@ -34,10 +35,12 @@ public class GUI extends Application implements View {
     private FXMLLoader fxmlLoader;
     private SetupSceneController setupSceneController;
     private GameSceneController gameSceneController;
+    private boolean isUpdateActive;
 
 
     @Override
     public void start(Stage stage) throws Exception {
+        isUpdateActive=true;
         this.stage = stage;
         stage.setOnCloseRequest((WindowEvent t) -> {
             Platform.exit();
@@ -143,6 +146,7 @@ public class GUI extends Application implements View {
 
     @Override
     public void displayLorenzoAction(int id) {
+        gameSceneController.displayLorenzoAction(id);
     }
 
     public void displayProductionCardYouCanSelect(List<Integer> IDs, List<Value> basicProduction) {
@@ -239,6 +243,11 @@ public class GUI extends Application implements View {
         MatchData.getInstance().update(message);
         if(gameSceneController!=null){
             gameSceneController.updateView();
+            gameSceneController.updateMainLabel();
+            if(message instanceof TurnMessage){
+                gameSceneController.enableNextPreviousButtons();
+                gameSceneController.setCurrentPlayer(message.getNickname());
+            }
         }
     }
 
@@ -270,7 +279,6 @@ public class GUI extends Application implements View {
     @Override
     public void displayChooseActionRequest(Map<ActionType, Boolean> executableActions, boolean standardActionDone) {
         gameSceneController.displayChooseActionRequest(executableActions,standardActionDone);
-        gameSceneController.enableNextPreviousButtons();
     }
 
     @Override
@@ -289,12 +297,11 @@ public class GUI extends Application implements View {
     public void displayStandardView() {
         if(gameSceneController!=null){
             gameSceneController.updateView();
-            gameSceneController.enableNextPreviousButtons();
         }
     }
 
     @Override
     public void setIsReloading(boolean reloading) {
-
+        MatchData.getInstance().setReloading(reloading);
     }
 }
