@@ -98,6 +98,10 @@ public class LobbyCLI {
     }
 
     public static void displayPlayersReadyToStartMessage(List<String> nicknames) {
+        //SINGLE PLAYER
+        if (nicknames.size() == 1)
+            return;
+        //MULTIPLAYER
         System.out.println("All the players are ready to start, players in game are:");
         for (String nickname : nicknames)
             System.out.println("- " + nickname);

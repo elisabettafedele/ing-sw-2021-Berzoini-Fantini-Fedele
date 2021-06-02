@@ -54,18 +54,24 @@ public class Controller {
 
     public synchronized void handleClientDisconnection(String nickname){
         ClientHandler connection = getConnectionByNickname(nickname);
-        //SINGLE PLAYER
+
         if (connection.getGameMode() == GameMode.SINGLE_PLAYER){
-            getPlayerByNickname(nickname).setActive(false);
-            server.removeConnectionGame(connection, false);
+            //SINGLE PLAYER
+            server.removeConnectionGameSinglePlayer(getConnectionByNickname(nickname));
             return;
+
+        } else {
+            //MULTIPLAYER
+            handleMultiplayerDisconnection(nickname);
         }
+    }
 
-        //MULTIPLAYER
-        //DISCONNECTION DURING SETUP PHASE
-        if (gamePhase instanceof SetUpPhase){
+    private void handleMultiplayerDisconnection(String nickname) {
+        ClientHandler connection = getConnectionByNickname(nickname);
 
-            if (connection.getClientHandlerPhase() == ClientHandlerPhase.SET_UP_FINISHED){
+        if (gamePhase instanceof SetUpPhase) {
+
+            if (connection.getClientHandlerPhase() == ClientHandlerPhase.SET_UP_FINISHED) {
                 //CASE 1: THE CLIENT HAS ALREADY FINISHED THE SETUP PHASE: the game starts and the player is set as inactive
                 if (!server.removeConnectionGame(connection, false))
                     return;
@@ -75,7 +81,7 @@ public class Controller {
                 if (gamePhase instanceof SetUpPhase)
                     ((SetUpPhase) gamePhase).endPhaseManager(connection);
             } else {
-                //CASE 2: THE CLIENT HAS NOT FINISHED THE SETUP PHASE YET
+                //CASE 2: THE CLIENT HAS NOT FINISHED THE SETUP PHASE YET: THE GAME IS DELETED AND OTHER CLIENTS ARE AGAIN IN THE LOBBY. IF A GAME IS READY TO START THEY WILL PLAY THERE
                 connection.getServer().removeNickname(connection.getNickname());
                 lockConnections.lock();
                 connection.getServer().removeGame(this);
@@ -95,9 +101,9 @@ public class Controller {
             return;
         }
 
-        if (gamePhase instanceof MultiplayerPlayPhase){
+        if (gamePhase instanceof MultiplayerPlayPhase) {
 
-            if (clientHandlers.size() < 1){
+            if (clientHandlers.size() < 1) {
                 //The game is cancelled
                 server.removeConnectionGame(connection, false);
             } else {
@@ -105,9 +111,9 @@ public class Controller {
                 getPlayerByNickname(nickname).setActive(false);
                 server.removeConnectionGame(connection, false);
                 sendMessageToAll(new NotifyClientDisconnection(nickname, false, false));
-                if (((MultiplayerPlayPhase) gamePhase).getTurnController().getCurrentPlayer().getNickname().equals(nickname)){
+                if (((MultiplayerPlayPhase) gamePhase).getTurnController().getCurrentPlayer().getNickname().equals(nickname)) {
                     //THE PLAYER DISCONNECTED WAS THE TURN'S OWNER -> I check if he has already done his standard action
-                    if (!((MultiplayerPlayPhase) gamePhase).getTurnController().isStandardActionDone()){
+                    if (!((MultiplayerPlayPhase) gamePhase).getTurnController().isStandardActionDone()) {
                         //IF HE HAS NOT DONE THE STANDARD ACTION YET -> INVALID TURN! UNDO OF THE TURN
                         game = new Game(((MultiplayerPlayPhase) gamePhase).getLastTurnGameCopy());
                         sendMatchData(game, true);
@@ -115,9 +121,6 @@ public class Controller {
                     ((MultiplayerPlayPhase) gamePhase).nextTurn();
                 }
             }
-
-
-
 
 
         }
@@ -297,8 +300,6 @@ public class Controller {
                 connection.sendMessageToClient(new ReloadLeaderCardsOwned(gamePlayer.getNickname(), leaderCards));
 
                 //2. Development cards
-                //TODO remove next row when raffa has finished
-                connection.sendMessageToClient(new ReloadDevelopmentCardOwned(gamePlayer.getNickname(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getHiddenDevelopmentCardColours(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getDevelopmentCardIdFirstRow()));
                 connection.sendMessageToClient(new LoadDevelopmentCardSlots(gamePlayer.getNickname(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getDevelopmentCardIdSlots()));
                 connection.sendMessageToClient(new ReloadDevelopmentCardsVictoryPoints(gamePlayer.getNickname(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getVictoryPointsDevelopmentCardSlots()));
 

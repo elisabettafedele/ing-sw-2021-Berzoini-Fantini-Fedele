@@ -114,6 +114,7 @@ public class Server implements ServerInterface {
         }
 
         if (takenNicknames.contains(connection.getNickname())){
+            //If there is an old single player game to finish
             if (connection.getGameMode() == GameMode.SINGLE_PLAYER && GameHistory.retrieveGameFromControllerId(connection.getNickname().hashCode()) != null){
                 startNewGame(connection);
                 return;
@@ -358,20 +359,8 @@ public class Server implements ServerInterface {
      * @return true iff the game still exist
      */
     public synchronized boolean removeConnectionGame(ClientHandler connection, boolean forced){
-        //if the client comes back I retrieve the game from the json file
-        if (connection.getController().getGame().getGameMode() == GameMode.SINGLE_PLAYER) {
-            if (connection.getController().getGamePhase() instanceof EndPhase) {
-                Map <String, Integer> results = new HashMap<>();
-                results.put (connection.getNickname(), connection.getController().getPlayers().get(0).isWinner() ? connection.getController().getPlayers().get(0).getVictoryPoints() : -1);
-                takenNicknames.remove(connection.getNickname());
-                clientsDisconnectedGameFinished.put(connection.getNickname(), new GameOverMessage(results, true));
-                return false;
-            } else {
-                activeGames.remove(connection.getController());
-            }
-            return true;
-        }
-        //If he was the last player remained in the game, I delete the game and I remove all the players from disconnectedPlayers -> the game is not finished, but is not playable anymore
+        //If he is the last player
+        //TODO If there would be only one more player in the game, I delete the game and I remove all the players from disconnectedPlayers -> the game is not finished, but is not playable anymore
         if (connection.getController().getClientHandlers().size() == 1) {
             for (String nickname : connection.getController().getPlayers().stream().map(Player::getNickname).collect(Collectors.toList())) {
                 clientsDisconnected.remove(nickname);
@@ -385,6 +374,24 @@ public class Server implements ServerInterface {
                 clientsDisconnected.put(connection.getNickname(), connection.getController());
             connection.getController().removeConnection(connection);
             return true;
+        }
+    }
+
+    /**
+     * Method to handle the disconnection of a single player.
+     * If the game is ended and he has not received the notification, I save the message in clientDisconnectedGameFinished list.
+     * If he was still playing or he was in the set up phase the game remain saved in the json file, as it happens with persistency
+     * @param connection the {@link ClientHandler} of the disconnected client
+     */
+    public synchronized void removeConnectionGameSinglePlayer(ClientHandler connection){
+        //if the client comes back I retrieve the game from the json file
+        if (connection.getController().getGamePhase() instanceof EndPhase) {
+            Map <String, Integer> results = new HashMap<>();
+            results.put (connection.getNickname(), connection.getController().getPlayers().get(0).isWinner() ? connection.getController().getPlayers().get(0).getVictoryPoints() : -1);
+            takenNicknames.remove(connection.getNickname());
+            clientsDisconnectedGameFinished.put(connection.getNickname(), new GameOverMessage(results, true));
+        } else {
+            activeGames.remove(connection.getController());
         }
     }
 

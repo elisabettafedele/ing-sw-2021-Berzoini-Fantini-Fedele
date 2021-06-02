@@ -138,10 +138,9 @@ public class CLI implements View {
         System.out.println(Colour.ANSI_BRIGHT_GREEN.getCode() + "We are sorry to inform you that " + nickname + " has left the game." );
         System.out.println("The game" + (gameCancelled? " has been cancelled." : " will go on skipping the turns of that player."+ Colour.ANSI_RESET));
         if (setUp && gameCancelled){
-            System.out.println(Colour.ANSI_BRIGHT_GREEN.getCode() + "You have been reconnected to the main lobby...\nBe ready to start another game!\n" + Colour.ANSI_RESET);
+            System.out.println(Colour.ANSI_BRIGHT_GREEN.getCode() + "You have been reconnected to the main lobby...\nBe ready to start another game. A game will start as soon as enough players will be ready\n" + Colour.ANSI_RESET);
         }
-        if (setUp && !gameCancelled)
-            System.out.println("We are sorry, but since the game's size has been reduced, a part of the set up phase will be repeated. \nHowever, you will not be asked your leader cards' choices again");
+
     }
 
     @Override
