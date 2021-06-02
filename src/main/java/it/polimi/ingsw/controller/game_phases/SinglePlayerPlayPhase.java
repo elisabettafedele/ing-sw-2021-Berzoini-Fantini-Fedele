@@ -5,8 +5,6 @@ import it.polimi.ingsw.controller.TurnController;
 import it.polimi.ingsw.controller.actions.SoloActionToken;
 import it.polimi.ingsw.enumerations.FlagColor;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
-import it.polimi.ingsw.exceptions.InvalidMethodException;
-import it.polimi.ingsw.exceptions.ZeroPlayerException;
 import it.polimi.ingsw.messages.toClient.TurnMessage;
 import it.polimi.ingsw.messages.toClient.game.NotifyLorenzoAction;
 import it.polimi.ingsw.messages.toClient.matchData.LoadDevelopmentCardGrid;
@@ -14,12 +12,9 @@ import it.polimi.ingsw.messages.toClient.matchData.UpdateMarkerPosition;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.DevelopmentCard;
 import it.polimi.ingsw.model.persistency.GameHistory;
-import it.polimi.ingsw.model.persistency.PersistentControllerPlayPhase;
 import it.polimi.ingsw.model.persistency.PersistentControllerPlayPhaseSingle;
 import it.polimi.ingsw.model.persistency.PersistentGame;
-import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.jsonParsers.SoloActionTokenParser;
-
 import java.util.*;
 import java.util.stream.Collectors;
 

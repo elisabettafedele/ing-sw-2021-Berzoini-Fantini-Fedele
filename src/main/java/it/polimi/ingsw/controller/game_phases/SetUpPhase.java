@@ -1,6 +1,5 @@
 package it.polimi.ingsw.controller.game_phases;
 
-
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.enumerations.*;
 import it.polimi.ingsw.messages.toClient.game.ChooseLeaderCardsRequest;
@@ -38,13 +37,24 @@ public class SetUpPhase implements GamePhase {
         controller.sendMessageToAll(new LoadDevelopmentCardGrid(null, controller.getGame().getDevelopmentCardGrid().getAvailableCards().stream().map(Card::getID).collect(Collectors.toList())));
     }
 
+    /**
+     * Constructor of the SetUpPhase used when a game is reloaded from the json file
+     * @param resourcesToStoreByNickname
+     * @param controller
+     */
     public SetUpPhase(Map<String, List<Resource>> resourcesToStoreByNickname, Controller controller){
         this.resourcesToStoreByNickname = resourcesToStoreByNickname;
         this.controller = controller;
     }
 
+    /**
+     * Standard constructor of the Set Up phase. It is used when a new game is created.
+     */
     public SetUpPhase(){ }
 
+    /**
+     * Method to reload the phase retrieving the needed data from the {@link PersistentControllerSetUpPhase}
+     */
     public void reloadPhase(){
         List<String> nicknames = controller.getNicknames();
         initialResourceByNickname = new HashMap<>();
@@ -83,9 +93,8 @@ public class SetUpPhase implements GamePhase {
 
 
     public void handleMessage(MessageToServer message, ClientHandler clientHandler) {
-        if (message instanceof ChooseLeaderCardsResponse && clientHandler.getClientHandlerPhase() == ClientHandlerPhase.WAITING_DISCARDED_LEADER_CARDS) {
+        if (message instanceof ChooseLeaderCardsResponse && clientHandler.getClientHandlerPhase() == ClientHandlerPhase.WAITING_DISCARDED_LEADER_CARDS)
             removeLeaderCards(((ChooseLeaderCardsResponse) message).getDiscardedLeaderCards(), clientHandler);
-        }
 
         if (message instanceof ChooseResourceTypeResponse && clientHandler.getClientHandlerPhase() == ClientHandlerPhase.WAITING_CHOOSE_RESOURCE_TYPE)
             setInitialResourcesByNickname(((ChooseResourceTypeResponse) message).getResources(), clientHandler);
@@ -205,15 +214,10 @@ public class SetUpPhase implements GamePhase {
     }
 
     /**
-     * Method to inform the client that he has finished the setUp phase and that the game will start when all the other players will be ready
-     * @param clientHandler
+     * Method that checks whether all the players has finished the set up.
+     * If they are all ready to start, it makes the game start!
+     * @param clientHandler the connection of the client who has just finished the set up
      */
-    /*
-    private void sendSetUpFinishedMessage(ClientHandler clientHandler) {
-        clientHandler.setClientHandlerPhase(ClientHandlerPhase.SET_UP_FINISHED);
-        endPhaseManager(clientHandler);
-    }*/
-
     public synchronized void endPhaseManager(ClientHandler clientHandler) {
         clientHandler.setClientHandlerPhase(ClientHandlerPhase.SET_UP_FINISHED);
         if (!(controller.getGamePhase() instanceof SetUpPhase))
@@ -228,7 +232,13 @@ public class SetUpPhase implements GamePhase {
         controller.setGamePhase(controller.getGame().getGameMode() == GameMode.MULTI_PLAYER ? new MultiplayerPlayPhase(controller) : new SinglePlayerPlayPhase(controller));
     }
 
-
+    /**
+     * Method to assign the {@link LeaderCard} of the list contained between the index start and end
+     * @param cards a list of {@link LeaderCard}
+     * @param start the starting index to assign the cards (included)
+     * @param end the finishing index to assign the cards (excluded)
+     * @return a {@link LinkedList} with the selected cards
+     */
     private List<LeaderCard> assignLeaderCards(List<LeaderCard> cards, int start, int end) {
         List<LeaderCard> IDs = new LinkedList<>();
         for (int i = start; i < end; i++)
@@ -236,6 +246,12 @@ public class SetUpPhase implements GamePhase {
         return IDs;
     }
 
+    /**
+     * Method to add a specific {@link Player} to the {@link it.polimi.ingsw.model.game.Game}
+     * @param nickname the nickname of the player
+     * @param leaderCardsAssigned the four {@link LeaderCard} assigned to the {@link Player}
+     * @param index the player's position in the round order
+     */
     private void addPlayerToTheGame(String nickname, List<LeaderCard> leaderCardsAssigned, int index) {
         try {
             controller.getGame().addPlayer(nickname, leaderCardsAssigned, getInitialFaithPoints(index), hasInkwell(index));
@@ -244,14 +260,26 @@ public class SetUpPhase implements GamePhase {
         }
     }
 
+    /**
+     * @param index the player's position in the round order
+     * @return true iff the player has the inkwell (the player is the first of the round)
+     */
     private boolean hasInkwell(int index) {
         return index == 0;
     }
 
+    /**
+     * @param index the player's position in the round order
+     * @return the number of initial faith points to assign to the player
+     */
     private int getInitialFaithPoints(int index) {
         return index > 1 ? 1 : 0;
     }
 
+    /**
+     * @param index the player's position in the round order
+     * @return the number of initial resources to assign to that {@link Player}
+     */
     private int getNumberOfInitialResourcesByIndex(int index) {
         if (index == 0)
             return 0;
@@ -260,6 +288,10 @@ public class SetUpPhase implements GamePhase {
         return 2;
     }
 
+    /**
+     * @param nickname the player's nickname
+     * @return the number of initial resources to assign to that {@link Player}
+     */
     public int getNumberOfInitialResourcesByNickname(String nickname) {
         return initialResourceByNickname.get(nickname);
     }

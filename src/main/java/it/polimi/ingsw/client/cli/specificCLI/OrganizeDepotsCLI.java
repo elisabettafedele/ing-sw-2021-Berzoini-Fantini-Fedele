@@ -136,7 +136,7 @@ public class OrganizeDepotsCLI {
     }
 
     public static void displayResourcesToStore(List<Resource> resourcesToStore){
-        System.out.println("Conversion done!\nYou now have to store these resources: ");
+        System.out.println("You now have to store these resources: ");
         for (Resource resource : resourcesToStore){
             System.out.print(Colour.getColourByResource(resource).getCode() + resource.symbol + Colour.ANSI_RESET + " ");
         }

@@ -30,7 +30,6 @@ public class TurnController {
     private Player currentPlayer;
     private Controller controller;
     private boolean isInterruptible;
-    private boolean endTurnImmediately=false;
     private boolean endTrigger=false;
     private List<Action> possibleActions;
     private Map<ActionType, Boolean> executableActions;
@@ -95,7 +94,6 @@ public class TurnController {
     private void reset(){
         numberOfLeaderActionsDone=0;
         standardActionDone=false;
-        endTurnImmediately=false;
         endTrigger=false;
         for(Action action : possibleActions){
             action.reset(currentPlayer);
@@ -254,6 +252,11 @@ public class TurnController {
         setNextAction();
     }
 
+    /**
+     * Method to remove one specific {@link Resource} from a specific {@link ResourceStorageType} of the current player
+     * @param resourceStorageType where the resource will be removed from
+     * @param resource the type of the {@link Resource} that will be removed
+     */
     public void removeResource(ResourceStorageType resourceStorageType, Resource resource){
         int previousValue = resourcesToRemove.get(resource);
         assert (previousValue > 0);
@@ -262,7 +265,6 @@ public class TurnController {
         controller.sendMessageToAll(new UpdateDepotsStatus(currentPlayer.getNickname(), currentPlayer.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), currentPlayer.getPersonalBoard().getStrongboxStatus(), currentPlayer.getPersonalBoard().getLeaderStatus()));
         handleRemoveResources();
     }
-
 
 
     public boolean isEndTriggered(){
@@ -286,6 +288,11 @@ public class TurnController {
             ((PlayPhase)getController().getGamePhase()).handleEndTriggered();
     }
 
+    /**
+     * Method to end the turn and pass to the next one.
+     * It also save a copy of the finished turn in order to make possible the undo of a future invalid turn
+     * (A turn is considered invalid if the turn owner has not already completed the standard action and disconnects from the server)
+     */
     public void endTurn(){
         //I set a copy of the game at the end of each turn
         ((PlayPhase)controller.getGamePhase()).saveGame();

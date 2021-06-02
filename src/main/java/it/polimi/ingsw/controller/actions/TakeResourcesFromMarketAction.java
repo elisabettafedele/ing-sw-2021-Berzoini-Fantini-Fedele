@@ -35,7 +35,7 @@ public class TakeResourcesFromMarketAction implements Action {
 
     /**
      * Constructor of the action
-     * @param turnController
+     * @param turnController the {@link TurnController} of the current {@link it.polimi.ingsw.model.game.Game}
      */
     public TakeResourcesFromMarketAction(TurnController turnController) {
         this.player= turnController.getCurrentPlayer();
@@ -45,11 +45,20 @@ public class TakeResourcesFromMarketAction implements Action {
         this.market = controller.getGame().getMarket();
     }
 
+    /**
+     * Method overriden. It checks whether the action is executable.
+     * Since the player is always able to take resources from market it always returns true.
+     * @return
+     */
     @Override
     public boolean isExecutable() {
         return true;
     }
 
+    /**
+     * Method to reset the action from one turn to the next one
+     * @param currentPlayer {@link Player} who owns the turn
+     */
     @Override
     public void reset(Player currentPlayer) {
         this.player = currentPlayer;
@@ -60,17 +69,23 @@ public class TakeResourcesFromMarketAction implements Action {
         availableDepotsForReorganization=new LinkedList<>();
     }
 
+    /**
+     * Method to start the execution of the action.
+     * First, I ask the client the desired insertion position of the slide marble
+     */
     public void execute() {
         clientHandler.setCurrentAction(this);
-        clientHandler.sendMessageToClient(new UpdateMarketView(player.getNickname(), market.getMarketTray(), market.getSlideMarble()));
         clientHandler.sendMessageToClient(new MarbleInsertionPositionRequest());
     }
 
 
     /**
-     * Method called once that the client has inserted the desired insertion position
-     *
-     * @param insertionPosition a number between 1 and 7. It is the insertion position of the marble
+     * Method called once the client has inserted the desired insertion position
+     * It checks if there are any white marble conversion available and:
+     * - If no conversion is available: it converts the marbles in resources in the standard way
+     * - If one conversion is available: it converts the white marbles according to the effect owned, and then it converts the other marbles in the standard way
+     * - If two conversions are available: for each white marble it asks the client which conversion he wants to use
+     * @param insertionPosition a number between 1 and 7. It is the insertion position of the slide marble
      */
     public void handleInsertionPositionResponse(int insertionPosition) {
         int whiteMarblesNumber = player.getPersonalBoard().getAvailableEffects(EffectType.WHITE_MARBLE).size();
@@ -107,8 +122,7 @@ public class TakeResourcesFromMarketAction implements Action {
     }
 
     /**
-     * Method to change the color of the first white marble
-     *
+     * Method to change the color of the first white marble of the list. The client has to choose between the two conversions owned
      * @param conversion the color of the produced marble
      */
     public void handleWhiteMarblesConversionResponse(List<Resource> conversion) {
@@ -122,8 +136,7 @@ public class TakeResourcesFromMarketAction implements Action {
     }
 
     /**
-     * Method to get the list of the available white marble conversions of the acting player
-     *
+     * Method to get the list of the available white marble conversions of the acting player, according to the active leader cards (if any)
      * @return an {@link ArrayList} containing all the possible {@link Resource} types that a white marble can be converted to, according to the {@link LeaderCard} possessed by the acting player
      */
     public List<Resource> getWhiteMarblesConversion() {
@@ -322,46 +335,11 @@ public class TakeResourcesFromMarketAction implements Action {
         //clientHandler.sendMessageToClient(new DisplayStandardView());
         turnController.setNextAction();
     }
-/*
-    @Override
-    public void handleMessage(MessageToServer message){
-        //ignored since it does not match any type of message I am waiting
-    }
 
-    public void handleMessage(MarbleInsertionPositionResponse message){
-        handleInsertionPositionResponse(message.getInsertionPosition());
-    }
-
-    public void handleMessage(ChooseWhiteMarbleConversionResponse message) {
-        handleWhiteMarblesConversionResponse(message.getResource());
-    }
-
-    public void handleMessage(ChooseStorageTypeResponse message) {
-        storeResource(message.getResource(), message.getStorageType());
-    }
-
-    public void handleMessage(DiscardResourceRequest message) {
-        handleDiscard(message.getResource());
-    }
-
-    public void handleMessage(ReorganizeDepotRequest message) {
-        handleReorganizeDepotsRequest();
-    }
-
-    public void handleMessage(SwapWarehouseDepotsRequest message) {
-        handleSwapRequest(message.getOriginDepot(), message.getDestinationDepot());
-    }
-
-    public void handleMessage(MoveResourcesRequest message) {
-        handleMoveRequest(message.getOriginDepot(), message.getDestinationDepot(), message.getResource(), message.getQuantity());
-    }
-
-    public void handleMessage(NotifyEndDepotsReorganization message){
-        handleEndDepotsOrganization();
-    }
-
-    */
-
+    /**
+     * Method to handle the messages received inside the action
+     * @param message the message to handle
+     */
     @Override
     public void handleMessage(MessageToServer message) {
         if (message instanceof MarbleInsertionPositionResponse)
