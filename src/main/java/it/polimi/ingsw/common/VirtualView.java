@@ -60,7 +60,7 @@ public interface VirtualView {
     //DISCONNECTIONS
     void displayDisconnection(String nickname, boolean setUp, boolean gameCancelled);
     void displayWelcomeBackMessage(String nickname, boolean gameFinished);
-
+    void handleCloseConnection(boolean wasConnected);
 
 
 }

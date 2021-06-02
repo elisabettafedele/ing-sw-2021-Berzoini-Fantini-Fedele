@@ -10,6 +10,7 @@ import it.polimi.ingsw.messages.toServer.lobby.GameModeResponse;
 import it.polimi.ingsw.messages.toServer.lobby.NicknameResponse;
 import it.polimi.ingsw.messages.toServer.lobby.NumberOfPlayersResponse;
 
+import java.io.IOException;
 import java.util.List;
 
 public class LobbyCLI {
@@ -65,12 +66,16 @@ public class LobbyCLI {
     public static void displayGameModeRequest(Client client) {
         System.out.println(Colour.ANSI_BRIGHT_GREEN.getCode() + "\nConnection established!" + Colour.ANSI_RESET);
         System.out.println("\nInsert a game mode, multiplayer or solo mode: m | s");
-        client.sendMessageToServer(new GameModeResponse(getGameMode()));
+        try {
+            client.sendMessageToServer(new GameModeResponse(getGameMode()));
+        } catch (IOException e) { }
     }
 
-    private static GameMode getGameMode(){
+    private static GameMode getGameMode() throws IOException {
         while(true) {
             String gameModeString = InputParser.getLine();
+            if (gameModeString == null)
+                throw new IOException();
             if (gameModeString.equals("m"))
                 return GameMode.MULTI_PLAYER;
             else if (gameModeString.equals("s"))
@@ -83,7 +88,9 @@ public class LobbyCLI {
 
     public static void displayNumberOfPlayersRequest(Client client){
         System.out.println("Insert desired number of players: 2, 3 or 4");
-        client.sendMessageToServer(new NumberOfPlayersResponse(InputParser.getInt("Invalid number of players: please insert an integer number between 2 and 4", CLI.conditionOnIntegerRange(2, 4))));
+        Integer choice = InputParser.getInt("Invalid number of players: please insert an integer number between 2 and 4", CLI.conditionOnIntegerRange(2, 4));
+        if (choice != null)
+            client.sendMessageToServer(new NumberOfPlayersResponse(choice));
     }
 
     public static void displayWaitingInTheLobbyMessage() {

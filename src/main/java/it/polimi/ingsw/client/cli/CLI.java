@@ -149,7 +149,16 @@ public class CLI implements View {
         System.out.println("Welcome back " + nickname + (gameFinished ? "!\nThe game you were playing in is finished, we are loading the results for you..." : ".\nYou have to finish an old game, we are logging you in the room..."));
     }
 
-
+    @Override
+    public void handleCloseConnection(boolean wasConnected) {
+        if (!wasConnected)
+            System.out.println(Colour.ANSI_BRIGHT_CYAN.getCode() + "The server is not reachable at the moment. Try again later." + Colour.ANSI_RESET);
+        else
+            System.out.println(Colour.ANSI_BRIGHT_GREEN.getCode() + "Connection closed" + Colour.ANSI_RESET);
+        if (inputObserverOutOfTurn != null && inputObserverOutOfTurn.isAlive())
+            inputObserverOutOfTurn.interrupt();
+        return;
+    }
 
 
     @Override

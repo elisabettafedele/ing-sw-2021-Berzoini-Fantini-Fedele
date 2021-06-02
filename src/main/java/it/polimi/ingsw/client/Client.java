@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client;
 
+import it.polimi.ingsw.client.cli.CLI;
 import it.polimi.ingsw.client.cli.graphical.Colour;
 import it.polimi.ingsw.common.ClientInterface;
 import it.polimi.ingsw.messages.ConnectionMessage;
@@ -57,6 +58,7 @@ public class Client implements ClientInterface {
                     Thread.sleep(PING_PERIOD);
                     sendMessageToServer(ConnectionMessage.PING);
                 }catch (InterruptedException e){
+                    closeSocket();
                     break;
                 }
             }
@@ -108,6 +110,7 @@ public class Client implements ClientInterface {
         } catch (IOException | ClassNotFoundException e){
             pinger.interrupt();
         } finally {
+            connected.set(false);
             closeSocket();
         }
     }
@@ -119,6 +122,7 @@ public class Client implements ClientInterface {
                 os.writeObject(message);
                 os.flush();
             } catch (IOException e) {
+                connected.set(false);
                 closeSocket();
             }
         }
@@ -148,12 +152,11 @@ public class Client implements ClientInterface {
         boolean wasConnected = connected.get();
         if (packetReceiver.isAlive())
             packetReceiver.interrupt();
+        view.handleCloseConnection(wasConnected);
         if (!wasConnected) {
-            System.out.println(Colour.ANSI_BRIGHT_CYAN.getCode() + "The server is not reachable at the moment. Try again later." + Colour.ANSI_RESET);
             return;
         } else {
             connected.set(false);
-            System.out.println(Colour.ANSI_BRIGHT_GREEN.getCode() + "Connection closed" + Colour.ANSI_RESET);
             try {
                 is.close();
             } catch (IOException e) {
