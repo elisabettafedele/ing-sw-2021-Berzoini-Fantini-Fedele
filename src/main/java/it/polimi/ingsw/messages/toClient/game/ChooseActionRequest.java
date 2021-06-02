@@ -8,6 +8,9 @@ import java.util.Map;
 
 public class ChooseActionRequest implements MessageToClient
 {
+    /**
+     * Message used to ask the client which action he desires to perform
+     */
     Map<ActionType, Boolean> executableActions;
     boolean standardActionDone;
     public ChooseActionRequest(Map<ActionType, Boolean> executableActions, boolean standardActionDone) {

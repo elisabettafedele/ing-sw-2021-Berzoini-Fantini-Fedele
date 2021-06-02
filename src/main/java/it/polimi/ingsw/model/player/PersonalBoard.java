@@ -232,31 +232,6 @@ public class PersonalBoard implements Serializable {
         return developmentCards;
     }
 
-    public int[] getDevelopmentCardIdFirstRow(){
-        int[] developmentCardIdFirstRow = new int[numberOfDevelopmentCardSlots];
-        for (int i = 0; i < developmentCardSlots.length; i++){
-            if (!developmentCardSlots[i].isEmpty())
-                developmentCardIdFirstRow[i] = developmentCardSlots[i].peek().getID();
-            else
-                developmentCardIdFirstRow[i] = -1;
-        }
-        return developmentCardIdFirstRow;
-    }
-
-    public List<String>[] getHiddenDevelopmentCardColours(){
-        List<String>[] hiddenDevelopmentCardColours= new ArrayList[numberOfDevelopmentCardSlots];
-        for (int i = 0; i < developmentCardSlots.length; i++){
-            hiddenDevelopmentCardColours[i] = new ArrayList<>();
-            if (developmentCardSlots[i].size() > 1){
-                //get the covered cards
-                for (int j = 0; j < developmentCardSlots[i].size() - 1; j++){
-                    hiddenDevelopmentCardColours[i].add(developmentCardSlots[i].get(j).getFlag().getFlagColor().toString());
-                }
-            }
-        }
-        return hiddenDevelopmentCardColours;
-    }
-
     /**
      * @return Returns all {@link LeaderCard}
      */

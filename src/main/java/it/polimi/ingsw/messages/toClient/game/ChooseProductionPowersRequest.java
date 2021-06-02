@@ -10,6 +10,10 @@ import java.util.Map;
 
 public class ChooseProductionPowersRequest implements MessageToClient {
 
+    /**
+     * Message used to ask the client which productions he wants to use
+     */
+
     Map<Resource, Integer> availableResources;
     Map<Integer, List<Value>> availableProductionPowers;
 

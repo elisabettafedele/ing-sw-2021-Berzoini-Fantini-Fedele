@@ -48,6 +48,10 @@ public class Controller {
         this.clientHandlers = new LinkedList<>();
     }
 
+    /**
+     * Method to handle a client's disconnection when a {@link Game} has already started
+     * @param nickname the nickname of the disconnected client
+     */
     public synchronized void handleClientDisconnection(String nickname){
         ClientHandler connection = getConnectionByNickname(nickname);
 
@@ -61,6 +65,10 @@ public class Controller {
         }
     }
 
+    /**
+     * Method to handle a client's disconnection when a {@link Game} has already started and the {@link GameMode} is multiplayer
+     * @param nickname the nickname of the disconnected client
+     */
     private void handleMultiplayerDisconnection(String nickname) {
         if (gamePhase instanceof SetUpPhase)
             handleMultiplayerDisconnectionSetUpPhase(nickname);
@@ -73,6 +81,10 @@ public class Controller {
             handleMultiplayerDisconnectionEndPhase(nickname);
     }
 
+    /**
+     * Method to handle a client's disconnection when a {@link Game} has already started, the {@link GameMode} is multiplayer and the game was still in the set up phase.
+     * @param nickname the nickname of the disconnected client
+     */
     private void handleMultiplayerDisconnectionSetUpPhase(String nickname){
         ClientHandler connection = getConnectionByNickname(nickname);
         if (connection.getClientHandlerPhase() == ClientHandlerPhase.SET_UP_FINISHED) {
@@ -104,6 +116,10 @@ public class Controller {
         }
     }
 
+    /**
+     * Method to handle a client's disconnection when a {@link Game} has already started, the {@link GameMode} is multiplayer and the game was in the play phase.
+     * @param nickname the nickname of the disconnected client
+     */
     private void handleMultiplayerDisconnectionGamePhase(String nickname){
         getPlayerByNickname(nickname).setActive(false);
         if (getPlayers().stream().filter(Player::isActive).count() == 1) {
@@ -135,6 +151,10 @@ public class Controller {
         }
     }
 
+    /**
+     * Method to handle a client's disconnection when a {@link Game} has already started, the {@link GameMode} is multiplayer and the game was in the end phase
+     * @param nickname the nickname of the disconnected client
+     */
     private void handleMultiplayerDisconnectionEndPhase(String nickname){
         server.removeConnectionGame(getConnectionByNickname(nickname), false);
     }
@@ -248,10 +268,6 @@ public class Controller {
     public synchronized void handleMessage(MessageToServer message, ClientHandlerInterface clientHandler){
         gamePhase.handleMessage(message, (ClientHandler) clientHandler);
     }
-
-
-
-
 
     /**
      * Method to send all the Match Data to the client

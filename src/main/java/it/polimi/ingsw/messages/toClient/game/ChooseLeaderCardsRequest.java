@@ -7,6 +7,10 @@ import java.util.List;
 
 public class ChooseLeaderCardsRequest implements MessageToClient {
 
+    /**
+     * Message used to ask the client to choose 2 out of the 4 leader cards assigned
+     */
+
     List<Integer> leaderCardsIDs;
 
     public ChooseLeaderCardsRequest(List<Integer> leaderCardsIDs){

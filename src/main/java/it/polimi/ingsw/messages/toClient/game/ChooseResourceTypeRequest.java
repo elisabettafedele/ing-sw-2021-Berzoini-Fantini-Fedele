@@ -8,6 +8,9 @@ import java.util.List;
 
 public class ChooseResourceTypeRequest implements MessageToClient {
 
+    /**
+     * Message used to ask the client which initial resource type(s) he desires
+     */
     private List<Resource> resourceTypes;
     private int quantity;
 

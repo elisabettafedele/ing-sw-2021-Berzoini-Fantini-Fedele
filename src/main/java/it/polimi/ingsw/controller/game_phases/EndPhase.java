@@ -9,7 +9,9 @@ import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.server.ClientHandler;
 
 public abstract class EndPhase implements GamePhase {
-
+    /**
+     * Abstract class to manage the end phase
+     */
     private Controller controller;
 
     @Override
@@ -23,6 +25,9 @@ public abstract class EndPhase implements GamePhase {
         //ignored
     }
 
+    /**
+     * Method to calculate the victory points of each player
+     */
     private void countVictoryPoints(){
         for (Player player : controller.getPlayers()){
             try {
