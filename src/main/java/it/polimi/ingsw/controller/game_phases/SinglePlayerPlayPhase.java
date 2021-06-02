@@ -159,4 +159,12 @@ public class SinglePlayerPlayPhase extends PlayPhase {
             this.tokens.add(tokenParser.stream().filter(x -> x.getId() == token).collect(Collectors.toList()).get(0));
         }
     }
+
+    public void handleReconnection(){
+
+    }
+
+    public String getLastPlayer() {
+        return lastPlayer;
+    }
 }

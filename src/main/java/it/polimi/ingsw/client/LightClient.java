@@ -4,6 +4,10 @@ import it.polimi.ingsw.enumerations.Resource;
 
 import java.util.*;
 
+/**
+ * This class represent a light version of the player and the
+ * {@link it.polimi.ingsw.model.player.PersonalBoard} of the Model
+ */
 public class LightClient {
 
     private int faithTrackPosition;

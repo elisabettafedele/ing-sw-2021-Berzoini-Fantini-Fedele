@@ -56,7 +56,12 @@ public class Controller {
         ClientHandler connection = getConnectionByNickname(nickname);
         //SINGLE PLAYER
         if (connection.getGameMode() == GameMode.SINGLE_PLAYER){
-            connection.getServer().gameEnded(this);
+            getPlayerByNickname(nickname).setActive(false);
+            if (gamePhase instanceof SetUpPhase)
+                connection.getServer().removeConnectionGame(connection, true);
+            if (gamePhase instanceof PlayPhase) {
+                server.removeConnectionGame(connection, false);
+            }
             return;
         }
 

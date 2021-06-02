@@ -352,6 +352,12 @@ public class Server implements ServerInterface {
      * @return true iff the game still exist
      */
     public synchronized boolean removeConnectionGame(ClientHandler connection, boolean forced){
+        //if the client comes back I retrieve the game from the json file
+        if (connection.getController().getGame().getGameMode() == GameMode.SINGLE_PLAYER) {
+            activeGames.remove(connection.getController());
+            takenNicknames.remove(connection.getNickname());
+            return true;
+        }
         //If he was the last player remained in the game, I delete the game and I remove all the players from disconnectedPlayers -> the game is not finished, but is not playable anymore
         if (connection.getController().getClientHandlers().size() == 1) {
             for (String nickname : connection.getController().getPlayers().stream().map(Player::getNickname).collect(Collectors.toList())) {

@@ -410,7 +410,6 @@ public class CLI implements View {
 
     @Override
     public void displayStandardView() {
-
         Screen.getInstance().setClientToDisplay(MatchData.getInstance().getCurrentViewNickname());
         Screen.getInstance().displayStandardView();
     }
