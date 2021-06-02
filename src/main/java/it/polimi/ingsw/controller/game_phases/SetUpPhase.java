@@ -62,7 +62,6 @@ public class SetUpPhase implements GamePhase {
         controller.sendLightCards();
         controller.sendMatchData(controller.getGame(), false);
         for (String nickname : nicknames){
-            controller.getConnectionByNickname(nickname).sendMessageToClient(new WelcomeBackMessage(nickname, false));
             if (controller.getPlayerByNickname(nickname).getPersonalBoard().getLeaderCards().size() == 4){
                 controller.getConnectionByNickname(nickname).setClientHandlerPhase(ClientHandlerPhase.WAITING_DISCARDED_LEADER_CARDS);
                 controller.getConnectionByNickname(nickname).sendMessageToClient(new ChooseLeaderCardsRequest(controller.getPlayerByNickname(nickname).getPersonalBoard().getLeaderCards().stream().map(Card::getID).collect(Collectors.toList())));

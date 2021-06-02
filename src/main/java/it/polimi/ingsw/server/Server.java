@@ -4,6 +4,7 @@ import it.polimi.ingsw.common.ClientHandlerInterface;
 import it.polimi.ingsw.common.ServerInterface;
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.controller.game_phases.EndPhase;
+import it.polimi.ingsw.controller.game_phases.MultiplayerEndPhase;
 import it.polimi.ingsw.controller.game_phases.PlayPhase;
 import it.polimi.ingsw.controller.game_phases.SetUpPhase;
 import it.polimi.ingsw.enumerations.ClientHandlerPhase;
@@ -11,6 +12,7 @@ import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.jsonParsers.DevelopmentCardParser;
 import it.polimi.ingsw.jsonParsers.LeaderCardParser;
+import it.polimi.ingsw.messages.toClient.TurnMessage;
 import it.polimi.ingsw.messages.toClient.WelcomeBackMessage;
 import it.polimi.ingsw.messages.toClient.game.GameOverMessage;
 import it.polimi.ingsw.messages.toClient.lobby.NicknameRequest;
@@ -39,23 +41,16 @@ public class Server implements ServerInterface {
     private int port;
     //Thread pool which contains a thread for each client connected to the server
     private final ExecutorService executor;
-    //Server.Server socket, used to accept connections from new client, it is constructed only when the server start working
+    //Server socket, used to accept connections from new client, it is constructed only when the server start working
     private ServerSocket serverSocket;
-
     private int numberOfPlayersForNextGame = -1;
-
     private List<ClientHandler> clientsInLobby;
     private Map<String, Controller> clientsDisconnected;
     private Map<String, GameOverMessage> clientsDisconnectedGameFinished;
-    private List<String> takenNicknames;
-
-
+    private Set<String> takenNicknames;
     private List<Controller> activeGames;
-
-    ReentrantLock lockLobby = new ReentrantLock(true);
-    ReentrantLock lockGames = new ReentrantLock(true);
-
-
+    private ReentrantLock lockLobby = new ReentrantLock(true);
+    private ReentrantLock lockGames = new ReentrantLock(true);
     public static final Logger SERVER_LOGGER = Logger.getLogger("Server logger");
 
 
@@ -66,7 +61,7 @@ public class Server implements ServerInterface {
         this.clientsDisconnected = new HashMap<>();
         this.clientsDisconnectedGameFinished = new HashMap<>();
         this.activeGames = new LinkedList<>();
-        this.takenNicknames = new ArrayList<>();
+        this.takenNicknames = new HashSet<>();
     }
 
     /**
@@ -106,9 +101,10 @@ public class Server implements ServerInterface {
      * - it calls the NewGameManager method
      * @param connection the connection with the client that has chosen his nickname
      */
-
     public synchronized void handleNicknameChoice(ClientHandler connection) {
         if(knownClient(connection.getNickname())){
+            // If the game the player was playing in is not finished, I do not need to start a new game.
+            // The method handleKnownClientReconnection() will manage the reinsertion of the player in the right room.
             if (!handleKnownClientReconnection(connection))
                 return;
         }
@@ -134,7 +130,6 @@ public class Server implements ServerInterface {
             return;
         }
 
-
         //MULTIPLAYER
         lockLobby.lock();
         try {
@@ -151,11 +146,17 @@ public class Server implements ServerInterface {
 
     }
 
+    /**
+     * Method to handle the reconnection of a client that was playing a multiplayer game or that has finished a single player game, but has not received the results.
+     * @param clientHandler the {@link ClientHandler} of the reconnected player
+     * @return true uf the game the player was playing in is now finished
+     */
     public boolean handleKnownClientReconnection(ClientHandler clientHandler){
         boolean gameFinished = clientsDisconnectedGameFinished.containsKey(clientHandler.getNickname());
         clientHandler.sendMessageToClient(new WelcomeBackMessage(clientHandler.getNickname(), gameFinished));
 
         if (gameFinished){
+            //If the game is already finished, I send the results to the player and I manage his connection as a new one
             clientHandler.sendMessageToClient(clientsDisconnectedGameFinished.get(clientHandler.getNickname()));
             clientsDisconnectedGameFinished.remove(clientHandler.getNickname());
             return true;
@@ -172,11 +173,11 @@ public class Server implements ServerInterface {
                 ((SetUpPhase) clientsDisconnected.get(clientHandler.getNickname()).getGamePhase()).endPhaseManager(clientHandler);
             } else {
                 clientHandler.getController().sendMatchData(clientHandler.getController().getGame(), clientHandler, false);
+                clientHandler.sendMessageToClient(new TurnMessage(((PlayPhase)clientHandler.getController().getGamePhase()).getTurnController().getCurrentPlayer().getNickname(), true));
                 clientsDisconnected.remove(clientHandler.getNickname());
             }
             return false;
         }
-
     }
 
     /**
@@ -203,32 +204,17 @@ public class Server implements ServerInterface {
         }
     }
 
+    /**
+     * Method to check whether there are duplicates among the nicknames for the next match.
+     * Nicknames need to be unique in the whole system
+     * @return true if all the nicknames are valid
+     */
     private boolean invalidNicknameForNextMatch(){
         lockLobby.lock();
         try {
             for (int i = 1; i < numberOfPlayersForNextGame; i++) {
                 if (!clientsInLobby.get(i).isValidNickname())
                     return true;
-            }
-        } finally {
-            lockLobby.unlock();
-        }
-        return false;
-    }
-
-    /**
-     * Method that checks whether there are duplicates nicknames in the group of players who will join the next match
-     * @return true iff there are duplicates nicknames among the players that are ready to start a new game
-     */
-    private boolean duplicatesNicknameForNextMatch() {
-        lockLobby.lock();
-        try {
-            for (int i = 1; i < numberOfPlayersForNextGame; i++) {
-                for (int j = 0; j < i; j++) {
-                    if (clientsInLobby.get(j).getNickname().equals(clientsInLobby.get(i).getNickname())) {
-                        return true;
-                    }
-                }
             }
         } finally {
             lockLobby.unlock();
@@ -280,6 +266,10 @@ public class Server implements ServerInterface {
         }
     }
 
+    /**
+     * Method to handle the start of a single player {@link it.polimi.ingsw.model.game.Game}
+     * @param connection the {@link ClientHandler} of the player
+     */
     private void startNewGame(ClientHandler connection){
         Controller controller = null;
         try {
@@ -302,27 +292,6 @@ public class Server implements ServerInterface {
         assert controller != null;
         connection.sendMessageToClient(new SendPlayerNicknamesMessage(connection.getNickname(), new ArrayList<String>()));
         controller.start();
-    }
-
-    /**
-     * Method used to ask the nickname to the first duplicate of the queue
-     */
-    private void askNicknameToFirstDuplicate() {
-        boolean found = false;
-        lockLobby.lock();
-        try {
-            for(int i = 1; i < numberOfPlayersForNextGame; i++) {
-                for (int j = 0; j < i; j++) {
-                    if (!found && clientsInLobby.get(j).getNickname().equals(clientsInLobby.get(i).getNickname()) && clientsInLobby.get(i).getClientHandlerPhase() != ClientHandlerPhase.WAITING_NICKNAME) {
-                        clientsInLobby.get(i).setClientHandlerPhase(ClientHandlerPhase.WAITING_NICKNAME);
-                        clientsInLobby.get(i).sendMessageToClient(new NicknameRequest(true, true));
-                        found = true;
-                    }
-                }
-            }
-        } finally {
-            lockLobby.unlock();
-        }
     }
 
 
@@ -362,16 +331,22 @@ public class Server implements ServerInterface {
         //If he is the last player
         //TODO If there would be only one more player in the game, I delete the game and I remove all the players from disconnectedPlayers -> the game is not finished, but is not playable anymore
         if (connection.getController().getClientHandlers().size() == 1) {
-            for (String nickname : connection.getController().getPlayers().stream().map(Player::getNickname).collect(Collectors.toList())) {
+            for (String nickname : connection.getController().getPlayers().stream().filter(x -> !x.getNickname().equals(connection.getNickname())).map(Player::getNickname).collect(Collectors.toList())) {
                 clientsDisconnected.remove(nickname);
                 takenNicknames.remove(nickname);
             }
+            if (!forced)
+                takenNicknames.remove(connection.getNickname());
             GameHistory.removeOldGame(connection.getController().getControllerID());
             activeGames.remove(connection.getController());
             return false;
         } else {
-            if (!forced)
-                clientsDisconnected.put(connection.getNickname(), connection.getController());
+            if (!forced) {
+                if (connection.getController().getGamePhase() instanceof EndPhase)
+                    clientsDisconnectedGameFinished.put(connection.getNickname(), ((MultiplayerEndPhase)connection.getController().getGamePhase()).getEndMessage(true));
+                else
+                    clientsDisconnected.put(connection.getNickname(), connection.getController());
+            }
             connection.getController().removeConnection(connection);
             return true;
         }
@@ -399,7 +374,6 @@ public class Server implements ServerInterface {
         takenNicknames.remove(nickname);
     }
 
-
     @Override
     public void setNumberOfPlayersForNextGame(ClientHandlerInterface clientHandler, int numberOfPlayersForNextGame){
         this.numberOfPlayersForNextGame = numberOfPlayersForNextGame;
@@ -408,11 +382,11 @@ public class Server implements ServerInterface {
     }
 
     /**
-     * Method to handle the end of a game. In particular:
+     * Method to handle the end of a multiplayer game. In particular:
      * - If the game had some clients disconnected: they are moved from clientDisconnected to clientsDisconnectedGameFinished and the results of the game are saved in the GameOver message
      * - Anyhow, the game is removed from activeGames, since it is no longer active
-     * @param controller
-     * @param gameOverMessage
+     * @param controller the {@link Controller} related to the game that has just ended
+     * @param gameOverMessage the message with the results of the {@link it.polimi.ingsw.model.game.Game}
      */
     public void gameEnded(Controller controller, GameOverMessage gameOverMessage){
         controller.getPlayers().forEach(x -> takenNicknames.remove(x.getNickname()));
@@ -425,6 +399,10 @@ public class Server implements ServerInterface {
         activeGames.remove(controller);
     }
 
+    /**
+     * Method to handle the end of a single player game
+     * @param controller the controller of the {@link it.polimi.ingsw.model.game.Game}
+     */
     public void gameEnded(Controller controller){
         takenNicknames.remove(controller.getPlayers().get(0).getNickname());
         GameHistory.removeOldGame(controller.getControllerID());

@@ -3,28 +3,21 @@ package it.polimi.ingsw.client.cli;
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.client.View;
-
 import it.polimi.ingsw.client.cli.graphical.Colour;
 import it.polimi.ingsw.client.cli.graphical.GraphicalLogo;
 import it.polimi.ingsw.client.cli.graphical.Screen;
 import it.polimi.ingsw.client.cli.specificCLI.*;
 import it.polimi.ingsw.client.utilities.InputParser;
 import it.polimi.ingsw.client.utilities.UtilityProduction;
-import it.polimi.ingsw.client.utilities.InputParser;
 import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.common.LightLeaderCard;
 import it.polimi.ingsw.enumerations.*;
 import it.polimi.ingsw.messages.toClient.TurnMessage;
 import it.polimi.ingsw.messages.toClient.matchData.MatchDataMessage;
 import it.polimi.ingsw.model.cards.Value;
-import javafx.css.Match;
-
 import java.util.*;
-
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 
@@ -32,6 +25,7 @@ public class CLI implements View {
 
     private Client client;
     private Thread inputObserverOutOfTurn;
+
     private AtomicBoolean myTurn = new AtomicBoolean(false);
 
     public static void main(String[] args) {
@@ -96,7 +90,7 @@ public class CLI implements View {
     }
 
     private void outOfTurnInput(){
-        while (!myTurn.get()) {
+        while (!myTurn.get() && client.isConnected()) {
             String line = InputParser.getLine();
             if (line == null)
                 return;
@@ -136,8 +130,8 @@ public class CLI implements View {
     @Override
     public void displayDisconnection(String nickname, boolean setUp, boolean gameCancelled) {
         System.out.println(Colour.ANSI_BRIGHT_GREEN.getCode() + "We are sorry to inform you that " + nickname + " has left the game." );
-        System.out.println("The game" + (gameCancelled? " has been cancelled." : " will go on skipping the turns of that player."+ Colour.ANSI_RESET));
-        if (setUp && gameCancelled){
+        System.out.println("The game" + (gameCancelled? " has been cancelled." : " will go on skipping the turns of that player.") + Colour.ANSI_RESET);
+        if (gameCancelled){
             System.out.println(Colour.ANSI_BRIGHT_GREEN.getCode() + "You have been reconnected to the main lobby...\nBe ready to start another game. A game will start as soon as enough players will be ready\n" + Colour.ANSI_RESET);
         }
 

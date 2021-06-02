@@ -9,14 +9,17 @@ import java.util.stream.Collectors;
 public class MultiplayerEndPhase extends EndPhase {
     @Override
     public void notifyResults() {
+        getController().sendMessageToAll(getEndMessage(false));
+        getController().getServer().gameEnded(getController(), getEndMessage(true));
+    }
+
+    public GameOverMessage getEndMessage(boolean readyForAnotherGame){
         List<Player> sortedPlayers = getController().getPlayers().stream().sorted(Comparator.comparingInt(Player::getVictoryPoints).reversed()).collect(Collectors.toList());
         Map<String, Integer> results = new LinkedHashMap<>();
-
 
         for (Player player : sortedPlayers){
             results.put(player.getNickname(), player.getVictoryPoints());
         }
-        getController().sendMessageToAll(new GameOverMessage(results, false));
-        getController().getServer().gameEnded(getController(), new GameOverMessage(results, true));
+        return new GameOverMessage(results, readyForAnotherGame);
     }
 }

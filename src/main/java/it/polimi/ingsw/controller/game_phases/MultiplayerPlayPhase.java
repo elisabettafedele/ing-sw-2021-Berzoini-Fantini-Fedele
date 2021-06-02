@@ -21,6 +21,7 @@ public class MultiplayerPlayPhase extends PlayPhase {
         setController(controller);
         this.turnIndex = 0;
         setPlayer(controller.getPlayers().get(turnIndex));
+        setLastTurnGameCopy(new PersistentGame(getController().getGame()));
     }
 
     public MultiplayerPlayPhase(Controller controller, String lastPlayerNickname, boolean endTrigger){

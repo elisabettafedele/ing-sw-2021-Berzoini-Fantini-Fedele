@@ -48,17 +48,12 @@ public class Controller {
         this.clientHandlers = new LinkedList<>();
     }
 
-    public void setServer (Server server){
-        this.server = server;
-    }
-
     public synchronized void handleClientDisconnection(String nickname){
         ClientHandler connection = getConnectionByNickname(nickname);
 
         if (connection.getGameMode() == GameMode.SINGLE_PLAYER){
             //SINGLE PLAYER
             server.removeConnectionGameSinglePlayer(getConnectionByNickname(nickname));
-            return;
 
         } else {
             //MULTIPLAYER
@@ -67,63 +62,81 @@ public class Controller {
     }
 
     private void handleMultiplayerDisconnection(String nickname) {
+        if (gamePhase instanceof SetUpPhase)
+            handleMultiplayerDisconnectionSetUpPhase(nickname);
+
+
+        if (gamePhase instanceof MultiplayerPlayPhase)
+            handleMultiplayerDisconnectionGamePhase(nickname);
+
+        if (gamePhase instanceof EndPhase)
+            handleMultiplayerDisconnectionEndPhase(nickname);
+    }
+
+    private void handleMultiplayerDisconnectionSetUpPhase(String nickname){
         ClientHandler connection = getConnectionByNickname(nickname);
-
-        if (gamePhase instanceof SetUpPhase) {
-
-            if (connection.getClientHandlerPhase() == ClientHandlerPhase.SET_UP_FINISHED) {
-                //CASE 1: THE CLIENT HAS ALREADY FINISHED THE SETUP PHASE: the game starts and the player is set as inactive
-                if (!server.removeConnectionGame(connection, false))
-                    return;
-                //If I am here is because the game still exists
-                getClientHandlers().stream().filter(x -> !x.getNickname().equals(nickname)).collect(Collectors.toList()).forEach(x -> x.sendMessageToClient(new NotifyClientDisconnection(nickname, true, false)));
-                getPlayerByNickname(nickname).setActive(false);
-                if (gamePhase instanceof SetUpPhase)
-                    ((SetUpPhase) gamePhase).endPhaseManager(connection);
-            } else {
-                //CASE 2: THE CLIENT HAS NOT FINISHED THE SETUP PHASE YET: THE GAME IS DELETED AND OTHER CLIENTS ARE AGAIN IN THE LOBBY. IF A GAME IS READY TO START THEY WILL PLAY THERE
-                connection.getServer().removeNickname(connection.getNickname());
-                lockConnections.lock();
-                connection.getServer().removeGame(this);
-                GameHistory.removeOldGame(controllerID);
-                for (ClientHandler other : getClientHandlers()) {
-                    if (other.isGameStarted() && other.isActive()) {
-                        other.sendMessageToClient(new NotifyClientDisconnection(nickname, true, true));
-                        other.setGameStarted(false);
-                        other.setClientHandlerPhase(ClientHandlerPhase.WAITING_IN_THE_LOBBY);
-                        server.addClientHandler(other);
-                    }
-                    server.NewGameManager();
+        if (connection.getClientHandlerPhase() == ClientHandlerPhase.SET_UP_FINISHED) {
+            //CASE 1: THE CLIENT HAS ALREADY FINISHED THE SETUP PHASE: the game starts and the player is set as inactive
+            if (!server.removeConnectionGame(connection, false))
+                return;
+            //If I am here is because the game still exists
+            getClientHandlers().stream().filter(x -> !x.getNickname().equals(nickname)).collect(Collectors.toList()).forEach(x -> x.sendMessageToClient(new NotifyClientDisconnection(nickname, true, false)));
+            getPlayerByNickname(nickname).setActive(false);
+            if (gamePhase instanceof SetUpPhase)
+                ((SetUpPhase) gamePhase).endPhaseManager(connection);
+        } else {
+            //CASE 2: THE CLIENT HAS NOT FINISHED THE SETUP PHASE YET: THE GAME IS DELETED AND OTHER CLIENTS ARE AGAIN IN THE LOBBY. IF A GAME IS READY TO START THEY WILL PLAY THERE
+            connection.getServer().removeNickname(connection.getNickname());
+            lockConnections.lock();
+            connection.getServer().removeGame(this);
+            GameHistory.removeOldGame(controllerID);
+            for (ClientHandler other : getClientHandlers()) {
+                if (other.isGameStarted() && other.isActive()) {
+                    other.sendMessageToClient(new NotifyClientDisconnection(nickname, true, true));
+                    other.setGameStarted(false);
+                    other.setClientHandlerPhase(ClientHandlerPhase.WAITING_IN_THE_LOBBY);
+                    server.addClientHandler(other);
                 }
-                lockConnections.unlock();
-                connection.setController(null);
+                server.NewGameManager();
             }
+            lockConnections.unlock();
+            connection.setController(null);
+        }
+    }
+
+    private void handleMultiplayerDisconnectionGamePhase(String nickname){
+        getPlayerByNickname(nickname).setActive(false);
+        if (getPlayers().stream().filter(Player::isActive).count() == 1) {
+            server.removeConnectionGame(getConnectionByNickname(nickname), false);
+            String lastPlayerNickname = getPlayers().stream().filter(Player::isActive).collect(Collectors.toList()).get(0).getNickname();
+            getConnectionByNickname(lastPlayerNickname).sendMessageToClient(new NotifyClientDisconnection(lastPlayerNickname, false, true));
+            server.removeConnectionGame(getConnectionByNickname(lastPlayerNickname), true);
+            getConnectionByNickname(lastPlayerNickname).setGameStarted(false);
+            getConnectionByNickname(lastPlayerNickname).setClientHandlerPhase(ClientHandlerPhase.WAITING_IN_THE_LOBBY);
+            server.addClientHandler(getConnectionByNickname(lastPlayerNickname));
+            server.NewGameManager();
             return;
         }
-
-        if (gamePhase instanceof MultiplayerPlayPhase) {
-
-            if (clientHandlers.size() < 1) {
-                //The game is cancelled
-                server.removeConnectionGame(connection, false);
-            } else {
-                //The game will still be played
-                getPlayerByNickname(nickname).setActive(false);
-                server.removeConnectionGame(connection, false);
-                sendMessageToAll(new NotifyClientDisconnection(nickname, false, false));
-                if (((MultiplayerPlayPhase) gamePhase).getTurnController().getCurrentPlayer().getNickname().equals(nickname)) {
-                    //THE PLAYER DISCONNECTED WAS THE TURN'S OWNER -> I check if he has already done his standard action
-                    if (!((MultiplayerPlayPhase) gamePhase).getTurnController().isStandardActionDone()) {
-                        //IF HE HAS NOT DONE THE STANDARD ACTION YET -> INVALID TURN! UNDO OF THE TURN
-                        game = new Game(((MultiplayerPlayPhase) gamePhase).getLastTurnGameCopy());
-                        sendMatchData(game, true);
-                    }
-                    ((MultiplayerPlayPhase) gamePhase).nextTurn();
+        boolean gameFinished  = !server.removeConnectionGame(getConnectionByNickname(nickname), false);
+        if (!gameFinished) {
+            //The game will still be played
+            getPlayerByNickname(nickname).setActive(false);
+            sendMessageToAll(new NotifyClientDisconnection(nickname, false, false));
+            if (((MultiplayerPlayPhase) gamePhase).getTurnController().getCurrentPlayer().getNickname().equals(nickname)) {
+                //THE PLAYER DISCONNECTED WAS THE TURN'S OWNER -> I check if he has already done his standard action
+                if (!((MultiplayerPlayPhase) gamePhase).getTurnController().isStandardActionDone()) {
+                    //IF HE HAS NOT DONE THE STANDARD ACTION YET -> INVALID TURN! UNDO OF THE TURN
+                    game = new Game(((MultiplayerPlayPhase) gamePhase).getLastTurnGameCopy());
+                    getPlayerByNickname(nickname).setActive(false);
+                    sendMatchData(game, true);
                 }
+                ((MultiplayerPlayPhase) gamePhase).nextTurn();
             }
-
-
         }
+    }
+
+    private void handleMultiplayerDisconnectionEndPhase(String nickname){
+        server.removeConnectionGame(getConnectionByNickname(nickname), false);
     }
 
     /**
@@ -136,10 +149,16 @@ public class Controller {
             startANewGame();
     }
 
+    /**
+     * Method to start a new game, used when there is no game to load from the json file
+     */
     private void startANewGame(){
         this.setGamePhase(new SetUpPhase());
     }
 
+    /**
+     * Method to retrieve an old {@link Game} from the memory
+     */
     private void reloadAnOldGame(){
         if (GameHistory.isSetUpPhase(controllerID))
             reloadSetUpPhase();
@@ -147,6 +166,9 @@ public class Controller {
             reloadPlayPhase();
     }
 
+    /**
+     * Method to retrieve the {@link SetUpPhase} of an old {@link Game}
+     */
     private void reloadSetUpPhase(){
         clientHandlers.forEach(x -> x.sendMessageToClient(new WelcomeBackMessage(x.getNickname(), false)));
         PersistentControllerSetUpPhase controller = GameHistory.retrieveSetUpController(controllerID);
@@ -155,13 +177,20 @@ public class Controller {
         ((SetUpPhase) gamePhase).reloadPhase();
     }
 
+    /**
+     * Method to retrieve the {@link PlayPhase} of an old {@link Game}
+     */
     private void reloadPlayPhase(){
+        clientHandlers.forEach(x -> x.sendMessageToClient(new WelcomeBackMessage(x.getNickname(), false)));
         if (game.getGameMode() == GameMode.MULTI_PLAYER)
             reloadMultiplayerPlayPhase();
         else
             reloadSinglePlayerPlayPhase();
     }
 
+    /**
+     * Method to retrieve the {@link MultiplayerPlayPhase} of an old {@link Game}
+     */
     private void reloadMultiplayerPlayPhase(){
         PersistentControllerPlayPhase controller = GameHistory.retrievePlayController(controllerID);
         game = new Game(controller.getGame());
@@ -173,11 +202,14 @@ public class Controller {
         ((PlayPhase)gamePhase).restartLastTurn();
     }
 
+    /**
+     * Method to retrieve the {@link SinglePlayerPlayPhase} of an old {@link Game}
+     */
     private void reloadSinglePlayerPlayPhase(){
         PersistentControllerPlayPhaseSingle controller = GameHistory.retrievePlayControllerSingle(controllerID);
         game = new Game(controller.getGame());
         sendLightCards();
-        clientHandlers.forEach(x -> x.sendMessageToClient(new WelcomeBackMessage(x.getNickname(), false)));
+        clientHandlers.get(0).sendMessageToClient(new WelcomeBackMessage(clientHandlers.get(0).getNickname(), false));
         sendMatchData(game, false);
         gamePhase = new SinglePlayerPlayPhase(this, controller.getLastPlayer(), controller.isEndTriggered(), controller.getBlackCrossPosition(), controller.getTokens());
         if (((SinglePlayerPlayPhase) gamePhase).wasEndTriggered())
@@ -215,6 +247,97 @@ public class Controller {
 
     public synchronized void handleMessage(MessageToServer message, ClientHandlerInterface clientHandler){
         gamePhase.handleMessage(message, (ClientHandler) clientHandler);
+    }
+
+
+
+
+
+    /**
+     * Method to send all the Match Data to the client
+     * @param game the {@link Game} the client is playing in
+     * @param connection the {@link ClientHandler} of the client
+     * @param disconnection true if I am sending the data because a client disconnected during his turn (I did the undo of his turn if he has not finished the standard action)
+     */
+    public void sendMatchData(Game game, ClientHandler connection, boolean disconnection){
+        connection.sendMessageToClient(new ReloadMatchData(true, disconnection));
+        connection.sendMessageToClient(new LoadDevelopmentCardGrid(connection.getNickname(), game.getDevelopmentCardGrid().getAvailableCards().stream().map(Card::getID).collect(Collectors.toList())));
+        connection.sendMessageToClient(new UpdateMarketView(RELOAD, game.getMarket().getMarketTray(), game.getMarket().getSlideMarble()));
+        for (Player gamePlayer : getPlayers()) {
+
+                // 1. I create a map with the leader cards of the gamePlayer I am analyzing
+                Map<Integer, Boolean> leaderCards = gamePlayer.getPersonalBoard().getLeaderCardsMap();
+                connection.sendMessageToClient(new ReloadLeaderCardsOwned(gamePlayer.getNickname(), leaderCards));
+
+                //2. Development cards
+                connection.sendMessageToClient(new LoadDevelopmentCardSlots(gamePlayer.getNickname(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getDevelopmentCardIdSlots()));
+                connection.sendMessageToClient(new ReloadDevelopmentCardsVictoryPoints(gamePlayer.getNickname(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getVictoryPointsDevelopmentCardSlots()));
+
+                //3. Marker position
+                connection.sendMessageToClient(new UpdateMarkerPosition(gamePlayer.getNickname(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getMarkerPosition()));
+
+                //4. Depots status
+                connection.sendMessageToClient(new UpdateDepotsStatus(gamePlayer.getNickname(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getStrongboxStatus(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getLeaderStatus()));
+
+                //5. Pope tiles
+                connection.sendMessageToClient(new ReloadPopesFavorTiles(gamePlayer.getNickname(), gamePlayer.getPersonalBoard().getPopesTileStates()));
+        }
+        connection.sendMessageToClient(new ReloadMatchData(false, disconnection));
+    }
+
+    /**
+     * Method to send the Match Data to all the clients connected
+     * @param game the game the clients are playing in
+     * @param disconnection true if I am sending the data because a client disconnected during his turn (I did the undo of his turn if he has not finished the standard action)
+     */
+    public void sendMatchData(Game game, boolean disconnection){
+        assert game!=null;
+        lockConnections.lock();
+        for (ClientHandler player : clientHandlers){
+            sendMatchData(game, player, disconnection);
+        }
+        lockConnections.unlock();
+    }
+
+    public void sendLightCards() {
+        getClientHandlers().forEach(x -> sendLightCards(x.getNickname()));
+    }
+
+    public void sendLightCards(String nickname){
+        List<LightLeaderCard> leaderCards = LightCardsParser.getLightLeaderCards(LeaderCardParser.parseCards());
+        List<LightDevelopmentCard> developmentCards = LightCardsParser.getLightDevelopmentCards(DevelopmentCardParser.parseCards());
+        getConnectionByNickname(nickname).sendMessageToClient(new LoadDevelopmentCardsMessage(developmentCards));
+        getConnectionByNickname(nickname).sendMessageToClient(new LoadLeaderCardsMessage(leaderCards));
+    }
+
+    /**
+     * Method to send the same message to all the clients connected
+     * @param message the {@link MessageToClient} to be sent
+     */
+    public void sendMessageToAll(MessageToClient message){
+        lockConnections.lock();
+        try{
+            for (ClientHandler clientHandler : clientHandlers)
+                clientHandler.sendMessageToClient(message);
+        } finally {
+            lockConnections.unlock();
+        }
+    }
+
+    public void endMatch(){
+        setGamePhase(gamePhase instanceof MultiplayerPlayPhase ? new MultiplayerEndPhase() : new SinglePlayerEndPhase());
+    }
+
+    public List<ClientHandler> getClientHandlers() {
+        return clientHandlers;
+    }
+
+    public Server getServer() {
+        return server;
+    }
+
+    public int getControllerID() {
+        return controllerID;
     }
 
     public Game getGame(){
@@ -257,102 +380,22 @@ public class Controller {
         return player;
     }
 
-    public void setGamePhase(GamePhase gamePhase) {
-        this.gamePhase = gamePhase;
-        sendMessageToAll(new TextMessage(gamePhase.toString() + " has started!"));
-        gamePhase.executePhase(this);
-    }
-
     public GamePhase getGamePhase(){
         return gamePhase;
     }
 
-    public void sendMessageToAll(MessageToClient message){
-        lockConnections.lock();
-        try{
-            for (ClientHandler clientHandler : clientHandlers)
-                clientHandler.sendMessageToClient(message);
-        } finally {
-            lockConnections.unlock();
-        }
+    public void setServer (Server server) {
+        this.server = server;
     }
 
-    public void sendMessageToAllExcept(MessageToClient message, String nickname){
-        lockConnections.lock();
-        try{
-            for (ClientHandler clientHandler : clientHandlers) {
-                if (!clientHandler.getNickname().equals(nickname))
-                    clientHandler.sendMessageToClient(message);
-            }
-        } finally {
-            lockConnections.unlock();
-        }
-    }
-
-    public void sendMatchData(Game game, ClientHandler connection, boolean disconnection){
-        connection.sendMessageToClient(new ReloadMatchData(true, disconnection));
-        connection.sendMessageToClient(new LoadDevelopmentCardGrid(connection.getNickname(), game.getDevelopmentCardGrid().getAvailableCards().stream().map(Card::getID).collect(Collectors.toList())));
-        connection.sendMessageToClient(new UpdateMarketView(RELOAD, game.getMarket().getMarketTray(), game.getMarket().getSlideMarble()));
-        for (Player gamePlayer : getPlayers()) {
-
-                // 1. I create a map with the leader cards of the gamePlayer I am analyzing
-                Map<Integer, Boolean> leaderCards = gamePlayer.getPersonalBoard().getLeaderCardsMap();
-                connection.sendMessageToClient(new ReloadLeaderCardsOwned(gamePlayer.getNickname(), leaderCards));
-
-                //2. Development cards
-                connection.sendMessageToClient(new LoadDevelopmentCardSlots(gamePlayer.getNickname(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getDevelopmentCardIdSlots()));
-                connection.sendMessageToClient(new ReloadDevelopmentCardsVictoryPoints(gamePlayer.getNickname(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getVictoryPointsDevelopmentCardSlots()));
-
-                //3. Marker position
-                connection.sendMessageToClient(new UpdateMarkerPosition(gamePlayer.getNickname(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getMarkerPosition()));
-
-                //4. Depots status
-                connection.sendMessageToClient(new UpdateDepotsStatus(gamePlayer.getNickname(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getStrongboxStatus(), game.getPlayerByNickname(gamePlayer.getNickname()).getPersonalBoard().getLeaderStatus()));
-
-                //5. Pope tiles
-                connection.sendMessageToClient(new ReloadPopesFavorTiles(gamePlayer.getNickname(), gamePlayer.getPersonalBoard().getPopesTileStates()));
-        }
-        connection.sendMessageToClient(new ReloadMatchData(false, disconnection));
-    }
-
-    public void sendMatchData(Game game, boolean disconnection){
-        assert game!=null;
-        lockConnections.lock();
-        for (ClientHandler player : clientHandlers){
-            sendMatchData(game, player, disconnection);
-        }
-        lockConnections.unlock();
-    }
-
-
-    public void endMatch(){
-        setGamePhase(gamePhase instanceof MultiplayerPlayPhase ? new MultiplayerEndPhase() : new SinglePlayerEndPhase());
-    }
-
-    public List<ClientHandler> getClientHandlers() {
-        return clientHandlers;
-    }
-
-    public Server getServer() {
-        return server;
-    }
-
-    public int getControllerID() {
-        return controllerID;
-    }
 
     public void setControllerID(int controllerID) {
         this.controllerID = controllerID;
     }
 
-    public void sendLightCards() {
-        getClientHandlers().forEach(x -> sendLightCards(x.getNickname()));
-    }
-
-    public void sendLightCards(String nickname){
-        List<LightLeaderCard> leaderCards = LightCardsParser.getLightLeaderCards(LeaderCardParser.parseCards());
-        List<LightDevelopmentCard> developmentCards = LightCardsParser.getLightDevelopmentCards(DevelopmentCardParser.parseCards());
-        getConnectionByNickname(nickname).sendMessageToClient(new LoadDevelopmentCardsMessage(developmentCards));
-        getConnectionByNickname(nickname).sendMessageToClient(new LoadLeaderCardsMessage(leaderCards));
+    public void setGamePhase(GamePhase gamePhase) {
+        this.gamePhase = gamePhase;
+        sendMessageToAll(new TextMessage(gamePhase.toString() + " has started!"));
+        gamePhase.executePhase(this);
     }
 }

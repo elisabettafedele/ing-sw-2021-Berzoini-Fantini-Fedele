@@ -104,8 +104,6 @@ public class Client implements ClientInterface {
                 }
                 if (message instanceof NotifyClientDisconnection && ((NotifyClientDisconnection)message).isGameCancelled())
                     gameCanceled = true;
-
-
             }
         } catch (IOException | ClassNotFoundException e){
             pinger.interrupt();
@@ -173,4 +171,7 @@ public class Client implements ClientInterface {
     }
 
 
+    public boolean isConnected() {
+        return connected.get();
+    }
 }
