@@ -96,9 +96,10 @@ public class GameSceneController {
     private Label mainLabelMessage;
     @FXML
     private Label currentPBNicknameLabel;
-
     @FXML
     private VBox popupVbox;
+    @FXML
+    private VBox lorenzoVbox;
     @FXML
     private VBox reorganizationVbox;
     @FXML
@@ -129,6 +130,7 @@ public class GameSceneController {
     List<Integer> selectedLeaderCards;
     List<ResourceStorageType> reorganizeChosenDepots;
     List<Node> selectedProductions;
+    String currentPlayer;
 
     boolean isYourTurn;
     // *********************************************************************  //
@@ -136,6 +138,7 @@ public class GameSceneController {
     // *********************************************************************  //
     @FXML
     public void initialize() {
+        currentPlayer=new String();
         matchData=MatchData.getInstance();
         players=matchData.getAllNicknames();
         currentPlayerIndex=0;
@@ -168,12 +171,22 @@ public class GameSceneController {
         greyNode(nextPlayerButton);
         activateLeaderCardButton.setVisible(false);
         discardLeaderCardButton.setVisible(false);
+        if(players.size()>1) mainLabelMessage.setText("Wait for other players");
+        else{
+            updateMainLabel();
+            nextPlayerButton.setVisible(false);
+            nextPlayerButton.setManaged(false);
+            previousPlayerButton.setVisible(false);
+            previousPlayerButton.setManaged(false);
+            currentPBNicknameLabel.setVisible(false);
+            currentPBNicknameLabel.setManaged(false);
+        }
         endTurnButton.setVisible(false);
         endTurnButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                deactivateAllActionsGlowing();
                 endTurnButton.setVisible(false);
-                mainLabelMessage.setText("WAIT YOUR TURN");
                 client.sendMessageToServer(new EndTurnRequest());
             }
         });
@@ -220,6 +233,14 @@ public class GameSceneController {
                 actionEvent.consume();
             }
         });
+        lorenzoVbox.setVisible(false);
+        ((Button)lorenzoVbox.getChildren().get(2)).setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                lorenzoVbox.setVisible(false);
+                actionEvent.consume();
+            }
+        });
 
     }
 
@@ -231,6 +252,9 @@ public class GameSceneController {
         this.client = client;
     }
 
+    public void setCurrentPlayer(String nickname) {
+        currentPlayer=nickname;
+    }
     // *********************************************************************  //
     //                           UTILITY FUNCTIONS                            //
     // *********************************************************************  //
@@ -312,34 +336,48 @@ public class GameSceneController {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                updateDevelopmentCardGridView();
-                updateMarketView();
-                updateMainLabel();
-                updateFaithTrack();
-                updateWarehouseAndStrongboxView();
-                updateDevelopmentCardsSlots();
-                updateLeaderCardsView();
-                if(currentPlayerIndex==0){
-                    currentPBNicknameLabel.setText("You");
-                }
-                else{
-                    currentPBNicknameLabel.setText(players.get(currentPlayerIndex));
+                if (!matchData.isReloading()) {
+                    updateDevelopmentCardGridView();
+                    updateMarketView();
+                    updateFaithTrack();
+                    updateWarehouseAndStrongboxView();
+                    updateDevelopmentCardsSlots();
+                    updateLeaderCardsView();
+                    if(currentPlayerIndex==0){
+                        currentPBNicknameLabel.setText("You");
+                    }
+                    else{
+                        currentPBNicknameLabel.setText(players.get(currentPlayerIndex));
+                    }
                 }
             }
         });
 
     }
 
-    private void updateMainLabel() {
-        mainLabelNames.setText("");
-        mainLabelStats.setText("");
-        mainLabelMessage.setFont(new Font(mainLabelNames.getFont().toString(),8));
-        mainLabelStats.setFont(new Font(mainLabelNames.getFont().toString(),8));
-        mainLabelNames.setFont(new Font(mainLabelNames.getFont().toString(),8));
-        for(int i=0;i<players.size();i++){
-            mainLabelNames.setText(mainLabelNames.getText() + players.get(i) + "\n");
-            mainLabelStats.setText(mainLabelStats.getText() + "FT: " + matchData.getLightClientByNickname(players.get(i)).getFaithTrackPosition() + " VP: " + matchData.getLightClientByNickname(players.get(i)).getVictoryPoints() + "\n");
-        }
+    public void updateMainLabel() {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                mainLabelNames.setText("");
+                mainLabelStats.setText("");
+                mainLabelMessage.setFont(new Font(mainLabelNames.getFont().toString(),8));
+                mainLabelStats.setFont(new Font(mainLabelNames.getFont().toString(),8));
+                mainLabelNames.setFont(new Font(mainLabelNames.getFont().toString(),8));
+                for(int i=0;i<players.size();i++){
+                    mainLabelNames.setText(mainLabelNames.getText() + players.get(i) + "\n");
+                    mainLabelStats.setText(mainLabelStats.getText() + "FT: " + matchData.getLightClientByNickname(players.get(i)).getFaithTrackPosition() + " VP: " + matchData.getLightClientByNickname(players.get(i)).getVictoryPoints() + "\n");
+                }
+                if(players.size()>1){
+                    if(currentPlayer.equals(players.get(0)))mainLabelMessage.setText("It's your turn!");
+                    else mainLabelMessage.setText("It's " + currentPlayer + "'s turn");
+                }
+                else{
+                    mainLabelNames.setText(mainLabelNames.getText() + "Lorenzo\n");
+                    mainLabelStats.setText(mainLabelStats.getText() + "FT: " + matchData.getBlackCrossPosition()+ "\n");
+                }
+            }
+        });
     }
 
     private void updateDevelopmentCardsSlots() {
@@ -375,12 +413,22 @@ public class GameSceneController {
     }
 
     private void updateFaithTrack() {
-        for(Node ftBox : faithtrack.getChildren()){
-            ftBox.setVisible(false);
-        }
         int playerPos=matchData.getLightClientByNickname(players.get(currentPlayerIndex)).getFaithTrackPosition();
         if(playerPos>24){
             playerPos=24;
+        }
+        for(Node ftBox : faithtrack.getChildren()){
+            ftBox.setVisible(false);
+        }
+        if(players.size()==1){
+            for(Node ftBox : faithtrack.getChildren()){
+                ((ImageView)ftBox).setImage(new Image(GameSceneController.class.getResource("/img/punchboard/faithSign.png").toString()));
+            }
+            int blackCrossPos= matchData.getBlackCrossPosition();
+            if(blackCrossPos>24) blackCrossPos=24;
+            ((ImageView)faithtrack.getChildren().get(blackCrossPos)).setImage(new Image(GameSceneController.class.getResource("/img/punchboard/blackCross.png").toString()));
+            if(playerPos==blackCrossPos)((ImageView)faithtrack.getChildren().get(blackCrossPos)).setImage(new Image(GameSceneController.class.getResource("/img/punchboard/faithAndBlackCross.png").toString()));
+            faithtrack.getChildren().get(blackCrossPos).setVisible(true);
         }
         faithtrack.getChildren().get(playerPos).setVisible(true);
         int tileCounter=0;
@@ -399,8 +447,6 @@ public class GameSceneController {
             }
             tileCounter++;
         }
-
-
     }
 
     private void updateWarehouseAndStrongboxView() {
@@ -539,12 +585,12 @@ public class GameSceneController {
             public void run() {
                 GameSceneController.this.executableActions =executableActions;
                 isYourTurn=true;
-                mainLabelMessage.setText("IT'S YOUR TURN!");
                 endTurnButton.setVisible(standardActionDone);
                 if(executableActions.keySet().isEmpty()){
                     endTurnButton.setVisible(true);
                 }
                 updateGlowingObjects();
+                enableNextPreviousButtons();
             }
         });
     }
@@ -617,19 +663,19 @@ public class GameSceneController {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 //createTooltip(nodeToDeactivate,null);
-                mouseEvent.consume();
+                //mouseEvent.consume();
             }
         });
         nodeToDeactivate.setOnMouseExited(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                mouseEvent.consume();
+                //mouseEvent.consume();
             }
         });
         nodeToDeactivate.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                mouseEvent.consume();
+                //mouseEvent.consume();
             }
         });
         nodeToDeactivate.setEffect(null);
@@ -733,7 +779,6 @@ public class GameSceneController {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                mainLabelMessage.setText("IT'S YOUR TURN!");
                 popupVbox.setVisible(true);
                 discardButton.setVisible(canDiscard);
                 discardButton.setManaged(canDiscard);
@@ -753,7 +798,6 @@ public class GameSceneController {
                         resetStorageInsertion();
                         popupVbox.setVisible(false);
                         popupVbox.setManaged(false);
-                        mainLabelMessage.setText("WAIT YOUR TURN");
                         client.sendMessageToServer(new DiscardResourceRequest(resource));
                     }
                 });
@@ -763,7 +807,6 @@ public class GameSceneController {
                         resetStorageInsertion();
                         popupVbox.setVisible(false);
                         popupVbox.setManaged(false);
-                        mainLabelMessage.setText("WAIT YOUR TURN");
                         client.sendMessageToServer(new ReorganizeDepotRequest());
                     }
                 });
@@ -930,7 +973,6 @@ public class GameSceneController {
         client.sendMessageToServer(new ChooseStorageTypeResponse(Resource.valueOf(resourceToAddAsString),storageSelected,discardButton.isVisible(),reorganizeButton.isVisible()));
         popupVbox.setVisible(false);
         popupVbox.setManaged(false);
-        mainLabelMessage.setText("WAIT YOUR TURN");
     }
 
 
@@ -1076,7 +1118,6 @@ public class GameSceneController {
                     selectionHBox.getChildren().clear();
                     confirmSelectionButton.setVisible(false);
                     confirmSelectionButton.setDisable(true);
-                    mainLabelMessage.setText("WAIT YOUR TURN");
                     label.setText("Waiting the other players, the game will start \nas soon as they all be ready...");
                     popupVbox.setVisible(false);
                 }
@@ -1139,13 +1180,12 @@ public class GameSceneController {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                ((HBox)reorganizationVbox.getChildren().get(1)).setVisible(true);
-                ((HBox)reorganizationVbox.getChildren().get(1)).setManaged(true);
+                (reorganizationVbox.getChildren().get(1)).setVisible(true);
+                (reorganizationVbox.getChildren().get(1)).setManaged(true);
                 reorganizeChosenDepots=new ArrayList<>();
                 Label messageLabel=(Label)reorganizationVbox.getChildren().get(0);
                 Button moveButton = (Button)((HBox)reorganizationVbox.getChildren().get(1)).getChildren().get(0);
                 Button swapButton = (Button)((HBox)reorganizationVbox.getChildren().get(1)).getChildren().get(1);
-                mainLabelMessage.setText("IT'S YOUR TURN!");//TODO change it to wait your turn only when turn actually ends(do it after "who's turn" message implementation
                 popupVbox.setVisible(false);
                 reorganizationVbox.setVisible(true);
                 if(failure){
@@ -1158,8 +1198,8 @@ public class GameSceneController {
                     @Override
                     public void handle(ActionEvent actionEvent) {
                         sourceAndTargetDepotsSelection(true,depots,availableLeaderResource,true);
-                        ((HBox)reorganizationVbox.getChildren().get(1)).setVisible(false);
-                        ((HBox)reorganizationVbox.getChildren().get(1)).setManaged(false);
+                        (reorganizationVbox.getChildren().get(1)).setVisible(false);
+                        (reorganizationVbox.getChildren().get(1)).setManaged(false);
                         messageLabel.setText("Select from which depot you want to move resources");
                     }
                 });
@@ -1167,8 +1207,8 @@ public class GameSceneController {
                     @Override
                     public void handle(ActionEvent actionEvent) {
                         sourceAndTargetDepotsSelection(false,depots,availableLeaderResource,true);
-                        ((HBox)reorganizationVbox.getChildren().get(1)).setVisible(false);
-                        ((HBox)reorganizationVbox.getChildren().get(1)).setManaged(false);
+                        (reorganizationVbox.getChildren().get(1)).setVisible(false);
+                        (reorganizationVbox.getChildren().get(1)).setManaged(false);
                         messageLabel.setText("Select the first depot to swap resources");
                     }
                 });
@@ -1508,7 +1548,7 @@ public class GameSceneController {
                             }
                             if(addORremove){
                                 for(Node toRemoveGlowNode: nodeIntMap.keySet()){
-                                    node.setEffect(null);
+                                    toRemoveGlowNode.setEffect(null);
                                 }
                                 glowNode(node,Color.BLUEVIOLET);
                                 selectedProductions.add(node);
@@ -1645,6 +1685,23 @@ public class GameSceneController {
 
         });
     }
+
+    // *********************************************************************  //
+    //                      SINGLE PLAYER FUNCTIONS                           //
+    // *********************************************************************  //
+
+
+    public void displayLorenzoAction(int id) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                ((ImageView)lorenzoVbox.getChildren().get(1)).setImage(new Image(GameSceneController.class.getResource("/img/punchboard/" + id + ".png").toString()));
+                lorenzoVbox.setVisible(true);
+            }
+        });
+    }
+
+
 
     /*   Use this to avoid Thread exception
 

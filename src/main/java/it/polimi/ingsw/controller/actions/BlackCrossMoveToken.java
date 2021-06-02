@@ -19,7 +19,7 @@ public class BlackCrossMoveToken extends SoloActionToken{
     @Override
     public void useActionToken(SinglePlayerPlayPhase singlePlayerPlayPhase) {
         singlePlayerPlayPhase.moveBlackCross(numOfMoves);
-        singlePlayerPlayPhase.getController().sendMessageToAll(new UpdateMarkerPosition(SinglePlayerPlayPhase.LORENZO, numOfMoves));
+        singlePlayerPlayPhase.getController().sendMessageToAll(new UpdateMarkerPosition(SinglePlayerPlayPhase.LORENZO, singlePlayerPlayPhase.getBlackCrossPosition()));
         if(shuffle)
             singlePlayerPlayPhase.shuffleTokens();
     }

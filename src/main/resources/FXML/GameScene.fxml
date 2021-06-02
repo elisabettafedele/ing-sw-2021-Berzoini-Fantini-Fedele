@@ -435,7 +435,7 @@
                   </HBox>
                </children>
             </VBox>
-            <VBox fx:id="productionVbox" alignment="CENTER" layoutX="80.0" layoutY="23.0" prefHeight="201.0" prefWidth="346.0" styleClass="popup-box" stylesheets="@../css/style.css">
+            <VBox fx:id="productionVbox" alignment="CENTER" layoutX="80.0" layoutY="23.0" prefHeight="201.0" prefWidth="346.0" styleClass="popup-box" stylesheets="@../css/style.css" visible="false">
                <children>
                   <Label alignment="CENTER" prefHeight="85.0" prefWidth="346.0" />
                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" />
@@ -446,6 +446,28 @@
                         <Button mnemonicParsing="false" text="Confirm" />
                      </children>
                   </HBox>
+               </children>
+            </VBox>
+            <VBox fx:id="lorenzoVbox" alignment="CENTER" layoutX="27.0" layoutY="240.0" prefHeight="189.0" prefWidth="278.0" styleClass="popup-box" stylesheets="@../css/style.css">
+               <children>
+                  <Label alignment="CENTER" prefHeight="59.0" prefWidth="346.0" text="Lorenzo il Magnifico has moved!">
+                     <VBox.margin>
+                        <Insets top="10.0" />
+                     </VBox.margin>
+                  </Label>
+                  <ImageView fitWidth="80.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../img/punchboard/65.png" />
+                     </image>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </ImageView>
+                  <Button mnemonicParsing="false" text="Continue">
+                     <VBox.margin>
+                        <Insets bottom="20.0" top="10.0" />
+                     </VBox.margin>
+                  </Button>
                </children>
             </VBox>
          </children>

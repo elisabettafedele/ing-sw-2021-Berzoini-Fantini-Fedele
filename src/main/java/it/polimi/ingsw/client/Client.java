@@ -136,6 +136,7 @@ public class Client implements ClientInterface {
             System.out.println(message.toString());
             if (message instanceof ChooseLeaderCardsRequest || message instanceof NumberOfPlayersRequest)
                 gameCanceled = false;
+            //System.out.println(message.toString());
             ((MessageToClient) message).handleMessage(view);
         }
     }
