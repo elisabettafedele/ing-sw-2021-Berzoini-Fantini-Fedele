@@ -110,7 +110,7 @@ public class Controller {
                     other.setClientHandlerPhase(ClientHandlerPhase.WAITING_IN_THE_LOBBY);
                     server.addClientHandler(other);
                 }
-                server.NewGameManager();
+                server.newGameManager();
             }
             lockConnections.unlock();
             connection.setController(null);
@@ -131,7 +131,7 @@ public class Controller {
             getConnectionByNickname(lastPlayerNickname).setGameStarted(false);
             getConnectionByNickname(lastPlayerNickname).setClientHandlerPhase(ClientHandlerPhase.WAITING_IN_THE_LOBBY);
             server.addClientHandler(getConnectionByNickname(lastPlayerNickname));
-            server.NewGameManager();
+            server.newGameManager();
             return;
         }
         boolean gameFinished  = !server.removeConnectionGame(getConnectionByNickname(nickname), false);
@@ -216,8 +216,8 @@ public class Controller {
         PersistentControllerPlayPhase controller = GameHistory.retrievePlayController(controllerID);
         game = new Game(controller.getGame());
         getPlayers().forEach(x -> x.setActive(true));
-        sendLightCards();
         clientHandlers.forEach(x -> x.sendMessageToClient(new WelcomeBackMessage(x.getNickname(), false)));
+        sendLightCards();
         sendMatchData(game, false);
         gamePhase = new MultiplayerPlayPhase(this, controller.getLastPlayer(), controller.isEndTriggered());
         ((PlayPhase)gamePhase).restartLastTurn();
@@ -229,8 +229,8 @@ public class Controller {
     private void reloadSinglePlayerPlayPhase(){
         PersistentControllerPlayPhaseSingle controller = GameHistory.retrievePlayControllerSingle(controllerID);
         game = new Game(controller.getGame());
-        sendLightCards();
         clientHandlers.get(0).sendMessageToClient(new WelcomeBackMessage(clientHandlers.get(0).getNickname(), false));
+        sendLightCards();
         sendMatchData(game, false);
         gamePhase = new SinglePlayerPlayPhase(this, controller.getLastPlayer(), controller.isEndTriggered(), controller.getBlackCrossPosition(), controller.getTokens());
         if (((SinglePlayerPlayPhase) gamePhase).wasEndTriggered())

@@ -136,7 +136,7 @@ public class Server implements ServerInterface {
             if(!clientsInLobby.contains(connection)){
                 clientsInLobby.add(connection);
             }
-            NewGameManager();
+            newGameManager();
             if (clientsInLobby.contains(connection) && connection.getClientHandlerPhase() == ClientHandlerPhase.WAITING_IN_THE_LOBBY)
                 connection.sendMessageToClient(new WaitingInTheLobbyMessage());
         }
@@ -189,7 +189,7 @@ public class Server implements ServerInterface {
      * - If both a) and b) are true a new multiplayer game starts
      */
     @Override
-    public synchronized void NewGameManager() {
+    public synchronized void newGameManager() {
         lockLobby.lock();
         try{
             if(numberOfPlayersForNextGame == -1 && clientsInLobby.size() > 0 && clientsInLobby.get(0).getClientHandlerPhase() != ClientHandlerPhase.WAITING_NUMBER_OF_PLAYERS){
@@ -313,7 +313,7 @@ public class Server implements ServerInterface {
                 if (position == 0)
                     numberOfPlayersForNextGame = -1;
                 if(position < numberOfPlayersForNextGame || numberOfPlayersForNextGame == -1)
-                    NewGameManager();
+                    newGameManager();
             }
         }
         finally {
@@ -378,7 +378,7 @@ public class Server implements ServerInterface {
     public void setNumberOfPlayersForNextGame(ClientHandlerInterface clientHandler, int numberOfPlayersForNextGame){
         this.numberOfPlayersForNextGame = numberOfPlayersForNextGame;
         Server.SERVER_LOGGER.log(Level.INFO, "New message from "+ clientHandler.getNickname() + " that has chosen the number of players: "+ numberOfPlayersForNextGame);
-        NewGameManager();
+        newGameManager();
     }
 
     /**
