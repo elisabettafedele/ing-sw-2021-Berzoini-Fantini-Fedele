@@ -223,9 +223,11 @@ public class SetUpPhase implements GamePhase {
         clientHandler.setClientHandlerPhase(ClientHandlerPhase.SET_UP_FINISHED);
         if (!(controller.getGamePhase() instanceof SetUpPhase))
             return;
-        List<String> nicknames = controller.getClientHandlers().stream().map(ClientHandler::getNickname).collect(Collectors.toList());
+        List<String> nicknames = controller.getPlayers().stream().map(Player::getNickname).collect(Collectors.toList());
         for (String nickname : nicknames) {
-            if (controller.getConnectionByNickname(nickname).getClientHandlerPhase() != ClientHandlerPhase.SET_UP_FINISHED) {
+            if (!controller.getPlayerByNickname(nickname).isActive() && controller.getPlayerByNickname(nickname).getPersonalBoard().getLeaderCards().size() == 4)
+                return;
+            if (controller.getPlayerByNickname(nickname).isActive() && controller.getConnectionByNickname(nickname).getClientHandlerPhase() != ClientHandlerPhase.SET_UP_FINISHED) {
                 clientHandler.sendMessageToClient(new TextMessage("Waiting the other players, the game will start as soon as they all be ready..."));
                 return;
             }
