@@ -18,4 +18,8 @@ public class GameOverMessage implements MessageToClient {
     public void handleMessage(VirtualView view) {
         view.displayResults(results, readyForAnotherGame);
     }
+
+    public String toString(){
+        return "sending results";
+    }
 }

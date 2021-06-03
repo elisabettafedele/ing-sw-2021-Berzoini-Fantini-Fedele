@@ -5,7 +5,6 @@ import it.polimi.ingsw.messages.toClient.MessageToClient;
 
 
 public class NicknameRequest implements MessageToClient {
-    private String message;
     private boolean isRetry;
     private boolean alreadyTaken;
 
@@ -17,6 +16,10 @@ public class NicknameRequest implements MessageToClient {
     @Override
     public void handleMessage(VirtualView view) {
         view.displayNicknameRequest(isRetry, alreadyTaken);
+    }
+
+    public String toString(){
+        return "asking a nickname" + ((alreadyTaken) ? " because the old one was already taken" : "");
     }
 
 }

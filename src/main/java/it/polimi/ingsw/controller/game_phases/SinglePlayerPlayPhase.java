@@ -5,7 +5,7 @@ import it.polimi.ingsw.controller.TurnController;
 import it.polimi.ingsw.controller.actions.SoloActionToken;
 import it.polimi.ingsw.enumerations.FlagColor;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
-import it.polimi.ingsw.messages.toClient.TurnMessage;
+import it.polimi.ingsw.messages.toClient.matchData.TurnMessage;
 import it.polimi.ingsw.messages.toClient.game.NotifyLorenzoAction;
 import it.polimi.ingsw.messages.toClient.matchData.LoadDevelopmentCardGrid;
 import it.polimi.ingsw.messages.toClient.matchData.UpdateMarkerPosition;

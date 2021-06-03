@@ -13,4 +13,9 @@ public class EndTurnRequest implements MessageToServer {
         Server.SERVER_LOGGER.log(Level.INFO, "New message from " + clientHandler.getNickname() + " that has requested to end his turn.");
         clientHandler.getController().handleMessage(this, clientHandler);
     }
+
+    public String toString(){
+        return "asked to end the turn";
+    }
+
 }

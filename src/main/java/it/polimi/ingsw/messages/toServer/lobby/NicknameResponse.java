@@ -33,4 +33,9 @@ public class NicknameResponse implements MessageToServer {
         clientHandler.setNickname(nickname);
     }
 
+    public String toString(){
+        return "received nickname";
+    }
+
+
 }

@@ -6,8 +6,13 @@ import it.polimi.ingsw.controller.actions.Action;
 import it.polimi.ingsw.enumerations.ClientHandlerPhase;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.messages.*;
+import it.polimi.ingsw.messages.toClient.MessageToClient;
+import it.polimi.ingsw.messages.toClient.TextMessage;
 import it.polimi.ingsw.messages.toClient.lobby.GameModeRequest;
 import it.polimi.ingsw.messages.toClient.TimeoutExpiredMessage;
+import it.polimi.ingsw.messages.toClient.matchData.LoadDevelopmentCardsMessage;
+import it.polimi.ingsw.messages.toClient.matchData.LoadLeaderCardsMessage;
+import it.polimi.ingsw.messages.toClient.matchData.MatchDataMessage;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
 import it.polimi.ingsw.model.player.Player;
 
@@ -52,7 +57,7 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
 
     private boolean gameStarted = false;
 
-    private String nickname;
+    private String nickname = null;
     private GameMode gameMode;
 
     private ClientHandlerPhase clientHandlerPhase;
@@ -100,6 +105,7 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
                     if(messageFromClient != null && !(messageFromClient == ConnectionMessage.PING)) {
                         //stopTimer();
                         //if (!gameStarted)
+                        Server.SERVER_LOGGER.log(Level.INFO, "[" + (nickname != null ? nickname : socket.getInetAddress().getHostAddress()) + "]: " + messageFromClient);
                             ((MessageToServer) messageFromClient).handleMessage(server, this);
 
                         //else
@@ -143,6 +149,8 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
     @Override
     public void sendMessageToClient(Serializable message) {
         try {
+            if (printable(message))
+                Server.SERVER_LOGGER.log(Level.INFO, "[" + (nickname != null ? nickname : socket.getInetAddress().getHostAddress()) + "]: " + message.toString());
             os.writeObject(message);
             os.flush();
             os.reset();
@@ -150,6 +158,10 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
         } catch (IOException e) {
             handleSocketDisconnection(e instanceof SocketTimeoutException);
         }
+    }
+
+    private boolean printable(Serializable message){
+        return !(message instanceof MatchDataMessage) && message != ConnectionMessage.PING && !(message instanceof LoadLeaderCardsMessage) && !(message instanceof LoadDevelopmentCardsMessage) && !(message instanceof TextMessage);
     }
 
     /**
@@ -214,7 +226,6 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
 
     @Override
     public void setNickname(String nickname){
-        Server.SERVER_LOGGER.log(Level.INFO, "New message from client that has chosen his nickname: "+ nickname);
         this.nickname = nickname;
         server.handleNicknameChoice(this);
     }
@@ -226,7 +237,6 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
 
     @Override
     public void setGameMode(GameMode gameMode){
-        Server.SERVER_LOGGER.log(Level.INFO, "New message from client that has chosen the game mode");
         this.gameMode = gameMode;
     }
 

@@ -20,7 +20,11 @@ public class SelectCardResponse implements MessageToServer {
 
     @Override
     public void handleMessage(ServerInterface server, ClientHandlerInterface clientHandler) {
-        Server.SERVER_LOGGER.log(Level.INFO, "New message from " + clientHandler.getNickname() + " that has selected the card with id:" + selectedCard);
         clientHandler.getCurrentAction().handleMessage(this);
     }
+
+    public String toString(){
+        return "chosen the card with ID " + selectedCard;
+    }
+
 }

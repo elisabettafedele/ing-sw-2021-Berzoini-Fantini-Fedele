@@ -12,7 +12,7 @@ import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.jsonParsers.DevelopmentCardParser;
 import it.polimi.ingsw.jsonParsers.LeaderCardParser;
-import it.polimi.ingsw.messages.toClient.TurnMessage;
+import it.polimi.ingsw.messages.toClient.matchData.TurnMessage;
 import it.polimi.ingsw.messages.toClient.WelcomeBackMessage;
 import it.polimi.ingsw.messages.toClient.game.GameOverMessage;
 import it.polimi.ingsw.messages.toClient.lobby.NicknameRequest;
@@ -32,6 +32,7 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -84,7 +85,7 @@ public class Server implements ServerInterface {
             //Until the server is stopped, he keeps accepting new connections from clients who connect to its socket
             while (true) {
                 Socket clientSocket = serverSocket.accept();
-                SERVER_LOGGER.log(Level.INFO,"New client connection: [IP address: " + clientSocket.getInetAddress().getHostAddress() + ", port: " + port + "]");
+                SERVER_LOGGER.log(Level.INFO,"Received connection from address: [" + clientSocket.getInetAddress().getHostAddress() + "]");
                 ClientHandler clientHandler = new ClientHandler(clientSocket, this);
                 executor.submit(clientHandler);
             }
@@ -377,7 +378,6 @@ public class Server implements ServerInterface {
     @Override
     public void setNumberOfPlayersForNextGame(ClientHandlerInterface clientHandler, int numberOfPlayersForNextGame){
         this.numberOfPlayersForNextGame = numberOfPlayersForNextGame;
-        Server.SERVER_LOGGER.log(Level.INFO, "New message from "+ clientHandler.getNickname() + " that has chosen the number of players: "+ numberOfPlayersForNextGame);
         newGameManager();
     }
 

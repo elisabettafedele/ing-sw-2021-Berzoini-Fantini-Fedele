@@ -14,4 +14,8 @@ public class NotifyLorenzoAction implements MessageToClient {
     public void handleMessage(VirtualView view) {
         view.displayLorenzoAction(id);
     }
+
+    public String toString(){
+        return "sent notification of Lorenzo's action";
+    }
 }

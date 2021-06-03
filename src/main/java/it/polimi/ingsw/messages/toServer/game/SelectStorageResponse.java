@@ -30,4 +30,9 @@ public class SelectStorageResponse implements MessageToServer {
         Server.SERVER_LOGGER.log(Level.INFO, "New message from " + clientHandler.getNickname() + " that has decided to store one" + resource + "in " + resourceStorageType);
         clientHandler.getCurrentAction().handleMessage(this);
     }
+
+    public String toString(){
+        return "has chosen to store the resource in " + resourceStorageType;
+    }
+
 }

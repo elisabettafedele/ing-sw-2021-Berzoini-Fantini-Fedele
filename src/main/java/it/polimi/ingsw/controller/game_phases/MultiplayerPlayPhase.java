@@ -4,7 +4,7 @@ import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.controller.TurnController;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.messages.toClient.TextMessage;
-import it.polimi.ingsw.messages.toClient.TurnMessage;
+import it.polimi.ingsw.messages.toClient.matchData.TurnMessage;
 import it.polimi.ingsw.messages.toClient.matchData.UpdateMarkerPosition;
 import it.polimi.ingsw.model.persistency.GameHistory;
 import it.polimi.ingsw.model.persistency.PersistentControllerPlayPhase;

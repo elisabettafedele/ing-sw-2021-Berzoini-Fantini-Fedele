@@ -17,4 +17,8 @@ public class SelectDevelopmentCardSlotRequest implements MessageToClient {
     public void handleMessage(VirtualView view) {
         view.displaySelectDevelopmentCardSlotRequest(firstSlotAvailable,secondSlotAvailable,thirdSlotAvailable);
     }
+
+    public String toString(){
+        return "asking to choose a development card slot for the development card just bought";
+    }
 }

@@ -1,4 +1,4 @@
-package it.polimi.ingsw.messages.toClient;
+package it.polimi.ingsw.messages.toClient.matchData;
 
 import it.polimi.ingsw.messages.toClient.matchData.MatchDataMessage;
 
@@ -13,4 +13,5 @@ public class TurnMessage extends MatchDataMessage {
     public boolean isStarted() {
         return started;
     }
+
 }

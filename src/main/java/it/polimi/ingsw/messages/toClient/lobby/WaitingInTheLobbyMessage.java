@@ -9,4 +9,8 @@ public class WaitingInTheLobbyMessage implements MessageToClient {
     public void handleMessage(VirtualView view) {
         view.displayWaitingInTheLobbyMessage();
     }
+
+    public String toString(){
+        return "sending waiting in the lobby message";
+    }
 }

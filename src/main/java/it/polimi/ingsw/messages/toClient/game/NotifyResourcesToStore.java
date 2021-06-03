@@ -17,4 +17,8 @@ public class NotifyResourcesToStore implements MessageToClient {
     public void handleMessage(VirtualView view) {
         view.displayResourcesToStore(resourcesToStore);
     }
+
+    public String toString(){
+        return "notifying the resources to store";
+    }
 }

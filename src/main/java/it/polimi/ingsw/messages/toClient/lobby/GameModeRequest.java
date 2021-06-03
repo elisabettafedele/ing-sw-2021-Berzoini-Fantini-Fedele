@@ -9,4 +9,8 @@ public class GameModeRequest implements MessageToClient {
     public void handleMessage(VirtualView view) {
         view.displayGameModeRequest();
     }
+
+    public String toString(){
+        return "asking the game mode";
+    }
 }

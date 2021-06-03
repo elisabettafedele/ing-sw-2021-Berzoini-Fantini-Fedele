@@ -1,7 +1,7 @@
 package it.polimi.ingsw.controller.actions;
 
 import it.polimi.ingsw.enumerations.ActionType;
-import it.polimi.ingsw.messages.toClient.game.NotifyEndRemoveResources;
+import it.polimi.ingsw.messages.toServer.NotifyEndRemoveResources;
 import it.polimi.ingsw.messages.toClient.matchData.UpdateDepotsStatus;
 import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.server.Server;

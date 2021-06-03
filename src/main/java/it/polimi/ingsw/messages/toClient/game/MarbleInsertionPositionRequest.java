@@ -11,4 +11,8 @@ public class MarbleInsertionPositionRequest implements MessageToClient {
     public void handleMessage(VirtualView view) {
         view.displayMarbleInsertionPositionRequest();
     }
+
+    public String toString(){
+        return "asking marble insertion position";
+    }
 }

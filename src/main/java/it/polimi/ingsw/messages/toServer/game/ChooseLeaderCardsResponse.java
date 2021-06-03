@@ -23,8 +23,12 @@ public class ChooseLeaderCardsResponse implements MessageToServer {
 
     @Override
     public void handleMessage(ServerInterface server, ClientHandlerInterface clientHandler) {
-        Server.SERVER_LOGGER.log(Level.INFO, "New message from " + clientHandler.getNickname() + " that has chosen his leader cards");
         if (clientHandler.getController() != null)
             clientHandler.getController().handleMessage(this, clientHandler);
     }
+
+    public String toString(){
+        return "received discarded leader cards IDs: " + discardedLeaderCards;
+    }
+
 }

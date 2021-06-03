@@ -30,4 +30,9 @@ public class SwapWarehouseDepotsRequest implements MessageToServer {
     public String getDestinationDepot() {
         return destinationDepot;
     }
+
+    public String toString(){
+        return "requested to swap " + originDepot + " and " + destinationDepot;
+    }
+
 }

@@ -20,7 +20,11 @@ public class MarbleInsertionPositionResponse implements MessageToServer {
 
     @Override
     public void handleMessage(ServerInterface server, ClientHandlerInterface clientHandler) {
-        Server.SERVER_LOGGER.log(Level.INFO, "New message from " + clientHandler.getNickname() + " that has chosen to insert a marble in the market in position " + insertionPosition);
         clientHandler.getCurrentAction().handleMessage(this);
     }
+
+    public String toString(){
+        return "received chosen marble insertion position";
+    }
+
 }

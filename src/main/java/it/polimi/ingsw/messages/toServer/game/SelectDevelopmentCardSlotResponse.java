@@ -19,7 +19,11 @@ public class SelectDevelopmentCardSlotResponse implements MessageToServer {
 
     @Override
     public void handleMessage(ServerInterface server, ClientHandlerInterface clientHandler) {
-        Server.SERVER_LOGGER.log(Level.INFO, "New message from " + clientHandler.getNickname() + " that has requested to place his development card on the slot number " + slotSelected);
         clientHandler.getCurrentAction().handleMessage(this);
     }
+
+    public String toString(){
+        return "has chosen to place the card on the slot number " + slotSelected;
+    }
+
 }

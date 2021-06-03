@@ -10,7 +10,11 @@ import java.util.logging.Level;
 public class NotifyEndDepotsReorganization implements MessageToServer {
     @Override
     public void handleMessage(ServerInterface server, ClientHandlerInterface clientHandler) {
-        Server.SERVER_LOGGER.log(Level.INFO, "New message from " + clientHandler.getNickname() + " that has finished to reorganize his depots");
         clientHandler.getCurrentAction().handleMessage(this);
     }
+
+    public String toString(){
+        return "ended the reorganization of the depots";
+    }
+
 }

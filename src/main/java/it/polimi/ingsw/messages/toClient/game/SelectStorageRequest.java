@@ -20,4 +20,8 @@ boolean isInLeaderDepot;
     public void handleMessage(VirtualView view) {
         view.displaySelectStorageRequest(resource, isInWarehouse, isInStrongbox, isInLeaderDepot);
     }
+
+    public String toString(){
+        return "asking to choose a storage type to remove resources";
+    }
 }

@@ -16,4 +16,8 @@ public class WelcomeBackMessage implements MessageToClient{
     public void handleMessage(VirtualView view) {
         view.displayWelcomeBackMessage(nickname, gameFinished);
     }
+
+    public String toString(){
+        return "sending welcome back message" + (gameFinished ? " and notifying that the game is finished" : "");
+    }
 }

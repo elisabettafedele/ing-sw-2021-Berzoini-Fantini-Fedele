@@ -21,4 +21,8 @@ public class SendPlayerNicknamesMessage implements MessageToClient {
         otherPlayersNicknames.add(playerNickname);
         view.displayPlayersReadyToStartMessage(otherPlayersNicknames);
     }
+
+    public String toString(){
+        return "sending info about players in game";
+    }
 }

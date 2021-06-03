@@ -24,4 +24,8 @@ public class ChooseResourceTypeRequest implements MessageToClient {
     public void handleMessage(VirtualView view) {
         view.displayChooseResourceTypeRequest(resourceTypes, quantity);
     }
+
+    public String toString(){
+        return "asking to choose " +  (quantity == 1 ? "an initial resource" : "two initial resources");
+    }
 }

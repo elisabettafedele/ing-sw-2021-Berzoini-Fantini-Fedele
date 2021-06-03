@@ -19,4 +19,8 @@ public class NotifyMarbleTaken implements MessageToClient {
     public void handleMessage(VirtualView view) {
         view.displayMarblesTaken(marbleTaken, needToChooseConversion);
     }
+
+    public String toString(){
+        return "sending marbles taken";
+    }
 }

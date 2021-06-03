@@ -22,4 +22,8 @@ public class ChooseWhiteMarbleConversionRequest implements MessageToClient {
         view.displayChooseWhiteMarbleConversionRequest(conversions, numberOfWhiteMarbles);
 
     }
+
+    public String toString(){
+        return "asking to choose one out of the two white marble conversions available";
+    }
 }

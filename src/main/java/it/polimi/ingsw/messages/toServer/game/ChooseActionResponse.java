@@ -22,4 +22,9 @@ public class ChooseActionResponse implements MessageToServer {
     public void handleMessage(ServerInterface server, ClientHandlerInterface clientHandler) {
         clientHandler.getController().handleMessage(this,clientHandler);
     }
+
+    public String toString(){
+        return "received the action chosen";
+    }
+
 }

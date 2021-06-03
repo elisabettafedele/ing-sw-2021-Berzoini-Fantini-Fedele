@@ -26,4 +26,8 @@ public class ChooseProductionPowersRequest implements MessageToClient {
     public void handleMessage(VirtualView view) {
         view.displayChooseProductionPowersRequest(this.availableProductionPowers, this.availableResources);
     }
+
+    public String toString(){
+        return "asking to choose a production";
+    }
 }

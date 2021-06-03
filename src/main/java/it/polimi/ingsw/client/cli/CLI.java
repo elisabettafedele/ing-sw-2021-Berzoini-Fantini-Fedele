@@ -12,7 +12,7 @@ import it.polimi.ingsw.client.utilities.UtilityProduction;
 import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.common.LightLeaderCard;
 import it.polimi.ingsw.enumerations.*;
-import it.polimi.ingsw.messages.toClient.TurnMessage;
+import it.polimi.ingsw.messages.toClient.matchData.TurnMessage;
 import it.polimi.ingsw.messages.toClient.matchData.MatchDataMessage;
 import it.polimi.ingsw.model.cards.Value;
 import java.util.*;

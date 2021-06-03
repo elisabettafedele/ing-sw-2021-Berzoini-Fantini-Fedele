@@ -21,4 +21,8 @@ public class ChooseLeaderCardsRequest implements MessageToClient {
     public void handleMessage(VirtualView view) {
         view.displayChooseLeaderCardsRequest(leaderCardsIDs);
     }
+
+    public String toString(){
+        return "sending leader cards to choose";
+    }
 }

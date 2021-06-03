@@ -1,5 +1,6 @@
 package it.polimi.ingsw.messages.toServer.game;
 
+import it.polimi.ingsw.enumerations.Marble;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
 import it.polimi.ingsw.server.Server;
 import it.polimi.ingsw.common.ClientHandlerInterface;
@@ -21,7 +22,11 @@ public class ChooseWhiteMarbleConversionResponse implements MessageToServer {
 
     @Override
     public void handleMessage(ServerInterface server, ClientHandlerInterface clientHandler) {
-        Server.SERVER_LOGGER.log(Level.INFO, "New message from " + clientHandler.getNickname() + "that has chosen a white marble conversion");
         clientHandler.getCurrentAction().handleMessage(this);
     }
+
+    public String toString(){
+        return "received chosen white marble conversion: " + Marble.valueOf(resources.get(0).getValue());
+    }
+
 }

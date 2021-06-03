@@ -23,4 +23,8 @@ public class ChooseStorageTypeRequest implements MessageToClient {
     public void handleMessage(VirtualView view) {
         view.displayChooseStorageTypeRequest(resource, availableDepots, canDiscard, canReorganize);
     }
+
+    public String toString(){
+        return "asking to choose a storage type";
+    }
 }

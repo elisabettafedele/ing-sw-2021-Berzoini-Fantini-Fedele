@@ -22,6 +22,8 @@ public class GameHistory {
      * @return a JsonObject corresponding to the game wanted if any exists, null if no game with that id is present in the json file
      */
     public synchronized static JsonObject retrieveGameFromControllerId(int id) {
+        if (!saveGames)
+            return null;
         JsonObject jsonObjectOfOldMatch = null;
         try (JsonReader jsonReader = new JsonReader(new FileReader("backupOfGames.json"))) {
             JsonArray jsonArray = new Gson().fromJson(jsonReader, JsonArray.class);
@@ -154,6 +156,8 @@ public class GameHistory {
 
 
     public static void removeOldGame(int controllerID){
+        if (!saveGames)
+            return;
         JsonArray jsonArray = getJsonArray(controllerID);
         try (Writer writer = new FileWriter("backupOfGames.json", false)) {
             Gson gson = JsonAdapter.getGsonBuilder();

@@ -21,7 +21,11 @@ public class DiscardResourceRequest implements MessageToServer {
 
     @Override
     public void handleMessage(ServerInterface server, ClientHandlerInterface clientHandler) {
-        Server.SERVER_LOGGER.log(Level.INFO, "New message from " + clientHandler.getNickname() + " that has decided to discard one " + resource);
         clientHandler.getCurrentAction().handleMessage(this);
     }
+
+    public String toString(){
+        return "asked to discard a resource";
+    }
+
 }

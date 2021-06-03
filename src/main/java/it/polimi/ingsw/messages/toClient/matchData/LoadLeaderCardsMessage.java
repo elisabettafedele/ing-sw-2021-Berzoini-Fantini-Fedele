@@ -10,7 +10,6 @@ import java.util.List;
 
 public class LoadLeaderCardsMessage implements MessageToClient {
 
-    private static final long serialVersionUID = -7962181283165725506L;
     private List<LightLeaderCard> leaderCards;
     public LoadLeaderCardsMessage (List<LightLeaderCard> leaderCards){
         this.leaderCards = leaderCards;

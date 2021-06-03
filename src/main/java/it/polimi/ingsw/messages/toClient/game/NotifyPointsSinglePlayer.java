@@ -14,4 +14,8 @@ public class NotifyPointsSinglePlayer implements MessageToClient {
     public void handleMessage(VirtualView view) {
         view.displayResults(victoryPoints);
     }
+
+    public String toString(){
+        return "notifying results";
+    }
 }

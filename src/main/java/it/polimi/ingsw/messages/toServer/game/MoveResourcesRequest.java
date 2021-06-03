@@ -43,4 +43,9 @@ public class MoveResourcesRequest implements MessageToServer {
     public Resource getResource(){
         return resource;
     }
+
+    public String toString(){
+        return "asked to move resources from " + originDepot + " to " + destinationDepot;
+    }
+
 }

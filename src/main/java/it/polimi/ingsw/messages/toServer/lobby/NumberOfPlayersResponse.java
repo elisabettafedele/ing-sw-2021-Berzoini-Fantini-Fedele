@@ -25,4 +25,9 @@ public class NumberOfPlayersResponse implements MessageToServer {
             clientHandler.setNumberOfPlayersForNextGame(numberOfPlayers);
         }
     }
+
+    public String toString(){
+        return "received number of players";
+    }
+
 }

@@ -38,4 +38,9 @@ public class ChooseStorageTypeResponse implements MessageToServer {
     public String getStorageType() {
         return storageType;
     }
+
+    public String toString(){
+        return "received desired storage type: " + storageType;
+    }
+
 }

@@ -36,4 +36,9 @@ public class ChooseProductionPowersResponse implements MessageToServer {
         Server.SERVER_LOGGER.log(Level.INFO, "New message from " + clientHandler.getNickname() + " that has chosen his production powers : " + productionPowersSelected);
         clientHandler.getCurrentAction().handleMessage(this);
     }
+
+    public String toString(){
+        return "received selected production " + (productionPowersSelected.size() > 1  ? "powers" : "power");
+    }
+
 }

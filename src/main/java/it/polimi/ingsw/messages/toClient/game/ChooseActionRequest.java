@@ -22,4 +22,8 @@ public class ChooseActionRequest implements MessageToClient
     public void handleMessage(VirtualView view) {
         view.displayChooseActionRequest(executableActions, standardActionDone);
     }
+
+    public String toString(){
+        return "sending next possible actions";
+    }
 }

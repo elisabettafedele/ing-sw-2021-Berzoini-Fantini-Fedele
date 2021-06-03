@@ -16,4 +16,8 @@ public class SelectCardRequest implements MessageToClient {
     public void handleMessage(VirtualView view) {
         view.displaySelectCardRequest(CardsIDs,leaderORdevelopment);
     }
+
+    public String toString(){
+        return "asking to choose a " + (leaderORdevelopment ? "leader" : "development") + " card";
+    }
 }

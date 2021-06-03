@@ -10,4 +10,8 @@ public class NumberOfPlayersRequest implements MessageToClient {
     public void handleMessage(VirtualView view) {
         view.displayNumberOfPlayersRequest();
     }
+
+    public String toString(){
+        return "asking the desired number of players";
+    }
 }

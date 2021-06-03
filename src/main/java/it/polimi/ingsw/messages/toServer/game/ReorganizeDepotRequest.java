@@ -11,7 +11,11 @@ public class ReorganizeDepotRequest implements MessageToServer {
 
     @Override
     public void handleMessage(ServerInterface server, ClientHandlerInterface clientHandler) {
-        Server.SERVER_LOGGER.log(Level.INFO, "New message from " + clientHandler.getNickname() + " that has requested to reorganize his depots");
         clientHandler.getCurrentAction().handleMessage(this);
     }
+
+    public String toString(){
+        return "requested to reorganize the depots";
+    }
+
 }

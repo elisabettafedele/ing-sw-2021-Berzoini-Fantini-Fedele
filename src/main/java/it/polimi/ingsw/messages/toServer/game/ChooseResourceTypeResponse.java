@@ -25,4 +25,9 @@ public class ChooseResourceTypeResponse implements MessageToServer {
         Server.SERVER_LOGGER.log(Level.INFO, "New message from " + clientHandler.getNickname() + " that has choosen his resource types");
         if (clientHandler.getController() != null)
             clientHandler.getController().handleMessage(this, clientHandler);    }
+
+    public String toString(){
+        return "received chosen resource" + (resources.size() > 1 ? "s" : "") + " type: " + resources;
+    }
+
 }

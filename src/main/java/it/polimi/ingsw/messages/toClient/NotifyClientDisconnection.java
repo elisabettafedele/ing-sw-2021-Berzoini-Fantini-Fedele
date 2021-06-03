@@ -22,4 +22,8 @@ public class NotifyClientDisconnection implements MessageToClient{
     public boolean isGameCancelled() {
         return gameCancelled;
     }
+
+    public String toString(){
+        return "notifying the disconnection of " + nickname + (gameCancelled ? " and informing that the game has been cancelled" : "");
+    }
 }

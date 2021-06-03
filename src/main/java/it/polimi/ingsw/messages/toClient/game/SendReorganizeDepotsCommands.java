@@ -19,6 +19,10 @@ public class SendReorganizeDepotsCommands implements MessageToClient {
         this.availableLeaderResources = availableLeaderResources;
     }
 
+    public String toString(){
+        return "asking to choose a command to reorganize the depots";
+    }
+
 
     @Override
     public void handleMessage(VirtualView view) {
