@@ -19,7 +19,7 @@ public class NicknameRequest implements MessageToClient {
     }
 
     public String toString(){
-        return "asking a nickname" + ((alreadyTaken) ? " because the old one was already taken" : "");
+        return "asking nickname" + ((alreadyTaken) ? " because the old one was already taken" : "");
     }
 
 }

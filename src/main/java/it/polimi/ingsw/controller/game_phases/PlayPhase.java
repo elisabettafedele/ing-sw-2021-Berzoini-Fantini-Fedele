@@ -57,7 +57,6 @@ public abstract class PlayPhase implements GamePhase{
 
     public void handleMessage(MessageToServer message, ClientHandler clientHandler) {
         if (message instanceof ChooseActionResponse && (clientHandler.getNickname().equals(getTurnController().getCurrentPlayer().getNickname()))) {
-            Server.SERVER_LOGGER.log(Level.INFO, "New message from " + clientHandler.getNickname() + " that has chosen his next action : " + turnController.getPossibleActions().get(((ChooseActionResponse)message).getActionChosen()).toString());
             getTurnController().doAction(((ChooseActionResponse) message).getActionChosen());
         }
         if (message instanceof EndTurnRequest && (clientHandler.getNickname().equals(getTurnController().getCurrentPlayer().getNickname())))

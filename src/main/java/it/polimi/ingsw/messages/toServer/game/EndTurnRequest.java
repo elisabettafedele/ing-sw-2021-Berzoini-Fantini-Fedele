@@ -10,7 +10,6 @@ import java.util.logging.Level;
 public class EndTurnRequest implements MessageToServer {
     @Override
     public void handleMessage(ServerInterface server, ClientHandlerInterface clientHandler) {
-        Server.SERVER_LOGGER.log(Level.INFO, "New message from " + clientHandler.getNickname() + " that has requested to end his turn.");
         clientHandler.getController().handleMessage(this, clientHandler);
     }
 

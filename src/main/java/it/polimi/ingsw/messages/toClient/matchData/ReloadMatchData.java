@@ -8,7 +8,6 @@ public class ReloadMatchData implements MessageToClient {
     private final boolean disconnection;
     public ReloadMatchData(boolean start, boolean disconnection) {
         this.start = start;
-        //TODO handle disconnection
         this.disconnection = disconnection;
     }
 
@@ -17,5 +16,9 @@ public class ReloadMatchData implements MessageToClient {
         view.setIsReloading(start);
         if (!start)
             view.displayStandardView();
+    }
+
+    public String toString(){
+        return (start ? "starting to send match data" : "finished to send match data") + ((disconnection && start) ? " because a client disconnected during his turn and it has been canceled" : "");
     }
 }

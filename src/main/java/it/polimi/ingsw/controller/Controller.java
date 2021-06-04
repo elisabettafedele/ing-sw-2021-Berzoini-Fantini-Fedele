@@ -31,6 +31,7 @@ import it.polimi.ingsw.server.Server;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class Controller {
@@ -174,6 +175,7 @@ public class Controller {
      * Method to start a new game, used when there is no game to load from the json file
      */
     private void startANewGame(){
+        Server.SERVER_LOGGER.log(Level.INFO, "Creating a new " + game.getGameMode().name().replace("_", " ") + " game with id [" + controllerID + "], player" + (game.getGameMode()==GameMode.MULTI_PLAYER ?"s: " : ": ")  + clientHandlers.stream().map(ClientHandler::getNickname).collect(Collectors.toList()));
         this.setGamePhase(new SetUpPhase());
     }
 
@@ -181,6 +183,7 @@ public class Controller {
      * Method to retrieve an old {@link Game} from the memory
      */
     private void reloadAnOldGame(){
+        Server.SERVER_LOGGER.log(Level.INFO, "Retrieving an old " + game.getGameMode().name().replace("_", " ") + " game with id [" + controllerID + "], player" + (game.getGameMode()==GameMode.MULTI_PLAYER ?"s: " : ": ")  + clientHandlers.stream().map(ClientHandler::getNickname).collect(Collectors.toList()));
         if (GameHistory.isSetUpPhase(controllerID))
             reloadSetUpPhase();
         else
