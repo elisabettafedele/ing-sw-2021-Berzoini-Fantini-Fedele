@@ -154,6 +154,12 @@ public class Server implements ServerInterface {
      */
     public boolean handleKnownClientReconnection(ClientHandler clientHandler){
         boolean gameFinished = clientsDisconnectedGameFinished.containsKey(clientHandler.getNickname());
+        if (!gameFinished && clientHandler.getGameMode() == GameMode.SINGLE_PLAYER){
+            clientsDisconnected.remove(clientHandler.getNickname());
+            takenNicknames.remove(clientHandler.getNickname());
+            return true;
+        }
+
         clientHandler.sendMessageToClient(new WelcomeBackMessage(clientHandler.getNickname(), gameFinished));
 
         if (gameFinished){
