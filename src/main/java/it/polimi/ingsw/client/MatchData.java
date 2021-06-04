@@ -209,7 +209,9 @@ public class MatchData {
         }
 
         if (message instanceof NotifyDevelopmentCardBought){
-            Collections.replaceAll(developmentCardGrid, ((NotifyDevelopmentCardBought) message).getCardBought(), ((NotifyDevelopmentCardBought) message).getNewCardOnGrid());
+            developmentCardGrid.remove((Integer) ((NotifyDevelopmentCardBought) message).getCardBought());
+            if (((NotifyDevelopmentCardBought) message).getNewCardOnGrid() != EMPTY_SLOT)
+                developmentCardGrid.add(((NotifyDevelopmentCardBought) message).getCardBought());
             getLightClientByNickname(message.getNickname()).addDevelopmentCard(((NotifyDevelopmentCardBought) message).getCardBought(), ((NotifyDevelopmentCardBought) message).getSlot(), ((NotifyDevelopmentCardBought) message).getVictoryPoints());
             display();
         }

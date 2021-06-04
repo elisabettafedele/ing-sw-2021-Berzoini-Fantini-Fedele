@@ -67,24 +67,22 @@ public class LeaderCardAction implements Action{
 
     @Override
     public void handleMessage(MessageToServer message) {
-        for(LeaderCard lc : player.getPersonalBoard().getLeaderCards()){
-            if(!lc.isActive()){
-                if(lc.getID()==((SelectCardResponse) message).getSelectedCard()){
-                    if(activateORdiscard) {lc.activate();}
-                    if(!activateORdiscard){
-                        player.getPersonalBoard().removeLeaderCard(lc.getID());
-                        try {
-                            player.getPersonalBoard().moveMarker(1);
-                            turnController.getController().sendMessageToAll(new UpdateMarkerPosition(player.getNickname(), player.getPersonalBoard().getMarkerPosition()));
-                            turnController.checkFaithTrack();
-                        } catch (InvalidArgumentException e) {
-                            //moveMarker's parameter is a constant so the exception won't be launched
-                        }
-
-                    }
-                    }
+        if(!activateORdiscard){
+            player.getPersonalBoard().removeLeaderCard(((SelectCardResponse) message).getSelectedCard());
+            try {
+                player.getPersonalBoard().moveMarker(1);
+                turnController.getController().sendMessageToAll(new UpdateMarkerPosition(player.getNickname(), player.getPersonalBoard().getMarkerPosition()));
+                turnController.checkFaithTrack();
+            } catch (InvalidArgumentException ignored) {
+                //moveMarker's parameter is a constant so the exception won't be launched
+            }
+        } else {
+            for (LeaderCard lc : player.getPersonalBoard().getLeaderCards()) {
+                if (!lc.isActive() && lc.getID() == ((SelectCardResponse) message).getSelectedCard()) {
+                    lc.activate();
                 }
             }
+        }
         turnController.getController().sendMessageToAll(new NotifyLeaderAction(clientHandler.getNickname(), ((SelectCardResponse) message).getSelectedCard(), !activateORdiscard));
         turnController.incrementNumberOfLeaderActionDone();
         //clientHandler.sendMessageToClient(new DisplayStandardView());
