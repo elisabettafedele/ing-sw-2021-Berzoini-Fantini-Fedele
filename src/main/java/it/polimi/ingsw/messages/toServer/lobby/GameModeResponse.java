@@ -27,4 +27,8 @@ public class GameModeResponse implements MessageToServer {
             clientHandler.sendMessageToClient(new NicknameRequest(false, false));
         }
     }
+
+    public String toString(){
+        return "received game mode: " + gameMode.name().replace("_", " ");
+    }
 }

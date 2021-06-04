@@ -34,7 +34,7 @@ public class NicknameResponse implements MessageToServer {
     }
 
     public String toString(){
-        return "received nickname";
+        return "received nickname: " + nickname;
     }
 
 
