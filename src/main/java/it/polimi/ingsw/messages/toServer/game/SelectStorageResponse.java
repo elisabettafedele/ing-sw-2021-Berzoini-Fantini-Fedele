@@ -27,7 +27,6 @@ public class SelectStorageResponse implements MessageToServer {
 
     @Override
     public void handleMessage(ServerInterface server, ClientHandlerInterface clientHandler) {
-        Server.SERVER_LOGGER.log(Level.INFO, "New message from " + clientHandler.getNickname() + " that has decided to store one" + resource + "in " + resourceStorageType);
         clientHandler.getCurrentAction().handleMessage(this);
     }
 

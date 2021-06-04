@@ -14,7 +14,7 @@ public class ServerMain {
     public static void main(String[] args){
         int port = DEFAULT_PORT;
         List<String> arguments = new ArrayList<>(Arrays.asList(args));
-        GameHistory.saveGames = (arguments.size() > 1 && arguments.get(0).equals(JSON_ARGUMENT));
+        GameHistory.saveGames = (arguments.size() > 0 && arguments.get(0).equals(JSON_ARGUMENT));
         Server server = new Server(port);
         server.startServer();
     }

@@ -1,7 +1,5 @@
 package it.polimi.ingsw.messages.toClient.matchData;
 
-import it.polimi.ingsw.messages.toClient.matchData.MatchDataMessage;
-
 public class TurnMessage extends MatchDataMessage {
     private boolean started;
 

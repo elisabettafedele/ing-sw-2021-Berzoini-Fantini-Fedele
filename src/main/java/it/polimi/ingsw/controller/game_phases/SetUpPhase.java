@@ -235,6 +235,18 @@ public class SetUpPhase implements GamePhase {
         controller.setGamePhase(controller.getGame().getGameMode() == GameMode.MULTI_PLAYER ? new MultiplayerPlayPhase(controller) : new SinglePlayerPlayPhase(controller));
     }
 
+    public void endPhaseManagerDisconnection(){
+        if (!(controller.getGamePhase() instanceof SetUpPhase))
+            return;
+        List<String> nicknames = controller.getPlayers().stream().map(Player::getNickname).collect(Collectors.toList());
+        for (String nickname : nicknames) {
+            if ((!controller.getPlayerByNickname(nickname).isActive() && controller.getPlayerByNickname(nickname).getPersonalBoard().getLeaderCards().size() == 4) || (controller.getPlayerByNickname(nickname).isActive() && controller.getConnectionByNickname(nickname).getClientHandlerPhase() != ClientHandlerPhase.SET_UP_FINISHED))
+                return;
+        }
+        controller.setGamePhase(controller.getGame().getGameMode() == GameMode.MULTI_PLAYER ? new MultiplayerPlayPhase(controller) : new SinglePlayerPlayPhase(controller));
+
+    }
+
     /**
      * Method to assign the {@link LeaderCard} of the list contained between the index start and end
      * @param cards a list of {@link LeaderCard}

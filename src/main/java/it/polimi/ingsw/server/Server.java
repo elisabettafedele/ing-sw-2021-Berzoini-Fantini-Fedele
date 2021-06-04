@@ -324,33 +324,15 @@ public class Server implements ServerInterface {
 
     /**
      * Method to remove a connection when the game is already started.
-     * If it is the last connection, also the controller is deleted from the list of active games
+     * If the game was in the end phase I save the end message to send to the player
      * @param connection the {@link ClientHandler} to be removed from the controller
-     * @return true iff the game still exist
      */
-    public synchronized boolean removeConnectionGame(ClientHandler connection, boolean forced){
-        //If he is the last player
-        //TODO If there would be only one more player in the game, I delete the game and I remove all the players from disconnectedPlayers -> the game is not finished, but is not playable anymore
-        if (connection.getController().getClientHandlers().size() == 1) {
-            for (String nickname : connection.getController().getPlayers().stream().filter(x -> !x.getNickname().equals(connection.getNickname())).map(Player::getNickname).collect(Collectors.toList())) {
-                clientsDisconnected.remove(nickname);
-                takenNicknames.remove(nickname);
-            }
-            if (!forced)
-                takenNicknames.remove(connection.getNickname());
-            GameHistory.removeOldGame(connection.getController().getControllerID());
-            activeGames.remove(connection.getController());
-            return false;
-        } else {
-            if (!forced) {
-                if (connection.getController().getGamePhase() instanceof EndPhase)
-                    clientsDisconnectedGameFinished.put(connection.getNickname(), ((MultiplayerEndPhase)connection.getController().getGamePhase()).getEndMessage(true));
-                else
-                    clientsDisconnected.put(connection.getNickname(), connection.getController());
-            }
-            connection.getController().removeConnection(connection);
-            return true;
-        }
+    public synchronized void removeConnectionGame(ClientHandler connection){
+        if (connection.getController().getGamePhase() instanceof EndPhase)
+            clientsDisconnectedGameFinished.put(connection.getNickname(), ((MultiplayerEndPhase)connection.getController().getGamePhase()).getEndMessage(true));
+        else
+            clientsDisconnected.put(connection.getNickname(), connection.getController());
+        connection.getController().removeConnection(connection);
     }
 
     /**
@@ -361,17 +343,22 @@ public class Server implements ServerInterface {
      */
     public synchronized void removeConnectionGameSinglePlayer(ClientHandler connection){
         //if the client comes back I retrieve the game from the json file
+        takenNicknames.remove(connection.getNickname());
         if (connection.getController().getGamePhase() instanceof EndPhase) {
             Map <String, Integer> results = new HashMap<>();
             results.put (connection.getNickname(), connection.getController().getPlayers().get(0).isWinner() ? connection.getController().getPlayers().get(0).getVictoryPoints() : -1);
-            takenNicknames.remove(connection.getNickname());
             clientsDisconnectedGameFinished.put(connection.getNickname(), new GameOverMessage(results, true));
         } else {
             activeGames.remove(connection.getController());
         }
     }
 
+    /**
+     * Method to remove a nickname from the list of takenNicknames
+     * @param nickname
+     */
     public void removeNickname (String nickname){
+        clientsDisconnected.remove(nickname);
         takenNicknames.remove(nickname);
     }
 
@@ -409,6 +396,10 @@ public class Server implements ServerInterface {
         activeGames.remove(controller);
     }
 
+    /**
+     * @param nickname the nickname of the {@link it.polimi.ingsw.client.Client}
+     * @return true if the client disconnected before the finish of a multiplayer game
+     */
     private boolean knownClient(String nickname) {
         return clientsDisconnected.containsKey(nickname) || clientsDisconnectedGameFinished.containsKey(nickname);
     }

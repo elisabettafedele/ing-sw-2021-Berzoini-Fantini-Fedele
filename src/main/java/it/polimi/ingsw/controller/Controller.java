@@ -58,11 +58,15 @@ public class Controller {
 
         if (connection.getGameMode() == GameMode.SINGLE_PLAYER){
             //SINGLE PLAYER
-            server.removeConnectionGameSinglePlayer(getConnectionByNickname(nickname));
+            clientHandlers.remove(connection);
+            server.removeConnectionGameSinglePlayer(connection);
 
         } else {
             //MULTIPLAYER
-            handleMultiplayerDisconnection(nickname);
+            if (gamePhase instanceof EndPhase)
+                server.removeConnectionGame(connection);
+            else
+                handleMultiplayerDisconnection(nickname);
         }
     }
 
@@ -71,14 +75,47 @@ public class Controller {
      * @param nickname the nickname of the disconnected client
      */
     private void handleMultiplayerDisconnection(String nickname) {
-        if (gamePhase instanceof SetUpPhase)
-            handleMultiplayerDisconnectionSetUpPhase(nickname);
+        checkEndMultiplayerGame(nickname);
+    }
 
-        if (gamePhase instanceof MultiplayerPlayPhase)
-            handleMultiplayerDisconnectionGamePhase(nickname);
+    /**
+     * Method to whether the game should be canceled
+     * @param nickname the nickname of the disconnected client
+     */
+    private void checkEndMultiplayerGame(String nickname){
+        getPlayerByNickname(nickname).setActive(false);
+        if (getPlayers().stream().filter(Player::isActive).count() == 1 || (gamePhase instanceof SetUpPhase && getConnectionByNickname(nickname).getClientHandlerPhase() != ClientHandlerPhase.SET_UP_FINISHED)){
+            clientHandlers.remove(getConnectionByNickname(nickname));
+            forceEndMultiplayerGame();
+        } else {
+            server.removeConnectionGame(getConnectionByNickname(nickname));
+            if (gamePhase instanceof SetUpPhase)
+                handleMultiplayerDisconnectionSetUpPhase(nickname);
 
-        if (gamePhase instanceof EndPhase)
-            handleMultiplayerDisconnectionEndPhase(nickname);
+            if (gamePhase instanceof MultiplayerPlayPhase)
+                handleMultiplayerDisconnectionGamePhase(nickname);
+        }
+    }
+
+    /**
+     * Method to force the end of a {@link Game}
+     */
+    private void forceEndMultiplayerGame(){
+        for (Player player : getPlayers()) {
+            //For each player that is still active I notify the end of the game and I reinsert him in the lobby room
+            if (player.isActive()) {
+                getConnectionByNickname(player.getNickname()).sendMessageToClient(new NotifyClientDisconnection(player.getNickname(), gamePhase instanceof SetUpPhase, true));
+                getConnectionByNickname(player.getNickname()).setGameStarted(false);
+                getConnectionByNickname(player.getNickname()).setController(null);
+                getConnectionByNickname(player.getNickname()).setClientHandlerPhase(ClientHandlerPhase.WAITING_IN_THE_LOBBY);
+                server.addClientHandler(getConnectionByNickname(player.getNickname()));
+            } else {
+                server.removeNickname(player.getNickname());
+            }
+        }
+        GameHistory.removeOldGame(controllerID);
+        server.removeGame(this);
+        server.newGameManager();
     }
 
     /**
@@ -86,36 +123,10 @@ public class Controller {
      * @param nickname the nickname of the disconnected client
      */
     private void handleMultiplayerDisconnectionSetUpPhase(String nickname){
-        ClientHandler connection = getConnectionByNickname(nickname);
-        getPlayerByNickname(nickname).setActive(false);
-
-        if (connection.getClientHandlerPhase() == ClientHandlerPhase.SET_UP_FINISHED && getPlayers().stream().filter(Player::isActive).count() > 1) {
-            //CASE 1: THE CLIENT HAS ALREADY FINISHED THE SETUP PHASE: the game starts and the player is set as inactive
-            if (!server.removeConnectionGame(connection, false))
-                return;
-            //If I am here is because the game still exists
-            getClientHandlers().stream().filter(x -> !x.getNickname().equals(nickname)).collect(Collectors.toList()).forEach(x -> x.sendMessageToClient(new NotifyClientDisconnection(nickname, true, false)));
-            if (gamePhase instanceof SetUpPhase)
-                ((SetUpPhase) gamePhase).endPhaseManager(connection);
-        } else {
-            //CASE 2: THE CLIENT HAS NOT FINISHED THE SETUP PHASE YET: THE GAME IS DELETED AND OTHER CLIENTS ARE AGAIN IN THE LOBBY. IF A GAME IS READY TO START THEY WILL PLAY THERE
-            connection.getServer().removeNickname(connection.getNickname());
-            lockConnections.lock();
-            connection.getServer().removeGame(this);
-            GameHistory.removeOldGame(controllerID);
-            for (ClientHandler other : getClientHandlers()) {
-                if (other.isGameStarted() && other.isActive()) {
-                    other.sendMessageToClient(new NotifyClientDisconnection(nickname, true, true));
-                    other.setGameStarted(false);
-                    other.setController(null);
-                    other.setClientHandlerPhase(ClientHandlerPhase.WAITING_IN_THE_LOBBY);
-                    server.addClientHandler(other);
-                }
-                server.newGameManager();
-            }
-            lockConnections.unlock();
-            connection.setController(null);
-        }
+        getClientHandlers().stream().filter(x -> !x.getNickname().equals(nickname)).collect(Collectors.toList()).forEach(x -> x.sendMessageToClient(new NotifyClientDisconnection(nickname, true, false)));
+        server.removeConnectionGame(getConnectionByNickname(nickname));
+        if (gamePhase instanceof SetUpPhase)
+            ((SetUpPhase) gamePhase).endPhaseManagerDisconnection();
     }
 
     /**
@@ -123,21 +134,6 @@ public class Controller {
      * @param nickname the nickname of the disconnected client
      */
     private void handleMultiplayerDisconnectionGamePhase(String nickname){
-        getPlayerByNickname(nickname).setActive(false);
-        if (getPlayers().stream().filter(Player::isActive).count() == 1) {
-            server.removeConnectionGame(getConnectionByNickname(nickname), false);
-            String lastPlayerNickname = getPlayers().stream().filter(Player::isActive).collect(Collectors.toList()).get(0).getNickname();
-            getConnectionByNickname(lastPlayerNickname).sendMessageToClient(new NotifyClientDisconnection(lastPlayerNickname, false, true));
-            server.removeConnectionGame(getConnectionByNickname(lastPlayerNickname), true);
-            getConnectionByNickname(lastPlayerNickname).setGameStarted(false);
-            getConnectionByNickname(lastPlayerNickname).setClientHandlerPhase(ClientHandlerPhase.WAITING_IN_THE_LOBBY);
-            server.addClientHandler(getConnectionByNickname(lastPlayerNickname));
-            server.newGameManager();
-            return;
-        }
-        boolean gameFinished  = !server.removeConnectionGame(getConnectionByNickname(nickname), false);
-        if (!gameFinished) {
-            //The game will still be played
             getPlayerByNickname(nickname).setActive(false);
             sendMessageToAll(new NotifyClientDisconnection(nickname, false, false));
             if (((MultiplayerPlayPhase) gamePhase).getTurnController().getCurrentPlayer().getNickname().equals(nickname)) {
@@ -150,16 +146,8 @@ public class Controller {
                 }
                 ((MultiplayerPlayPhase) gamePhase).nextTurn();
             }
-        }
     }
 
-    /**
-     * Method to handle a client's disconnection when a {@link Game} has already started, the {@link GameMode} is multiplayer and the game was in the end phase
-     * @param nickname the nickname of the disconnected client
-     */
-    private void handleMultiplayerDisconnectionEndPhase(String nickname){
-        server.removeConnectionGame(getConnectionByNickname(nickname), false);
-    }
 
     /**
      * Method to start the controller. A new SetUp phase is created
