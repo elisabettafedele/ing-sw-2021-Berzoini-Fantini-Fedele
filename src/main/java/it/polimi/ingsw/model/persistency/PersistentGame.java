@@ -7,7 +7,6 @@ import it.polimi.ingsw.exceptions.ZeroPlayerException;
 import it.polimi.ingsw.model.game.Game;
 import it.polimi.ingsw.model.game.VaticanReportSection;
 import it.polimi.ingsw.model.player.Player;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +20,10 @@ public class PersistentGame implements Serializable {
     private List<PersistentPlayer> players;
     private VaticanReportSection currentSection;
 
+    /**
+     * Constructor of a light version of the {@link Game} used to save the status of the game and to retrieve it when needed
+     * @param game the {@link Game} to be converted
+     */
     public PersistentGame(Game game){
         gameMode = game.getGameMode();
         marketTray = new Marble[3][4];

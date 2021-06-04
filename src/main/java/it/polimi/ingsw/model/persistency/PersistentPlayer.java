@@ -23,6 +23,10 @@ public class PersistentPlayer implements Serializable {
     private PopesTileState[] popesTileStates;
     private boolean active;
 
+    /**
+     * Constructor of a light version of a {@link Player} used to save the status of the game and to retrieve it when needed
+     * @param player the {@link Player} to be converted
+     */
     public PersistentPlayer(Player player) {
         this.active = player.isActive();
         nickname = player.getNickname();
