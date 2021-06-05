@@ -17,15 +17,18 @@ public class LobbyCLI {
     private static final String DEFAULT_ADDRESS = "127.0.0.1";
     private static final int DEFAULT_PORT = 1234;
 
-    public static Client askConnectionParameters(CLI cli){
+    public static Client askConnectionParameters(CLI cli, boolean firstTryConnection){
         int port;
         String IPAddress;
         boolean firstTry = true;
         //Insert IP address
         do{
+            if (!firstTryConnection && firstTry){
+                System.out.println(Colour.ANSI_BRIGHT_CYAN.getCode() + "There is not an active server at the IP address and port provided. Try again." + Colour.ANSI_RESET);
+            }
             if(firstTry)
                 System.out.println("Enter the server's IP address or d (default configuration): ");
-            else
+            else if (!firstTry)
                 System.out.println("Invalid IP address: enter x.x.x.x where x is called an octet and must be a decimal value between 0 and 255. Enter d for default configuration: ");
             IPAddress = InputParser.getLine();
             firstTry = false;

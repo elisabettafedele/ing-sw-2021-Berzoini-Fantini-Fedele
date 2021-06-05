@@ -79,7 +79,7 @@ public class Server implements ServerInterface {
         }
 
         //Ok from now on the server is actually working
-        SERVER_LOGGER.log(Level.INFO, "Server ready");
+        SERVER_LOGGER.log(Level.INFO, "Server ready on port " + port);
 
         try {
             //Until the server is stopped, he keeps accepting new connections from clients who connect to its socket

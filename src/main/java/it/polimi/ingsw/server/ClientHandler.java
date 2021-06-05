@@ -173,7 +173,7 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
             return;
         //The connection is not active anymore
         this.active = false;
-        Server.SERVER_LOGGER.log(Level.SEVERE, "Client " + nickname + " disconnected");
+        Server.SERVER_LOGGER.log(Level.SEVERE, "[" + (nickname != null ? nickname : socket.getInetAddress().getHostAddress())+ "]: " + "client disconnected");
         //If the game is started, the controller will handle his disconnection
         if (gameStarted){
             controller.handleClientDisconnection(nickname);

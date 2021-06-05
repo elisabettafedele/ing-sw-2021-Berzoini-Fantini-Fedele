@@ -66,18 +66,15 @@ public class Client implements ClientInterface {
 
     }
 
-    public void start(){
+    public void start() throws IOException {
         socket = new Socket();
         this.incomingPackets = new LinkedBlockingQueue<>();
-        try {
-            socket.connect(new InetSocketAddress(IPAddress, port), SOCKET_TIMEOUT);
-            os = new ObjectOutputStream(socket.getOutputStream());
-            is = new ObjectInputStream(socket.getInputStream());
 
-        } catch (IOException e) {
-            closeSocket();
-            return;
-        }
+        socket.connect(new InetSocketAddress(IPAddress, port), SOCKET_TIMEOUT);
+        os = new ObjectOutputStream(socket.getOutputStream());
+        is = new ObjectInputStream(socket.getInputStream());
+
+
 
         connected.set(true);
         packetReceiver.start();

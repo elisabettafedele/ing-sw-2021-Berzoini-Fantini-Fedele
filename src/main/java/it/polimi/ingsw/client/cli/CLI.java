@@ -15,6 +15,8 @@ import it.polimi.ingsw.enumerations.*;
 import it.polimi.ingsw.messages.toClient.matchData.TurnMessage;
 import it.polimi.ingsw.messages.toClient.matchData.MatchDataMessage;
 import it.polimi.ingsw.model.cards.Value;
+
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.Map;
@@ -34,10 +36,19 @@ public class CLI implements View {
     }
 
     private void init(){
+        boolean error = true;
+        boolean firstTry = true;
         GraphicalLogo.printLogo();
         MatchData.getInstance().setView(this);
-        client = LobbyCLI.askConnectionParameters(this);
-        client.start();
+        while (error) {
+            client = LobbyCLI.askConnectionParameters(this, firstTry);
+            try {
+                client.start();
+                error = false;
+            } catch (IOException e) {
+                firstTry = false;
+            }
+        }
     }
 
     @Override

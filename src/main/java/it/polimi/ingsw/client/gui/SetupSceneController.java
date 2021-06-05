@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.gui;
 
 
 import it.polimi.ingsw.client.Client;
+import it.polimi.ingsw.client.cli.specificCLI.LobbyCLI;
 import it.polimi.ingsw.client.utilities.Utils;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.enumerations.Resource;
@@ -17,6 +18,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -99,9 +101,16 @@ public class SetupSceneController {
 
     @FXML
     public void handleConnectButton(ActionEvent actionEvent) {
-        client=new Client(ipTextField.getText(), Integer.parseInt(portTextField.getText()),gui);
-        gui.setClient(client);
-        client.start();
+        boolean error = true;
+        while (error) {
+            client = new Client(ipTextField.getText(), Integer.parseInt(portTextField.getText()), gui);
+            gui.setClient(client);
+            try {
+                client.start();
+                error = false;
+            } catch (IOException e) {
+            }
+        }
     }
 
     @FXML
