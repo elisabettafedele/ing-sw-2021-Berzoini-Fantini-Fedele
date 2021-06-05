@@ -6,6 +6,7 @@ import it.polimi.ingsw.client.View;
 import it.polimi.ingsw.client.cli.graphical.Colour;
 import it.polimi.ingsw.client.cli.graphical.GraphicalLogo;
 import it.polimi.ingsw.client.cli.graphical.Screen;
+import it.polimi.ingsw.client.cli.graphical.TokenDescriptors;
 import it.polimi.ingsw.client.cli.specificCLI.*;
 import it.polimi.ingsw.client.utilities.InputParser;
 import it.polimi.ingsw.client.utilities.UtilityProduction;
@@ -269,7 +270,8 @@ public class CLI implements View {
 
     @Override
     public void displayLorenzoAction(int id) {
-        System.out.println("Lorenzo used token " + id);
+        System.out.println(Colour.ANSI_BLUE.getCode() + TokenDescriptors.valueOf(id).getDescription() + Colour.ANSI_RESET);
+        //System.out.println("Lorenzo used token " + id);
     }
 
     @Override
