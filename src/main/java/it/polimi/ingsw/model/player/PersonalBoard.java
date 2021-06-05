@@ -168,18 +168,17 @@ public class PersonalBoard implements Serializable {
     }
 
     public boolean isResourceAvailableAndRemove(ResourceStorageType depot, Resource resource, int quantity, boolean wantToRemove){
+        boolean available;
         if(depot==ResourceStorageType.STRONGBOX){
-            for(int i=0; i< 4 ; i++){
-                if(strongbox[i].getResourceType()==resource && strongbox[i].getResourceQuantity()>=quantity){
-                    if(wantToRemove){
-                        try {
-                            strongbox[i].removeResources(quantity);
-                        } catch (InsufficientQuantityException | InvalidArgumentException ignored) { } //is checked before
-                    }
-                    return true;
+            available = strongbox[resource.getValue()].getResourceQuantity() >= quantity;
+            if (wantToRemove && available) {
+                try {
+                    strongbox[resource.getValue()].removeResources(quantity);
+                } catch (InsufficientQuantityException | InvalidArgumentException ignored) {
+                    //It is checked before so it will never happen
                 }
             }
-            return false;
+            return available;
         }
         if(depot==ResourceStorageType.LEADER_DEPOT){
             List<Effect> extraDepotEffects = this.getAvailableEffects(EffectType.EXTRA_DEPOT);
@@ -201,22 +200,22 @@ public class PersonalBoard implements Serializable {
             return false;
         }
         if(depot==ResourceStorageType.WAREHOUSE){
-            for(int ii=0;ii<warehouse.getNumberOfDepots();ii++){
-                try {
-                    if(resource==warehouse.getResourceTypeOfDepot(ii)&&warehouse.getResourceQuantityOfDepot(ii)>=quantity){
-                        if(wantToRemove){
-                            try {
-                                warehouse.removeResourcesFromDepot(resource,quantity);
-                            } catch (InvalidResourceTypeException | InsufficientQuantityException ignored) { } //is checked before
-                        }
-                        return true;
-                    }
-                } catch (InvalidArgumentException e) {
-                    e.printStackTrace();
-                }
+            available = true;
+            try {
+                available = (warehouse.getRowIndexFromResource(resource) != -1 && warehouse.getResourceQuantityOfDepot(warehouse.getRowIndexFromResource(resource)) >= quantity);
+            } catch (InvalidArgumentException e) {
+                e.printStackTrace();
             }
-            return false;
+            if (available && wantToRemove) {
+                try {
+                    warehouse.removeResourcesFromDepot(resource, quantity);
+                } catch (InvalidResourceTypeException | InsufficientQuantityException | InvalidArgumentException ignored) { }
+            }
+            return available;
         }
+        //This point should never be reached
+        //TODO remove the next line, is just a temporary check
+        System.out.println("ERROR");
         return false;
     }
 

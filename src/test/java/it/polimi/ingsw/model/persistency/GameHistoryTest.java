@@ -1,13 +1,11 @@
 package it.polimi.ingsw.model.persistency;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
+
 import it.polimi.ingsw.client.PopesTileState;
 import it.polimi.ingsw.controller.actions.SoloActionToken;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
-import it.polimi.ingsw.jsonParsers.JsonAdapter;
 import it.polimi.ingsw.jsonParsers.SoloActionTokenParser;
 import it.polimi.ingsw.model.game.DevelopmentCardGrid;
 import it.polimi.ingsw.model.game.Market;
@@ -19,7 +17,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class GameHistoryTest extends TestCase {
-    PersistentGame persistentGame;
 
     @BeforeClass
     public void setUpClass() throws InvalidArgumentException {
@@ -99,21 +96,16 @@ public class GameHistoryTest extends TestCase {
         Map<String, List<Resource>> resourcesToStore = new HashMap<>();
         resourcesToStore.put("Betti", new ArrayList<>());
         PersistentControllerSetUpPhase persistentControllerSetUpPhase = new PersistentControllerSetUpPhase(persistentGame, 123, new HashMap<>());
-        JsonArray array = GameHistory.createJsonArraySetUp(persistentControllerSetUpPhase);
-        Gson gson = JsonAdapter.getGsonBuilder();
-        String json = gson.toJson(array);
-        JsonArray jsonArray = new Gson().fromJson(json, JsonArray.class);
-        PersistentControllerSetUpPhase reload = new Gson().fromJson(jsonArray.get(0).getAsJsonObject(), PersistentControllerSetUpPhase.class);
-        assertEquals(reload.getGame().getGameMode(), persistentGame.getGameMode());
-        assertEquals(reload.getGame().getCurrentSection().getStart(), persistentGame.getCurrentSection().getStart());
-        assertEquals(reload.getGame().getSlideMarble(), persistentGame.getSlideMarble());
-        assertEquals(reload.getGame().getPlayers().get(0).getNickname(), persistentGame.getPlayers().get(0).getNickname());
-        assertEquals(reload.getResourcesToStore().size(), 0);
-        for (int i = 0; i < reload.getGame().getMarketTray().length; i++){
-            for (int j = 0; j < reload.getGame().getMarketTray()[i].length; j++){
-                assertEquals(reload.getGame().getMarketTray()[i][j], persistentGame.getMarketTray()[i][j]);
+        assertEquals(persistentControllerSetUpPhase.getGame().getGameMode(), persistentGame.getGameMode());
+        assertEquals(persistentControllerSetUpPhase.getGame().getSlideMarble(), persistentGame.getSlideMarble());
+        assertEquals(persistentControllerSetUpPhase.getGame().getPlayers().get(0).getNickname(), persistentGame.getPlayers().get(0).getNickname());
+        assertEquals(persistentControllerSetUpPhase.getResourcesToStore().size(), 0);
+        for (int i = 0; i < persistentControllerSetUpPhase.getGame().getMarketTray().length; i++){
+            for (int j = 0; j < persistentControllerSetUpPhase.getGame().getMarketTray()[i].length; j++){
+                assertEquals(persistentControllerSetUpPhase.getGame().getMarketTray()[i][j], persistentGame.getMarketTray()[i][j]);
             }
         }
+
     }
 
     @Test
@@ -155,22 +147,17 @@ public class GameHistoryTest extends TestCase {
 
 
         PersistentControllerPlayPhaseSingle persistentControllerPlayPhaseSingle = new PersistentControllerPlayPhaseSingle(persistentGame, "Betti", 123, false, SoloActionTokenParser.parseTokens().stream().map(SoloActionToken::getId).collect(Collectors.toList()), 3);
-        JsonArray array = GameHistory.createJsonArraySinglePlayer(persistentControllerPlayPhaseSingle);
-        Gson gson = JsonAdapter.getGsonBuilder();
-        String json = gson.toJson(array);
-        JsonArray jsonArray = new Gson().fromJson(json, JsonArray.class);
-        PersistentControllerPlayPhaseSingle reload = new Gson().fromJson(jsonArray.get(0).getAsJsonObject(), PersistentControllerPlayPhaseSingle.class);
-        assertEquals(reload.getGame().getGameMode(), persistentGame.getGameMode());
-        assertEquals(reload.getGame().getCurrentSection().getStart(), persistentGame.getCurrentSection().getStart());
-        assertEquals(reload.getGame().getSlideMarble(), persistentGame.getSlideMarble());
-        assertEquals(reload.getGame().getPlayers().get(0).getNickname(), persistentGame.getPlayers().get(0).getNickname());
-        for (int i = 0; i < reload.getGame().getMarketTray().length; i++){
-            for (int j = 0; j < reload.getGame().getMarketTray()[i].length; j++){
-                assertEquals(reload.getGame().getMarketTray()[i][j], persistentGame.getMarketTray()[i][j]);
+        assertEquals(persistentControllerPlayPhaseSingle.getGame().getGameMode(), persistentGame.getGameMode());
+        assertEquals(persistentControllerPlayPhaseSingle.getGame().getCurrentSection().getStart(), persistentGame.getCurrentSection().getStart());
+        assertEquals(persistentControllerPlayPhaseSingle.getGame().getSlideMarble(), persistentGame.getSlideMarble());
+        assertEquals(persistentControllerPlayPhaseSingle.getGame().getPlayers().get(0).getNickname(), persistentGame.getPlayers().get(0).getNickname());
+        for (int i = 0; i < persistentControllerPlayPhaseSingle.getGame().getMarketTray().length; i++){
+            for (int j = 0; j < persistentControllerPlayPhaseSingle.getGame().getMarketTray()[i].length; j++){
+                assertEquals(persistentControllerPlayPhaseSingle.getGame().getMarketTray()[i][j], persistentGame.getMarketTray()[i][j]);
             }
         }
-        assertFalse(reload.isEndTriggered());
-        assertEquals(reload.getBlackCrossPosition(), 3);
+        assertFalse(persistentControllerPlayPhaseSingle.isEndTriggered());
+        assertEquals(persistentControllerPlayPhaseSingle.getBlackCrossPosition(), 3);
 
 
     }
