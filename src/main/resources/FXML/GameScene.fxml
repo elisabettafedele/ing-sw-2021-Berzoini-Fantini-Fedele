@@ -448,7 +448,7 @@
                   </HBox>
                </children>
             </VBox>
-            <VBox fx:id="lorenzoVbox" alignment="CENTER" layoutX="27.0" layoutY="240.0" prefHeight="189.0" prefWidth="278.0" styleClass="popup-box" stylesheets="@../css/style.css">
+            <VBox fx:id="lorenzoVbox" alignment="CENTER" layoutX="27.0" layoutY="240.0" prefHeight="189.0" prefWidth="278.0" styleClass="popup-box" stylesheets="@../css/style.css" visible="false">
                <children>
                   <Label alignment="CENTER" prefHeight="59.0" prefWidth="346.0" text="Lorenzo il Magnifico has moved!">
                      <VBox.margin>
