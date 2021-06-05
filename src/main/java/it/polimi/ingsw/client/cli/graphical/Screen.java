@@ -8,6 +8,7 @@ import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.exceptions.ValueNotPresentException;
 import it.polimi.ingsw.model.cards.Value;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +56,7 @@ public class Screen extends GraphicalElement{
     }
 
     private Screen() {
-        super(188, 25);
+        super(188, 26);
         graphicalDevelopmentCardGrid = new GraphicalDevelopmentCardGrid();
         developmentCardGridCardsToDisplay = new ArrayList<>();
         reset();
@@ -67,11 +68,21 @@ public class Screen extends GraphicalElement{
 
     public void displayStandardView(){
         nickname = MatchData.getInstance().getCurrentViewNickname();
-        System.out.print("\u001b[2J");
+        //clearConsole();
         System.out.flush();
         reset();
         drawAllElements();
         display();
+    }
+
+    private void clearConsole()
+    {
+        try {
+            if (System.getProperty("os.name").contains("Windows"))
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            else
+                Runtime.getRuntime().exec("clear");
+        } catch (IOException | InterruptedException ex) {}
     }
 
     private void drawAllElements() {
@@ -98,6 +109,7 @@ public class Screen extends GraphicalElement{
         gw.drawWarehouse();
         drawElement(gw.getHeight(), gw.getWidth(), gw.getColours(), gw.getSymbols(), gw.getBackGroundColours(),
                 warehouse_x_anchor, warehouse_y_anchor);
+        drawDepotsNumbers(warehouse_x_anchor + 1, warehouse_y_anchor + gw.getWidth() + 1);
     }
 
     private void drawScoreBoard() {
@@ -134,6 +146,13 @@ public class Screen extends GraphicalElement{
 
                 }
             }
+        }
+        drawLabel(devCardSlots_x_anchor + GraphicalDevelopmentCardGrid.cardHeight, devCardSlots_y_anchor + 10, "Development Cards Slots");
+    }
+
+    private void drawLabel(int x, int y, String label) {
+        for(int i = 0; i < label.length(); i++){
+            symbols[x][y + i] = label.charAt(i);
         }
     }
 
@@ -298,8 +317,8 @@ public class Screen extends GraphicalElement{
         gw.drawWarehouse();
         drawElement(gw.getHeight(), gw.getWidth(), gw.getColours(), gw.getSymbols(), gw.getBackGroundColours(),
                 height-gw.getHeight()-1, 0);
-        drawDepotsNumbers(gw.getHeight(), gw.getWidth());
-        displayASection(height-gw.getHeight()-2, height, 0, width);
+        //drawDepotsNumbers(gw.getHeight(), gw.getWidth());
+        //displayASection(height-gw.getHeight()-2, height, 0, width);
     }
 
     private void drawDepotsNumbers(int h, int w) {
@@ -307,7 +326,7 @@ public class Screen extends GraphicalElement{
 
         for(int i = 0; i < 3; i++){
             for(int j = 0; j < depots[i].length(); j++){
-                symbols[height - h + i*2][w+j] = depots[i].charAt(j);
+                symbols[h + i*2][w+j] = depots[i].charAt(j);
             }
         }
     }
