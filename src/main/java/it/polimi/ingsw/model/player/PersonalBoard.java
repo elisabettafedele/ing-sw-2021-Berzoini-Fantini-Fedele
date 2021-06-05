@@ -169,7 +169,7 @@ public class PersonalBoard implements Serializable {
 
     public boolean isResourceAvailableAndRemove(ResourceStorageType depot, Resource resource, int quantity, boolean wantToRemove){
         if(depot==ResourceStorageType.STRONGBOX){
-            for(int i=0; i< 3 ; i++){
+            for(int i=0; i< 4 ; i++){
                 if(strongbox[i].getResourceType()==resource && strongbox[i].getResourceQuantity()>=quantity){
                     if(wantToRemove){
                         try {

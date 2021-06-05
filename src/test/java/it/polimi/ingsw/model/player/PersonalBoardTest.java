@@ -473,8 +473,10 @@ public class PersonalBoardTest {
         pb.addResources(ResourceStorageType.LEADER_DEPOT, Resource.COIN, 1);
         pb.addResources(ResourceStorageType.LEADER_DEPOT, Resource.SHIELD, 2);
         pb.addResources(ResourceStorageType.STRONGBOX, Resource.SERVANT, 2);
-        assertTrue(pb.isResourceAvailableAndRemove(ResourceStorageType.STRONGBOX, Resource.SERVANT, 1, true));
-        assertEquals(pb.getStrongbox()[Resource.SERVANT.getValue()].getResourceQuantity(), 1);
+        assertTrue(pb.isResourceAvailableAndRemove(ResourceStorageType.STRONGBOX, Resource.SERVANT, 1, false));
+        assertTrue(pb.isResourceAvailableAndRemove(ResourceStorageType.STRONGBOX, Resource.SERVANT, 1, false));
+        assertTrue(pb.isResourceAvailableAndRemove(ResourceStorageType.STRONGBOX, Resource.SERVANT, 2, true));
+        assertEquals(pb.getStrongbox()[Resource.SERVANT.getValue()].getResourceQuantity(), 0);
         assertFalse(pb.isResourceAvailableAndRemove(ResourceStorageType.STRONGBOX, Resource.SERVANT, 2, true));
         assertFalse(pb.isResourceAvailableAndRemove(ResourceStorageType.LEADER_DEPOT, Resource.SERVANT, 2, true));
         pb.addResources(ResourceStorageType.WAREHOUSE_FIRST_DEPOT, Resource.SERVANT, 1);

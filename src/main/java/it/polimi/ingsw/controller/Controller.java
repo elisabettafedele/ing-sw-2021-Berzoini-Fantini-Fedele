@@ -207,7 +207,6 @@ public class Controller {
         PersistentControllerPlayPhase controller = GameHistory.retrievePlayController(controllerID);
         game = new Game(controller.getGame());
         getPlayers().forEach(x -> x.setActive(true));
-        clientHandlers.forEach(x -> x.sendMessageToClient(new WelcomeBackMessage(x.getNickname(), false)));
         sendLightCards();
         sendMatchData(game, false);
         gamePhase = new MultiplayerPlayPhase(this, controller.getLastPlayer(), controller.isEndTriggered());
@@ -220,7 +219,6 @@ public class Controller {
     private void reloadSinglePlayerPlayPhase(){
         PersistentControllerPlayPhaseSingle controller = GameHistory.retrievePlayControllerSingle(controllerID);
         game = new Game(controller.getGame());
-        clientHandlers.get(0).sendMessageToClient(new WelcomeBackMessage(clientHandlers.get(0).getNickname(), false));
         sendLightCards();
         sendMatchData(game, false);
         gamePhase = new SinglePlayerPlayPhase(this, controller.getLastPlayer(), controller.isEndTriggered(), controller.getBlackCrossPosition(), controller.getTokens());

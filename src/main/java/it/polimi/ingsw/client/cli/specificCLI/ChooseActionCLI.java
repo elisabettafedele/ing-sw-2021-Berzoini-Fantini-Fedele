@@ -33,6 +33,8 @@ public class ChooseActionCLI {
         } catch (IOException e) {
             return;
         }
+        if (selectionString == null)
+            return;
         if (selectionString.equals("end"))
             client.sendMessageToServer(new EndTurnRequest());
         else {
