@@ -131,6 +131,7 @@ public class GameSceneController {
     List<ResourceStorageType> reorganizeChosenDepots;
     List<Node> selectedProductions;
     String currentPlayer;
+    List<Integer> developmentCardGridIDsBackup;
 
     boolean isYourTurn;
     // *********************************************************************  //
@@ -138,6 +139,7 @@ public class GameSceneController {
     // *********************************************************************  //
     @FXML
     public void initialize() {
+        developmentCardGridIDsBackup= new ArrayList<>();
         currentPlayer=new String();
         matchData=MatchData.getInstance();
         players=matchData.getAllNicknames();
@@ -209,14 +211,12 @@ public class GameSceneController {
             @Override
             public void handle(ActionEvent actionEvent) {
                 UtilityProduction.displayAvailableProductions();
-                actionEvent.consume();
             }
         });
         ((Button)((HBox)productionVbox.getChildren().get(2)).getChildren().get(1)).setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 UtilityProduction.chooseProductionToRemove();
-                actionEvent.consume();
             }
         });
         ((Button)((HBox)productionVbox.getChildren().get(2)).getChildren().get(2)).setOnAction(new EventHandler<ActionEvent>() {
@@ -230,7 +230,6 @@ public class GameSceneController {
                for(Node node : selectedProductions){
                    node.setEffect(null);
                }
-                actionEvent.consume();
             }
         });
         lorenzoVbox.setVisible(false);
@@ -238,7 +237,6 @@ public class GameSceneController {
             @Override
             public void handle(ActionEvent actionEvent) {
                 lorenzoVbox.setVisible(false);
-                actionEvent.consume();
             }
         });
 
@@ -564,14 +562,26 @@ public class GameSceneController {
 
     private void updateDevelopmentCardGridView() {
         List<LightDevelopmentCard> developmentCardGrid =new ArrayList<>();
-        for(Integer devCardId : matchData.getDevelopmentCardGrid()){
+        List<Integer> gridCardsIDs = matchData.getDevelopmentCardGrid();
+        if(developmentCardGridIDsBackup.size()>gridCardsIDs.size()){
+            for(Integer id : developmentCardGridIDsBackup){
+                if(!gridCardsIDs.contains(id)){
+                    LightDevelopmentCard devCard= matchData.getDevelopmentCardByID(id);
+                    int row = (Level.valueOf(devCard.getFlagLevel()).getValue() * - 1) + 2;
+                    int col = FlagColor.valueOf(devCard.getFlagColor()).getValue();
+                    this.developmentCardGrid.getChildren().get(col+ this.developmentCardGrid.getColumnCount()*row).setVisible(false);
+                }
+            }
+        }
+        developmentCardGridIDsBackup=gridCardsIDs;
+        for(Integer devCardId : gridCardsIDs){
             developmentCardGrid.add(matchData.getDevelopmentCardByID(devCardId));
         }
         for(LightDevelopmentCard devCard : developmentCardGrid){
             int row = (Level.valueOf(devCard.getFlagLevel()).getValue() * - 1) + 2;
             int col = FlagColor.valueOf(devCard.getFlagColor()).getValue();
             ((ImageView) this.developmentCardGrid.getChildren().get(col+ this.developmentCardGrid.getColumnCount()*row)).setImage(new Image(GameSceneController.class.getResource("/img/Cards/DevelopmentCards/front/" + devCard.getID() + ".png").toString()));
-
+            this.developmentCardGrid.getChildren().get(col+ this.developmentCardGrid.getColumnCount()*row).setVisible(true);
         }
     }
 
@@ -663,19 +673,16 @@ public class GameSceneController {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 //createTooltip(nodeToDeactivate,null);
-                //mouseEvent.consume();
             }
         });
         nodeToDeactivate.setOnMouseExited(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                //mouseEvent.consume();
             }
         });
         nodeToDeactivate.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                //mouseEvent.consume();
             }
         });
         nodeToDeactivate.setEffect(null);
@@ -697,7 +704,6 @@ public class GameSceneController {
                 else{
                     createTooltip(nodeToActivate,actionType.toString().replace('_',' '));
                 }
-                mouseEvent.consume();
             }
         });
         nodeToActivate.setOnMouseExited(new EventHandler<MouseEvent>() {
@@ -706,7 +712,6 @@ public class GameSceneController {
                 nodeToActivate.setEffect(null);
                 if(backToGreyLeaderCard){
                     greyNode(nodeToActivate);
-                    mouseEvent.consume();
                 }
             }
         });
@@ -722,7 +727,6 @@ public class GameSceneController {
                             selectAction(ActionType.ACTIVATE_LEADER_CARD.toString());
                             activateLeaderCardButton.setVisible(false);
                             discardLeaderCardButton.setVisible(false);
-                            actionEvent.consume();
                         }
                     });
                     discardLeaderCardButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -731,7 +735,6 @@ public class GameSceneController {
                             selectAction(ActionType.DISCARD_LEADER_CARD.toString());
                             activateLeaderCardButton.setVisible(false);
                             discardLeaderCardButton.setVisible(false);
-                            actionEvent.consume();
                         }
                     });
                 }
@@ -739,7 +742,6 @@ public class GameSceneController {
                       selectAction(actionType.toString());
                 }
                 deactivateAllActionsGlowing();
-                mouseEvent.consume();
             }
         });
     }
@@ -877,7 +879,6 @@ public class GameSceneController {
                 ClipboardContent content = new ClipboardContent();
                 content.putString(resourceAsString);
                 db.setContent(content);
-                event.consume();
             }
         });
         resourceToDrag.setOnDragDone(new EventHandler<DragEvent>() {
@@ -885,8 +886,6 @@ public class GameSceneController {
                 if (event.getTransferMode() == TransferMode.MOVE) {
                     ((HBox) resourceToDrag.getParent()).getChildren().remove(0);
                 }
-
-                event.consume();
             }
         });
     }
@@ -899,7 +898,6 @@ public class GameSceneController {
                         event.getDragboard().hasString()) {
                     event.acceptTransferModes(TransferMode.MOVE);
                 }
-                event.consume();
             }
         });
         nodeDraggableOver.setOnDragEntered(new EventHandler<DragEvent>() {
@@ -909,14 +907,12 @@ public class GameSceneController {
                         event.getDragboard().hasString()) {
                     glowNode(nodeDraggableOver,Color.ORANGE);
                 }
-                event.consume();
             }
         });
         nodeDraggableOver.setOnDragExited(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent event) {
                 glowNode(nodeDraggableOver,Color.CYAN);
-                event.consume();
             }
         });
         nodeDraggableOver.setOnDragDropped(new EventHandler<DragEvent>() {
@@ -929,7 +925,6 @@ public class GameSceneController {
                     success = true;
                 }
                 event.setDropCompleted(success);
-                event.consume();
             }
         });
     }
@@ -938,25 +933,21 @@ public class GameSceneController {
         nodeDraggableOver.setOnDragOver(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent event) {
-                event.consume();
             }
         });
         nodeDraggableOver.setOnDragEntered(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent event) {
-                event.consume();
             }
         });
         nodeDraggableOver.setOnDragExited(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent event) {
-                event.consume();
             }
         });
         nodeDraggableOver.setOnDragDropped(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent event) {
-                event.consume();
             }
         });
     }
@@ -1154,21 +1145,18 @@ public class GameSceneController {
                         public void handle(MouseEvent mouseEvent) {
                             client.sendMessageToServer(new MarbleInsertionPositionResponse(marketArrowsNumMap.get(arrow.getId())));
                             arrows.forEach(arrow->deactivateGlowingAndSelectEventHandler(arrow,false));
-                            mouseEvent.consume();
                         }
                     });
                     arrow.setOnMouseEntered(new EventHandler<MouseEvent>() {
                         @Override
                         public void handle(MouseEvent mouseEvent) {
                             glowNode(arrow,Color.CORAL);
-                            mouseEvent.consume();
                         }
                     });
                     arrow.setOnMouseExited(new EventHandler<MouseEvent>() {
                         @Override
                         public void handle(MouseEvent mouseEvent) {
                             glowNode(arrow,Color.CYAN);
-                            mouseEvent.consume();
                         }
                     });
                 }
@@ -1255,7 +1243,6 @@ public class GameSceneController {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 createTooltip(depotNode,"CLICK TO SELECT");
-                mouseEvent.consume();
             }
         });
         depotNode.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -1277,13 +1264,11 @@ public class GameSceneController {
                 depotNode.setOnMouseEntered(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
-                        mouseEvent.consume();
                     }
                 });
                 depotNode.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
-                        mouseEvent.consume();
                     }
                 });
                 if(firstChoice){
@@ -1376,7 +1361,6 @@ public class GameSceneController {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 createTooltip(node,"SELECT CARD");
-                mouseEvent.consume();
             }
         });
         node.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -1384,7 +1368,6 @@ public class GameSceneController {
             public void handle(MouseEvent mouseEvent) {
                 deactivateGlowingAndSelectEventHandler(node,false);
                 client.sendMessageToServer(new SelectCardResponse(cardId));
-                mouseEvent.consume();
             }
         });
     }
@@ -1405,7 +1388,6 @@ public class GameSceneController {
                         @Override
                         public void handle(MouseEvent mouseEvent) {
                             createTooltip(node,"CLICK TO SELECT THIS SLOT");
-                            mouseEvent.consume();
                         }
                     });
                     node.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -1420,7 +1402,6 @@ public class GameSceneController {
                             if(node.equals(firstSlot)) client.sendMessageToServer(new SelectDevelopmentCardSlotResponse(0));
                             if(node.equals(secondSlot)) client.sendMessageToServer(new SelectDevelopmentCardSlotResponse(1));
                             if(node.equals(thirdSlot)) client.sendMessageToServer(new SelectDevelopmentCardSlotResponse(2));
-                            mouseEvent.consume();
                         }
                     });
                 }
@@ -1465,6 +1446,7 @@ public class GameSceneController {
                     nodeAndStorageType.put(warehouse_first_depot,ResourceStorageType.WAREHOUSE);
                     nodeAndStorageType.put(warehouse_second_depot,ResourceStorageType.WAREHOUSE);
                     nodeAndStorageType.put(warehouse_third_depot,ResourceStorageType.WAREHOUSE);
+                    nodeAndStorageType.put(warehouse,ResourceStorageType.WAREHOUSE);
                 }
                 if(isInStrongbox){
                     nodeAndStorageType.put(((Pane)strongbox.getParent()).getChildren().get(1),ResourceStorageType.STRONGBOX);
@@ -1475,7 +1457,6 @@ public class GameSceneController {
                         @Override
                         public void handle(MouseEvent mouseEvent) {
                             createTooltip(node,"CLICK TO CHOOSE THIS STORAGE");
-                            mouseEvent.consume();
                         }
                     });
                     node.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -1488,7 +1469,6 @@ public class GameSceneController {
                             popupVbox.setManaged(false);
                             popupVbox.setVisible(false);
                             client.sendMessageToServer(new SelectStorageResponse(resource, nodeAndStorageType.get(node)));
-                            mouseEvent.consume();
                         }
                     });
                 }
@@ -1526,7 +1506,6 @@ public class GameSceneController {
                         @Override
                         public void handle(MouseEvent mouseEvent) {
                             createTooltip(node,"CLICK TO SELECT THIS PRODUCTION");
-                            mouseEvent.consume();
                         }
                     });
                     node.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -1536,13 +1515,11 @@ public class GameSceneController {
                                 toRemoveGlowNode.setOnMouseEntered(new EventHandler<MouseEvent>() {
                                     @Override
                                     public void handle(MouseEvent mouseEvent) {
-                                        mouseEvent.consume();
                                     }
                                 });
                                 toRemoveGlowNode.setOnMouseClicked(new EventHandler<MouseEvent>() {
                                     @Override
                                     public void handle(MouseEvent mouseEvent) {
-                                        mouseEvent.consume();
                                     }
                                 });
                             }
@@ -1569,8 +1546,6 @@ public class GameSceneController {
                                 }
                                 UtilityProduction.removeProduction(nodeIntMap.get(node));
                             }
-
-                            mouseEvent.consume();
                         }
                     });
                 }
@@ -1609,14 +1584,12 @@ public class GameSceneController {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
                         glowNode(node,Color.CYAN);
-                        mouseEvent.consume();
                     }
                 });
                 node.setOnMouseExited(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
                         node.setEffect(null);
-                        mouseEvent.consume();
                     }
                 });
                 node.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -1628,7 +1601,6 @@ public class GameSceneController {
                         if(chosenResources.size()==3){
                             UtilityProduction.manageBasicProductionPower(chosenResources);
                             resourcesHBox.getChildren().clear();
-                            mouseEvent.consume();
                         }
                         if(chosenResources.size()==2){
                             for(Node node : resourcesHBox.getChildren()){
@@ -1636,7 +1608,6 @@ public class GameSceneController {
                                 node.setManaged(true);
                             }
                             ((Label) productionVbox.getChildren().get(0)).setText("Select the basic production output");
-                            mouseEvent.consume();
                         }
                         else{
                             ((Label) productionVbox.getChildren().get(0)).setText("Select the second basic production input.");
@@ -1644,7 +1615,6 @@ public class GameSceneController {
                                 node.setVisible(false);
                                 node.setManaged(false);
                             }
-                            mouseEvent.consume();
                         }
                     }
                 });
@@ -1700,7 +1670,6 @@ public class GameSceneController {
             }
         });
     }
-
 
 
     /*   Use this to avoid Thread exception

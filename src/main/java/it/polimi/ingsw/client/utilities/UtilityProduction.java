@@ -69,7 +69,6 @@ public class UtilityProduction {
             availableProductionIDs.add(BASIC_PRODUCTION_POWER);
         }
         if(view instanceof CLI) ((CLI) view).displayCurrentSelectedProductions(selectedProductions.keySet(),selectedProductions.get(0));
-        //TODO nella gui mettere che se availableProductionIDs.size()==0 deve chiamare la nextActionProduction della view
         view.displayProductionCardYouCanSelect(availableProductionIDs, availableProductionPowers.get(0));
         view.displayChooseProduction(availableProductionIDs,availableResources,true);
     }
