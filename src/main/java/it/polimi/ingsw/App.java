@@ -1,5 +1,6 @@
 package it.polimi.ingsw;
 
+import it.polimi.ingsw.client.cli.graphical.SubscriptNumbers;
 import it.polimi.ingsw.exceptions.DifferentEffectTypeException;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 
@@ -24,6 +25,9 @@ public class App
             System.out.println(stack.get(i));
         }
         System.out.println(stack);
+
+        System.out.print(SubscriptNumbers.values());
+
     }
 }
 

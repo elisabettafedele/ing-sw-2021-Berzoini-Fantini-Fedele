@@ -38,7 +38,6 @@ public class ActivateProductionAction implements Action{
         this.player = turnController.getCurrentPlayer();
         this.clientHandler = turnController.getController().getConnectionByNickname(player.getNickname());
         this.personalBoard = this.player.getPersonalBoard();
-        //TODO: manage this exceptions
         this.availableResources = this.personalBoard.countResources();
         this.availableProductionLeaderCards = this.personalBoard.availableLeaderCards();
         this.availableDevelopmentCards = this.personalBoard.availableDevelopmentCards();
@@ -50,7 +49,6 @@ public class ActivateProductionAction implements Action{
         this.player = currentPlayer;
         this.clientHandler = turnController.getController().getConnectionByNickname(currentPlayer.getNickname());
         this.personalBoard = this.player.getPersonalBoard();
-        //TODO: manage this exceptions
         this.availableResources = this.personalBoard.countResources();
         this.availableProductionLeaderCards = this.personalBoard.availableLeaderCards();
         this.availableDevelopmentCards = this.personalBoard.availableDevelopmentCards();

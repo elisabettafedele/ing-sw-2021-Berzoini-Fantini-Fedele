@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.utilities;
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.View;
 import it.polimi.ingsw.client.cli.CLI;
+import it.polimi.ingsw.client.gui.GUI;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.ValueNotPresentException;
@@ -14,6 +15,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Common class of {@link CLI} and {@link GUI} to manage the activate production action
+ * client side
+ */
 public class UtilityProduction {
     private static final int BASIC_PRODUCTION_POWER = 0;
     private static Map<Integer, List<Value>> selectedProductions;
@@ -23,6 +28,13 @@ public class UtilityProduction {
     private static Map<Integer, List<Value>> availableProductionPowers;
     private static Map<Resource, Integer> availableResources;
 
+    /**
+     * Resets the initial information to perform the action
+     * @param view the {@link CLI} or {@link GUI} instance
+     * @param client
+     * @param availableProductionPowers
+     * @param availableResources
+     */
     public static void initialize(View view, Client client, Map<Integer, List<Value>> availableProductionPowers, Map<Resource, Integer> availableResources ){
         selectedProductions = new HashMap<>();
         actualChosenProduction = null;
@@ -33,6 +45,12 @@ public class UtilityProduction {
         displayAvailableProductions();
 
     }
+
+    /**
+     * Among all the initial availableProduction powers checks if the player has enough resources to activate
+     * a production. This method is necessary because the player can activate more than one production power during
+     * his turn.
+     */
     public static void displayAvailableProductions(){
         view.displayStandardView();
         List <Integer> availableProductionIDs = new ArrayList<>();
@@ -56,6 +74,12 @@ public class UtilityProduction {
         view.displayChooseProduction(availableProductionIDs,availableResources,true);
     }
 
+    /**
+     * Given a production cost checks if tha player has enough resources to activate it
+     * @param activationCost the cost of the production power to analyze
+     * @param availableResources the resources that the player has not spent yet
+     * @return True if the player can activate the production
+     */
     private static boolean hasResourcesForThisProduction(Map<Resource, Integer> activationCost, Map<Resource, Integer> availableResources){
         boolean executable = true;
         for (Map.Entry<Resource, Integer> entry : activationCost.entrySet()){
@@ -69,12 +93,19 @@ public class UtilityProduction {
     }
 
 
-
+    /**
+     * Add the production power selected to a list
+     * @param selection the ID of the production power selcted
+     */
     public static void addProductionPower(Integer selection) {
         actualChosenProduction = availableProductionPowers.get(selection);
         addProdPowerToList(selection);
     }
 
+    /**
+     * Method to manage the construction of the basic production power
+     * @param chosenResources the resource chosen by the player to be used for input and output
+     */
     public static void manageBasicProductionPower(List<Resource> chosenResources) {
         List<Value> production= new ArrayList<>();
         Map<Resource, Integer> productionCost = new HashMap<>();
@@ -98,12 +129,22 @@ public class UtilityProduction {
         addProdPowerToList(0);
     }
 
+    /**
+     * Add the production power selected to a list
+     * @param selection the ID of the production power selcted
+     */
     public static void addProdPowerToList(int selection){
         selectedProductions.put(selection, actualChosenProduction);
         availableProductionPowers.remove(selection);
         subtractResources(actualChosenProduction.get(0), availableResources);
     }
 
+    /**
+     * After choosing a production power the activation cost is removed from the initial availableResources in order
+     * to check correctly the available resources for other production powers selections
+     * @param activationCost
+     * @param availableResources
+     */
     private static void subtractResources(Value activationCost, Map<Resource, Integer> availableResources){
         Map<Resource, Integer> resourceToBeRemoved = null;
         try {
@@ -118,6 +159,9 @@ public class UtilityProduction {
         view.chooseNextProductionAction();
     }
 
+    /**
+     * Method to notify the server when the player has completed the selection of the production powers
+     */
     public static void confirmChoices() {
         List<Integer> productionPowersSelected= new ArrayList<>(selectedProductions.keySet());
         if(productionPowersSelected.contains(BASIC_PRODUCTION_POWER)){
@@ -127,11 +171,21 @@ public class UtilityProduction {
         }
     }
 
+    /**
+     * Method to ask the player which of his production powers want to remove
+     */
     public static void chooseProductionToRemove() {
         if(view instanceof CLI) ((CLI) view).displayCurrentSelectedProductions(selectedProductions.keySet(),selectedProductions.get(0));
         view.displayChooseProduction(new ArrayList<>(selectedProductions.keySet()), availableResources,false);
     }
 
+    /**
+     * Method to manage the removal of a chosen production. If the removed production is the basic power, the basic
+     * power it's rebuilt.
+     * Then the production is removed from the list of the chosen ones and his activation cost is re-added to the
+     * availableResources map
+     * @param selection
+     */
     public static void removeProduction(Integer selection) {
         if(selection == BASIC_PRODUCTION_POWER){
             Map<Resource, Integer> cost = new HashMap<>();
