@@ -113,6 +113,7 @@ public class CLI implements View {
     @Override
     public void displayResults(Map<String, Integer> results, boolean readyForAnotherGame) {
         int i = 1;
+        List<String> winners= new ArrayList<>();
         if (results.size() == 1){
             int points = -1;
             for (String name : results.keySet())
@@ -120,22 +121,35 @@ public class CLI implements View {
             displayResults(points);
         }
         else {
+            int max =0;
             for (String name : results.keySet()) {
                 System.out.println((results.keySet().size() > 1 ? (i++ + ". ") : "") + name + ": " + results.get(name) + " victory points");
+                if(max<results.get(name)){
+                    max=results.get(name);
+                    winners.clear();
+                    winners.add(name);
+                }
+                if(max==results.get(name)){
+                    winners.add(name);
+                }
+            }
+            System.out.print(winners.size()>1? "WINNERS: ":"WINNER : ");
+            for(String winner:winners){
+                System.out.print( "!! "+ winner + " !!");
             }
         }
         if (!readyForAnotherGame)
             client.closeSocket();
         else
-            System.out.println("You can now start another game!");
+            System.out.println("\nYou can now start another game!");
     }
 
     @Override
     public void displayResults(int victoryPoints) {
         if (victoryPoints == -1)
-            System.out.println("You lost against Lorenzo");
+            System.out.println("You lost against Lorenzo il Magnifico!");
         else
-            System.out.println("You got " + victoryPoints + " victory points!");
+            System.out.println("You won with " + victoryPoints + " victory points!! \nCongratulations");
         client.closeSocket();
     }
 

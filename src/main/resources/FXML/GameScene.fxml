@@ -470,6 +470,15 @@
                   </Button>
                </children>
             </VBox>
+            <VBox fx:id="endVbox" alignment="CENTER" layoutX="37.0" layoutY="250.0" prefHeight="189.0" prefWidth="278.0" styleClass="popup-box" stylesheets="@../css/style.css">
+               <children>
+                  <Label alignment="CENTER" prefHeight="224.0" prefWidth="278.0">
+                     <VBox.margin>
+                        <Insets top="10.0" />
+                     </VBox.margin>
+                  </Label>
+               </children>
+            </VBox>
          </children>
       </AnchorPane>
       <AnchorPane fx:id="leftPane" prefHeight="637.0" prefWidth="408.0">

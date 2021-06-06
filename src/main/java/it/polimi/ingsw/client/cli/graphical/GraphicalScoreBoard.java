@@ -12,11 +12,12 @@ public class GraphicalScoreBoard extends GraphicalElement{
         reset();
     }
 
-    public void drawScoreBoard(){
+    public int drawScoreBoard(){
         List<String> nicknames = MatchData.getInstance().getAllNicknames();
         int maxLength = getMaxLength(nicknames);
         drawTable(maxLength, nicknames.size());
         fillNamesAndScores(nicknames, maxLength);
+        return maxLength;
     }
 
     private void fillNamesAndScores(List<String> nicknames, int max_length) {

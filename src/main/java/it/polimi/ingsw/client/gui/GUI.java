@@ -164,7 +164,7 @@ public class GUI extends Application implements View {
 
     @Override
     public void displayCurrentSelectedProductions(Set<Integer> productionIDs, List<Value> basicProduction) {
-
+            //empty
     }
 
     @Override
@@ -253,12 +253,12 @@ public class GUI extends Application implements View {
 
     @Override
     public void displayResults(Map<String, Integer> results, boolean readyForAnotherGame) {
-
+        gameSceneController.displayResults(results,readyForAnotherGame);
     }
 
     @Override
     public void displayResults(int victoryPoints) {
-
+        gameSceneController.displayResults(victoryPoints);
     }
 
     @Override
