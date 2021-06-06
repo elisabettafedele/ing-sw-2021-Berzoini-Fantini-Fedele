@@ -11,6 +11,7 @@ import it.polimi.ingsw.messages.toClient.matchData.LoadDevelopmentCardGrid;
 import it.polimi.ingsw.messages.toClient.matchData.UpdateMarkerPosition;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.DevelopmentCard;
+import it.polimi.ingsw.model.game.FaithTrack;
 import it.polimi.ingsw.model.persistency.GameHistory;
 import it.polimi.ingsw.model.persistency.PersistentControllerPlayPhaseSingle;
 import it.polimi.ingsw.model.persistency.PersistentGame;
@@ -113,6 +114,8 @@ public class SinglePlayerPlayPhase extends PlayPhase {
 
     public void moveBlackCross(int step){
         blackCrossPosition = blackCrossPosition + step;
+        if (blackCrossPosition > getController().getGame().getFaithTrack().getLength())
+            blackCrossPosition = getController().getGame().getFaithTrack().getLength();
         getTurnController().checkFaithTrack();
         //TODO, manage eventual Lorenzo's victory.
     }
@@ -136,7 +139,7 @@ public class SinglePlayerPlayPhase extends PlayPhase {
 
     @Override
     public void handleEndTriggered() {
-        getPlayer().setWinner(!getController().getGame().getDevelopmentCardGrid().checkEmptyColumn() && blackCrossPosition != getController().getGame().getFaithTrack().getLength());
+        getPlayer().setWinner(!getController().getGame().getDevelopmentCardGrid().checkEmptyColumn() && blackCrossPosition < getController().getGame().getFaithTrack().getLength());
         getController().endMatch();
     }
 

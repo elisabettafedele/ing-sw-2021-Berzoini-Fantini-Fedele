@@ -9,7 +9,6 @@ import it.polimi.ingsw.messages.toServer.NotifyEndRemoveResources;
 import it.polimi.ingsw.messages.toClient.game.SelectStorageRequest;
 import it.polimi.ingsw.messages.toClient.matchData.NotifyTakenPopesFavorTile;
 import it.polimi.ingsw.messages.toClient.matchData.UpdateDepotsStatus;
-import it.polimi.ingsw.messages.toServer.game.SelectStorageResponse;
 import it.polimi.ingsw.model.persistency.PersistentGame;
 import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.controller.actions.*;
@@ -192,10 +191,13 @@ public class TurnController {
         for(Player p: controller.getPlayers()){
             if(p.getPersonalBoard().getMarkerPosition()>=controller.getGame().getFaithTrack().getLength()){
                 setEndTrigger(true);
+                if (isInterruptible)
+                    ((SinglePlayerPlayPhase) controller.getGamePhase()).getPlayer().setWinner(true);
             }
         }
         if(isInterruptible&&((SinglePlayerPlayPhase)controller.getGamePhase()).getBlackCrossPosition()>=controller.getGame().getFaithTrack().getLength()){
             setEndTrigger(true);
+            ((SinglePlayerPlayPhase) controller.getGamePhase()).getPlayer().setWinner(false);
         }
 
     }
