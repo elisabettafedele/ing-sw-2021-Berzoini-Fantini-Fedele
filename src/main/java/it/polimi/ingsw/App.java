@@ -1,10 +1,6 @@
 package it.polimi.ingsw;
 
-import it.polimi.ingsw.client.cli.graphical.SubscriptNumbers;
-import it.polimi.ingsw.exceptions.DifferentEffectTypeException;
-import it.polimi.ingsw.exceptions.InvalidArgumentException;
-
-import java.io.UnsupportedEncodingException;
+import java.io.IOException;
 import java.util.*;
 
 
@@ -15,7 +11,7 @@ import java.util.*;
 public class App 
 {
 
-    public static void main(String[] args ) throws InvalidArgumentException, DifferentEffectTypeException, UnsupportedEncodingException {
+    public static void main(String[] args ){
         Stack<Integer> stack = new Stack<>();
 
         stack.push(5);
@@ -26,8 +22,18 @@ public class App
         }
         System.out.println(stack);
 
-        System.out.print(SubscriptNumbers.values());
+        clrscr();
 
+    }
+
+    public static void clrscr(){
+        //Clears Screen in java
+        try {
+            if (System.getProperty("os.name").contains("Windows"))
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            else
+                Runtime.getRuntime().exec("clear");
+        } catch (IOException | InterruptedException ex) {}
     }
 }
 
