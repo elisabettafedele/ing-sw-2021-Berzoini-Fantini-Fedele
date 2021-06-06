@@ -219,45 +219,42 @@ public class TurnController {
      */
     private void handleRemoveResources(){
         //If I do not have any other resource to remove
-        boolean end = true;
-        for (Resource resource: resourcesToRemove.keySet())
-            if (resourcesToRemove.get(resource) > 0)
-                end = false;
-        //If I do not have any other resource to remove
-        if (end){
+        if (isRemoveResourcesFinished()){
             getController().getConnectionByNickname(currentPlayer.getNickname()).getCurrentAction().handleMessage(new NotifyEndRemoveResources());
             resourcesToRemove = new HashMap<>();
             setStandardActionDoneToTrue();
             setNextAction();
             return;
         }
-        for (Resource resource: resourcesToRemove.keySet()){
-            if (resourcesToRemove.get(resource) > 0) {
-                //Automatic remove
-                if (currentPlayer.getPersonalBoard().countResources().get(resource).equals(resourcesToRemove.get(resource))) {
-                    currentPlayer.getPersonalBoard().removeAll(resource);
-                    controller.sendMessageToAll(new UpdateDepotsStatus(currentPlayer.getNickname(), currentPlayer.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), currentPlayer.getPersonalBoard().getStrongboxStatus(), currentPlayer.getPersonalBoard().getLeaderStatus()));
-                    resourcesToRemove.replace(resource, 0);
-                } else {
-                    boolean isInWarehouse = currentPlayer.getPersonalBoard().getWarehouse().getResourceTypes().contains(resource);
-                    boolean isInStrongbox = currentPlayer.getPersonalBoard().getStrongboxStatus()[resource.getValue()] > 0;
-                    boolean isInLeaderDepot = currentPlayer.getPersonalBoard().isResourceAvailableAndRemove(ResourceStorageType.LEADER_DEPOT, resource, 1, false);
-                    if (isInLeaderDepot ^ isInStrongbox ^ isInWarehouse) {
-                        if (isInWarehouse)
-                            currentPlayer.getPersonalBoard().isResourceAvailableAndRemove(ResourceStorageType.WAREHOUSE, resource, 1, true);
-                        else if (isInStrongbox)
-                            currentPlayer.getPersonalBoard().isResourceAvailableAndRemove(ResourceStorageType.STRONGBOX, resource, 1, true);
-                        else
-                            currentPlayer.getPersonalBoard().isResourceAvailableAndRemove(ResourceStorageType.LEADER_DEPOT, resource, 1, true);
+        while (!isRemoveResourcesFinished()){
+            for (Resource resource: resourcesToRemove.keySet()){
+                if (resourcesToRemove.get(resource) > 0) {
+                    //Automatic remove
+                    if (currentPlayer.getPersonalBoard().countResources().get(resource).equals(resourcesToRemove.get(resource))) {
+                        currentPlayer.getPersonalBoard().removeAll(resource);
                         controller.sendMessageToAll(new UpdateDepotsStatus(currentPlayer.getNickname(), currentPlayer.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), currentPlayer.getPersonalBoard().getStrongboxStatus(), currentPlayer.getPersonalBoard().getLeaderStatus()));
+                        resourcesToRemove.replace(resource, 0);
                     } else {
-                        clientHandler.sendMessageToClient(new SelectStorageRequest(resource, isInWarehouse, isInStrongbox, isInLeaderDepot));
-                        return;
+                        boolean isInWarehouse = currentPlayer.getPersonalBoard().getWarehouse().getResourceTypes().contains(resource);
+                        boolean isInStrongbox = currentPlayer.getPersonalBoard().getStrongboxStatus()[resource.getValue()] > 0;
+                        boolean isInLeaderDepot = currentPlayer.getPersonalBoard().isResourceAvailableAndRemove(ResourceStorageType.LEADER_DEPOT, resource, 1, false);
+                        if (isInLeaderDepot ^ isInStrongbox ^ isInWarehouse) {
+                            if (isInWarehouse)
+                                currentPlayer.getPersonalBoard().isResourceAvailableAndRemove(ResourceStorageType.WAREHOUSE, resource, resourcesToRemove.get(resource), true);
+                            else if (isInStrongbox)
+                                currentPlayer.getPersonalBoard().isResourceAvailableAndRemove(ResourceStorageType.STRONGBOX, resource, resourcesToRemove.get(resource), true);
+                            else
+                                currentPlayer.getPersonalBoard().isResourceAvailableAndRemove(ResourceStorageType.LEADER_DEPOT, resource, resourcesToRemove.get(resource), true);
+                            controller.sendMessageToAll(new UpdateDepotsStatus(currentPlayer.getNickname(), currentPlayer.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), currentPlayer.getPersonalBoard().getStrongboxStatus(), currentPlayer.getPersonalBoard().getLeaderStatus()));
+                            resourcesToRemove.replace(resource, 0);
+                        } else {
+                            clientHandler.sendMessageToClient(new SelectStorageRequest(resource, isInWarehouse, isInStrongbox, isInLeaderDepot));
+                            return;
+                        }
                     }
                 }
             }
         }
-
         if (standardActionDone)
             return;
         resourcesToRemove = new HashMap<>();
@@ -265,6 +262,20 @@ public class TurnController {
         setStandardActionDoneToTrue();
         //clientHandler.sendMessageToClient(new DisplayStandardView());
         setNextAction();
+    }
+
+    /**
+     * Method to check whether all the resources to remove have been removed
+     * @return true only if there are no more resources to remove
+     */
+    private boolean isRemoveResourcesFinished(){
+        for (Resource resource: resourcesToRemove.keySet()) {
+            if (resourcesToRemove.get(resource) > 0)
+                return false;
+        }
+        return true;
+
+
     }
 
     /**

@@ -65,8 +65,8 @@ public class SinglePlayerPlayPhase extends PlayPhase {
         getController().sendMessageToAll(new TurnMessage(LORENZO, true));
         SoloActionToken token = tokens.remove(); //removing the first of the queue;
         tokens.add(token); //saving the used token at the end of the queue;
-        token.useActionToken(this);
         getController().sendMessageToAll(new NotifyLorenzoAction(token.getId()));
+        token.useActionToken(this);
         lastPlayer = LORENZO;
         saveGame();
         getController().sendMessageToAll(new TurnMessage(getPlayer().getNickname(), true));
@@ -153,9 +153,9 @@ public class SinglePlayerPlayPhase extends PlayPhase {
         }
         setTurnController(new TurnController(getController(), getController().getPlayers().get(0)));
         if (lastPlayer.equals(LORENZO))
-            useActionToken();
-        else
             getTurnController().start(getController().getPlayers().get(0));
+        else
+            useActionToken();
     }
 
     public void setLastPlayer(String lastPlayer) {

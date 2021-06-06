@@ -3,13 +3,11 @@ package it.polimi.ingsw.client.cli.specificCLI;
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.cli.CLI;
 import it.polimi.ingsw.client.cli.graphical.Colour;
-import it.polimi.ingsw.client.cli.graphical.Screen;
 import it.polimi.ingsw.client.utilities.InputParser;
 import it.polimi.ingsw.enumerations.Marble;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.messages.toServer.game.ChooseWhiteMarbleConversionResponse;
 import it.polimi.ingsw.messages.toServer.game.MarbleInsertionPositionResponse;
-
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,9 +16,10 @@ import java.util.stream.Collectors;
 public class TakeResourcesFromMarketCLI {
 
     public static void displayMarbleInsertionPositionRequest(Client client) {
-        // Screen.getInstance().displayStandardView();
         System.out.println("Insert a marble insertion position (from 1 to 7) to insert the marble in the market trace: ");
-        client.sendMessageToServer(new MarbleInsertionPositionResponse(InputParser.getInt("Invalid position: the position must be an integer from 1 to 7!", CLI.conditionOnIntegerRange(1, 7))));
+        Integer selection = InputParser.getInt("Invalid position: the position must be an integer from 1 to 7!", CLI.conditionOnIntegerRange(1, 7));
+        if (selection != null)
+            client.sendMessageToServer(new MarbleInsertionPositionResponse(selection));
     }
 
     public static void displayChooseWhiteMarbleConversionRequest(Client client, List<Resource> resources, int numberOfMarbles) {
