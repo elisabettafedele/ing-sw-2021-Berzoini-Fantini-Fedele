@@ -19,7 +19,7 @@ public abstract class GraphicalElement {
     void display(){
         for(int i = 0; i < height; i++){
             for(int j = 0; j < width; j++){
-                System.out.print(backGroundColours[i][j].getCode() + colours[i][j].getCode() + symbols[i][j]); //+ Colour.ANSI_RESET
+                System.out.print(backGroundColours[i][j].getCode() + colours[i][j].getCode() + symbols[i][j] + Colour.ANSI_RESET);
             }
             System.out.print("\n");
         }
