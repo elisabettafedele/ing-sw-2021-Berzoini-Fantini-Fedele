@@ -102,6 +102,15 @@ public class Screen extends GraphicalElement{
         gs.drawStrongbox();
         drawElement(gs.getHeight(), gs.getWidth(), gs.getColours(), gs.getSymbols(), gs.getBackGroundColours(),
                 strongbox_x_anchor, strongbox_y_anchor);
+        String label = "Strongbox";
+        drawVerticalLabel(strongbox_x_anchor, strongbox_y_anchor - 2, label);
+    }
+
+    private void drawVerticalLabel(int x, int y, String label) {
+        for(int i = 0; i < label.length(); i++){
+            symbols[x+ i][y] = label.charAt(i);
+            colours[x+ i][y] = Colour.ANSI_BRIGHT_BLUE;
+        }
     }
 
     private void drawWarehouse() {
@@ -110,13 +119,17 @@ public class Screen extends GraphicalElement{
         drawElement(gw.getHeight(), gw.getWidth(), gw.getColours(), gw.getSymbols(), gw.getBackGroundColours(),
                 warehouse_x_anchor, warehouse_y_anchor);
         drawDepotsNumbers(warehouse_x_anchor + 1, warehouse_y_anchor + gw.getWidth() + 1);
+        String label = "Warehouse";
+        drawHorizontalLabel(warehouse_x_anchor, warehouse_y_anchor + gw.getWidth() + 3, label);
     }
 
     private void drawScoreBoard() {
         GraphicalScoreBoard gsb = new GraphicalScoreBoard();
-        gsb.drawScoreBoard();
+        int maxLength = gsb.drawScoreBoard();
         drawElement(gsb.getHeight(), gsb.getWidth(), gsb.getColours(), gsb.getSymbols(), gsb.getBackGroundColours(),
                 scoreBoard_x_anchor, scoreBoard_y_anchor);
+        String label = "Scoreboard";
+        drawHorizontalLabel(scoreBoard_x_anchor - 1, scoreBoard_y_anchor + ((maxLength + 9)/2 - 5), label);
     }
 
     private void drawMarket() {
@@ -124,6 +137,8 @@ public class Screen extends GraphicalElement{
         gmt.drawMarketTray();
         drawElement(gmt.getHeight(), gmt.getWidth(), gmt.getColours(), gmt.getSymbols(), gmt.getBackGroundColours(),
                 market_x_anchor, market_y_anchor);
+        String label = "Market";
+        drawHorizontalLabel(market_x_anchor - 1, market_y_anchor + 4, label);
     }
 
     private void drawDevelopmentCardSlots() {
@@ -147,12 +162,13 @@ public class Screen extends GraphicalElement{
                 }
             }
         }
-        drawLabel(devCardSlots_x_anchor + GraphicalDevelopmentCardGrid.cardHeight, devCardSlots_y_anchor + 10, "Development Cards Slots");
+        drawHorizontalLabel(devCardSlots_x_anchor + GraphicalDevelopmentCardGrid.cardHeight, devCardSlots_y_anchor + 10, "Development Cards Slots");
     }
 
-    private void drawLabel(int x, int y, String label) {
+    private void drawHorizontalLabel(int x, int y, String label) {
         for(int i = 0; i < label.length(); i++){
             symbols[x][y + i] = label.charAt(i);
+            colours[x][y + i] = Colour.ANSI_BRIGHT_BLUE;
         }
     }
 
@@ -170,6 +186,8 @@ public class Screen extends GraphicalElement{
             drawElement(GraphicalDevelopmentCardGrid.cardHeight, GraphicalDevelopmentCardGrid.cardWidth, glc.getColours(), glc.getSymbols(),
                     glc.getBackGroundColours(), this.ownedLeader_x_anchor, this.ownedLeader_y_anchor + i*yStep);
         }
+        String label = "Your leader cards";
+        drawHorizontalLabel(ownedLeader_x_anchor + GraphicalDevelopmentCardGrid.cardHeight, ownedLeader_y_anchor + 6, label);
 
     }
 
@@ -187,6 +205,8 @@ public class Screen extends GraphicalElement{
     private void drawDevelopmentCardGrid(){
         graphicalDevelopmentCardGrid.drawDevelopmentCardGrid(MatchData.getInstance().getDevelopmentCardGrid());
         drawCompositeElement(graphicalDevelopmentCardGrid, devCardGrid_x_anchor, devCardGrid_y_anchor);
+        String label = "Development Card Grid";
+        drawHorizontalLabel(devCardGrid_x_anchor + GraphicalDevelopmentCardGrid.cardHeight*3, 19, label);
     }
 
     private void drawFaithTrack() {

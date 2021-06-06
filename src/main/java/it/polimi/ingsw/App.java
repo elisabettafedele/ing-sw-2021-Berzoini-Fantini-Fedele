@@ -23,7 +23,13 @@ public class App
         System.out.println(stack);
 
         clrscr();
-
+        String str = "\uD83C\uDD73\uD83C\uDD74\uD83C\uDD85\uD83C\uDD74\uD83C\uDD7B\uD83C\uDD7E\uD83C\uDD7F\uD83C\uDD7C\uD83C\uDD74\uD83C\uDD7D\uD83C\uDD83 \uD83C\uDD72\uD83C\uDD70\uD83C\uDD81\uD83C\uDD73 \uD83C\uDD76\uD83C\uDD81\uD83C\uDD78\uD83C\uDD73";
+        char[] strr = new char[str.length()];
+        //System.out.println("\uD83C\uDD73\uD83C\uDD74\uD83C\uDD85\uD83C\uDD74\uD83C\uDD7B\uD83C\uDD7E\uD83C\uDD7F\uD83C\uDD7C\uD83C\uDD74\uD83C\uDD7D\uD83C\uDD83 \uD83C\uDD72\uD83C\uDD70\uD83C\uDD81\uD83C\uDD73 \uD83C\uDD76\uD83C\uDD81\uD83C\uDD78\uD83C\uDD73");
+        for(int i = 0; i < str.length(); i++){
+            strr[i] = str.charAt(i);
+            System.out.print(strr[i]);
+        }
     }
 
     public static void clrscr(){
