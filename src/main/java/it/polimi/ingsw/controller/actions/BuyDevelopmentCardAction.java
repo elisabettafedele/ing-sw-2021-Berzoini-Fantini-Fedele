@@ -127,6 +127,7 @@ public class BuyDevelopmentCardAction implements Action{
                 }
             }
             clientHandler.sendMessageToClient(new SelectDevelopmentCardSlotRequest(currentPlayer.getPersonalBoard().cardInsertionIsLegal(developmentCardChosen,0),currentPlayer.getPersonalBoard().cardInsertionIsLegal(developmentCardChosen,1),currentPlayer.getPersonalBoard().cardInsertionIsLegal(developmentCardChosen,2)));
+            return;
         }
         if(message instanceof SelectDevelopmentCardSlotResponse){
             try {
@@ -143,6 +144,7 @@ public class BuyDevelopmentCardAction implements Action{
             } catch (InvalidArgumentException | InvalidSlotException e) {
                 e.printStackTrace();
             }
+            return;
         }
         if(message instanceof SelectStorageResponse){
             turnController.removeResource(((SelectStorageResponse) message).getResourceStorageType(), ((SelectStorageResponse) message).getResource());

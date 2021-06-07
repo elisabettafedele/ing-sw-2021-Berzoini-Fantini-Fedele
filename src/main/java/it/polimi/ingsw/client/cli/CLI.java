@@ -113,6 +113,7 @@ public class CLI implements View {
     @Override
     public void displayResults(Map<String, Integer> results, boolean readyForAnotherGame) {
         int i = 1;
+        List<String> winners= new ArrayList<>();
         if (results.size() == 1){
             int points = -1;
             for (String name : results.keySet())
@@ -120,22 +121,35 @@ public class CLI implements View {
             displayResults(points);
         }
         else {
+            int max =0;
             for (String name : results.keySet()) {
                 System.out.println((results.keySet().size() > 1 ? (i++ + ". ") : "") + name + ": " + results.get(name) + " victory points");
+                if(max<results.get(name)){
+                    max=results.get(name);
+                    winners.clear();
+                    winners.add(name);
+                }
+                if(max==results.get(name)){
+                    winners.add(name);
+                }
+            }
+            System.out.print(winners.size()>1? "WINNERS: ":"WINNER : ");
+            for(String winner:winners){
+                System.out.print( "!! "+ winner + " !!");
             }
         }
         if (!readyForAnotherGame)
             client.closeSocket();
         else
-            System.out.println("You can now start another game!");
+            System.out.println("\nYou can now start another game!");
     }
 
     @Override
     public void displayResults(int victoryPoints) {
         if (victoryPoints == -1)
-            System.out.println("You lost against Lorenzo");
+            System.out.println("You lost against Lorenzo il Magnifico!");
         else
-            System.out.println("You got " + victoryPoints + " victory points!");
+            System.out.println("You won with " + victoryPoints + " victory points!! \nCongratulations");
         client.closeSocket();
     }
 
@@ -162,7 +176,6 @@ public class CLI implements View {
             System.out.println(Colour.ANSI_BRIGHT_GREEN.getCode() + "Connection closed" + Colour.ANSI_RESET);
         if (inputObserverOutOfTurn != null && inputObserverOutOfTurn.isAlive())
             inputObserverOutOfTurn.interrupt();
-        return;
     }
 
 
@@ -318,6 +331,8 @@ public class CLI implements View {
             System.out.print("Insert the number of the production you want to eliminate: ");
         Integer selection = InputParser.getInt(
                 "Error: the ID provided is not available. Provide a valid ID: ", CLI.conditionOnInteger(availableProductionIDs));
+        if (selection == null)
+            return;
         if(addORremove){
             if(selection == 0){
                 createBasicProduction(availableResources);
@@ -357,6 +372,8 @@ public class CLI implements View {
                         "Error: the given number is not present in the list. Provide a valid number",
                         CLI.conditionOnIntegerRange(1, usableResources.size()));
                 //Adding the chosen resource to the chosenResources List
+                if (selection == null)
+                    return;
                 chosenResources.add(usableResources.get(selection - 1));
                 //If that Resource type had quantity equal to 1 it is removed from the usableResources list
                 if(availableResources.get(usableResources.get(selection - 1)) <= 1){
@@ -374,6 +391,8 @@ public class CLI implements View {
             Integer selection = InputParser.getInt(
                     "Error: the given number is not present in the list. Provide a valid number",
                     CLI.conditionOnIntegerRange(1, realValues.size()));
+            if (selection == null)
+                return;
             chosenResources.add(realValues.get(selection - 1));
             UtilityProduction.manageBasicProductionPower(chosenResources);
         }
@@ -393,6 +412,8 @@ public class CLI implements View {
                 "2. Remove an already chosen production\n3. Confirm your list of production(s)\n");
         Integer selection = InputParser.getInt(
                 "Error: the ID provided is not available. Provide a valid ID", CLI.conditionOnIntegerRange(1, 3));
+        if (selection == null)
+            return;
         if(selection == 3){
             UtilityProduction.confirmChoices();
         }else if(selection == 2){

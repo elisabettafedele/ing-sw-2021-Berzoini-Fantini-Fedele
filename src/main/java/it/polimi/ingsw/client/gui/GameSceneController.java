@@ -105,6 +105,8 @@ public class GameSceneController {
     @FXML
     private VBox productionVbox;
     @FXML
+    private VBox endVbox;
+    @FXML
     private HBox buttonsHbox;
     @FXML
     private Button reorganizeButton;
@@ -139,6 +141,8 @@ public class GameSceneController {
     // *********************************************************************  //
     @FXML
     public void initialize() {
+        endVbox.setManaged(false);
+        endVbox.setVisible(false);
         developmentCardGridIDsBackup= new ArrayList<>();
         currentPlayer=new String();
         matchData=MatchData.getInstance();
@@ -1670,6 +1674,74 @@ public class GameSceneController {
             }
         });
     }
+
+    // *********************************************************************  //
+    //                                END GAME                                //
+    // *********************************************************************  //
+
+    public void displayResults(Map<String, Integer> results, boolean readyForAnotherGame) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                leftPane.setDisable(true);
+                rightPane.setDisable(true);
+                endVbox.setManaged(true);
+                endVbox.setVisible(true);
+                List<String> winners= new ArrayList<>();
+                Label endMessage= ((Label)endVbox.getChildren().get(0));
+                int i = 1;
+                if (results.size() == 1){
+                    int points = -1;
+                    for (String name : results.keySet())
+                        points = results.get(name);
+                    displayResults(points);
+                }
+                else {
+                    endMessage.setText("");
+                    int max=0;
+                    for (String name : results.keySet()) {
+                        endMessage.setText(endMessage.getText() + (results.keySet().size() > 1 ? (i++ + ". ") : "") + name + ": " + results.get(name) + " victory points\n" );
+                        if(max<results.get(name)){
+                            max=results.get(name);
+                            winners.clear();
+                            winners.add(name);
+                        }
+                        if(max==results.get(name)){
+                            winners.add(name);
+                        }
+                    }
+                    endMessage.setText(endMessage.getText() + (winners.size()>1? "WINNERS: ":"WINNER : ") );
+                    for(String winner:winners){
+                        endMessage.setText(endMessage.getText() + "!! "+ winner + " !!");
+                    }
+                }
+                if (!readyForAnotherGame)
+                    client.closeSocket();
+                else
+                    endMessage.setText(endMessage.getText() + "\n\nYou can now start another game!\n");
+            }
+        });
+    }
+
+    public void displayResults(int  victoryPoints) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                leftPane.setDisable(true);
+                rightPane.setDisable(true);
+                endVbox.setManaged(true);
+                endVbox.setVisible(true);
+                Label endMessage= ((Label)endVbox.getChildren().get(0));
+                if (victoryPoints == -1)
+                    endMessage.setText("You lost against Lorenzo il Magnifico!");
+                else
+                    endMessage.setText("You won with " + victoryPoints + " victory points!! \nCongratulations");
+                client.closeSocket();
+            }
+        });
+
+    }
+
 
 
     /*   Use this to avoid Thread exception

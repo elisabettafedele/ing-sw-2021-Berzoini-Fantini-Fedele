@@ -63,16 +63,18 @@ public class OrganizeDepotsCLI {
         while (true) {
             System.out.println("You can take a " + resource.toString() + " from:");
             if (isInWarehouse) {
-                System.out.println("1-Warehouse");
+                System.out.println("1. WAREHOUSE");
             }
             if (isInStrongbox) {
-                System.out.println("2-Strongbox");
+                System.out.println("2. STRONGBOX");
             }
             if (isInLeaderDepot) {
-                System.out.println("3-Leader Depot");
+                System.out.println("3. LEADER DEPOT");
             }
             System.out.println("Where would you like to remove it? Select the relative number:");
-            int selection = InputParser.getInt("Error: write a number.");
+            Integer selection = InputParser.getInt("Error: write a number.");
+            if (selection == null)
+                return;
             if (selection == 1 && isInWarehouse) {
                 client.sendMessageToServer(new SelectStorageResponse(resource, ResourceStorageType.WAREHOUSE));
                 return;
