@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Enumerations to describes the used tokens during single player matches
+ * Enumerations to describes the tokens used by Lorenzo il Magnifico during single player matches
  */
 public enum TokenDescriptors {
     TOKEN_65(65, "Lorenzo has discarded two blue development cards\n"),

@@ -14,6 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+/**
+ * Class to collect all the graphical element together
+ */
 public class Screen extends GraphicalElement{
 
     private final int devCardGridXAnchor = 0;
@@ -66,6 +69,9 @@ public class Screen extends GraphicalElement{
         this.nickname = nickname;
     }
 
+    /**
+     * Display the view of a player with all the graphical elements
+     */
     public void displayStandardView(){
         nickname = MatchData.getInstance().getCurrentViewNickname();
         //clearConsole();
@@ -87,6 +93,9 @@ public class Screen extends GraphicalElement{
         } catch (IOException | InterruptedException ex) {}
     }
 
+    /**
+     * Draw all the graphical elements
+     */
     private void drawAllElements() {
         drawDevelopmentCardGrid();
         drawFaithTrack();
@@ -229,6 +238,11 @@ public class Screen extends GraphicalElement{
         }
     }
 
+    /**
+     * Method to display a list of card outside of the standard view
+     * @param IDs the IDs to be displayed
+     * @param basicProduction the eventual basic production if ID == 0 is present in IDs
+     */
     public void displayCardSelection(List<Integer> IDs, List<Value> basicProduction){
         reset();
         int x_anchor = height - GraphicalDevelopmentCardGrid.cardHeight;
@@ -335,6 +349,9 @@ public class Screen extends GraphicalElement{
         }
     }
 
+    /**
+     * Method to display the warehouse outside the standard view
+     */
     public void displayWarehouse(){
         reset();
         GraphicalWarehouse gw = new GraphicalWarehouse(this.nickname);
@@ -345,6 +362,11 @@ public class Screen extends GraphicalElement{
         //displayASection(height-gw.getHeight()-2, height, 0, width);
     }
 
+    /**
+     * Draws the label to indicate the three depots of the warehouse
+     * @param h x coordinate
+     * @param w y coordinate
+     */
     private void drawDepotsNumbers(int h, int w) {
         String[] depots = new String[]{"◄ First Depot", "◄ Second Depot", "◄ Third Depot"};
 

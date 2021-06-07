@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Class to draw the development card grid
+ */
 public class GraphicalDevelopmentCardGrid extends GraphicalElement{
 
     private static final int h_space = 1; //horizontal_space between cards
@@ -23,6 +26,10 @@ public class GraphicalDevelopmentCardGrid extends GraphicalElement{
         super(cardWidth*4 + h_space*3, cardHeight*3 + v_space*3);
     }
 
+    /**
+     * Sets the card IDs that are going to be displayed
+     * @param cardsToDisplay
+     */
     private void setCardsToDisplay(List<Integer> cardsToDisplay){
         this.cardsToDisplay = new ArrayList<>();
         for(Integer ID : cardsToDisplay){
@@ -30,6 +37,10 @@ public class GraphicalDevelopmentCardGrid extends GraphicalElement{
         }
     }
 
+    /**
+     * Fill the symbols, colour and background colours matrices
+     * @param cardsToDisplay the IDs of the cards to siplay
+     */
     public void drawDevelopmentCardGrid(List<Integer> cardsToDisplay){
         setCardsToDisplay(cardsToDisplay);
         reset();
@@ -45,6 +56,12 @@ public class GraphicalDevelopmentCardGrid extends GraphicalElement{
         }
     }
 
+    /**
+     * Draw a single card in a specific slot of the grid
+     * @param gdc the card to be drawn
+     * @param x_coord the x coordinate of the card slot
+     * @param y_coord the y coordinate of the card slot
+     */
     private void drawCard(GraphicalDevelopmentCard gdc, int x_coord, int y_coord) {
 
         char[][] cardSymbols = gdc.getSymbols();
@@ -60,6 +77,11 @@ public class GraphicalDevelopmentCardGrid extends GraphicalElement{
         }
     }
 
+    /**
+     * Returns the coordinates of a card analyzing its flag
+     * @param ldc the leader card to be analyzed
+     * @return a list of integer containing x and y coordinates
+     */
     private List<Integer> retrieveCoordinates(LightDevelopmentCard ldc) {
         int x = 0;
         int y = 0;

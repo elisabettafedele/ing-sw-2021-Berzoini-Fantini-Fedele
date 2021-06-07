@@ -5,6 +5,9 @@ import it.polimi.ingsw.enumerations.Resource;
 
 import java.util.List;
 
+/**
+ * This class represents the common features of development and leader card
+ */
 public abstract class GraphicalCard extends GraphicalElement{
 
     protected LightCard lightCard;
@@ -18,8 +21,14 @@ public abstract class GraphicalCard extends GraphicalElement{
         this.nickname = nickname;
     }
 
+    /**
+     * Method to draw all the elements of a card
+     */
     abstract void drawCard();
 
+    /**
+     * Draws the ID of the card in the right-upper corner
+     */
     protected void drawID() {
         int ID = lightCard.getID();
         if(ID>9){
@@ -30,6 +39,9 @@ public abstract class GraphicalCard extends GraphicalElement{
         colours[1][width - 3] = Colour.ANSI_BRIGHT_WHITE;
     }
 
+    /**
+     * Draws the victory points of the card
+     */
     protected void drawVictoryPoints() {
         int vp = lightCard.getVictoryPoints();
         int h_center = width /2;
@@ -47,6 +59,11 @@ public abstract class GraphicalCard extends GraphicalElement{
         colours[3][h_center+2] = Colour.ANSI_BRIGHT_YELLOW;
     }
 
+    /**
+     * Draw the costs of the production powers
+     * @param posix the height position of the cost
+     * @param cost the cost of the production power input/output
+     */
     protected void drawCost(int posix, List<String> cost) {
         int center = width /2;
         int begin = center - cost.size()/2;
@@ -70,6 +87,11 @@ public abstract class GraphicalCard extends GraphicalElement{
         }
     }
 
+    /**
+     * Convert a resource to a specific colour
+     * @param r the resource to be converted
+     * @return the colour corresponding to Resource r
+     */
     protected Colour getResourceColor(Resource r){
         Colour c;
         if (r == Resource.COIN)
@@ -86,6 +108,11 @@ public abstract class GraphicalCard extends GraphicalElement{
         return c;
     }
 
+    /**
+     * Return the right colour from the flag description
+     * @param flagColor the string containing the colour of the flag
+     * @return the colour corresponding to the Flag
+     */
     protected Colour getColor(String flagColor) {
         if(flagColor.equals("YELLOW")){
             return Colour.ANSI_BRIGHT_YELLOW;

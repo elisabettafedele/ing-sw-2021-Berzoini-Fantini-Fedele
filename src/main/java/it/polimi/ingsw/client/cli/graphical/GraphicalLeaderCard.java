@@ -10,6 +10,9 @@ import it.polimi.ingsw.enumerations.Resource;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Class to represents a leader card in the cli
+ */
 public class GraphicalLeaderCard extends GraphicalCard{
 
     public GraphicalLeaderCard(LightCard ldc, String nickname) {
@@ -34,6 +37,10 @@ public class GraphicalLeaderCard extends GraphicalCard{
         drawActive(active);
     }
 
+    /**
+     * Paints the ID green if the card is active, red if it's not
+     * @param active True if the card is active
+     */
     private void drawActive(boolean active) {
         if(active){
             colours[1][width - 4] = Colour.ANSI_BRIGHT_GREEN;
@@ -45,6 +52,9 @@ public class GraphicalLeaderCard extends GraphicalCard{
 
     }
 
+    /**
+     * Draw the effect fo the card
+     */
     private void drawEffect() {
         if(lightCard.getEffectType().equals("PRODUCTION")){
             drawProductionCost();
@@ -132,6 +142,9 @@ public class GraphicalLeaderCard extends GraphicalCard{
 
     }
 
+    /**
+     * Draw the activation cost of the leader card (flags or resources)
+     */
     private void drawActivationCost() {
         if(lightCard.getCostType().equals("RESOURCE"))
             drawCost(1, lightCard.getCost());
@@ -168,7 +181,9 @@ public class GraphicalLeaderCard extends GraphicalCard{
         super.display();
     }
 
-
+    /**
+     * Draw the back of the card (only the edges)
+     */
     public void drawHiddenCard() {
         boolean active;
         try {

@@ -4,6 +4,9 @@ import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.enumerations.Marble;
 import javafx.css.Match;
 
+/**
+ * Class to represents the market in the CLI
+ */
 public class GraphicalMarketTray extends GraphicalElement{
 
     public GraphicalMarketTray(){
@@ -21,6 +24,10 @@ public class GraphicalMarketTray extends GraphicalElement{
         colours[3][11] = Colour.getColourByMarble(slideMarble);
     }
 
+    /**
+     * Draws the possible position with relatives numbers where the slide marble
+     * can be inserted
+     */
     private void drawArrowsAndNumbers() {
         for(int i = 0; i < 3; i++){
             symbols[i][11] = '←';
@@ -36,6 +43,10 @@ public class GraphicalMarketTray extends GraphicalElement{
         }
     }
 
+    /**
+     * Fills the matrix of chars with the marbles
+     * @param marketTray
+     */
     private void drawMarket(Marble[][] marketTray) {
         for(int i = 0; i < marketTray.length; i++){
             for(int j = 0; j < marketTray[i].length; j++){

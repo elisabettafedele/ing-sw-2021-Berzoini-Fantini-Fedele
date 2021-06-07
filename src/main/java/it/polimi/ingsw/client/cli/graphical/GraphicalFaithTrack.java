@@ -4,6 +4,9 @@ import it.polimi.ingsw.client.LightClient;
 import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.client.PopesTileState;
 
+/**
+ * Class to represents the faithTrack
+ */
 public class GraphicalFaithTrack extends GraphicalElement{
 
     private final int squareHeight = 3;
@@ -47,7 +50,9 @@ public class GraphicalFaithTrack extends GraphicalElement{
     }
 
 
-
+    /**
+     * Draws the popes favor tiles with a specific colour based on the players positions
+     */
     private void drawPopesFavorTiles() {
         int xStep = height/3 - 1;
         int yStep = width /19;
@@ -63,6 +68,11 @@ public class GraphicalFaithTrack extends GraphicalElement{
         drawLowerTiles(x_begin, y_begin+yStep*11, xStep, yStep, c, 4);
     }
 
+    /**
+     * Return the colour of the popes Tile based on its state
+     * @param pt the state of the popes tile
+     * @return a colour, green for taken, red for not taken, yellow for not reached
+     */
     private Colour getColourByPopesTileState(PopesTileState pt) {
         if(pt == PopesTileState.NOT_REACHED)
             return Colour.ANSI_YELLOW;
@@ -134,6 +144,12 @@ public class GraphicalFaithTrack extends GraphicalElement{
 
     }
 
+    /**
+     * Draw a single square of the faith track
+     * @param number the number of the square
+     * @param x the x coord where the square has to be drawn
+     * @param y the y coord where the square has to be drawn
+     */
     private void drawSquare(int number, int x, int y) {
         int tens = number/10;
         int units = number%10;
@@ -167,6 +183,12 @@ public class GraphicalFaithTrack extends GraphicalElement{
 
     }
 
+    /**
+     * Paints the square based on the number of the square itself
+     * @param number the number of the square
+     * @param x the x coordinate of the square
+     * @param y the y coordinate of the square
+     */
     private void paintSquares(int number, int x, int y) {
         if(number == 8 || number == 15 || number == 24)
             drawPopeSpaces(x, y);
@@ -265,6 +287,11 @@ public class GraphicalFaithTrack extends GraphicalElement{
         }
     }
 
+    /**
+     * Returns the symbols to be used when drawing a specific square
+     * @param number the n-square of the faith track
+     * @return an array of four chars to be used in the corners of the square
+     */
     private char[] getCharsByNumber(int number) {
         char [] boxChars = new char[4];
         boxChars[0] = '┬';

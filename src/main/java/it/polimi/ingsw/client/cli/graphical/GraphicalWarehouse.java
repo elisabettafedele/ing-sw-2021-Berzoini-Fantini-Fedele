@@ -6,6 +6,9 @@ import it.polimi.ingsw.enumerations.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class to represent the warehouse
+ */
 public class GraphicalWarehouse extends GraphicalElement{
 
     private String nickname;
@@ -22,6 +25,9 @@ public class GraphicalWarehouse extends GraphicalElement{
         fillDepots();
     }
 
+    /**
+     * Fill each depots with the resources owned by the player
+     */
     private void fillDepots() {
         int[] y_coords = new int[]{3, 2, 4, 1, 3, 5};
         int coord = 0;
@@ -40,6 +46,9 @@ public class GraphicalWarehouse extends GraphicalElement{
         }
     }
 
+    /**
+     * Draws the three depots of the warehouse
+     */
     private void drawDepots() {
         drawBox(0, 2);
         drawBox(2, 1);
