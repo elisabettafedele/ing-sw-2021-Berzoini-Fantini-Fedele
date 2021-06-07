@@ -3,6 +3,9 @@ package it.polimi.ingsw.client.cli.graphical;
 import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.enumerations.Resource;
 
+/**
+ * Class to represents the strongbox
+ */
 public class GraphicalStrongbox extends GraphicalElement{
 
     private String nickname;
@@ -19,6 +22,9 @@ public class GraphicalStrongbox extends GraphicalElement{
         drawResources();
     }
 
+    /**
+     * Draws the resources with the relative quantity
+     */
     private void drawResources() {
         int[] strongbox = MatchData.getInstance().getLightClientByNickname(this.nickname).getStrongbox();
         for(int i = 0; i < strongbox.length; i++){

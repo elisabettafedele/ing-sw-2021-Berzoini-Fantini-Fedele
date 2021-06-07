@@ -1,5 +1,8 @@
 package it.polimi.ingsw.client.cli.graphical;
 
+/**
+ * This class represents the basic information that each element of the CLI has
+ */
 public abstract class GraphicalElement {
     int width;
     int height;
@@ -16,6 +19,9 @@ public abstract class GraphicalElement {
         this.backGroundColours = new BackColour[height][width];
     }
 
+    /**
+     * Display on the terminal the element
+     */
     void display(){
         for(int i = 0; i < height; i++){
             for(int j = 0; j < width; j++){
@@ -25,6 +31,9 @@ public abstract class GraphicalElement {
         }
     }
 
+    /**
+     * Clear all the symbols, colours and background colours of the graphical element
+     */
     protected void reset(){
         for(int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
@@ -55,6 +64,11 @@ public abstract class GraphicalElement {
         return backGroundColours;
     }
 
+    /**
+     * Draw rectangular edges
+     * @param h the height of the rectangular frame
+     * @param w the width of the rectangular frame
+     */
     protected void drawEdges(int h, int w){
         for (int i = 0; i < h; i++) {
             for (int j = 0; j < w; j++) {

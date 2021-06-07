@@ -5,6 +5,10 @@ import it.polimi.ingsw.enumerations.GameMode;
 
 import java.util.List;
 
+/**
+ * Class to draw the scoreboard with names, position on the faith track and victory points
+ * of the players
+ */
 public class GraphicalScoreBoard extends GraphicalElement{
 
     public GraphicalScoreBoard() {
@@ -20,6 +24,11 @@ public class GraphicalScoreBoard extends GraphicalElement{
         return maxLength;
     }
 
+    /**
+     * Puts the names and the points of each player in the scoreboard
+     * @param nicknames all the player nicknames
+     * @param max_length the lenght of the longest nickname (aesthetic needs)
+     */
     private void fillNamesAndScores(List<String> nicknames, int max_length) {
         int x_begin = 3;
         for(String nickname : nicknames) {
@@ -48,6 +57,11 @@ public class GraphicalScoreBoard extends GraphicalElement{
         }
     }
 
+    /**
+     * Draw edges and separator of the table
+     * @param maxLength the length of the longest nickname
+     * @param size the number of players
+     */
     private void drawTable(int maxLength, int size) {
         drawEdges(3+size*2, maxLength+1+8);
         drawSeparators(size, maxLength);
