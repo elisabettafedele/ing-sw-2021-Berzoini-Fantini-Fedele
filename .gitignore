@@ -217,4 +217,4 @@ $RECYCLE.BIN/
 # SonarLint working directories, configuration files (including credentials)
 .sonarlint/
 
-target/backupOfGames.json
+backupOfGames.json
