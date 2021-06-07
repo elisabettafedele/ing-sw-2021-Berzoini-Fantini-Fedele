@@ -44,7 +44,7 @@ public class Controller {
     private Server server;
     private final String RELOAD = "RELOAD";
 
-    public Controller(GameMode gameMode) throws InvalidArgumentException, UnsupportedEncodingException {
+    public Controller(GameMode gameMode) {
         this.game = new Game(gameMode);
         this.clientHandlers = new LinkedList<>();
     }
