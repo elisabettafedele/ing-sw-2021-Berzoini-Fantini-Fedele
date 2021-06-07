@@ -175,7 +175,6 @@ public class CLI implements View {
             System.out.println(Colour.ANSI_BRIGHT_GREEN.getCode() + "Connection closed" + Colour.ANSI_RESET);
         if (inputObserverOutOfTurn != null && inputObserverOutOfTurn.isAlive())
             inputObserverOutOfTurn.interrupt();
-        return;
     }
 
 
@@ -331,6 +330,8 @@ public class CLI implements View {
             System.out.print("Insert the number of the production you want to eliminate: ");
         Integer selection = InputParser.getInt(
                 "Error: the ID provided is not available. Provide a valid ID: ", CLI.conditionOnInteger(availableProductionIDs));
+        if (selection == null)
+            return;
         if(addORremove){
             if(selection == 0){
                 createBasicProduction(availableResources);
@@ -370,6 +371,8 @@ public class CLI implements View {
                         "Error: the given number is not present in the list. Provide a valid number",
                         CLI.conditionOnIntegerRange(1, usableResources.size()));
                 //Adding the chosen resource to the chosenResources List
+                if (selection == null)
+                    return;
                 chosenResources.add(usableResources.get(selection - 1));
                 //If that Resource type had quantity equal to 1 it is removed from the usableResources list
                 if(availableResources.get(usableResources.get(selection - 1)) <= 1){
@@ -387,6 +390,8 @@ public class CLI implements View {
             Integer selection = InputParser.getInt(
                     "Error: the given number is not present in the list. Provide a valid number",
                     CLI.conditionOnIntegerRange(1, realValues.size()));
+            if (selection == null)
+                return;
             chosenResources.add(realValues.get(selection - 1));
             UtilityProduction.manageBasicProductionPower(chosenResources);
         }
@@ -406,6 +411,8 @@ public class CLI implements View {
                 "2. Remove an already chosen production\n3. Confirm your list of production(s)\n");
         Integer selection = InputParser.getInt(
                 "Error: the ID provided is not available. Provide a valid ID", CLI.conditionOnIntegerRange(1, 3));
+        if (selection == null)
+            return;
         if(selection == 3){
             UtilityProduction.confirmChoices();
         }else if(selection == 2){

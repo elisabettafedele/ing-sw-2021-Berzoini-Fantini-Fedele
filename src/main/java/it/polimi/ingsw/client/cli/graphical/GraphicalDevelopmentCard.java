@@ -7,6 +7,9 @@ import it.polimi.ingsw.enumerations.Resource;
 
 import java.util.List;
 
+/**
+ * Class to represents a development Card
+ */
 public class GraphicalDevelopmentCard extends GraphicalCard{
 
 
@@ -26,7 +29,9 @@ public class GraphicalDevelopmentCard extends GraphicalCard{
         drawProductionOutput();
     }
 
-
+    /**
+     * Draw the flag (type and colour) of the development Card
+     */
     private void drawFlag() {
         Colour flagColor = getColor(lightCard.getFlagColor());
         int level = getLevel(lightCard);

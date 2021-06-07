@@ -31,7 +31,7 @@ public class Game {
      * @throws InvalidArgumentException
      * @throws UnsupportedEncodingException
      */
-    public Game(GameMode gameMode) throws InvalidArgumentException, UnsupportedEncodingException {
+    public Game(GameMode gameMode) {
         this.developmentCardGrid = new DevelopmentCardGrid();
         this.market = new Market();
         this.gameMode = gameMode;

@@ -236,24 +236,23 @@ public class Server implements ServerInterface {
         //if (clientsInLobby.size() < numberOfPlayersForNextGame || !invalidNicknameForNextMatch()) maybe
         if (clientsInLobby.size() < numberOfPlayersForNextGame)
             return;
-        Controller controller = null;
-        try {
-            controller = new Controller(GameMode.MULTI_PLAYER);
-            controller.setServer(this);
-        } catch (InvalidArgumentException | UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        Controller controller = new Controller(GameMode.MULTI_PLAYER);
+        controller.setServer(this);
         lockLobby.lock();
         try {
             List <String> playersInGame = clientsInLobby.stream().filter(x -> clientsInLobby.indexOf(x) < numberOfPlayersForNextGame).map(x -> x.getNickname()).collect(Collectors.toList());
+
             for (int i = 0; i < numberOfPlayersForNextGame; i++) {
                 clientsInLobby.get(0).setClientHandlerPhase(ClientHandlerPhase.READY_TO_START);
-                clientsInLobby.get(0).sendMessageToClient(new SendPlayerNicknamesMessage(clientsInLobby.get(0).getNickname(), playersInGame.stream().filter(x -> !x.equals(clientsInLobby.get(0).getNickname())).collect(Collectors.toList())));
                 clientsInLobby.get(0).setGameStarted(true);
                 controller.addConnection(clientsInLobby.get(0));
                 clientsInLobby.get(0).setController(controller);
                 clientsInLobby.remove(0);
             }
+            for (String nickname : playersInGame) {
+                controller.getConnectionByNickname(nickname).sendMessageToClient(new SendPlayerNicknamesMessage(nickname, playersInGame.stream().filter(x -> !(x.equals(nickname))).collect(Collectors.toList())));
+            }
+
             controller.setControllerID(playersInGame.stream().sorted().reduce("", String::concat).hashCode());
             lockGames.lock();
             try {
@@ -278,13 +277,8 @@ public class Server implements ServerInterface {
      * @param connection the {@link ClientHandler} of the player
      */
     private void startNewGame(ClientHandler connection){
-        Controller controller = null;
-        try {
-            controller = new Controller(GameMode.SINGLE_PLAYER);
-            controller.setServer(this);
-        } catch (InvalidArgumentException | UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        Controller controller = new Controller(GameMode.SINGLE_PLAYER);
+        controller.setServer(this);
         connection.setClientHandlerPhase(ClientHandlerPhase.READY_TO_START);
         connection.setGameStarted(true);
         controller.addConnection(connection);

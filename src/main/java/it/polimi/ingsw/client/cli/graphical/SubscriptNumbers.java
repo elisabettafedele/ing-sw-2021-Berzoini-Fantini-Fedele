@@ -1,10 +1,12 @@
 package it.polimi.ingsw.client.cli.graphical;
 
-import it.polimi.ingsw.enumerations.Resource;
 
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Enum to obtain the subscript version of a number
+ */
 public enum SubscriptNumbers {
     ZERO(0, "\u2080"),
     ONE(1,"\u2081"),
