@@ -16,29 +16,29 @@ import java.util.Stack;
 
 public class Screen extends GraphicalElement{
 
-    private final int devCardGrid_x_anchor = 0;
-    private final int devCardGrid_y_anchor = 0;
+    private final int devCardGridXAnchor = 0;
+    private final int devCardGridYAnchor = 0;
 
-    private final int faith_track_x_anchor = 0;
-    private final int faith_track_y_anchor = 62;
+    private final int faithTrackXAnchor = 0;
+    private final int faithTrackYAnchor = 62;
 
-    private final int devCardSlots_x_anchor = 16;
+    private final int devCardSlotsXAnchor = 16;
     private final int devCardSlots_y_anchor = 62;
 
-    private final int ownedLeader_x_anchor = 16;
-    private final int ownedLeader_y_anchor = 122;
+    private final int ownedLeaderXAnchor = 16;
+    private final int ownedLeaderYAnchor = 122;
 
-    private final int market_x_anchor = 1;
-    private final int market_y_anchor = 123;
+    private final int marketXAnchor = 1;
+    private final int marketYAnchor = 123;
 
-    private final int scoreBoard_x_anchor = 1;
-    private final int scoreBoard_y_anchor = 140;
+    private final int scoreBoardXAnchor = 1;
+    private final int scoreBoardYAnchor = 140;
 
-    private final int warehouse_x_anchor = 9;
-    private final int warehouse_y_anchor = 131;
+    private final int warehouseXAnchor = 9;
+    private final int warehouseYAnchor = 131;
 
-    private final int strongbox_x_anchor = 7;
-    private final int strongbox_y_anchor = 122;
+    private final int strongboxXAnchor = 7;
+    private final int strongboxYAnchor = 122;
 
     GraphicalDevelopmentCardGrid graphicalDevelopmentCardGrid;
     List<Integer> developmentCardGridCardsToDisplay;
@@ -69,6 +69,8 @@ public class Screen extends GraphicalElement{
     public void displayStandardView(){
         nickname = MatchData.getInstance().getCurrentViewNickname();
         //clearConsole();
+        System.out.println("\033[H\033[2J");
+        System.out.println("\033[H\033[3J");
         System.out.flush();
         reset();
         drawAllElements();
@@ -101,9 +103,9 @@ public class Screen extends GraphicalElement{
         GraphicalStrongbox gs = new GraphicalStrongbox(this.nickname);
         gs.drawStrongbox();
         drawElement(gs.getHeight(), gs.getWidth(), gs.getColours(), gs.getSymbols(), gs.getBackGroundColours(),
-                strongbox_x_anchor, strongbox_y_anchor);
+                strongboxXAnchor, strongboxYAnchor);
         String label = "Strongbox";
-        drawVerticalLabel(strongbox_x_anchor, strongbox_y_anchor - 2, label);
+        drawVerticalLabel(strongboxXAnchor, strongboxYAnchor - 2, label);
     }
 
     private void drawVerticalLabel(int x, int y, String label) {
@@ -117,28 +119,28 @@ public class Screen extends GraphicalElement{
         GraphicalWarehouse gw = new GraphicalWarehouse(this.nickname);
         gw.drawWarehouse();
         drawElement(gw.getHeight(), gw.getWidth(), gw.getColours(), gw.getSymbols(), gw.getBackGroundColours(),
-                warehouse_x_anchor, warehouse_y_anchor);
-        drawDepotsNumbers(warehouse_x_anchor + 1, warehouse_y_anchor + gw.getWidth() + 1);
+                warehouseXAnchor, warehouseYAnchor);
+        drawDepotsNumbers(warehouseXAnchor + 1, warehouseYAnchor + gw.getWidth() + 1);
         String label = "Warehouse";
-        drawHorizontalLabel(warehouse_x_anchor, warehouse_y_anchor + gw.getWidth() + 3, label);
+        drawHorizontalLabel(warehouseXAnchor, warehouseYAnchor + gw.getWidth() + 3, label);
     }
 
     private void drawScoreBoard() {
         GraphicalScoreBoard gsb = new GraphicalScoreBoard();
         int maxLength = gsb.drawScoreBoard();
         drawElement(gsb.getHeight(), gsb.getWidth(), gsb.getColours(), gsb.getSymbols(), gsb.getBackGroundColours(),
-                scoreBoard_x_anchor, scoreBoard_y_anchor);
+                scoreBoardXAnchor, scoreBoardYAnchor);
         String label = "Scoreboard";
-        drawHorizontalLabel(scoreBoard_x_anchor - 1, scoreBoard_y_anchor + ((maxLength + 9)/2 - 5), label);
+        drawHorizontalLabel(scoreBoardXAnchor - 1, scoreBoardYAnchor + ((maxLength + 9)/2 - 5), label);
     }
 
     private void drawMarket() {
         GraphicalMarketTray gmt = new GraphicalMarketTray();
         gmt.drawMarketTray();
         drawElement(gmt.getHeight(), gmt.getWidth(), gmt.getColours(), gmt.getSymbols(), gmt.getBackGroundColours(),
-                market_x_anchor, market_y_anchor);
+                marketXAnchor, marketYAnchor);
         String label = "Market";
-        drawHorizontalLabel(market_x_anchor - 1, market_y_anchor + 4, label);
+        drawHorizontalLabel(marketXAnchor - 1, marketYAnchor + 4, label);
     }
 
     private void drawDevelopmentCardSlots() {
@@ -151,7 +153,7 @@ public class Screen extends GraphicalElement{
                 GraphicalDevelopmentCard gdc = new GraphicalDevelopmentCard(ldc, this.nickname);
                 gdc.drawCard();
 
-                int x_anchor = this.devCardSlots_x_anchor + (developmentCardSlots[i].size()*(-2) + 2) + j*2;
+                int x_anchor = this.devCardSlotsXAnchor + (developmentCardSlots[i].size()*(-2) + 2) + j*2;
                 drawElement(gdc.getHeight(), gdc.getWidth(), gdc.getColours(), gdc.getSymbols(), gdc.getBackGroundColours(),
                         x_anchor, this.devCardSlots_y_anchor+i*yStep);
 
@@ -162,7 +164,7 @@ public class Screen extends GraphicalElement{
                 }
             }
         }
-        drawHorizontalLabel(devCardSlots_x_anchor + GraphicalDevelopmentCardGrid.cardHeight, devCardSlots_y_anchor + 10, "Development Cards Slots");
+        drawHorizontalLabel(devCardSlotsXAnchor + GraphicalDevelopmentCardGrid.cardHeight, devCardSlots_y_anchor + 10, "Development Cards Slots");
     }
 
     private void drawHorizontalLabel(int x, int y, String label) {
@@ -184,10 +186,10 @@ public class Screen extends GraphicalElement{
             else
                 glc.drawCard();
             drawElement(GraphicalDevelopmentCardGrid.cardHeight, GraphicalDevelopmentCardGrid.cardWidth, glc.getColours(), glc.getSymbols(),
-                    glc.getBackGroundColours(), this.ownedLeader_x_anchor, this.ownedLeader_y_anchor + i*yStep);
+                    glc.getBackGroundColours(), this.ownedLeaderXAnchor, this.ownedLeaderYAnchor + i*yStep);
         }
         String label = "Your leader cards";
-        drawHorizontalLabel(ownedLeader_x_anchor + GraphicalDevelopmentCardGrid.cardHeight, ownedLeader_y_anchor + 6, label);
+        drawHorizontalLabel(ownedLeaderXAnchor + GraphicalDevelopmentCardGrid.cardHeight, ownedLeaderYAnchor + 6, label);
 
     }
 
@@ -204,15 +206,17 @@ public class Screen extends GraphicalElement{
 
     private void drawDevelopmentCardGrid(){
         graphicalDevelopmentCardGrid.drawDevelopmentCardGrid(MatchData.getInstance().getDevelopmentCardGrid());
-        drawCompositeElement(graphicalDevelopmentCardGrid, devCardGrid_x_anchor, devCardGrid_y_anchor);
+        drawCompositeElement(graphicalDevelopmentCardGrid, devCardGridXAnchor, devCardGridYAnchor);
         String label = "Development Card Grid";
-        drawHorizontalLabel(devCardGrid_x_anchor + GraphicalDevelopmentCardGrid.cardHeight*3, 19, label);
+        drawHorizontalLabel(devCardGridXAnchor + GraphicalDevelopmentCardGrid.cardHeight*3, 19, label);
     }
 
     private void drawFaithTrack() {
         this.graphicalFaithTrack = new GraphicalFaithTrack(this.nickname);
         graphicalFaithTrack.drawFaithTrack();
-        drawCompositeElement(graphicalFaithTrack, faith_track_x_anchor, faith_track_y_anchor);
+        drawCompositeElement(graphicalFaithTrack, faithTrackXAnchor, faithTrackYAnchor);
+        String label = "Faith Track";
+        drawHorizontalLabel(faithTrackXAnchor + graphicalFaithTrack.getHeight() - 1, faithTrackYAnchor + 10, label);
     }
 
     private void drawElement(int height, int width, Colour[][] colours, char[][] symbols, BackColour[][] backColours, int x_anchor, int y_anchor){
@@ -235,7 +239,7 @@ public class Screen extends GraphicalElement{
         boolean basicProd = false;
 
         if(IDs.contains(0)){
-            drawBasicProduction(y_step*(IDs.size()-1), x_anchor, basicProduction);
+            drawBasicProduction(y_step*(IDs.size()-1), x_anchor + 1, basicProduction);
             IDs.remove(Integer.valueOf(0));
             basicProd = true;
         }

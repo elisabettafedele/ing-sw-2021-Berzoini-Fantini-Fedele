@@ -19,7 +19,7 @@ public class TakeResourcesFromMarketCLI {
 
     public static void displayMarbleInsertionPositionRequest(Client client) {
         // Screen.getInstance().displayStandardView();
-        System.out.println("Insert a marble insertion position (from 1 to 7) to insert the marble in the market trace: ");
+        System.out.println("Insert a marble insertion position (from 1 to 7) to insert the marble in the market tray: ");
         client.sendMessageToServer(new MarbleInsertionPositionResponse(InputParser.getInt("Invalid position: the position must be an integer from 1 to 7!", CLI.conditionOnIntegerRange(1, 7))));
     }
 
