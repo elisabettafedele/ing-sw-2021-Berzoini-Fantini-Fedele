@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.gui;
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.client.View;
+import it.polimi.ingsw.client.cli.graphical.Colour;
 import it.polimi.ingsw.client.utilities.UtilityProduction;
 import it.polimi.ingsw.common.FunctionInterface;
 import it.polimi.ingsw.common.LightDevelopmentCard;
@@ -74,6 +75,10 @@ public class GUI extends Application implements View {
 
     private void askConnectionParameters(){
         resetControllers();
+        instantiateSetupScene();
+    }
+
+    private void instantiateSetupScene(){
         createMainScene("/FXML/SetupScene.fxml", () -> {
             stage.setTitle("Maestri del Rinascimento");
             stage.setResizable(false);
@@ -81,8 +86,6 @@ public class GUI extends Application implements View {
             setupSceneController = fxmlLoader.getController();
             setupSceneController.setGUI(this);
         });
-
-
     }
 
 
@@ -94,29 +97,72 @@ public class GUI extends Application implements View {
 
     @Override
     public void displayGameModeRequest() {
-            setupSceneController.selectGameMode();
+        if(setupSceneController!=null)setupSceneController.selectGameMode();
+        else{
+            resetControllers();
+            instantiateSetupScene();
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    setupSceneController.setClient(client);
+                    setupSceneController.selectGameMode();
+                }
+            });
+        }
     }
 
     @Override
     public void displayNicknameRequest(boolean isRetry, boolean alreadyTaken) {
-        setupSceneController.displayNicknameRequest(isRetry,alreadyTaken);
+        if(setupSceneController!=null) setupSceneController.displayNicknameRequest(isRetry,alreadyTaken);
+        else{
+            resetControllers();
+            instantiateSetupScene();
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    setupSceneController.setClient(client);
+                    setupSceneController.displayNicknameRequest(isRetry,alreadyTaken);
+                }
+            });
+        }
     }
 
     @Override
     public void displayNumberOfPlayersRequest() {
-        setupSceneController.displayNumberOfPlayersRequest();
+        if(setupSceneController!=null)setupSceneController.displayNumberOfPlayersRequest();
+        else{
+            resetControllers();
+            instantiateSetupScene();
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+
+                    setupSceneController.setClient(client);
+                    setupSceneController.displayNumberOfPlayersRequest();
+                }
+            });
+        }
     }
 
     @Override
     public void displayWaitingInTheLobbyMessage() {
-        if(setupSceneController != null){
-            setupSceneController.displayWaitingInTheLobbyMessage();
+        if(setupSceneController!=null)setupSceneController.displayWaitingInTheLobbyMessage();
+        else{
+            resetControllers();
+            instantiateSetupScene();
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    setupSceneController.setClient(client);
+                    setupSceneController.displayWaitingInTheLobbyMessage();
+                }
+            });
         }
     }
 
     @Override
     public void displayPlayersReadyToStartMessage(List<String> p) {
-        setupSceneController.displayPlayersReadyToStartMessage(p);
+        if(setupSceneController!=null)setupSceneController.displayPlayersReadyToStartMessage(p);
     }
 
     @Override
@@ -146,7 +192,12 @@ public class GUI extends Application implements View {
 
     @Override
     public void displayLorenzoAction(int id) {
-        gameSceneController.displayLorenzoAction(id);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                gameSceneController.displayLorenzoAction(id);
+            }
+        });
     }
 
     public void displayProductionCardYouCanSelect(List<Integer> IDs, List<Value> basicProduction) {
@@ -193,6 +244,16 @@ public class GUI extends Application implements View {
     @Override
     public void displayChooseLeaderCardsRequest(List<Integer> leaderCards){
         resetControllers();
+        instantiateGameScene();
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                gameSceneController.displayLeaderCardsRequest(leaderCards, client);
+            }
+        });
+    }
+
+    public void instantiateGameScene(){
         createMainScene("/FXML/GameScene.fxml", () -> {
             stage.setTitle("Maestri del Rinascimento");
             stage.setResizable(false);
@@ -200,7 +261,6 @@ public class GUI extends Application implements View {
             gameSceneController = fxmlLoader.getController();
             gameSceneController.setGUI(this);
             gameSceneController.setClient(client);
-            gameSceneController.displayLeaderCardsRequest(leaderCards, client);
         });
     }
 
@@ -240,34 +300,66 @@ public class GUI extends Application implements View {
 
     @Override
     public void update(MatchDataMessage message) {
-        MatchData.getInstance().update(message);
-        if(gameSceneController!=null){
-            gameSceneController.updateView();
-            gameSceneController.updateMainLabel();
-            if(message instanceof TurnMessage){
-                gameSceneController.enableNextPreviousButtons();
-                gameSceneController.setCurrentPlayer(message.getNickname());
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                MatchData.getInstance().update(message);
+                if(gameSceneController!=null){
+                    gameSceneController.updateView();
+                    gameSceneController.updateMainLabel();
+                    if(message instanceof TurnMessage){
+                        gameSceneController.enableNextPreviousButtons();
+                        gameSceneController.setCurrentPlayer(message.getNickname());
+                    }
+                }
             }
-        }
+        });
+
     }
 
     @Override
     public void displayResults(Map<String, Integer> results, boolean readyForAnotherGame) {
-        gameSceneController.displayResults(results,readyForAnotherGame);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                gameSceneController.displayResults(results,readyForAnotherGame);
+            }
+        });
+
     }
 
     @Override
     public void displayResults(int victoryPoints) {
-        gameSceneController.displayResults(victoryPoints);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                gameSceneController.displayResults(victoryPoints);
+            }
+        });
     }
 
     @Override
     public void displayDisconnection(String nickname, boolean setUp, boolean gameCancelled) {
-
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                if(gameSceneController!=null) {
+                    gameSceneController.displayDisconnection(nickname, setUp, gameCancelled);
+                }
+            }
+        });
     }
 
     @Override
     public void displayWelcomeBackMessage(String nickname, boolean gameFinished) {
+        resetControllers();
+        instantiateGameScene();
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                gameSceneController.displayWelcomeBackMessage(nickname,gameFinished);
+            }
+        });
 
     }
 
@@ -283,7 +375,12 @@ public class GUI extends Application implements View {
 
     @Override
     public void displayChooseActionRequest(Map<ActionType, Boolean> executableActions, boolean standardActionDone) {
-        gameSceneController.displayChooseActionRequest(executableActions,standardActionDone);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                gameSceneController.displayChooseActionRequest(executableActions,standardActionDone);
+            }
+        });
     }
 
     @Override
@@ -293,6 +390,7 @@ public class GUI extends Application implements View {
 
     public void setNicknames(String playerNickname, List<String> otherPlayersNicknames){
         MatchData.getInstance().setThisClient(playerNickname);
+        MatchData.getInstance().resetOtherClients();
         for(String nickname : otherPlayersNicknames){
             MatchData.getInstance().addLightClient(nickname);
         }

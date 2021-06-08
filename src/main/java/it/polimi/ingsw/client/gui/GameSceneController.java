@@ -3,8 +3,7 @@ package it.polimi.ingsw.client.gui;
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.client.PopesTileState;
-import it.polimi.ingsw.client.cli.CLI;
-import it.polimi.ingsw.client.utilities.InputParser;
+import it.polimi.ingsw.client.cli.graphical.Colour;
 import it.polimi.ingsw.client.utilities.UtilityProduction;
 import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.common.LightLeaderCard;
@@ -105,7 +104,7 @@ public class GameSceneController {
     @FXML
     private VBox productionVbox;
     @FXML
-    private VBox endVbox;
+    private VBox importantMessagesVbox;
     @FXML
     private HBox buttonsHbox;
     @FXML
@@ -141,8 +140,6 @@ public class GameSceneController {
     // *********************************************************************  //
     @FXML
     public void initialize() {
-        endVbox.setManaged(false);
-        endVbox.setVisible(false);
         developmentCardGridIDsBackup= new ArrayList<>();
         currentPlayer=new String();
         matchData=MatchData.getInstance();
@@ -243,6 +240,17 @@ public class GameSceneController {
                 lorenzoVbox.setVisible(false);
             }
         });
+        importantMessagesVbox.setManaged(false);
+        importantMessagesVbox.setVisible(false);
+        ((Button)importantMessagesVbox.getChildren().get(1)).setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                importantMessagesVbox.setManaged(false);
+                importantMessagesVbox.setVisible(false);
+                leftPane.setDisable(false);
+                rightPane.setDisable(false);
+            }
+        });
 
     }
 
@@ -338,7 +346,9 @@ public class GameSceneController {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+                players=matchData.getAllNicknames();
                 if (!matchData.isReloading()) {
+                    updateMainLabel();
                     updateDevelopmentCardGridView();
                     updateMarketView();
                     updateFaithTrack();
@@ -556,37 +566,42 @@ public class GameSceneController {
     }
 
     private void updateMarketView() {
-        for(int row=0;row< 3 ;row++ ){
-            for(int col=0; col< 4; col++){
-                ((ImageView) marketGrid.getChildren().get(col+row*4)).setImage(new Image(GameSceneController.class.getResource("/img/punchboard/marble_" + matchData.getMarketTray()[row][col].toString().toLowerCase() + ".png").toString()));
+        if(matchData.getMarketTray()!=null){
+            for(int row=0;row< 3 ;row++ ){
+                for(int col=0; col< 4; col++){
+                    ((ImageView) marketGrid.getChildren().get(col+row*4)).setImage(new Image(GameSceneController.class.getResource("/img/punchboard/marble_" + matchData.getMarketTray()[row][col].toString().toLowerCase() + ".png").toString()));
+                }
             }
+            slideMarble.setImage(new Image(GameSceneController.class.getResource("/img/punchboard/marble_" + matchData.getSlideMarble().toString().toLowerCase() + ".png").toString()));
         }
-        slideMarble.setImage(new Image(GameSceneController.class.getResource("/img/punchboard/marble_" + matchData.getSlideMarble().toString().toLowerCase() + ".png").toString()));
     }
 
     private void updateDevelopmentCardGridView() {
         List<LightDevelopmentCard> developmentCardGrid =new ArrayList<>();
         List<Integer> gridCardsIDs = matchData.getDevelopmentCardGrid();
-        if(developmentCardGridIDsBackup.size()>gridCardsIDs.size()){
-            for(Integer id : developmentCardGridIDsBackup){
-                if(!gridCardsIDs.contains(id)){
-                    LightDevelopmentCard devCard= matchData.getDevelopmentCardByID(id);
-                    int row = (Level.valueOf(devCard.getFlagLevel()).getValue() * - 1) + 2;
-                    int col = FlagColor.valueOf(devCard.getFlagColor()).getValue();
-                    this.developmentCardGrid.getChildren().get(col+ this.developmentCardGrid.getColumnCount()*row).setVisible(false);
+        if (gridCardsIDs != null) {
+            if(developmentCardGridIDsBackup.size()>gridCardsIDs.size()){
+                for(Integer id : developmentCardGridIDsBackup){
+                    if(!gridCardsIDs.contains(id)){
+                        LightDevelopmentCard devCard= matchData.getDevelopmentCardByID(id);
+                        int row = (Level.valueOf(devCard.getFlagLevel()).getValue() * - 1) + 2;
+                        int col = FlagColor.valueOf(devCard.getFlagColor()).getValue();
+                        this.developmentCardGrid.getChildren().get(col+ this.developmentCardGrid.getColumnCount()*row).setVisible(false);
+                    }
                 }
             }
+            developmentCardGridIDsBackup=gridCardsIDs;
+            for(Integer devCardId : gridCardsIDs){
+                developmentCardGrid.add(matchData.getDevelopmentCardByID(devCardId));
+            }
+            for(LightDevelopmentCard devCard : developmentCardGrid){
+                int row = (Level.valueOf(devCard.getFlagLevel()).getValue() * - 1) + 2;
+                int col = FlagColor.valueOf(devCard.getFlagColor()).getValue();
+                ((ImageView) this.developmentCardGrid.getChildren().get(col+ this.developmentCardGrid.getColumnCount()*row)).setImage(new Image(GameSceneController.class.getResource("/img/Cards/DevelopmentCards/front/" + devCard.getID() + ".png").toString()));
+                this.developmentCardGrid.getChildren().get(col+ this.developmentCardGrid.getColumnCount()*row).setVisible(true);
+            }
         }
-        developmentCardGridIDsBackup=gridCardsIDs;
-        for(Integer devCardId : gridCardsIDs){
-            developmentCardGrid.add(matchData.getDevelopmentCardByID(devCardId));
-        }
-        for(LightDevelopmentCard devCard : developmentCardGrid){
-            int row = (Level.valueOf(devCard.getFlagLevel()).getValue() * - 1) + 2;
-            int col = FlagColor.valueOf(devCard.getFlagColor()).getValue();
-            ((ImageView) this.developmentCardGrid.getChildren().get(col+ this.developmentCardGrid.getColumnCount()*row)).setImage(new Image(GameSceneController.class.getResource("/img/Cards/DevelopmentCards/front/" + devCard.getID() + ".png").toString()));
-            this.developmentCardGrid.getChildren().get(col+ this.developmentCardGrid.getColumnCount()*row).setVisible(true);
-        }
+
     }
 
     // *********************************************************************  //
@@ -1685,10 +1700,11 @@ public class GameSceneController {
             public void run() {
                 leftPane.setDisable(true);
                 rightPane.setDisable(true);
-                endVbox.setManaged(true);
-                endVbox.setVisible(true);
+                importantMessagesVbox.setManaged(true);
+                importantMessagesVbox.setVisible(true);
+                importantMessagesVbox.getChildren().get(1).setVisible(false);
                 List<String> winners= new ArrayList<>();
-                Label endMessage= ((Label)endVbox.getChildren().get(0));
+                Label endMessage= ((Label) importantMessagesVbox.getChildren().get(0));
                 int i = 1;
                 if (results.size() == 1){
                     int points = -1;
@@ -1729,9 +1745,10 @@ public class GameSceneController {
             public void run() {
                 leftPane.setDisable(true);
                 rightPane.setDisable(true);
-                endVbox.setManaged(true);
-                endVbox.setVisible(true);
-                Label endMessage= ((Label)endVbox.getChildren().get(0));
+                importantMessagesVbox.setManaged(true);
+                importantMessagesVbox.setVisible(true);
+                importantMessagesVbox.getChildren().get(1).setVisible(false);
+                Label endMessage= ((Label) importantMessagesVbox.getChildren().get(0));
                 if (victoryPoints == -1)
                     endMessage.setText("You lost against Lorenzo il Magnifico!");
                 else
@@ -1742,6 +1759,42 @@ public class GameSceneController {
 
     }
 
+    // *********************************************************************  //
+    //                      RESILIENCE TO DISCONNECTIONS                      //
+    // *********************************************************************  //
+
+    public void displayWelcomeBackMessage(String nickname, boolean gameFinished) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                importantMessagesVbox.setManaged(true);
+                importantMessagesVbox.setVisible(true);
+                importantMessagesVbox.getChildren().get(1).setVisible(true);
+                Label message= (Label) importantMessagesVbox.getChildren().get(0);
+                message.setText("Welcome back " + nickname + (gameFinished ? "!\nThe game you were playing in is finished, we are loading the results for you..." : ".\nYou have to finish an old game, we are logging you in the room..."));
+            }
+        });
+    }
+
+    public void displayDisconnection(String nickname, boolean setUp, boolean gameCancelled) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                importantMessagesVbox.setManaged(true);
+                importantMessagesVbox.setVisible(true);
+                importantMessagesVbox.getChildren().get(1).setVisible(!gameCancelled);
+                Label message= (Label) importantMessagesVbox.getChildren().get(0);
+                message.setText("We are sorry to inform you that " + nickname + " has left the game.\n The game" + (gameCancelled? " has been cancelled." : " will go on skipping the turns of that player.") + (gameCancelled? "\nYou have been reconnected to the main lobby...\nBe ready to start another game. \nA game will start as soon as enough players will be ready\n" : "") );
+                if(gameCancelled){
+                    leftPane.setDisable(true);
+                    rightPane.setDisable(true);
+                }
+            }
+        });
+
+    }
+
+    //TODO non si aggiorna subito, al ricaricamento della partita, la faithtrack(e il resto). L'update della developmentgrid con carte vuote non fuzniona bene(lascia quella di default)
 
 
     /*   Use this to avoid Thread exception

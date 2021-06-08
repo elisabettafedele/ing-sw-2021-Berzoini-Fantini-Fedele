@@ -10,8 +10,9 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" styleClass="setup-pane" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.gui.SetupSceneController">
    <children>
-      <VBox fx:id="vBoxIPandPORT" alignment="CENTER" layoutX="201.0" layoutY="100.0" prefHeight="200.0" prefWidth="198.0" visible="false">
+      <VBox fx:id="vBoxIPandPORT" alignment="CENTER" layoutX="201.0" layoutY="100.0" prefHeight="200.0" prefWidth="198.0">
          <children>
+            <Label alignment="CENTER" textFill="RED" />
             <TextField fx:id="ipTextField" alignment="CENTER" onKeyTyped="#ipChanged" promptText="Ip Address" text="127.0.0.1" />
             <TextField fx:id="portTextField" onKeyTyped="#portChanged" promptText="Port Number" text="1234" />
             <Button fx:id="connectButton" alignment="CENTER" mnemonicParsing="false" onAction="#handleConnectButton" text="Connect" />
@@ -23,7 +24,7 @@
             <Button fx:id="multiPlayerButton" mnemonicParsing="false" onAction="#handleMultiplayerButton" text="Multiplayer" />
          </children>
       </VBox>
-      <VBox fx:id="vBoxNickname" alignment="CENTER" layoutX="86.0" layoutY="100.0" prefHeight="200.0" prefWidth="443.0">
+      <VBox fx:id="vBoxNickname" alignment="CENTER" layoutX="86.0" layoutY="100.0" prefHeight="200.0" prefWidth="443.0" visible="false">
          <children>
             <Label fx:id="nicknameInfoLabel" prefHeight="46.0" prefWidth="423.0" />
             <TextField fx:id="nicknameField" promptText="Insert nickname" />

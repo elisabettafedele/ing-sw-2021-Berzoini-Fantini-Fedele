@@ -160,7 +160,6 @@ public class CLI implements View {
         if (gameCancelled){
             System.out.println(Colour.ANSI_BRIGHT_GREEN.getCode() + "You have been reconnected to the main lobby...\nBe ready to start another game. A game will start as soon as enough players will be ready\n" + Colour.ANSI_RESET);
         }
-
     }
 
     @Override
