@@ -98,8 +98,8 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <finalName>MasterOfRenaissanceServer</finalName>
                             <transformers>
-                                <!-- <finalName>Server</finalName> -->
                                 <transformer implementation=
                                                      "org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>it.polimi.ingsw.server.ServerMain</mainClass>
