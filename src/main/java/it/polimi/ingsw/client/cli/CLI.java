@@ -138,10 +138,12 @@ public class CLI implements View {
                 System.out.print( "!! "+ winner + " !!");
             }
         }
-        if (!readyForAnotherGame)
-            client.closeSocket();
-        else
+        if (readyForAnotherGame)
             System.out.println("\nYou can now start another game!");
+        else {
+            client.closeSocket();
+            //TODO askReconnect();
+        }
     }
 
     @Override
@@ -151,8 +153,30 @@ public class CLI implements View {
         else
             System.out.println("You won with " + victoryPoints + " victory points!! \nCongratulations");
         client.closeSocket();
+        //TODO askReconnect();
     }
-
+/*
+    public void askReconnect(){
+        System.out.println("Do you want to play another game? y | n");
+        while(true) {
+            String wantToReconnect = InputParser.getLine();
+            if (wantToReconnect == null)
+                return;
+            if (wantToReconnect.equals("y")) {
+                try {
+                    client.reconnect();
+                } catch (IOException e) {
+                    System.out.println(Colour.ANSI_BRIGHT_RED.getCode() + "We are sorry to inform you that the server is not available anymore\nTry again later" + Colour.ANSI_RESET);
+                }
+            }
+            else if (wantToReconnect.equals("n"))
+                return;
+            else {
+                System.out.println("Invalid choice: type y to start a new game or n to exit");
+            }
+        }
+    }
+*/
     @Override
     public void displayDisconnection(String nickname, boolean setUp, boolean gameCancelled) {
         System.out.println(Colour.ANSI_BRIGHT_GREEN.getCode() + "We are sorry to inform you that " + nickname + " has left the game." );

@@ -221,6 +221,7 @@ public class Controller {
         game = new Game(controller.getGame());
         sendLightCards();
         sendMatchData(game, false);
+        getConnectionByNickname(getPlayers().get(0).getNickname()).sendMessageToClient(new UpdateMarkerPosition(SinglePlayerPlayPhase.LORENZO, controller.getBlackCrossPosition()));
         gamePhase = new SinglePlayerPlayPhase(this, controller.getLastPlayer(), controller.isEndTriggered(), controller.getBlackCrossPosition(), controller.getTokens());
         if (((SinglePlayerPlayPhase) gamePhase).wasEndTriggered())
             endMatch();
