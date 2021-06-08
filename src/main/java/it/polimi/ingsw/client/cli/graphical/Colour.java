@@ -54,7 +54,7 @@ public enum Colour {
         if (marble == Marble.YELLOW)
             return ANSI_BRIGHT_YELLOW;
         if (marble == Marble.GREY)
-            return ANSI_WHITE;
+            return ANSI_BRIGHT_BLACK;
         if (marble == Marble.PURPLE)
             return ANSI_BRIGHT_PURPLE;
         if (marble == Marble.BLUE)
@@ -69,7 +69,7 @@ public enum Colour {
         if (resource == Resource.COIN)
             return ANSI_BRIGHT_YELLOW;
         if (resource == Resource.STONE)
-            return ANSI_WHITE;
+            return ANSI_BRIGHT_BLACK;
         if (resource == Resource.SHIELD)
             return ANSI_BRIGHT_BLUE;
         else

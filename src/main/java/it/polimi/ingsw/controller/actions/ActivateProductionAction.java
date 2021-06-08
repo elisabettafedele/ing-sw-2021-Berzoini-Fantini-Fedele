@@ -21,6 +21,9 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+/**
+ * Action to manage, server-side the production action
+ */
 public class ActivateProductionAction implements Action{
 
     private Player player;
@@ -73,7 +76,6 @@ public class ActivateProductionAction implements Action{
                 activationCost = developmentCard.getProduction().getProductionPower().get(0).getResourceValue();
             } catch (ValueNotPresentException e) {
                 e.printStackTrace();
-                //TODO: manage better
                 Server.SERVER_LOGGER.log(Level.WARNING, "The Development card " + developmentCard.toString() + "" +
                         "has no Production Effect. Removing from the list of cards present in the action");
                developmentCardIterator.remove();
@@ -170,6 +172,10 @@ public class ActivateProductionAction implements Action{
 
     }
 
+    /**
+     * Builds the basic production power of the personal board
+     * @return a production power with ANY Resource as input and ANy Resource as output
+     */
     private Production buildBasicProductionPower() {
         Map<Resource, Integer> cost = new HashMap<>();
         cost.put(Resource.ANY, 2);
@@ -245,6 +251,11 @@ public class ActivateProductionAction implements Action{
 
     }
 
+    /**
+     * Initialize the two given maps with all the possible resources and the initial quantity set to zero
+     * @param resourceToAdd the resources that are going to be added to the personal board
+     * @param resourceToRemove the resources that are going to be removed from the personal board
+     */
     private void initializeResourceMaps(Map<Resource, Integer> resourceToAdd, Map<Resource, Integer> resourceToRemove) {
         List<Resource> realValues = Resource.realValues();
         for(Resource r : realValues){
@@ -253,6 +264,12 @@ public class ActivateProductionAction implements Action{
         }
     }
 
+    /**
+     * Add the production produced or used for the productions to a Map.
+     * @param value the input or the output of a production power.
+     * @param resourceToManage the map where the input or ouput of a production power has to be added.
+     * @return the number of faith points produced, if any.
+     */
     private int manageCost(Value value, Map<Resource, Integer> resourceToManage) {
 
         try {
@@ -271,6 +288,11 @@ public class ActivateProductionAction implements Action{
         }
     }
 
+    /**
+     * Given the ID of a card that has a production power as effect returns the production power
+     * @param id ID of the {@link DevelopmentCard} or the {@link LeaderCard}, id == 0 for the basic production power
+     * @return the production input and output as a list of {@link Value}
+     */
     private List<Value> getProductionByID(int id) {
         for (LeaderCard lc : availableProductionLeaderCards){
             if(lc.getID() == id) {
