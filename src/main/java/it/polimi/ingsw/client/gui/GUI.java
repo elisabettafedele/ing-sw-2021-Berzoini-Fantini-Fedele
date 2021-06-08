@@ -69,13 +69,15 @@ public class GUI extends Application implements View {
         });
     }
 
-    public void setClient(Client client) {
-        this.client = client;
-    }
-
-    private void askConnectionParameters(){
-        resetControllers();
-        instantiateSetupScene();
+    public void instantiateGameScene(){
+        createMainScene("/FXML/GameScene.fxml", () -> {
+            stage.setTitle("Maestri del Rinascimento");
+            stage.setResizable(false);
+            stage.show();
+            gameSceneController = fxmlLoader.getController();
+            gameSceneController.setGUI(this);
+            gameSceneController.setClient(client);
+        });
     }
 
     private void instantiateSetupScene(){
@@ -88,12 +90,92 @@ public class GUI extends Application implements View {
         });
     }
 
+    public void setClient(Client client) {
+        this.client = client;
+    }
 
+    private void askConnectionParameters(){
+        resetControllers();
+        instantiateSetupScene();
+    }
 
     private void resetControllers() {
         setupSceneController = null;
         gameSceneController=null;
     }
+
+    @Override
+    public void displayMessage(String message) {
+        //empty
+    }
+
+    // *********************************************************************  //
+    //                           END GAME  & FA                               //
+    // *********************************************************************  //
+
+
+    @Override
+    public void displayResults(Map<String, Integer> results, boolean readyForAnotherGame) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                gameSceneController.displayResults(results,readyForAnotherGame);
+            }
+        });
+
+    }
+
+    @Override
+    public void displayResults(int victoryPoints) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                gameSceneController.displayResults(victoryPoints);
+            }
+        });
+    }
+
+    @Override
+    public void handleCloseConnection(boolean wasConnected) {
+        if(setupSceneController != null) setupSceneController.handleCloseConnection(wasConnected);
+        if(gameSceneController != null) gameSceneController.handleCloseConnection(wasConnected);
+    }
+
+    @Override
+    public void displayTimeoutExpiredMessage() {
+        System.out.println("Timeout expired");
+        client.closeSocket();
+    }
+
+    @Override
+    public void displayDisconnection(String nickname, boolean setUp, boolean gameCancelled) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                if(gameSceneController!=null) {
+                    gameSceneController.displayDisconnection(nickname, setUp, gameCancelled);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void displayWelcomeBackMessage(String nickname, boolean gameFinished) {
+        resetControllers();
+        instantiateGameScene();
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                gameSceneController.displayWelcomeBackMessage(nickname,gameFinished);
+            }
+        });
+
+    }
+
+    // *********************************************************************  //
+    //                              LOBBY GUI                                 //
+    // *********************************************************************  //
+
 
     @Override
     public void displayGameModeRequest() {
@@ -165,30 +247,41 @@ public class GUI extends Application implements View {
         if(setupSceneController!=null)setupSceneController.displayPlayersReadyToStartMessage(p);
     }
 
-    @Override
-    public void displayTimeoutExpiredMessage() {
 
+    // *********************************************************************  //
+    //                             SETUP GUI                                  //
+    // *********************************************************************  //
+
+    @Override
+    public void loadLeaderCards(List<LightLeaderCard> leaderCards){
+        MatchData.getInstance().setAllLeaderCards(leaderCards);
     }
 
     @Override
-    public void displayMarbleInsertionPositionRequest() {
-        gameSceneController.displayMarbleInsertionPositionRequest();
+
+    public void displayChooseResourceTypeRequest(List<Resource> resourceTypes, int quantity) {
+        gameSceneController.displayChooseResourceTypeRequest(quantity);
     }
 
     @Override
-    public void displayChooseWhiteMarbleConversionRequest(List<Resource> resources, int numberOfMarbles) {
-
+    public void displayChooseLeaderCardsRequest(List<Integer> leaderCards){
+        resetControllers();
+        instantiateGameScene();
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                gameSceneController.displayLeaderCardsRequest(leaderCards, client);
+            }
+        });
     }
 
-    @Override
-    public void displayMarblesTaken(List<Marble> marblesTaken, boolean needToChooseConversion) {
-
+    public void loadDevelopmentCards(List<LightDevelopmentCard> lightDevelopmentCards) {
+        MatchData.getInstance().setAllDevelopmentCards(lightDevelopmentCards);
     }
 
-    @Override
-    public void displayResourcesToStore(List<Resource> resourcesToStore){
-        gameSceneController.displayNotifyResourcesToStore(resourcesToStore);
-    }
+    // *********************************************************************  //
+    //                          SINGLE PLAYER                                 //
+    // *********************************************************************  //
 
     @Override
     public void displayLorenzoAction(int id) {
@@ -200,28 +293,42 @@ public class GUI extends Application implements View {
         });
     }
 
-    public void displayProductionCardYouCanSelect(List<Integer> IDs, List<Value> basicProduction) {
-        gameSceneController.displayProductionCardYouCanSelect(IDs);
+    // *********************************************************************  //
+    //                          CHOOSE ACTION GUI                             //
+    // *********************************************************************  //
+
+    @Override
+    public void displayChooseActionRequest(Map<ActionType, Boolean> executableActions, boolean standardActionDone) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                gameSceneController.displayChooseActionRequest(executableActions,standardActionDone);
+            }
+        });
+    }
+
+    // *********************************************************************  //
+    //                   TAKE RESOURCES FROM MARKET GUI                       //
+    // *********************************************************************  //
+
+    @Override
+    public void displayMarbleInsertionPositionRequest() {
+        gameSceneController.displayMarbleInsertionPositionRequest();
     }
 
     @Override
-    public void displayChooseProduction(List<Integer> availableProductionIDs, Map<Resource, Integer> availableResources, boolean addORremove) {
-        if(availableProductionIDs.size() == 0){
-            chooseNextProductionAction();
-            return;
-        }
-        gameSceneController.displayChooseProduction(availableProductionIDs,availableResources,addORremove);
+    public void displayChooseWhiteMarbleConversionRequest(List<Resource> resources, int numberOfMarbles) {
+        gameSceneController.displayChooseWhiteMarbleConversionRequest(resources, numberOfMarbles);
     }
 
     @Override
-    public void displayCurrentSelectedProductions(Set<Integer> productionIDs, List<Value> basicProduction) {
-            //empty
+    public void displayMarblesTaken(List<Marble> marblesTaken, boolean needToChooseConversion) {
+        //empty
     }
 
-    @Override
-    public void chooseNextProductionAction() {
-        gameSceneController.chooseNextProductionAction();
-    }
+    // *********************************************************************  //
+    //                         ORGANIZE DEPOTS GUI                            //
+    // *********************************************************************  //
 
     @Override
     public void displayChooseStorageTypeRequest(Resource resource, List<String> availableDepots, boolean canDiscard, boolean canReorganize) {
@@ -240,63 +347,65 @@ public class GUI extends Application implements View {
         gameSceneController.displayReorganizeDepotsRequest(depots,failure,availableLeaderResource);
     }
 
-
     @Override
-    public void displayChooseLeaderCardsRequest(List<Integer> leaderCards){
-        resetControllers();
-        instantiateGameScene();
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                gameSceneController.displayLeaderCardsRequest(leaderCards, client);
-            }
-        });
-    }
-
-    public void instantiateGameScene(){
-        createMainScene("/FXML/GameScene.fxml", () -> {
-            stage.setTitle("Maestri del Rinascimento");
-            stage.setResizable(false);
-            stage.show();
-            gameSceneController = fxmlLoader.getController();
-            gameSceneController.setGUI(this);
-            gameSceneController.setClient(client);
-        });
+    public void displaySelectStorageRequest(Resource resource, boolean isInWarehouse, boolean isInStrongbox, boolean isInLeaderDepot) {
+        gameSceneController.displaySelectStorageRequest(resource,isInWarehouse,isInStrongbox,isInLeaderDepot);
     }
 
     @Override
-    public void displaySelectCardRequest(List<Integer> cardIDs, boolean leaderORdevelopment) {
-            gameSceneController.displaySelectCardRequest(cardIDs,leaderORdevelopment);
+    public void displayResourcesToStore(List<Resource> resourcesToStore){
+        gameSceneController.displayNotifyResourcesToStore(resourcesToStore);
     }
 
-    @Override
-    public void loadLeaderCards(List<LightLeaderCard> leaderCards){
-        MatchData.getInstance().setAllLeaderCards(leaderCards);
-    }
-
-    @Override
-
-    public void displayChooseResourceTypeRequest(List<Resource> resourceTypes, int quantity) {
-        gameSceneController.displayChooseResourceTypeRequest(quantity);
-    }
-
-    public void loadDevelopmentCards(List<LightDevelopmentCard> lightDevelopmentCards) {
-        MatchData.getInstance().setAllDevelopmentCards(lightDevelopmentCards);
-    }
+    // *********************************************************************  //
+    //                            PRODUCTION GUI                              //
+    // *********************************************************************  //
 
     @Override
     public void displayChooseProductionPowersRequest(Map<Integer, List<Value>> availableProductionPowers, Map<Resource, Integer> availableResources) {
         UtilityProduction.initialize(this, client, availableProductionPowers, availableResources);
     }
-    @Override
-    public void displayMessage(String message) {
-        //TODO
+
+    public void displayProductionCardYouCanSelect(List<Integer> IDs, List<Value> basicProduction) {
+        gameSceneController.displayProductionCardYouCanSelect(IDs);
     }
 
     @Override
-    public void loadDevelopmentCardGrid(List<Integer> availableCardsIds) {
-        MatchData.getInstance().loadDevelopmentCardGrid(availableCardsIds);
+    public void displayChooseProduction(List<Integer> availableProductionIDs, Map<Resource, Integer> availableResources, boolean addORremove) {
+        if(availableProductionIDs.size() == 0){
+            chooseNextProductionAction();
+            return;
+        }
+        gameSceneController.displayChooseProduction(availableProductionIDs,availableResources,addORremove);
     }
+
+    @Override
+    public void displayCurrentSelectedProductions(Set<Integer> productionIDs, List<Value> basicProduction) {
+        //empty
+    }
+
+    @Override
+    public void chooseNextProductionAction() {
+        gameSceneController.chooseNextProductionAction();
+    }
+
+    // *********************************************************************  //
+    //                              CARDS GUI                                 //
+    // *********************************************************************  //
+
+    @Override
+    public void displaySelectDevelopmentCardSlotRequest(boolean firstSlotAvailable, boolean secondSlotAvailable, boolean thirdSlotAvailable) {
+        gameSceneController.displaySelectDevelopmentCardSlotRequest(firstSlotAvailable,secondSlotAvailable,thirdSlotAvailable);
+    }
+
+    @Override
+    public void displaySelectCardRequest(List<Integer> cardIDs, boolean leaderORdevelopment) {
+        gameSceneController.displaySelectCardRequest(cardIDs,leaderORdevelopment);
+    }
+
+    // *********************************************************************  //
+    //                             MATCHDATA UPDATE                           //
+    // *********************************************************************  //
 
     @Override
     public void update(MatchDataMessage message) {
@@ -317,83 +426,17 @@ public class GUI extends Application implements View {
 
     }
 
-    @Override
-    public void displayResults(Map<String, Integer> results, boolean readyForAnotherGame) {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                gameSceneController.displayResults(results,readyForAnotherGame);
-            }
-        });
-
-    }
-
-    @Override
-    public void displayResults(int victoryPoints) {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                gameSceneController.displayResults(victoryPoints);
-            }
-        });
-    }
-
-    @Override
-    public void displayDisconnection(String nickname, boolean setUp, boolean gameCancelled) {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                if(gameSceneController!=null) {
-                    gameSceneController.displayDisconnection(nickname, setUp, gameCancelled);
-                }
-            }
-        });
-    }
-
-    @Override
-    public void displayWelcomeBackMessage(String nickname, boolean gameFinished) {
-        resetControllers();
-        instantiateGameScene();
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                gameSceneController.displayWelcomeBackMessage(nickname,gameFinished);
-            }
-        });
-
-    }
-
-    @Override
-    public void handleCloseConnection(boolean wasConnected) {
-        //TODO
-    }
-
-    @Override
-    public void displaySelectStorageRequest(Resource resource, boolean isInWarehouse, boolean isInStrongbox, boolean isInLeaderDepot) {
-        gameSceneController.displaySelectStorageRequest(resource,isInWarehouse,isInStrongbox,isInLeaderDepot);
-    }
-
-    @Override
-    public void displayChooseActionRequest(Map<ActionType, Boolean> executableActions, boolean standardActionDone) {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                gameSceneController.displayChooseActionRequest(executableActions,standardActionDone);
-            }
-        });
-    }
-
-    @Override
-    public void displaySelectDevelopmentCardSlotRequest(boolean firstSlotAvailable, boolean secondSlotAvailable, boolean thirdSlotAvailable) {
-        gameSceneController.displaySelectDevelopmentCardSlotRequest(firstSlotAvailable,secondSlotAvailable,thirdSlotAvailable);
-    }
-
     public void setNicknames(String playerNickname, List<String> otherPlayersNicknames){
         MatchData.getInstance().setThisClient(playerNickname);
         MatchData.getInstance().resetOtherClients();
         for(String nickname : otherPlayersNicknames){
             MatchData.getInstance().addLightClient(nickname);
         }
+    }
+
+    @Override
+    public void loadDevelopmentCardGrid(List<Integer> availableCardsIds) {
+        MatchData.getInstance().loadDevelopmentCardGrid(availableCardsIds);
     }
 
     @Override

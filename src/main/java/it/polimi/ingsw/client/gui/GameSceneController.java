@@ -132,7 +132,6 @@ public class GameSceneController {
     List<ResourceStorageType> reorganizeChosenDepots;
     List<Node> selectedProductions;
     String currentPlayer;
-    List<Integer> developmentCardGridIDsBackup;
 
     boolean isYourTurn;
     // *********************************************************************  //
@@ -140,7 +139,6 @@ public class GameSceneController {
     // *********************************************************************  //
     @FXML
     public void initialize() {
-        developmentCardGridIDsBackup= new ArrayList<>();
         currentPlayer=new String();
         matchData=MatchData.getInstance();
         players=matchData.getAllNicknames();
@@ -579,18 +577,8 @@ public class GameSceneController {
     private void updateDevelopmentCardGridView() {
         List<LightDevelopmentCard> developmentCardGrid =new ArrayList<>();
         List<Integer> gridCardsIDs = matchData.getDevelopmentCardGrid();
+        this.developmentCardGrid.getChildren().forEach(x->x.setVisible(false));
         if (gridCardsIDs != null) {
-            if(developmentCardGridIDsBackup.size()>gridCardsIDs.size()){
-                for(Integer id : developmentCardGridIDsBackup){
-                    if(!gridCardsIDs.contains(id)){
-                        LightDevelopmentCard devCard= matchData.getDevelopmentCardByID(id);
-                        int row = (Level.valueOf(devCard.getFlagLevel()).getValue() * - 1) + 2;
-                        int col = FlagColor.valueOf(devCard.getFlagColor()).getValue();
-                        this.developmentCardGrid.getChildren().get(col+ this.developmentCardGrid.getColumnCount()*row).setVisible(false);
-                    }
-                }
-            }
-            developmentCardGridIDsBackup=gridCardsIDs;
             for(Integer devCardId : gridCardsIDs){
                 developmentCardGrid.add(matchData.getDevelopmentCardByID(devCardId));
             }
@@ -1066,9 +1054,9 @@ public class GameSceneController {
                 GridPane gridResources= new GridPane();
                 HBox selectionHBox=((HBox)popupVbox.getChildren().get(1));
                 selectionHBox.getChildren().add(gridResources);
-
                 ((Label) popupVbox.getChildren().get(0)).setText("Choose " + quantity + (quantity>1?" resources":" resource"));
-                List<ImageView> resourcesImages= buildResources(quantity,selectedResourcesBooleans,confirmSelectionButton);
+                selectedResources.clear();
+                List<ImageView> resourcesImages= buildResources(quantity,selectedResourcesBooleans,confirmSelectionButton,null);
                 int resCounter=0;
                 for(int row=0;row<quantity;row++){
                     for(int col=0;col<4;col++){
@@ -1081,12 +1069,14 @@ public class GameSceneController {
         });
     }
 
-    private List<ImageView> buildResources(int quantity, boolean[] selectedResourcesBooleans, Button confirmSelectionButton) {
-        List<Resource> resources= Resource.realValues();
+    private List<ImageView> buildResources(int quantity, boolean[] selectedResourcesBooleans, Button confirmSelectionButton , List<Resource> resourcesToAdd) {
+        if(resourcesToAdd==null){
+            resourcesToAdd= Resource.realValues();
+        }
         List<ImageView> resourcesImages=new ArrayList<>();
         AtomicInteger resCounter= new AtomicInteger();
         for(int ii=0; ii<quantity;ii++){
-            resources.forEach(resource->{
+            resourcesToAdd.forEach(resource->{
                 ImageView resourceImage= new ImageView( new Image(SetupSceneController.class.getResource("/img/punchboard/" + resource.toString().toLowerCase(Locale.ROOT) + ".png").toString()));
                 resourceImage.setFitHeight(40);
                 resourceImage.setPreserveRatio(true);
@@ -1182,6 +1172,48 @@ public class GameSceneController {
             }
         });
     }
+
+    public void displayChooseWhiteMarbleConversionRequest(List<Resource> resources, int numberOfMarbles) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                popupVbox.setVisible(true);
+                popupVbox.setManaged(true);
+                Button confirmSelectionButton= discardButton;
+                confirmSelectionButton.setDisable(true);
+                confirmSelectionButton.setVisible(true);
+                confirmSelectionButton.setText("Confirm selection");
+                boolean[] selectedResourcesBooleans=new boolean[resources.size()*numberOfMarbles];
+                GridPane gridResources= new GridPane();
+                HBox selectionHBox=((HBox)popupVbox.getChildren().get(1));
+                selectionHBox.getChildren().add(gridResources);
+                ((Label) popupVbox.getChildren().get(0)).setText(numberOfMarbles + " white marbles can be converted into resources");
+                List<ImageView> resourcesImages= buildResources(numberOfMarbles,selectedResourcesBooleans,confirmSelectionButton, resources);
+                int resCounter=0;
+                for(int row=0;row<numberOfMarbles;row++){
+                    for(int col=0;col<2;col++){
+                        gridResources.add(resourcesImages.get(resCounter), col, row);
+                        resCounter++;
+                    }
+                }
+                gridResources.setVisible(true);
+                confirmSelectionButton.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        if(selectedResources.size()>0){
+                            client.sendMessageToServer(new ChooseWhiteMarbleConversionResponse(selectedResources));
+                            selectionHBox.getChildren().clear();
+                            confirmSelectionButton.setVisible(false);
+                            confirmSelectionButton.setText("Discard");
+                            reorganizeButton.setManaged(true);
+                            popupVbox.setVisible(false);
+                        }
+                    }
+                });
+            }
+        });
+    }
+
 
     public void displayReorganizeDepotsRequest(List<String> depots, boolean failure, List<Resource> availableLeaderResource) {
         Platform.runLater(new Runnable() {
@@ -1771,7 +1803,7 @@ public class GameSceneController {
                 importantMessagesVbox.setVisible(true);
                 importantMessagesVbox.getChildren().get(1).setVisible(true);
                 Label message= (Label) importantMessagesVbox.getChildren().get(0);
-                message.setText("Welcome back " + nickname + (gameFinished ? "!\nThe game you were playing in is finished, we are loading the results for you..." : ".\nYou have to finish an old game, we are logging you in the room..."));
+                message.setText("Welcome back " + nickname + (gameFinished ? "!\nThe game you were playing in is finished,\n we are loading the results for you..." : ".\nYou have to finish an old game,\n we are logging you in the room..."));
             }
         });
     }
@@ -1794,20 +1826,29 @@ public class GameSceneController {
 
     }
 
+    public void handleCloseConnection(boolean wasConnected) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                importantMessagesVbox.setManaged(true);
+                importantMessagesVbox.setVisible(true);
+
+                if (!wasConnected)
+                    ((Label)importantMessagesVbox.getChildren().get(0)).setText("The server is not reachable at the moment. Try again later.");
+                else
+                    ((Label)importantMessagesVbox.getChildren().get(0)).setText("Connection closed");
+                ;
+                importantMessagesVbox.getChildren().get(1).setVisible(true);
+                ((Button)importantMessagesVbox.getChildren().get(1)).setText("Quit");
+                ((Button)importantMessagesVbox.getChildren().get(1)).setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        Platform.exit();
+                        System.exit(0);
+                    }
+                });
+            }
+        });
+    }
     //TODO non si aggiorna subito, al ricaricamento della partita, la faithtrack(e il resto). L'update della developmentgrid con carte vuote non fuzniona bene(lascia quella di default)
-
-
-    /*   Use this to avoid Thread exception
-
-
-    Platform.runLater(new Runnable() {
-        @Override
-        public void run() {
-            // Update UI here.
-         }
-    });
-
-
- */
-
 }

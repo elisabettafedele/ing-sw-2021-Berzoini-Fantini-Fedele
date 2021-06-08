@@ -61,38 +61,6 @@ public class CLI implements View {
         // client.start();
     }
 
-    @Override
-    public void update(MatchDataMessage message) {
-        MatchData.getInstance().update(message);
-        if (message instanceof TurnMessage)
-            update((TurnMessage) message);
-        //TODO update of views
-    }
-
-    public void update(TurnMessage message){
-        MatchData.getInstance().update(message);
-        if (MatchData.getInstance().getThisClientNickname().equals(message.getNickname())) {
-            MatchData.getInstance().setCurrentViewNickname(MatchData.getInstance().getThisClientNickname());
-            System.out.println((message).isStarted() ? "It's your turn! " : "Turn ended ");
-            myTurn.set(message.isStarted());
-            if (message.isStarted()) {
-                if (inputObserverOutOfTurn != null && inputObserverOutOfTurn.isAlive())
-                    this.inputObserverOutOfTurn.interrupt();
-            } else {
-                this.inputObserverOutOfTurn = new Thread(this::outOfTurnInput);
-                if (!MatchData.getInstance().getOtherClientsNicknames().isEmpty())
-                    System.out.println("From now on you can use the command -pb to move to another player's view (EG. -pb betti shows you the view of the player named \"betti\")");
-                inputObserverOutOfTurn.start();
-            }
-        } else {
-            if (inputObserverOutOfTurn == null || !inputObserverOutOfTurn.isAlive()) {
-                this.inputObserverOutOfTurn = new Thread(this::outOfTurnInput);
-                inputObserverOutOfTurn.start();
-            }
-            System.out.println(message.getNickname() + ((message).isStarted() ? " started " : " ended ") + "his turn");
-        }
-    }
-
     private void analyzeOutOfTurnMessage(String input) {
         if (input != null && input.contains("-pb") && (MatchData.getInstance().getThisClientNickname().contains(input.substring(4)) || MatchData.getInstance().getOtherClientsNicknames().contains(input.substring(4)))) {
             MatchData.getInstance().setCurrentViewNickname(input.substring(4));
@@ -109,6 +77,15 @@ public class CLI implements View {
             analyzeOutOfTurnMessage(line);
         }
     }
+
+    @Override
+    public void displayMessage(String message) {
+        System.out.println(message);
+    }
+
+    // *********************************************************************  //
+    //                           END GAME  & FA                               //
+    // *********************************************************************  //
 
     @Override
     public void displayResults(Map<String, Integer> results, boolean readyForAnotherGame) {
@@ -177,17 +154,6 @@ public class CLI implements View {
             inputObserverOutOfTurn.interrupt();
     }
 
-
-    @Override
-    public void displayMessage(String message) {
-        System.out.println(message);
-    }
-
-    @Override
-    public void loadDevelopmentCardGrid(List<Integer> availableCardsIds) {
-        MatchData.getInstance().loadDevelopmentCardGrid(availableCardsIds);
-    }
-
     // *********************************************************************  //
     //                             LOBBY CLI                                  //
     // *********************************************************************  //
@@ -244,6 +210,16 @@ public class CLI implements View {
     }
 
     // *********************************************************************  //
+    //                          SINGLE PLAYER                                 //
+    // *********************************************************************  //
+
+    @Override
+    public void displayLorenzoAction(int id) {
+        System.out.println(Colour.ANSI_BLUE.getCode() + TokenDescriptors.valueOf(id).getDescription() + Colour.ANSI_RESET);
+        //System.out.println("Lorenzo used token " + id);
+    }
+
+    // *********************************************************************  //
     //                          CHOOSE ACTION CLI                             //
     // *********************************************************************  //
 
@@ -289,12 +265,6 @@ public class CLI implements View {
     @Override
     public void displayResourcesToStore(List<Resource> resourcesToStore) {
         OrganizeDepotsCLI.displayResourcesToStore(resourcesToStore);
-    }
-
-    @Override
-    public void displayLorenzoAction(int id) {
-        System.out.println(Colour.ANSI_BLUE.getCode() + TokenDescriptors.valueOf(id).getDescription() + Colour.ANSI_RESET);
-        //System.out.println("Lorenzo used token " + id);
     }
 
     @Override
@@ -440,6 +410,37 @@ public class CLI implements View {
     //                             MATCHDATA UPDATE                           //
     // *********************************************************************  //
 
+    @Override
+    public void update(MatchDataMessage message) {
+        MatchData.getInstance().update(message);
+        if (message instanceof TurnMessage)
+            update((TurnMessage) message);
+        //TODO update of views
+    }
+
+    public void update(TurnMessage message){
+        MatchData.getInstance().update(message);
+        if (MatchData.getInstance().getThisClientNickname().equals(message.getNickname())) {
+            MatchData.getInstance().setCurrentViewNickname(MatchData.getInstance().getThisClientNickname());
+            System.out.println((message).isStarted() ? "It's your turn! " : "Turn ended ");
+            myTurn.set(message.isStarted());
+            if (message.isStarted()) {
+                if (inputObserverOutOfTurn != null && inputObserverOutOfTurn.isAlive())
+                    this.inputObserverOutOfTurn.interrupt();
+            } else {
+                this.inputObserverOutOfTurn = new Thread(this::outOfTurnInput);
+                if (!MatchData.getInstance().getOtherClientsNicknames().isEmpty())
+                    System.out.println("From now on you can use the command -pb to move to another player's view (EG. -pb betti shows you the view of the player named \"betti\")");
+                inputObserverOutOfTurn.start();
+            }
+        } else {
+            if (inputObserverOutOfTurn == null || !inputObserverOutOfTurn.isAlive()) {
+                this.inputObserverOutOfTurn = new Thread(this::outOfTurnInput);
+                inputObserverOutOfTurn.start();
+            }
+            System.out.println(message.getNickname() + ((message).isStarted() ? " started " : " ended ") + "his turn");
+        }
+    }
 
     public void setNicknames(String playerNickname, List<String> otherPlayersNicknames){
         MatchData.getInstance().setThisClient(playerNickname);
@@ -453,6 +454,11 @@ public class CLI implements View {
         }else{
             MatchData.getInstance().setGameMode(GameMode.MULTI_PLAYER);
         }
+    }
+
+    @Override
+    public void loadDevelopmentCardGrid(List<Integer> availableCardsIds) {
+        MatchData.getInstance().loadDevelopmentCardGrid(availableCardsIds);
     }
 
     @Override
