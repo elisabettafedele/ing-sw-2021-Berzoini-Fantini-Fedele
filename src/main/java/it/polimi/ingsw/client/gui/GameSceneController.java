@@ -1143,7 +1143,6 @@ public class GameSceneController {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                //TODO handle white marbles conversion
                 List<Node> arrows=new ArrayList<>();
                 ((Pane)((Pane) marketGrid.getParent()).getChildren().get(1)).getChildren().stream().forEach(node->arrows.add(node));
                 ((Pane)((Pane) marketGrid.getParent()).getChildren().get(2)).getChildren().stream().forEach(node->arrows.add(node));;
@@ -1850,5 +1849,4 @@ public class GameSceneController {
             }
         });
     }
-    //TODO non si aggiorna subito, al ricaricamento della partita, la faithtrack(e il resto). L'update della developmentgrid con carte vuote non fuzniona bene(lascia quella di default)
 }
