@@ -37,6 +37,11 @@ public class PersonalBoard implements Serializable {
         if(leaderCards==null || leaderCards.size()!=numberOfInitialLeaderCards){
             throw new InvalidArgumentException();
         }
+        //TODO REMOVE, FOR DEBUGGING ONLY
+        for(LeaderCard lc : leaderCards){
+            lc.activate();
+        }
+        //TODO
         strongbox = new StrongboxDepot[numberOfStrongboxDepots];
         strongbox[0]= new StrongboxDepot(Resource.COIN);
         strongbox[1]= new StrongboxDepot(Resource.STONE);

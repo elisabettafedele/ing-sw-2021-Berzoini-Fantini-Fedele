@@ -23,7 +23,7 @@ public class TakeResourcesFromMarketCLI {
     }
 
     public static void displayChooseWhiteMarbleConversionRequest(Client client, List<Resource> resources, int numberOfMarbles) {
-        System.out.println("You have these two possible white marble conversions: " + resources.get(0) + " | " + resources.get(1));
+        System.out.println("You have these two possible white marble conversions: 1-" + resources.get(0) + " | 2-" + resources.get(1));
         List<Resource> resourcesChosen = new LinkedList<>();
         for (int i = 0; i < numberOfMarbles; i++){
             if (numberOfMarbles > 1)

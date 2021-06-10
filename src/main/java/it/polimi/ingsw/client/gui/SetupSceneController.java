@@ -10,6 +10,7 @@ import it.polimi.ingsw.messages.toServer.lobby.NicknameResponse;
 import it.polimi.ingsw.messages.toServer.lobby.NumberOfPlayersResponse;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
@@ -255,24 +256,30 @@ public class SetupSceneController {
         });
     }
 
-
-
-
-
-
-
-
-/*   Use this to avoid Thread exception
-
-
-    Platform.runLater(new Runnable() {
-        @Override
-        public void run() {
-            // Update UI here.
-         }
-    });
-
-
- */
-
+    public void handleCloseConnection(boolean wasConnected) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                vBoxIPandPORT.setVisible(false);
+                vBoxGameMode.setVisible(false);
+                vBoxWaiting.setVisible(false);
+                vBoxNumOfPlayers.setVisible(false);
+                vBoxNickname.setVisible(true);
+                vBoxNickname.getChildren().get(1).setVisible(false);
+                vBoxNickname.getChildren().get(1).setManaged(false);
+                if (!wasConnected)
+                    ((Label)vBoxNickname.getChildren().get(0)).setText("The server is not reachable at the moment. Try again later.");
+                else
+                    ((Label)vBoxNickname.getChildren().get(0)).setText("Connection closed");
+                ((Button)vBoxNickname.getChildren().get(2)).setText("Quit");
+                ((Button)vBoxNickname.getChildren().get(2)).setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        Platform.exit();
+                        System.exit(0);
+                    }
+                });
+            }
+        });
+    }
 }
