@@ -1,13 +1,15 @@
 package it.polimi.ingsw.model.player;
 
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
+import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.persistency.PersistentPlayer;
 import it.polimi.ingsw.model.cards.LeaderCard;
+import it.polimi.ingsw.observe.Observable;
 
 import java.io.Serializable;
 import java.util.List;
 
-public class Player implements Serializable {
+public class Player extends Observable {
     private String nickname;
     private PersonalBoard personalBoard;
     private int victoryPoints;
@@ -97,6 +99,15 @@ public class Player implements Serializable {
 
     public void setInkwell(boolean inkwell) {
         this.inkwell = inkwell;
+    }
+
+    public int countPoints(){
+        int victoryPoints = 0;
+        victoryPoints += getPersonalBoard().getDevelopmentCards().stream().map(Card::getVictoryPoints).mapToInt(i -> i).sum();
+        victoryPoints += getPersonalBoard().getLeaderCards().stream().filter(LeaderCard::isActive).map(Card::getVictoryPoints).mapToInt(i -> i).sum();
+        victoryPoints += getPersonalBoard().countResourceNumber() / 5;
+        victoryPoints += this.victoryPoints;
+        return victoryPoints;
     }
 
 

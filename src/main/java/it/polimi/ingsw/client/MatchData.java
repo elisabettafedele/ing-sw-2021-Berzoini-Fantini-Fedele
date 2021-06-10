@@ -245,6 +245,9 @@ public class MatchData {
             if (((TurnMessage) message).isStarted())
                 this.turnOwnerNickname = message.getNickname();
         }
+        if (message instanceof NotifyVictoryPoints){
+            getLightClientByNickname(message.getNickname()).setVictoryPoints(((NotifyVictoryPoints) message).getVictoryPoints());
+        }
 
     }
 

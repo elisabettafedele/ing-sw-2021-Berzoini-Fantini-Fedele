@@ -46,8 +46,7 @@ public class GraphicalScoreBoard extends GraphicalElement{
                 symbols[x_begin][max_length + 2] = String.valueOf(faithTrackPosition/10).charAt(0);
             }
             symbols[x_begin][max_length + 3] = String.valueOf(faithTrackPosition%10).charAt(0);
-
-            int victoryPoints = MatchData.getInstance().getLightClientByNickname(nickname).getVictoryPoints();
+            int victoryPoints = nickname.equals(MatchData.LORENZO)? 0: MatchData.getInstance().getLightClientByNickname(nickname).getVictoryPoints();
             if(victoryPoints > 9){
                 symbols[x_begin][max_length + 6] = String.valueOf(victoryPoints /10).charAt(0);
             }
