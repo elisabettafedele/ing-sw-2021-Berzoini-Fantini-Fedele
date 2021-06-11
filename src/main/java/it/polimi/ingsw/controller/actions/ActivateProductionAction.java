@@ -1,6 +1,7 @@
 package it.polimi.ingsw.controller.actions;
 
 import it.polimi.ingsw.enumerations.ActionType;
+import it.polimi.ingsw.messages.toClient.matchData.UpdateMarkerPosition;
 import it.polimi.ingsw.messages.toServer.NotifyEndRemoveResources;
 import it.polimi.ingsw.messages.toClient.matchData.UpdateDepotsStatus;
 import it.polimi.ingsw.server.ClientHandler;
@@ -204,7 +205,6 @@ public class ActivateProductionAction implements Action{
 
             if(productionPowerSelected.size() < 1){
                 turnController.setNextAction();
-                //clientHandler.sendMessageToClient(new DisplayStandardView());
                 return;
             }
 
@@ -218,7 +218,10 @@ public class ActivateProductionAction implements Action{
             for (Integer id : productionPowerSelected){
                 productionPower = getProductionByID(id);
                 manageCost(productionPower.get(0), resourceToRemove);
-                faithPoints += manageCost(productionPower.get(1), resourceToAdd);
+                if(id >= 61){
+                    faithPoints += manageCost(((ChooseProductionPowersResponse) message).getSelectedLeaderProductions(id).get(1), resourceToAdd);
+                }else
+                    faithPoints += manageCost(productionPower.get(1), resourceToAdd);
             }
 
             turnController.removeResources(resourceToRemove);
@@ -229,6 +232,7 @@ public class ActivateProductionAction implements Action{
                 try {
                     personalBoard.moveMarker(faithPoints);
                     turnController.checkFaithTrack();
+                    turnController.getController().sendMessageToAll(new UpdateMarkerPosition(player.getNickname(), personalBoard.getMarkerPosition()));
                 } catch (InvalidArgumentException e) {
                     e.printStackTrace();
                 }
@@ -277,7 +281,7 @@ public class ActivateProductionAction implements Action{
                 resourceToManage.put(entry.getKey(), resourceToManage.get(entry.getKey()) + entry.getValue());
             }
         } catch (ValueNotPresentException e) {
-            e.printStackTrace();
+            //skip
         }
 
         //if the Value has faith points they are returned, else 0 is returned

@@ -48,4 +48,12 @@ public class FaithTrackTest {
         faithTrack.setVaticanReportSectionIterator(vaticanReportSection);
         assertEquals(vaticanReportSection.getStart(), faithTrack.getCurrentSection(false).getStart());
     }
+
+    @Test
+    public void testGetVaticanReportSectionNumberByStart() throws InvalidArgumentException {
+        VaticanReportSection vaticanReportSection = new VaticanReportSection(12, 18, 2);
+        assertEquals(faithTrack.getVaticanReportSectionNumberByStart(12), 1);
+        vaticanReportSection = new VaticanReportSection(19, 22, 2);
+        assertEquals(faithTrack.getVaticanReportSectionNumberByStart(19), 2);
+    }
 }

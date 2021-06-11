@@ -6,13 +6,17 @@ import it.polimi.ingsw.messages.toServer.MessageToServer;
 import it.polimi.ingsw.model.cards.Value;
 import it.polimi.ingsw.server.Server;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 public class ChooseProductionPowersResponse implements MessageToServer {
 
     List<Integer> productionPowersSelected;
     List<Value> basicProductionPower;
+
+    private Map<Integer, List<Value>> selectedLeaderProductions;
 
     public List<Integer> getProductionPowersSelected() {
         return productionPowersSelected;
@@ -23,13 +27,24 @@ public class ChooseProductionPowersResponse implements MessageToServer {
     }
 
     public ChooseProductionPowersResponse(List<Integer> productionPowersSelected) {
+        this.selectedLeaderProductions = new HashMap<>();
         this.productionPowersSelected = productionPowersSelected;
     }
 
     public ChooseProductionPowersResponse(List<Integer> productionPowersSelected, List<Value> basicProductionPower) {
+        this.selectedLeaderProductions = new HashMap<>();
         this.productionPowersSelected = productionPowersSelected;
         this.basicProductionPower = basicProductionPower;
     }
+
+    public List<Value> getSelectedLeaderProductions(int id) {
+        return selectedLeaderProductions.get(id);
+    }
+
+    public void addLeaderProduction(int id, List<Value> leaderProduction){
+        selectedLeaderProductions.put(id, leaderProduction);
+    }
+
 
     @Override
     public void handleMessage(ServerInterface server, ClientHandlerInterface clientHandler) {

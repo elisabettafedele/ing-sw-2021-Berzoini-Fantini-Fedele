@@ -48,7 +48,6 @@ public class LightClient {
         ownedLeaderCards.put(ID, active);
     }
 
-    //TODO: check that uses ID as Integer and not as int
     public void removeLeaderCard(Integer ID) {
         ownedLeaderCards.remove(ID);
     }
