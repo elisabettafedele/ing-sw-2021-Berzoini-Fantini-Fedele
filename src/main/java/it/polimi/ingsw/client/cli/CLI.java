@@ -329,6 +329,8 @@ public class CLI implements View {
         if(addORremove){
             if(selection == 0){
                 createBasicProduction(availableResources);
+            }else if(selection >= 61) {
+                chooseLeaderCardProductionPower(availableResources, selection);
             }else{
                 UtilityProduction.addProductionPower(selection);
             }
@@ -336,6 +338,21 @@ public class CLI implements View {
         else{
             UtilityProduction.removeProduction(selection);
         }
+    }
+
+    private void chooseLeaderCardProductionPower(Map<Resource, Integer> availableResources, int id) {
+        //TODO: merge this duplicates lines that are also in createBasicProduction
+        List<Resource> realValues = Resource.realValues();
+        System.out.println("Choose the resource you want to produce");
+        for(int k = 0; k < realValues.size(); k++){
+            System.out.printf("%d. " + realValues.get(k) +"\n", k+1);
+        }
+        //Selecting the desired resource
+        Integer selection = InputParser.getInt(
+                "Error: the given number is not present in the list. Provide a valid number",
+                CLI.conditionOnIntegerRange(1, realValues.size()));
+
+        UtilityProduction.manageLeaderProductionPower(realValues.get(selection - 1), id);
     }
 
     private void createBasicProduction(Map<Resource, Integer> availableResources){

@@ -8,12 +8,14 @@ import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.ValueNotPresentException;
 import it.polimi.ingsw.messages.toServer.game.ChooseProductionPowersResponse;
+import it.polimi.ingsw.model.cards.Production;
 import it.polimi.ingsw.model.cards.Value;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Common class of {@link CLI} and {@link GUI} to manage the activate production action
@@ -163,11 +165,28 @@ public class UtilityProduction {
      */
     public static void confirmChoices() {
         List<Integer> productionPowersSelected= new ArrayList<>(selectedProductions.keySet());
-        if(productionPowersSelected.contains(BASIC_PRODUCTION_POWER)){
-            client.sendMessageToServer(new ChooseProductionPowersResponse(productionPowersSelected, selectedProductions.get(BASIC_PRODUCTION_POWER)));
-        } else {
-            client.sendMessageToServer(new ChooseProductionPowersResponse(productionPowersSelected)); //If the player confirms with zero selections don't increment the actionDone variable!!!
+        //TODO: new
+        List<Integer> leaderProductionPower = productionPowersSelected.stream().filter(x -> x >= 61).collect(Collectors.toList());
+        ChooseProductionPowersResponse cppr;
+
+        if(productionPowersSelected.contains(BASIC_PRODUCTION_POWER) || !leaderProductionPower.isEmpty()){
+            if(productionPowersSelected.contains(BASIC_PRODUCTION_POWER)) {
+                cppr = new ChooseProductionPowersResponse(productionPowersSelected, selectedProductions.get(BASIC_PRODUCTION_POWER));
+                if(!leaderProductionPower.isEmpty()){
+                    for(Integer id : leaderProductionPower){
+                        cppr.addLeaderProduction(id, selectedProductions.get(id));
+                    }
+                }
+            }else{
+                cppr = new ChooseProductionPowersResponse(productionPowersSelected);
+                for(Integer id : leaderProductionPower){
+                    cppr.addLeaderProduction(id, selectedProductions.get(id));
+                }
+            }
+        }else {
+            cppr = new ChooseProductionPowersResponse(productionPowersSelected);
         }
+        client.sendMessageToServer(cppr);
     }
 
     /**
@@ -215,5 +234,34 @@ public class UtilityProduction {
             availableResources.put(entry.getKey(), availableResources.get(entry.getKey()) + entry.getValue());
         }
         view.chooseNextProductionAction();
+    }
+
+    /**
+     * Method to build the new production power of the leader cards that has a production power
+     * @param resource the resource chosen
+     * @param id the id of the leader card
+     */
+    public static void manageLeaderProductionPower(Resource resource, int id) {
+        Value oldProductionOutput = availableProductionPowers.get(id).get(1);
+        Map<Resource, Integer> newResourceValueOutput = null;
+        try {
+            newResourceValueOutput = oldProductionOutput.getResourceValue();
+        } catch (ValueNotPresentException e) {
+            //Should not raise exception
+        }
+        newResourceValueOutput.remove(Resource.ANY);
+        newResourceValueOutput.put(resource, 1);
+
+        List<Value> newProductionPower = null;
+        newProductionPower = new ArrayList<Value>();
+        newProductionPower.add(availableProductionPowers.get(id).get(0));
+        try {
+            newProductionPower.add(new Value(null, newResourceValueOutput, 1));
+        } catch (InvalidArgumentException e) {
+            e.printStackTrace();
+        }
+
+        actualChosenProduction = newProductionPower;
+        addProdPowerToList(id);
     }
 }

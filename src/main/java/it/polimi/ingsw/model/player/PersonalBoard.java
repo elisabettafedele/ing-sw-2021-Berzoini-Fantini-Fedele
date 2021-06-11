@@ -38,6 +38,11 @@ public class PersonalBoard implements Serializable {
             throw new InvalidArgumentException();
         }
         //TODO REMOVE, FOR DEBUGGING ONLY
+        /*
+        for(LeaderCard lc : leaderCards){
+            lc.activate();
+        }
+        */
         for(LeaderCard lc : leaderCards){
             lc.activate();
         }
