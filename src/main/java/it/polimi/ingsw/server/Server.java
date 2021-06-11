@@ -337,18 +337,13 @@ public class Server implements ServerInterface {
 
     /**
      * Method to handle the disconnection of a single player.
-     * If the game is ended and he has not received the notification, I save the message in clientDisconnectedGameFinished list.
      * If he was still playing or he was in the set up phase the game remain saved in the json file, as it happens with persistency
      * @param connection the {@link ClientHandler} of the disconnected client
      */
     public synchronized void removeConnectionGameSinglePlayer(ClientHandler connection){
         //if the client comes back I retrieve the game from the json file
-        takenNicknames.remove(connection.getNickname());
-        if (connection.getController().getGamePhase() instanceof EndPhase) {
-            Map <String, Integer> results = new HashMap<>();
-            results.put (connection.getNickname(), connection.getController().getPlayers().get(0).isWinner() ? connection.getController().getPlayers().get(0).getVictoryPoints() : -1);
-            clientsDisconnectedGameFinished.put(connection.getNickname(), new GameOverMessage(results, true));
-        } else {
+        if (!(connection.getController().getGamePhase() instanceof EndPhase)){
+            takenNicknames.remove(connection.getNickname());
             activeGames.remove(connection.getController());
         }
     }
