@@ -118,6 +118,8 @@ public class GameSceneController {
     @FXML
     private Button endTurnButton;
 
+    Color colorToGlow= Color.CYAN;
+    Color colorToAlternateGlow= Color.CORAL;
 
     List<String> players;
     int currentPlayerIndex;
@@ -133,12 +135,14 @@ public class GameSceneController {
     List<Node> selectedProductions;
     String currentPlayer;
 
+    boolean connectionClosedByClient = true;
     boolean isYourTurn;
     // *********************************************************************  //
     //                        INITIALIZING FUNCTIONS                          //
     // *********************************************************************  //
     @FXML
     public void initialize() {
+        selectedResources=new ArrayList<>();
         currentPlayer=new String();
         matchData=MatchData.getInstance();
         players=matchData.getAllNicknames();
@@ -157,7 +161,7 @@ public class GameSceneController {
         storageNameToNodeMap.put(ResourceStorageType.WAREHOUSE_THIRD_DEPOT,warehouse.getChildren().get(5));
         storageNameToNodeMap.put(ResourceStorageType.WAREHOUSE,warehouse);
         storageNameToNodeMap.put(ResourceStorageType.STRONGBOX,((Pane)strongbox.getParent()).getChildren().get(1));
-        storageNameToNodeMap.put(ResourceStorageType.LEADER_DEPOT,leftLeaderDepot.getParent());
+        storageNameToNodeMap.put(ResourceStorageType.LEADER_DEPOT,rightLeaderCard);
         marketArrowsNumMap=new HashMap<>();
         marketArrowsNumMap.put("one",1);
         marketArrowsNumMap.put("two",2);
@@ -276,6 +280,7 @@ public class GameSceneController {
 
     private void glowNode(Node nodeToGlow,Color color){
         DropShadow borderGlow = new DropShadow();
+        int depth = 40;
         borderGlow.setColor(color);
         borderGlow.setOffsetX(0f);
         borderGlow.setOffsetY(0f);
@@ -511,7 +516,7 @@ public class GameSceneController {
                 }
                 //if extra depot leaderCard, it shows the resources in it, if any
                 if(leaderCards.get(i).getEffectType().equals("EXTRA_DEPOT")){
-                    int quantity= matchData.getLightClientByNickname(players.get(currentPlayerIndex)).getLeaderDepots().get(leaderCards.get(i));
+                    int quantity= matchData.getLightClientByNickname(players.get(currentPlayerIndex)).getLeaderDepots().get(leaderCards.get(i).getID());
                     if(i==0){
                         for(int ii=0;ii<leftLeaderDepot.getChildren().size();ii++){
                             if(ii<quantity){
@@ -627,6 +632,13 @@ public class GameSceneController {
                             break;
                         case ACTIVATE_PRODUCTION:
                             activateGlowingAndSelectEventHandler(activateProductionPane,false,actionType);
+                            int counter=0;
+                            for(LightLeaderCard lc : leaderCards){
+                                if(matchData.getLightClientByNickname(players.get(currentPlayerIndex)).leaderCardIsActive(lc.getID())&& lc.getEffectType().equals(EffectType.PRODUCTION.toString())){
+                                    activateGlowingAndSelectEventHandler(((Pane)leftLeaderCard.getParent()).getChildren().get(counter*2),false,actionType);
+                                }
+                                counter++;
+                            }
                             break;
                         case BUY_DEVELOPMENT_CARD:
                             activateGlowingAndSelectEventHandler(developmentCardGrid,false,actionType);
@@ -704,7 +716,7 @@ public class GameSceneController {
         nodeToActivate.setOnMouseEntered(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                glowNode(nodeToActivate,Color.CYAN);
+                glowNode(nodeToActivate,colorToGlow);
                 if(actionType.equals(ActionType.ACTIVATE_LEADER_CARD)){
                     createTooltip(nodeToActivate,actionType.toString().replace('_',' ') + "OR" + ActionType.DISCARD_LEADER_CARD.toString().replace('_',' ') );
                 }
@@ -824,7 +836,7 @@ public class GameSceneController {
     }
 
     private void highlightAndDrag(Node resourceToDrag, String resourceAsString, HashMap<ResourceStorageType, Boolean> interactableDepots) {
-        glowNode(resourceToDrag,Color.CYAN);
+        glowNode(resourceToDrag,colorToGlow);
         makeDraggable(resourceToDrag, resourceAsString);
         for(ResourceStorageType resourceStorageType: interactableDepots.keySet()){
             if(interactableDepots.get(resourceStorageType)){
@@ -833,11 +845,15 @@ public class GameSceneController {
                     for(LightLeaderCard lc: matchData.getLightClientByNickname(players.get(0)).getOwnedLeaderCards().stream().map(x -> matchData.getLeaderCardByID(x)).collect(Collectors.toList())){
                         if(lc.getEffectType().equals("EXTRA_DEPOT")){
                             if(lcCounter == 0) {
-                                glowNode(leftLeaderCard,Color.CYAN);
+                                glowNode(leftLeaderCard,colorToGlow);
+                                ((DropShadow)leftLeaderCard.getEffect()).setHeight(70);
+                                ((DropShadow)leftLeaderCard.getEffect()).setWidth(70);
                                 activateDraggableOver(leftLeaderDepot);
                             }
                             if(lcCounter==1){
-                                glowNode(rightLeaderCard,Color.CYAN);
+                                glowNode(rightLeaderCard,colorToGlow);
+                                ((DropShadow)rightLeaderCard.getEffect()).setHeight(70);
+                                ((DropShadow)rightLeaderCard.getEffect()).setWidth(70);
                                 activateDraggableOver(rightLeaderDepot);
                             }
                         }
@@ -846,12 +862,12 @@ public class GameSceneController {
                 }
                 else {
                     if(resourceStorageType.equals(ResourceStorageType.WAREHOUSE)){
-                        glowNode(storageNameToNodeMap.get(ResourceStorageType.WAREHOUSE_FIRST_DEPOT),Color.CYAN);
-                        glowNode(storageNameToNodeMap.get(ResourceStorageType.WAREHOUSE_SECOND_DEPOT),Color.CYAN);
-                        glowNode(storageNameToNodeMap.get(ResourceStorageType.WAREHOUSE_THIRD_DEPOT),Color.CYAN);
+                        glowNode(storageNameToNodeMap.get(ResourceStorageType.WAREHOUSE_FIRST_DEPOT),colorToGlow);
+                        glowNode(storageNameToNodeMap.get(ResourceStorageType.WAREHOUSE_SECOND_DEPOT),colorToGlow);
+                        glowNode(storageNameToNodeMap.get(ResourceStorageType.WAREHOUSE_THIRD_DEPOT),colorToGlow);
                     }
                     else{
-                        glowNode(storageNameToNodeMap.get(resourceStorageType),Color.CYAN);
+                        glowNode(storageNameToNodeMap.get(resourceStorageType),colorToGlow);
                     }
                     activateDraggableOver(storageNameToNodeMap.get(resourceStorageType));
                 }
@@ -912,14 +928,30 @@ public class GameSceneController {
             public void handle(DragEvent event) {
                 if (event.getGestureSource() != nodeDraggableOver &&
                         event.getDragboard().hasString()) {
-                    glowNode(nodeDraggableOver,Color.ORANGE);
+                    if(nodeDraggableOver.equals(leftLeaderDepot)){
+                        glowNode(leftLeaderCard,colorToAlternateGlow);
+                    }
+                    else if(nodeDraggableOver.equals(rightLeaderDepot)){
+                        glowNode(rightLeaderCard,colorToAlternateGlow);
+                    }
+                    else{
+                        glowNode(nodeDraggableOver,colorToAlternateGlow);
+                    }
                 }
             }
         });
         nodeDraggableOver.setOnDragExited(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent event) {
-                glowNode(nodeDraggableOver,Color.CYAN);
+                if(nodeDraggableOver.equals(leftLeaderDepot)){
+                    glowNode(leftLeaderCard,colorToGlow);
+                }
+                else if(nodeDraggableOver.equals(rightLeaderDepot)){
+                    glowNode(rightLeaderCard,colorToGlow);
+                }
+                else{
+                    glowNode(nodeDraggableOver,colorToGlow);
+                }
             }
         });
         nodeDraggableOver.setOnDragDropped(new EventHandler<DragEvent>() {
@@ -928,7 +960,16 @@ public class GameSceneController {
                 Dragboard db = event.getDragboard();
                 boolean success = false;
                 if (event.getDragboard().hasString()) {
-                    addResource(nodeDraggableOver,db.getString());
+                    if(nodeDraggableOver.equals(leftLeaderDepot)){
+                        addResource(leftLeaderCard,db.getString());
+                    }
+                    else if(nodeDraggableOver.equals(rightLeaderDepot)){
+                        addResource(rightLeaderCard,db.getString());
+                    }
+                    else{
+                        addResource(nodeDraggableOver,db.getString());
+                    }
+
                     success = true;
                 }
                 event.setDropCompleted(success);
@@ -962,7 +1003,7 @@ public class GameSceneController {
     private void addResource(Node nodeDraggableOver, String resourceToAddAsString) {
         String storageSelected= new String();
         for(ResourceStorageType rst: storageNameToNodeMap.keySet()){
-            if(storageNameToNodeMap.get(rst).equals(nodeDraggableOver)){
+            if(storageNameToNodeMap.get(rst).equals(nodeDraggableOver)||nodeDraggableOver.equals(leftLeaderCard)){
                 storageSelected=rst.toString();
             }
         }
@@ -994,7 +1035,6 @@ public class GameSceneController {
 
                 HBox selectionHBox=((HBox)popupVbox.getChildren().get(1));
                 ((Label) popupVbox.getChildren().get(0)).setText("Choose two out of the four following Leader cards:");
-                selectedResources=new ArrayList<>();
                 selectedLeaderCards =new ArrayList<>();
 
                 HashMap<Integer, ImageView> leaderCardsMap= buildCards(leaderCards,confirmSelectionButton);
@@ -1082,22 +1122,25 @@ public class GameSceneController {
                 resourceImage.setPreserveRatio(true);
                 resourceImage.setSmooth(true);
                 resourceImage.setId(resCounter.toString());
-                resourceImage.addEventHandler(MouseEvent.MOUSE_PRESSED, mouseEvent -> {
-
-                    if(selectedResourcesBooleans[Integer.parseInt(resourceImage.getId())]){
-                        selectedResources.remove(resource);
-                        selectedResourcesBooleans[Integer.parseInt(resourceImage.getId())]=false;
-                        resourceImage.setEffect(null);
-                        confirmSelectionButton.setDisable(true);
-                    }else if (selectedResources.size()<quantity){
-                        selectedResources.add(resource);
-                        selectedResourcesBooleans[Integer.parseInt(resourceImage.getId())]=true;
-                        greyNode(resourceImage);
-                        if(selectedResources.size()==quantity){
-                            confirmSelectionButton.setDisable(false);
+                resourceImage.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent mouseEvent) {
+                        if(selectedResourcesBooleans[Integer.parseInt(resourceImage.getId())]){
+                            selectedResources.remove(resource);
+                            selectedResourcesBooleans[Integer.parseInt(resourceImage.getId())]=false;
+                            resourceImage.setEffect(null);
+                            confirmSelectionButton.setDisable(true);
+                        }else if (selectedResources.size()<quantity){
+                            selectedResources.add(resource);
+                            selectedResourcesBooleans[Integer.parseInt(resourceImage.getId())]=true;
+                            greyNode(resourceImage);
+                            if(selectedResources.size()==quantity){
+                                confirmSelectionButton.setDisable(false);
+                            }
                         }
                     }
                 });
+                resourceImage.setDisable(false);
                 resourcesImages.add(resourceImage);
                 resCounter.getAndIncrement();
             });
@@ -1147,7 +1190,7 @@ public class GameSceneController {
                 ((Pane)((Pane) marketGrid.getParent()).getChildren().get(1)).getChildren().stream().forEach(node->arrows.add(node));
                 ((Pane)((Pane) marketGrid.getParent()).getChildren().get(2)).getChildren().stream().forEach(node->arrows.add(node));;
                 for(Node arrow : arrows){
-                    glowNode(arrow,Color.CYAN);
+                    glowNode(arrow,colorToGlow);
                     arrow.setOnMouseClicked(new EventHandler<MouseEvent>() {
                         @Override
                         public void handle(MouseEvent mouseEvent) {
@@ -1158,13 +1201,13 @@ public class GameSceneController {
                     arrow.setOnMouseEntered(new EventHandler<MouseEvent>() {
                         @Override
                         public void handle(MouseEvent mouseEvent) {
-                            glowNode(arrow,Color.CORAL);
+                            glowNode(arrow,colorToAlternateGlow);
                         }
                     });
                     arrow.setOnMouseExited(new EventHandler<MouseEvent>() {
                         @Override
                         public void handle(MouseEvent mouseEvent) {
-                            glowNode(arrow,Color.CYAN);
+                            glowNode(arrow,colorToGlow);
                         }
                     });
                 }
@@ -1178,6 +1221,8 @@ public class GameSceneController {
             public void run() {
                 popupVbox.setVisible(true);
                 popupVbox.setManaged(true);
+                reorganizeButton.setVisible(false);
+                reorganizeButton.setManaged(false);
                 Button confirmSelectionButton= discardButton;
                 confirmSelectionButton.setDisable(true);
                 confirmSelectionButton.setVisible(true);
@@ -1186,6 +1231,7 @@ public class GameSceneController {
                 GridPane gridResources= new GridPane();
                 HBox selectionHBox=((HBox)popupVbox.getChildren().get(1));
                 selectionHBox.getChildren().add(gridResources);
+                selectedResources.clear();
                 ((Label) popupVbox.getChildren().get(0)).setText(numberOfMarbles + " white marbles can be converted into resources");
                 List<ImageView> resourcesImages= buildResources(numberOfMarbles,selectedResourcesBooleans,confirmSelectionButton, resources);
                 int resCounter=0;
@@ -1200,13 +1246,17 @@ public class GameSceneController {
                     @Override
                     public void handle(ActionEvent actionEvent) {
                         if(selectedResources.size()>0){
-                            client.sendMessageToServer(new ChooseWhiteMarbleConversionResponse(selectedResources));
+                            List<Resource> resourcesToSend = new ArrayList<>();
+                            for (int i = 0; i < selectedResources.size(); i++)
+                                resourcesToSend.add(selectedResources.get(i));
+                            client.sendMessageToServer(new ChooseWhiteMarbleConversionResponse(resourcesToSend));
                             selectionHBox.getChildren().clear();
                             confirmSelectionButton.setVisible(false);
                             confirmSelectionButton.setText("Discard");
                             reorganizeButton.setManaged(true);
                             popupVbox.setVisible(false);
                         }
+                        actionEvent.consume();
                     }
                 });
             }
@@ -1288,7 +1338,7 @@ public class GameSceneController {
     }
 
     private void depotChoiceGlowAndClick(Node depotNode, boolean moveORswap, List<String> depots, List<Resource> availableLeaderResource, boolean firstChoice, boolean leader) {
-        glowNode(depotNode,Color.CYAN);
+        glowNode(depotNode,colorToGlow);
         depotNode.setOnMouseEntered(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -1298,7 +1348,7 @@ public class GameSceneController {
         depotNode.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                glowNode(depotNode,Color.CORAL);
+                glowNode(depotNode,colorToAlternateGlow);
                 if(leader){
                     reorganizeChosenDepots.add(ResourceStorageType.LEADER_DEPOT);
                     depots.remove(ResourceStorageType.LEADER_DEPOT.toString());
@@ -1406,7 +1456,7 @@ public class GameSceneController {
     }
 
     private void selectAndGlowCard(Node node, Integer cardId) {
-        glowNode(node,Color.CYAN);
+        glowNode(node,colorToGlow);
         node.setOnMouseEntered(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -1430,9 +1480,9 @@ public class GameSceneController {
                 if(firstSlotAvailable)nodeList.add(firstSlot);
                 if(secondSlotAvailable)nodeList.add(secondSlot);
                 if(thirdSlotAvailable)nodeList.add(thirdSlot);
-                glowNode(activateProductionPane.getChildren().get(1),Color.CYAN);
-                glowNode(activateProductionPane.getChildren().get(2),Color.CYAN);
-                glowNode(activateProductionPane.getChildren().get(3),Color.CYAN);
+                glowNode(activateProductionPane.getChildren().get(1),colorToGlow);
+                glowNode(activateProductionPane.getChildren().get(2),colorToGlow);
+                glowNode(activateProductionPane.getChildren().get(3),colorToGlow);
                 for(Node node : nodeList){
                     node.setOnMouseEntered(new EventHandler<MouseEvent>() {
                         @Override
@@ -1486,8 +1536,14 @@ public class GameSceneController {
                     int counter=0;
                     for(Integer lcId: matchData.getLightClientByNickname(players.get(0)).getOwnedLeaderCards()){
                         if(matchData.getLightClientByNickname(players.get(0)).leaderCardIsActive(lcId)&&matchData.getLeaderCardByID(lcId).getEffectType().equals(EffectType.EXTRA_DEPOT.toString())){
-                            if(counter==0) nodeAndStorageType.put(leftLeaderCard,ResourceStorageType.LEADER_DEPOT);
-                            if(counter==1) nodeAndStorageType.put(rightLeaderCard,ResourceStorageType.LEADER_DEPOT);
+                            if(counter==0){
+                                nodeAndStorageType.put(leftLeaderCard,ResourceStorageType.LEADER_DEPOT);
+                                nodeAndStorageType.put(leftLeaderDepot,ResourceStorageType.LEADER_DEPOT);
+                            }
+                            if(counter==1) {
+                                nodeAndStorageType.put(rightLeaderCard,ResourceStorageType.LEADER_DEPOT);
+                                nodeAndStorageType.put(rightLeaderDepot,ResourceStorageType.LEADER_DEPOT);
+                            }
                         }
                         counter++;
                     }
@@ -1502,7 +1558,7 @@ public class GameSceneController {
                     nodeAndStorageType.put(((Pane)strongbox.getParent()).getChildren().get(1),ResourceStorageType.STRONGBOX);
                 }
                 for(Node node : nodeAndStorageType.keySet()){
-                    glowNode(node,Color.CYAN);
+                    glowNode(node,colorToGlow);
                     node.setOnMouseEntered(new EventHandler<MouseEvent>() {
                         @Override
                         public void handle(MouseEvent mouseEvent) {
@@ -1524,7 +1580,6 @@ public class GameSceneController {
                 }
             }
         });
-
     }
 
     public void displayChooseProduction(List<Integer> iDs, Map<Resource, Integer> availableResources, boolean addORremove) {
@@ -1538,7 +1593,6 @@ public class GameSceneController {
                 productionVbox.getChildren().get(2).setManaged(false);
                 ((Label) productionVbox.getChildren().get(0)).setText("Select a production");
 
-
                 Map<Node,Integer> nodeIntMap= new HashMap<>();
                 if(iDs.contains(0)){
                     nodeIntMap.put(basicProduction,0);
@@ -1550,8 +1604,16 @@ public class GameSceneController {
                     }
                     i++;
                 }
+                int counter=0;
+                for(LightLeaderCard lc : matchData.getLightClientByNickname(players.get(0)).getOwnedLeaderCards().stream().map(x->matchData.getLeaderCardByID(x)).collect(Collectors.toList())){
+                    if(matchData.getLightClientByNickname(players.get(0)).leaderCardIsActive(lc.getID())&&lc.getEffectType().equals(EffectType.PRODUCTION.toString())&&iDs.contains(lc.getID())) {
+                        if(counter==0) nodeIntMap.put(leftLeaderCard, lc.getID());
+                        if(counter==1) nodeIntMap.put(rightLeaderCard, lc.getID());
+                    }
+                    counter++;
+                }
                 for(Node node : nodeIntMap.keySet()){
-                    if(addORremove)glowNode(node,Color.AQUA);
+                    if(addORremove)glowNode(node,colorToGlow);
                     node.setOnMouseEntered(new EventHandler<MouseEvent>() {
                         @Override
                         public void handle(MouseEvent mouseEvent) {
@@ -1633,7 +1695,7 @@ public class GameSceneController {
                 node.setOnMouseEntered(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
-                        glowNode(node,Color.CYAN);
+                        glowNode(node,colorToGlow);
                     }
                 });
                 node.setOnMouseExited(new EventHandler<MouseEvent>() {
@@ -1762,8 +1824,10 @@ public class GameSceneController {
                         endMessage.setText(endMessage.getText() + "!! "+ winner + " !!");
                     }
                 }
-                if (!readyForAnotherGame)
+                if (!readyForAnotherGame){
+                    connectionClosedByClient=true;
                     client.closeSocket();
+                }
                 else
                     endMessage.setText(endMessage.getText() + "\n\nYou can now start another game!\n");
             }
@@ -1784,6 +1848,7 @@ public class GameSceneController {
                     endMessage.setText("You lost against Lorenzo il Magnifico!");
                 else
                     endMessage.setText("You won with " + victoryPoints + " victory points!! \nCongratulations");
+                connectionClosedByClient=true;
                 client.closeSocket();
             }
         });
@@ -1831,12 +1896,12 @@ public class GameSceneController {
             public void run() {
                 importantMessagesVbox.setManaged(true);
                 importantMessagesVbox.setVisible(true);
-
-                if (!wasConnected)
-                    ((Label)importantMessagesVbox.getChildren().get(0)).setText("The server is not reachable at the moment. Try again later.");
-                else
-                    ((Label)importantMessagesVbox.getChildren().get(0)).setText("Connection closed");
-                ;
+                if(!connectionClosedByClient){
+                    if (!wasConnected)
+                        ((Label)importantMessagesVbox.getChildren().get(0)).setText("The server is not reachable at the moment. Try again later.");
+                    else
+                        ((Label)importantMessagesVbox.getChildren().get(0)).setText("Connection closed");
+                }
                 importantMessagesVbox.getChildren().get(1).setVisible(true);
                 ((Button)importantMessagesVbox.getChildren().get(1)).setText("Quit");
                 ((Button)importantMessagesVbox.getChildren().get(1)).setOnAction(new EventHandler<ActionEvent>() {

@@ -11,7 +11,6 @@ import it.polimi.ingsw.messages.toClient.NotifyClientDisconnection;
 import it.polimi.ingsw.messages.toClient.WelcomeBackMessage;
 import it.polimi.ingsw.messages.toClient.matchData.*;
 import it.polimi.ingsw.model.cards.Card;
-import it.polimi.ingsw.model.cards.LeaderCard;
 import it.polimi.ingsw.model.persistency.GameHistory;
 import it.polimi.ingsw.model.persistency.PersistentControllerPlayPhase;
 import it.polimi.ingsw.model.persistency.PersistentControllerPlayPhaseSingle;
@@ -27,8 +26,6 @@ import it.polimi.ingsw.messages.toServer.MessageToServer;
 import it.polimi.ingsw.model.game.Game;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.server.Server;
-
-import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
@@ -288,6 +285,10 @@ public class Controller {
 
                 //5. Pope tiles
                 connection.sendMessageToClient(new ReloadPopesFavorTiles(gamePlayer.getNickname(), gamePlayer.getPersonalBoard().getPopesTileStates()));
+
+                //6. Victory points
+                connection.sendMessageToClient(new NotifyVictoryPoints(connection.getNickname(), getPlayerByNickname(connection.getNickname()).countPoints()));
+
         }
         connection.sendMessageToClient(new ReloadMatchData(false, disconnection));
     }

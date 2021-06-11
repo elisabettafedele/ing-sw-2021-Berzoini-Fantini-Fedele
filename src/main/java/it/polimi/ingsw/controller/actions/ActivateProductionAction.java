@@ -2,6 +2,7 @@ package it.polimi.ingsw.controller.actions;
 
 import it.polimi.ingsw.enumerations.ActionType;
 import it.polimi.ingsw.messages.toClient.matchData.UpdateMarkerPosition;
+import it.polimi.ingsw.messages.toClient.matchData.NotifyVictoryPoints;
 import it.polimi.ingsw.messages.toServer.NotifyEndRemoveResources;
 import it.polimi.ingsw.messages.toClient.matchData.UpdateDepotsStatus;
 import it.polimi.ingsw.server.ClientHandler;
@@ -247,6 +248,7 @@ public class ActivateProductionAction implements Action{
             try {
                 personalBoard.addResourcesToStrongbox(resourceToAdd);
                 turnController.getController().sendMessageToAll(new UpdateDepotsStatus(player.getNickname(), player.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), player.getPersonalBoard().getStrongboxStatus(), player.getPersonalBoard().getLeaderStatus()));
+                turnController.getController().sendMessageToAll(new NotifyVictoryPoints(player.getNickname(), player.countPoints()));
             } catch (InvalidDepotException | InvalidArgumentException e) {
                 e.printStackTrace();
             }

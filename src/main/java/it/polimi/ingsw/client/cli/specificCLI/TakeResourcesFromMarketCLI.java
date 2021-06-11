@@ -23,11 +23,11 @@ public class TakeResourcesFromMarketCLI {
     }
 
     public static void displayChooseWhiteMarbleConversionRequest(Client client, List<Resource> resources, int numberOfMarbles) {
-        System.out.println("You have these two possible white marble conversions: " + resources.get(0) + " | " + resources.get(1));
+        System.out.println("Choose one these two possible white marble conversions: \n1." + resources.get(0) + "\n2." + resources.get(1));
         List<Resource> resourcesChosen = new LinkedList<>();
         for (int i = 0; i < numberOfMarbles; i++){
             if (numberOfMarbles > 1)
-                System.out.printf("White marble #%d\n", i+1);
+                System.out.printf("Choice %d: ", i+1);
             try {
                 resourcesChosen.add(getMarbleColor(resources));
             } catch (IOException e) {

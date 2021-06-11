@@ -4,6 +4,7 @@ import it.polimi.ingsw.controller.game_phases.PlayPhase;
 import it.polimi.ingsw.controller.game_phases.SinglePlayerPlayPhase;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.enumerations.ResourceStorageType;
+import it.polimi.ingsw.messages.toClient.matchData.NotifyVictoryPoints;
 import it.polimi.ingsw.messages.toClient.matchData.TurnMessage;
 import it.polimi.ingsw.messages.toServer.NotifyEndRemoveResources;
 import it.polimi.ingsw.messages.toClient.game.SelectStorageRequest;
@@ -159,6 +160,7 @@ public class TurnController {
                                 p.addVictoryPoints(vaticanReportSection.getPopeFavorPoints());
                                 p.getPersonalBoard().setPopesTileStates(controller.getGame().getFaithTrack().getVaticanReportSectionNumberByStart(vaticanReportSection.getStart()), true);
                                 controller.sendMessageToAll(new NotifyTakenPopesFavorTile(p.getNickname(), controller.getGame().getFaithTrack().getVaticanReportSectionNumberByStart(vaticanReportSection.getStart()), true));
+                                controller.sendMessageToAll(new NotifyVictoryPoints(p.getNickname(), p.countPoints()));
                             } catch (InvalidArgumentException e) {
                                 e.printStackTrace();
                             }
@@ -235,6 +237,7 @@ public class TurnController {
                     if (currentPlayer.getPersonalBoard().countResources().get(resource).equals(resourcesToRemove.get(resource))) {
                         currentPlayer.getPersonalBoard().removeAll(resource);
                         controller.sendMessageToAll(new UpdateDepotsStatus(currentPlayer.getNickname(), currentPlayer.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), currentPlayer.getPersonalBoard().getStrongboxStatus(), currentPlayer.getPersonalBoard().getLeaderStatus()));
+                        controller.sendMessageToAll(new NotifyVictoryPoints(currentPlayer.getNickname(), currentPlayer.countPoints()));
                         resourcesToRemove.replace(resource, 0);
                     } else {
                         boolean isInWarehouse = currentPlayer.getPersonalBoard().getWarehouse().getResourceTypes().contains(resource);
@@ -248,6 +251,7 @@ public class TurnController {
                             else
                                 currentPlayer.getPersonalBoard().isResourceAvailableAndRemove(ResourceStorageType.LEADER_DEPOT, resource, resourcesToRemove.get(resource), true);
                             controller.sendMessageToAll(new UpdateDepotsStatus(currentPlayer.getNickname(), currentPlayer.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), currentPlayer.getPersonalBoard().getStrongboxStatus(), currentPlayer.getPersonalBoard().getLeaderStatus()));
+                            controller.sendMessageToAll(new NotifyVictoryPoints(currentPlayer.getNickname(), currentPlayer.countPoints()));
                             resourcesToRemove.replace(resource, 0);
                         } else {
                             clientHandler.sendMessageToClient(new SelectStorageRequest(resource, isInWarehouse, isInStrongbox, isInLeaderDepot));
@@ -291,6 +295,7 @@ public class TurnController {
         resourcesToRemove.replace(resource, previousValue-1);
         currentPlayer.getPersonalBoard().isResourceAvailableAndRemove( resourceStorageType,resource,1,true);
         controller.sendMessageToAll(new UpdateDepotsStatus(currentPlayer.getNickname(), currentPlayer.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), currentPlayer.getPersonalBoard().getStrongboxStatus(), currentPlayer.getPersonalBoard().getLeaderStatus()));
+        controller.sendMessageToAll(new NotifyVictoryPoints(currentPlayer.getNickname(), currentPlayer.countPoints()));
         handleRemoveResources();
     }
 

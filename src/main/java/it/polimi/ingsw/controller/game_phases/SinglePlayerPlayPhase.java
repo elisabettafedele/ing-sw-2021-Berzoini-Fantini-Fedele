@@ -91,10 +91,10 @@ public class SinglePlayerPlayPhase extends PlayPhase {
                     e.printStackTrace();
                 }
             }else{
-                getTurnController().setEndTrigger(true);
                 getPlayer().setWinner(false); //useless cause is false by default, leave here just to remember
-                //TODO: lost the game communication
-                break;
+                getController().sendMessageToAll(new LoadDevelopmentCardGrid(getPlayer().getNickname(),getController().getGame().getDevelopmentCardGrid().getAvailableCards().stream().map(Card:: getID).collect(Collectors.toList())));
+                getController().endMatch();
+                return;
             }
 
         }
@@ -116,7 +116,6 @@ public class SinglePlayerPlayPhase extends PlayPhase {
         blackCrossPosition = blackCrossPosition + step;
         if (blackCrossPosition > getController().getGame().getFaithTrack().getLength())
             blackCrossPosition = getController().getGame().getFaithTrack().getLength();
-        getTurnController().checkFaithTrack();
         //TODO, manage eventual Lorenzo's victory.
     }
 
@@ -130,6 +129,7 @@ public class SinglePlayerPlayPhase extends PlayPhase {
     public void handleResourceDiscard(String nickname) {
         moveBlackCross(1);
         getController().getConnectionByNickname(getPlayer().getNickname()).sendMessageToClient(new UpdateMarkerPosition(LORENZO, blackCrossPosition));
+        getTurnController().checkFaithTrack();
     }
 
 

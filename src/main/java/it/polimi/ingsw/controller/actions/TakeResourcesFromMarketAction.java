@@ -2,6 +2,7 @@ package it.polimi.ingsw.controller.actions;
 
 import it.polimi.ingsw.controller.game_phases.PlayPhase;
 import it.polimi.ingsw.messages.toClient.game.*;
+import it.polimi.ingsw.messages.toClient.matchData.NotifyVictoryPoints;
 import it.polimi.ingsw.messages.toClient.matchData.UpdateMarkerPosition;
 import it.polimi.ingsw.messages.toClient.matchData.UpdateMarketView;
 import it.polimi.ingsw.messages.toClient.matchData.UpdateDepotsStatus;
@@ -193,7 +194,6 @@ public class TakeResourcesFromMarketAction implements Action {
         }
         if (!player.getPersonalBoard().getAvailableEffects(EffectType.EXTRA_DEPOT).isEmpty())
             availableDepotsForReorganization.add(ResourceStorageType.LEADER_DEPOT.name());
-        clientHandler.sendMessageToClient(new UpdateDepotsStatus(player.getNickname(), player.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), player.getPersonalBoard().getStrongboxStatus(), player.getPersonalBoard().getLeaderStatus()));
         clientHandler.sendMessageToClient(new SendReorganizeDepotsCommands(availableDepotsForReorganization, true, false, availableLeaderResources));
     }
 
@@ -318,6 +318,7 @@ public class TakeResourcesFromMarketAction implements Action {
         resourcesToStore.remove(resource);
         try {
             player.getPersonalBoard().addResources(ResourceStorageType.valueOf(storageType), resource, 1);
+            controller.sendMessageToAll(new NotifyVictoryPoints(player.getNickname(), player.countPoints()));
             controller.sendMessageToAll(new UpdateDepotsStatus(player.getNickname(), player.getPersonalBoard().getWarehouse().getWarehouseDepotsStatus(), player.getPersonalBoard().getStrongboxStatus(), player.getPersonalBoard().getLeaderStatus()));
         } catch (InvalidDepotException | InsufficientSpaceException | InvalidResourceTypeException | InvalidArgumentException e) {
         }
