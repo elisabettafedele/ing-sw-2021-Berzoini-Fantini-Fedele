@@ -1246,7 +1246,10 @@ public class GameSceneController {
                     @Override
                     public void handle(ActionEvent actionEvent) {
                         if(selectedResources.size()>0){
-                            client.sendMessageToServer(new ChooseWhiteMarbleConversionResponse(selectedResources));
+                            List<Resource> resourcesToSend = new ArrayList<>();
+                            for (int i = 0; i < selectedResources.size(); i++)
+                                resourcesToSend.add(selectedResources.get(i));
+                            client.sendMessageToServer(new ChooseWhiteMarbleConversionResponse(resourcesToSend));
                             selectionHBox.getChildren().clear();
                             confirmSelectionButton.setVisible(false);
                             confirmSelectionButton.setText("Discard");
