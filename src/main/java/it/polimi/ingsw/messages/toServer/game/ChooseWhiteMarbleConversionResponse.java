@@ -9,6 +9,7 @@ import it.polimi.ingsw.enumerations.Resource;
 
 import java.util.List;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 public class ChooseWhiteMarbleConversionResponse implements MessageToServer {
     private List<Resource> resources;
@@ -26,7 +27,7 @@ public class ChooseWhiteMarbleConversionResponse implements MessageToServer {
     }
 
     public String toString(){
-        return "received chosen white marble conversion: " + Marble.valueOf(resources.get(0).getValue());
+        return "received chosen white marble conversion: " + resources.stream().map(x -> Marble.valueOf(x.getValue())).collect(Collectors.toList());
     }
 
 }
