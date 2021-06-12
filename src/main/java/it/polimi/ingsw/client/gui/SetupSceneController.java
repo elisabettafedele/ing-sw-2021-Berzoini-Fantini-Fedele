@@ -134,7 +134,11 @@ public class SetupSceneController {
     }
     @FXML
     public void portChanged(KeyEvent keyEvent) {
-        boolean hasInsertedValidPort = Utils.portIsValid(Integer.parseInt(portTextField.getText()));
+        boolean hasInsertedValidPort=false;
+        if(!portTextField.getText().equals("")) {
+            hasInsertedValidPort = Utils.portIsValid(Integer.parseInt(portTextField.getText()));
+        }
+
         validationMap.put(portTextField, hasInsertedValidPort);
         validateConnectFields();
     }
