@@ -22,14 +22,15 @@ public class OrganizeDepotsCLI {
         if (availableDepots.isEmpty())
             System.out.println("There are no available depots for " + resource);
         else {
-            System.out.println("Choose a depot for the " + resource);
+            System.out.print("Choose a depot for the " + resource + " ");
+            System.out.println(Colour.getColourByResource(resource).getCode() + resource.symbol + Colour.ANSI_RESET);
             Screen.getInstance().displayWarehouse();
             System.out.println("Available depots for this resource type are:");
             UtilityPrinter.printNumericList(availableDepots);
         }
         List<String> textCommands = new ArrayList<>();
         if (canDiscard) {
-            System.out.println("Type d if you want to discard the resource" + (canReorganize ? " or r if you want to reorganize your depots" : ""));
+            System.out.println("Type d to discard the resource" + (canReorganize ? " or r to reorganize your depots: d | r" : ": d"));
             textCommands.add(Command.DISCARD.command);
             if (canReorganize)
                 textCommands.add(Command.REORGANIZE.command);

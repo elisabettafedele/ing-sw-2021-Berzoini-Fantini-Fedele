@@ -410,10 +410,11 @@ public class CLI implements View {
     }
 
     public void displayCurrentSelectedProductions(Set<Integer> productionIDs, List<Value> basicProduction){
-        System.out.println("Your current selections are:");
-        List<Integer> IDs = new ArrayList<>();
-        IDs.addAll(productionIDs);
-        Screen.getInstance().displayCardSelection(IDs, basicProduction);
+        List<Integer> IDs = new ArrayList<>(productionIDs);
+        if(!IDs.isEmpty()){
+            System.out.println("Your current selections are:");
+            Screen.getInstance().displayCardSelection(IDs, basicProduction);
+        }
     }
 
     @Override

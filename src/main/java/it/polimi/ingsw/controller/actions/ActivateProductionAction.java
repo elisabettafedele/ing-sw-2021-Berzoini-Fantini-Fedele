@@ -225,10 +225,6 @@ public class ActivateProductionAction implements Action{
                     faithPoints += manageCost(productionPower.get(1), resourceToAdd);
             }
 
-            turnController.removeResources(resourceToRemove);
-
-
-
             if(faithPoints > 0){
                 try {
                     personalBoard.moveMarker(faithPoints);
@@ -238,6 +234,10 @@ public class ActivateProductionAction implements Action{
                     e.printStackTrace();
                 }
             }
+
+
+            turnController.removeResources(resourceToRemove);
+
 
         }
 
