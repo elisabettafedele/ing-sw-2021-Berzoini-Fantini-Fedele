@@ -43,9 +43,6 @@ public class PersonalBoard implements Serializable {
             lc.activate();
         }
         */
-        for(LeaderCard lc : leaderCards){
-            lc.activate();
-        }
         //TODO
         strongbox = new StrongboxDepot[numberOfStrongboxDepots];
         strongbox[0]= new StrongboxDepot(Resource.COIN);
