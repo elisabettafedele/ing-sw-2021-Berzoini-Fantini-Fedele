@@ -689,12 +689,12 @@
                   </ImageView>
                   <Pane fx:id="leftLeaderDepot" layoutX="14.0" layoutY="84.0" prefHeight="27.0" prefWidth="51.0">
                      <children>
-                        <ImageView fitHeight="134.0" fitWidth="12.0" layoutX="6.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="134.0" fitWidth="12.0" layoutX="6.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true" visible="false">
                            <image>
                               <Image url="@../img/punchboard/shield.png" />
                            </image>
                         </ImageView>
-                        <ImageView fitHeight="134.0" fitWidth="12.0" layoutX="35.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="134.0" fitWidth="12.0" layoutX="35.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true" visible="false">
                            <image>
                               <Image url="@../img/punchboard/shield.png" />
                            </image>
@@ -708,12 +708,12 @@
                   </ImageView>
                   <Pane fx:id="rightLeaderDepot" layoutX="105.0" layoutY="85.0" prefHeight="23.0" prefWidth="51.0">
                      <children>
-                        <ImageView fitHeight="134.0" fitWidth="12.0" layoutX="6.0" layoutY="9.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="134.0" fitWidth="12.0" layoutX="6.0" layoutY="9.0" pickOnBounds="true" preserveRatio="true" visible="false">
                            <image>
                               <Image url="@../img/punchboard/coin.png" />
                            </image>
                         </ImageView>
-                        <ImageView fitHeight="134.0" fitWidth="12.0" layoutX="33.0" layoutY="9.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="134.0" fitWidth="12.0" layoutX="33.0" layoutY="9.0" pickOnBounds="true" preserveRatio="true" visible="false">
                            <image>
                               <Image url="@../img/punchboard/coin.png" />
                            </image>
@@ -722,6 +722,16 @@
                   </Pane>
                   <Button fx:id="activateLeaderCardButton" layoutX="57.0" layoutY="23.0" mnemonicParsing="false" text="Activate" />
                   <Button fx:id="discardLeaderCardButton" layoutX="58.0" layoutY="62.0" mnemonicParsing="false" text="Discard" />
+                  <ImageView fitHeight="150.0" fitWidth="16.0" layoutX="37.0" layoutY="89.0" pickOnBounds="true" preserveRatio="true" visible="false">
+                     <image>
+                        <Image url="@../img/punchboard/stone.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="150.0" fitWidth="16.0" layoutX="128.0" layoutY="89.0" pickOnBounds="true" preserveRatio="true" visible="false">
+                     <image>
+                        <Image url="@../img/punchboard/stone.png" />
+                     </image>
+                  </ImageView>
                </children>
             </Pane>
             <Pane layoutX="230.0" layoutY="23.0" prefHeight="88.0" prefWidth="163.0">
@@ -745,7 +755,7 @@
             </Pane>
          </children>
       </AnchorPane>
-      <VBox fx:id="importantMessagesVbox" alignment="TOP_CENTER" layoutX="413.0" layoutY="183.0" prefHeight="276.0" prefWidth="334.0" styleClass="popup-box" stylesheets="@../css/style.css">
+      <VBox fx:id="importantMessagesVbox" alignment="TOP_CENTER" layoutX="413.0" layoutY="183.0" prefHeight="276.0" prefWidth="334.0" styleClass="popup-box" stylesheets="@../css/style.css" visible="false">
          <children>
             <Label alignment="CENTER" prefHeight="232.0" prefWidth="334.0">
                <VBox.margin>

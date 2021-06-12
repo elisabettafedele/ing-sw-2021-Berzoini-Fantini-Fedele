@@ -233,6 +233,8 @@ public class GameSceneController {
                for(Node node : selectedProductions){
                    node.setEffect(null);
                }
+               ((Pane)leftLeaderCard.getParent()).getChildren().get(6).setVisible(false);
+                ((Pane)leftLeaderCard.getParent()).getChildren().get(7).setVisible(false);
             }
         });
         lorenzoVbox.setVisible(false);
@@ -1644,6 +1646,9 @@ public class GameSceneController {
                                 if(nodeIntMap.get(node)==0){
                                     createBasicProduction(availableResources);
                                 }
+                                else if(nodeIntMap.get(node)>=61){
+                                    chooseLeaderCardProductionPower(availableResources,nodeIntMap.get(node));
+                                }
                                 else{
                                     UtilityProduction.addProductionPower(nodeIntMap.get(node));
                                 }
@@ -1656,10 +1661,66 @@ public class GameSceneController {
                                         ((Pane)basicProduction.getParent()).getChildren().get(i).setVisible(false);
                                     }
                                 }
+                                if(nodeIntMap.get(node)>=61){
+                                    int i=0;
+                                    for(Integer lcId : matchData.getLightClientByNickname(players.get(0)).getOwnedLeaderCards()){
+                                        if(nodeIntMap.get(node).equals(lcId)) break;
+                                        i++;
+                                    }
+                                    ((Pane)leftLeaderCard.getParent()).getChildren().get(6+i).setVisible(false);
+                                }
                                 UtilityProduction.removeProduction(nodeIntMap.get(node));
                             }
                         }
                     });
+                }
+            }
+        });
+    }
+
+    private void chooseLeaderCardProductionPower(Map<Resource, Integer> availableResources, Integer id) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                HBox resourcesHBox = (HBox) productionVbox.getChildren().get(1);
+                resourcesHBox.setVisible(true);
+                resourcesHBox.setManaged(true);
+                resourcesHBox.getChildren().clear();
+                ((Label) productionVbox.getChildren().get(0)).setText("Select the leader's production's output.");
+                for(Resource resource : Resource.realValues()){
+                    ImageView resourceImage = new ImageView(new Image(SetupSceneController.class.getResource("/img/punchboard/" + resource.toString().toLowerCase(Locale.ROOT) + ".png").toString()));
+                    resourceImage.setPreserveRatio(true);
+                    resourceImage.setFitHeight(((ImageView)warehouse_first_depot.getChildren().get(0)).getFitHeight());
+                    resourceImage.setId(resource.toString());
+                    resourceImage.setOnMouseEntered(new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent mouseEvent) {
+                            glowNode(resourceImage,colorToGlow);
+                        }
+                    });
+                    resourceImage.setOnMouseExited(new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent mouseEvent) {
+                            resourceImage.setEffect(null);
+                        }
+                    });
+                    resourceImage.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent mouseEvent) {
+                            int i=0;
+                            for(Integer lcId : matchData.getLightClientByNickname(players.get(0)).getOwnedLeaderCards()){
+                                if(id.equals(lcId)){
+                                    break;
+                                }
+                                i++;
+                            }
+                            ((ImageView)((Pane)leftLeaderCard.getParent()).getChildren().get(6+i)).setImage((resourceImage).getImage());
+                            ((Pane)leftLeaderCard.getParent()).getChildren().get(6+i).setVisible(true);
+                            UtilityProduction.manageLeaderProductionPower(resource,id);
+                            resourcesHBox.getChildren().clear();
+                        }
+                    });
+                    resourcesHBox.getChildren().add(resourceImage);
                 }
             }
         });
@@ -1914,4 +1975,5 @@ public class GameSceneController {
             }
         });
     }
+    //TODO leaderDepot non funziona benissimo
 }
