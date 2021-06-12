@@ -508,12 +508,12 @@ public class GameSceneController {
             if(matchData.getLightClientByNickname(players.get(currentPlayerIndex)).leaderCardIsActive(leaderCards.get(i).getID())){
                 if(i==0){
                     leftLeaderCard.setImage(new Image(GameSceneController.class.getResource("/img/Cards/LeaderCards/front/" + leaderCards.get(i).getID() + ".png").toString()));
-                    leftLeaderCard.setEffect(null);
+                    if(! (leftLeaderCard.getEffect() instanceof DropShadow)) leftLeaderCard.setEffect(null);
                     leftLeaderCard.setVisible(true);
                 }
                 if(i==1){
                     rightLeaderCard.setImage(new Image(GameSceneController.class.getResource("/img/Cards/LeaderCards/front/" + leaderCards.get(i).getID() + ".png").toString()));
-                    rightLeaderCard.setEffect(null);
+                    if(! (rightLeaderCard.getEffect() instanceof DropShadow))rightLeaderCard.setEffect(null);
                     rightLeaderCard.setVisible(true);
                 }
                 //if extra depot leaderCard, it shows the resources in it, if any
@@ -845,7 +845,7 @@ public class GameSceneController {
                 if (resourceStorageType.equals(ResourceStorageType.LEADER_DEPOT)){
                     int lcCounter=0;
                     for(LightLeaderCard lc: matchData.getLightClientByNickname(players.get(0)).getOwnedLeaderCards().stream().map(x -> matchData.getLeaderCardByID(x)).collect(Collectors.toList())){
-                        if(lc.getEffectType().equals("EXTRA_DEPOT")){
+                        if(lc.getEffectType().equals("EXTRA_DEPOT")&&lc.getEffectDescription().get(0).equals(resourceAsString)){
                             if(lcCounter == 0) {
                                 glowNode(leftLeaderCard,colorToGlow);
                                 ((DropShadow)leftLeaderCard.getEffect()).setHeight(70);
@@ -884,10 +884,10 @@ public class GameSceneController {
                 deactivateDraggableOver(leftLeaderDepot);
                 deactivateDraggableOver(rightLeaderDepot);
                 if(leftLeaderCard.getEffect() instanceof DropShadow){
-                    rightLeaderCard.setEffect(null);
+                    leftLeaderCard.setEffect(null);
                 }
                 if(rightLeaderCard.getEffect() instanceof DropShadow){
-                    leftLeaderCard.setEffect(null);
+                    rightLeaderCard.setEffect(null);
                 }
             }
             else{
@@ -963,7 +963,7 @@ public class GameSceneController {
                 boolean success = false;
                 if (event.getDragboard().hasString()) {
                     if(nodeDraggableOver.equals(leftLeaderDepot)){
-                        addResource(leftLeaderCard,db.getString());
+                        addResource(rightLeaderCard,db.getString());//because storageNameToNodeMap only contains rightLeaderCard
                     }
                     else if(nodeDraggableOver.equals(rightLeaderDepot)){
                         addResource(rightLeaderCard,db.getString());
@@ -1537,7 +1537,7 @@ public class GameSceneController {
                 if(isInLeaderDepot){
                     int counter=0;
                     for(Integer lcId: matchData.getLightClientByNickname(players.get(0)).getOwnedLeaderCards()){
-                        if(matchData.getLightClientByNickname(players.get(0)).leaderCardIsActive(lcId)&&matchData.getLeaderCardByID(lcId).getEffectType().equals(EffectType.EXTRA_DEPOT.toString())){
+                        if(matchData.getLightClientByNickname(players.get(0)).leaderCardIsActive(lcId)&&matchData.getLeaderCardByID(lcId).getEffectType().equals(EffectType.EXTRA_DEPOT.toString())&&matchData.getLeaderCardByID(lcId).getEffectDescription().get(0).equals(resource.toString())){
                             if(counter==0){
                                 nodeAndStorageType.put(leftLeaderCard,ResourceStorageType.LEADER_DEPOT);
                                 nodeAndStorageType.put(leftLeaderDepot,ResourceStorageType.LEADER_DEPOT);
