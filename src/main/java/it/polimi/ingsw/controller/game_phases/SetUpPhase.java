@@ -270,8 +270,6 @@ public class SetUpPhase implements GamePhase {
     private void addPlayerToTheGame(String nickname, List<LeaderCard> leaderCardsAssigned, int index) {
         try {
             controller.getGame().addPlayer(nickname, leaderCardsAssigned, getInitialFaithPoints(index), hasInkwell(index));
-            if (getInitialFaithPoints(index) > 0)
-                controller.sendMessageToAll(new NotifyVictoryPoints(nickname, getInitialFaithPoints(index)));
         } catch (InvalidArgumentException | InvalidPlayerAddException e) {
             e.printStackTrace();
         }

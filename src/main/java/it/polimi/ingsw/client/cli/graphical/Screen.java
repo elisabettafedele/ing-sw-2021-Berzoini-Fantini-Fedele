@@ -9,10 +9,7 @@ import it.polimi.ingsw.exceptions.ValueNotPresentException;
 import it.polimi.ingsw.model.cards.Value;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * Class to collect all the graphical element together
@@ -51,6 +48,7 @@ public class Screen extends GraphicalElement{
     private String nickname;
 
     private static Screen instance;
+    private int longestNickname;
 
     public static Screen getInstance(){
         if(instance == null)
@@ -59,7 +57,7 @@ public class Screen extends GraphicalElement{
     }
 
     private Screen() {
-        super(188, 26);
+        super(201, 26);
         graphicalDevelopmentCardGrid = new GraphicalDevelopmentCardGrid();
         developmentCardGridCardsToDisplay = new ArrayList<>();
         reset();
@@ -106,6 +104,48 @@ public class Screen extends GraphicalElement{
         drawScoreBoard();
         drawWarehouse();
         drawStrongbox();
+        drawSideInformations();
+
+    }
+
+    private void drawSideInformations() {
+        int currentViewNicknameYAnchor = scoreBoardYAnchor + longestNickname + 11;
+        String s1 = "You are viewing the personal";
+        String s2 = "board of " + MatchData.getInstance().getCurrentViewNickname();
+        String s3 = "Type <-pb + nickname> to see";
+        String s4 = "other players' personal board";
+        List<String> text= new ArrayList<>(Arrays.asList(s1, s2, s3, s4));
+
+        int i = 1;
+        for (String s : text){
+            for(int j = 0; j < s.length(); j++){
+                symbols[i][j + currentViewNicknameYAnchor] = s.charAt(j);
+            }
+            i++;
+        }
+        drawResourceLegend(currentViewNicknameYAnchor, i + 1);
+    }
+
+    private void drawResourceLegend(int currentViewNicknameYAnchor, int i) {
+        List<Resource> resources = Resource.realValues();
+        String s1 = "The resources present in the";
+        String s2 = "game are:";
+        List<String> text= new ArrayList<>(Arrays.asList(s1, s2));
+        for (String s : text){
+            for(int j = 0; j < s.length(); j++){
+                symbols[i][j + currentViewNicknameYAnchor] = s.charAt(j);
+            }
+            i++;
+        }
+        for(Resource r : resources){
+            symbols[i][currentViewNicknameYAnchor] = '>';
+            symbols[i][currentViewNicknameYAnchor + 2] = r.symbol.charAt(0);
+            colours[i][currentViewNicknameYAnchor + 2] = Colour.getColourByResource(r);
+            for(int j = 0; j < r.toString().length(); j++){
+                symbols[i][currentViewNicknameYAnchor + 4 + j] = r.toString().charAt(j);
+            }
+            i++;
+        }
     }
 
     private void drawStrongbox() {
@@ -131,12 +171,13 @@ public class Screen extends GraphicalElement{
                 warehouseXAnchor, warehouseYAnchor);
         drawDepotsNumbers(warehouseXAnchor + 1, warehouseYAnchor + gw.getWidth() + 1);
         String label = "Warehouse";
-        drawHorizontalLabel(warehouseXAnchor, warehouseYAnchor + gw.getWidth() + 3, label);
+        drawHorizontalLabel(warehouseXAnchor - 1, warehouseYAnchor - 1, label);
     }
 
     private void drawScoreBoard() {
         GraphicalScoreBoard gsb = new GraphicalScoreBoard();
         int maxLength = gsb.drawScoreBoard();
+        this.longestNickname = maxLength;
         drawElement(gsb.getHeight(), gsb.getWidth(), gsb.getColours(), gsb.getSymbols(), gsb.getBackGroundColours(),
                 scoreBoardXAnchor, scoreBoardYAnchor);
         String label = "Scoreboard";
@@ -343,7 +384,7 @@ public class Screen extends GraphicalElement{
     private void displayASection(int x_start, int x_end, int y_start, int y_end) {
         for(int i = x_start; i < x_end; i++){
             for(int j = y_start; j < y_end; j++){
-                System.out.print(backGroundColours[i][j].getCode() + colours[i][j].getCode() + symbols[i][j]); //+ Colour.ANSI_RESET
+                System.out.print(backGroundColours[i][j].getCode() + colours[i][j].getCode() + symbols[i][j] + Colour.ANSI_RESET); //
             }
             System.out.print("\n");
         }
@@ -368,12 +409,18 @@ public class Screen extends GraphicalElement{
      * @param w y coordinate
      */
     private void drawDepotsNumbers(int h, int w) {
-        String[] depots = new String[]{"◄ First Depot", "◄ Second Depot", "◄ Third Depot"};
+        List<String> depots = new ArrayList<>(Arrays.asList("◄ First Depot", "◄ Second Depot", "◄ Third Depot"));
+        int i = 0;
+        if(MatchData.getInstance().getAllNicknames().size() > 3){
+            depots.remove(0);
+            i = 1;
+        }
 
-        for(int i = 0; i < 3; i++){
-            for(int j = 0; j < depots[i].length(); j++){
-                symbols[h + i*2][w+j] = depots[i].charAt(j);
+        for(String s : depots){
+            for(int j = 0; j < s.length(); j++){
+                symbols[h + i*2][w+j] = s.charAt(j);
             }
+            i++;
         }
     }
 

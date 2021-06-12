@@ -1,5 +1,7 @@
 package it.polimi.ingsw;
 
+import it.polimi.ingsw.enumerations.Resource;
+
 import java.io.IOException;
 import java.util.*;
 
@@ -29,6 +31,10 @@ public class App
         for(int i = 0; i < str.length(); i++){
             strr[i] = str.charAt(i);
             System.out.print(strr[i]);
+        }
+
+        for(Resource r : Resource.realValues()){
+            System.out.println(r.toString());
         }
     }
 
