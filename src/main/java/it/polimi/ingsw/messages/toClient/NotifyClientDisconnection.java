@@ -2,13 +2,14 @@ package it.polimi.ingsw.messages.toClient;
 
 import it.polimi.ingsw.common.VirtualView;
 
-public class NotifyClientDisconnection implements MessageToClient{
+public class NotifyClientDisconnection extends MessageToClient{
     private String nickname;
     private boolean setUp;
     private boolean gameCancelled;
 
 
     public NotifyClientDisconnection(String nickname, boolean setUp, boolean gameCancelled) {
+        super(false);
         this.setUp = setUp;
         this.gameCancelled = gameCancelled;
         this.nickname = nickname;

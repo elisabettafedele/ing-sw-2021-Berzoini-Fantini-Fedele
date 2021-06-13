@@ -6,11 +6,12 @@ import it.polimi.ingsw.messages.toClient.MessageToClient;
 
 import java.util.List;
 
-public class NotifyMarbleTaken implements MessageToClient {
+public class NotifyMarbleTaken extends MessageToClient {
     private List<Marble> marbleTaken;
     private boolean needToChooseConversion;
 
     public NotifyMarbleTaken(List<Marble> marbleTaken, boolean needToChooseConversion){
+        super(false);
         this.marbleTaken = marbleTaken;
         this.needToChooseConversion = needToChooseConversion;
     }

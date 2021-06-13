@@ -5,10 +5,11 @@ import it.polimi.ingsw.messages.toClient.MessageToClient;
 
 import java.util.List;
 
-public class SelectCardRequest implements MessageToClient {
+public class SelectCardRequest extends MessageToClient {
     List<Integer> CardsIDs;
     boolean leaderORdevelopment;
     public SelectCardRequest(List<Integer> CardsIDs, boolean leaderORdevelopment){
+        super(true);
         this.CardsIDs = CardsIDs;
         this.leaderORdevelopment=leaderORdevelopment;
     }

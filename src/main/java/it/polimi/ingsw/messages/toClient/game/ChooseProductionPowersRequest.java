@@ -8,7 +8,7 @@ import it.polimi.ingsw.model.cards.Value;
 import java.util.List;
 import java.util.Map;
 
-public class ChooseProductionPowersRequest implements MessageToClient {
+public class ChooseProductionPowersRequest extends MessageToClient {
 
     /**
      * Message used to ask the client which productions he wants to use
@@ -18,6 +18,7 @@ public class ChooseProductionPowersRequest implements MessageToClient {
     Map<Integer, List<Value>> availableProductionPowers;
 
     public ChooseProductionPowersRequest(Map<Integer, List<Value>> availableProductionPowers, Map<Resource, Integer> availableResources) {
+        super(true);
         this.availableProductionPowers = availableProductionPowers;
         this.availableResources = availableResources;
     }

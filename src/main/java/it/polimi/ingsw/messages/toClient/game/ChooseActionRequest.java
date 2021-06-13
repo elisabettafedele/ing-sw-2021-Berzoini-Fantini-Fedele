@@ -6,7 +6,7 @@ import it.polimi.ingsw.messages.toClient.MessageToClient;
 
 import java.util.Map;
 
-public class ChooseActionRequest implements MessageToClient
+public class ChooseActionRequest extends MessageToClient
 {
     /**
      * Message used to ask the client which action he desires to perform
@@ -14,6 +14,7 @@ public class ChooseActionRequest implements MessageToClient
     Map<ActionType, Boolean> executableActions;
     boolean standardActionDone;
     public ChooseActionRequest(Map<ActionType, Boolean> executableActions, boolean standardActionDone) {
+        super(true);
         this.executableActions=executableActions;
         this.standardActionDone = standardActionDone;
     }

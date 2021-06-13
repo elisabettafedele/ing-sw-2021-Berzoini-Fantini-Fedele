@@ -4,9 +4,11 @@ import it.polimi.ingsw.common.VirtualView;
 import it.polimi.ingsw.controller.actions.Action;
 import it.polimi.ingsw.messages.toClient.MessageToClient;
 
-public class MarbleInsertionPositionRequest implements MessageToClient {
+public class MarbleInsertionPositionRequest extends MessageToClient {
 
-
+    public MarbleInsertionPositionRequest(){
+        super(true);
+    }
     @Override
     public void handleMessage(VirtualView view) {
         view.displayMarbleInsertionPositionRequest();

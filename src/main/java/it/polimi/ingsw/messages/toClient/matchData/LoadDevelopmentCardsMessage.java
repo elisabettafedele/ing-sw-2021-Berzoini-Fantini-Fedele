@@ -6,11 +6,12 @@ import it.polimi.ingsw.messages.toClient.MessageToClient;
 
 import java.util.List;
 
-public class LoadDevelopmentCardsMessage implements MessageToClient {
+public class LoadDevelopmentCardsMessage extends MessageToClient {
 
     private List<LightDevelopmentCard> lightDevCards;
 
     public LoadDevelopmentCardsMessage(List<LightDevelopmentCard> lightDevCards) {
+        super(false);
         this.lightDevCards = lightDevCards;
     }
 

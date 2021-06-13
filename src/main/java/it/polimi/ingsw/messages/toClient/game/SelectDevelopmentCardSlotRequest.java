@@ -3,12 +3,13 @@ package it.polimi.ingsw.messages.toClient.game;
 import it.polimi.ingsw.common.VirtualView;
 import it.polimi.ingsw.messages.toClient.MessageToClient;
 
-public class SelectDevelopmentCardSlotRequest implements MessageToClient {
+public class SelectDevelopmentCardSlotRequest extends MessageToClient {
 
     private boolean firstSlotAvailable;
     private boolean secondSlotAvailable;
     private boolean thirdSlotAvailable;
     public SelectDevelopmentCardSlotRequest(boolean firstSlotAvailable,boolean secondSlotAvailable,boolean thirdSlotAvailable){
+        super(true);
         this.firstSlotAvailable=firstSlotAvailable;
         this.secondSlotAvailable=secondSlotAvailable;
         this.thirdSlotAvailable=thirdSlotAvailable;

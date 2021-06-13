@@ -4,11 +4,12 @@ import it.polimi.ingsw.common.VirtualView;
 import it.polimi.ingsw.messages.toClient.MessageToClient;
 
 
-public class NicknameRequest implements MessageToClient {
+public class NicknameRequest extends MessageToClient {
     private boolean isRetry;
     private boolean alreadyTaken;
 
     public NicknameRequest(boolean isRetry, boolean alreadyTaken){
+        super(true);
         this.isRetry = isRetry;
         this.alreadyTaken = alreadyTaken;
     }

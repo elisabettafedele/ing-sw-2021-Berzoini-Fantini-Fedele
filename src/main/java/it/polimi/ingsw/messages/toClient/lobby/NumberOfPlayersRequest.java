@@ -3,8 +3,12 @@ package it.polimi.ingsw.messages.toClient.lobby;
 import it.polimi.ingsw.common.VirtualView;
 import it.polimi.ingsw.messages.toClient.MessageToClient;
 
-public class NumberOfPlayersRequest implements MessageToClient {
+public class NumberOfPlayersRequest extends MessageToClient {
 
+
+    public NumberOfPlayersRequest() {
+        super(true);
+    }
 
     @Override
     public void handleMessage(VirtualView view) {

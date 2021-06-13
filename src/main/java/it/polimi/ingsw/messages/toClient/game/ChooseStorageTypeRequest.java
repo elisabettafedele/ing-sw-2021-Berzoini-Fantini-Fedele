@@ -6,13 +6,14 @@ import it.polimi.ingsw.messages.toClient.MessageToClient;
 
 import java.util.List;
 
-public class ChooseStorageTypeRequest implements MessageToClient {
+public class ChooseStorageTypeRequest extends MessageToClient {
     private Resource resource;
     private List<String> availableDepots;
     private boolean canDiscard;
     private boolean canReorganize;
 
     public ChooseStorageTypeRequest(Resource resource, List<String> availableDepots, boolean canDiscard, boolean canReorganize){
+        super(true);
         this.resource = resource;
         this.availableDepots = availableDepots;
         this.canDiscard = canDiscard;

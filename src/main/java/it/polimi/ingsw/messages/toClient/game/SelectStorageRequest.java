@@ -4,12 +4,13 @@ import it.polimi.ingsw.common.VirtualView;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.messages.toClient.MessageToClient;
 
-public class SelectStorageRequest implements MessageToClient {
+public class SelectStorageRequest extends MessageToClient {
 Resource resource;
 boolean isInWarehouse;
 boolean isInStrongbox;
 boolean isInLeaderDepot;
     public SelectStorageRequest(Resource resource, boolean isInWarehouse,boolean isInStrongbox, boolean isInLeaderDepot) {
+        super(true);
         this.resource=resource;
         this.isInWarehouse=isInWarehouse;
         this.isInStrongbox=isInStrongbox;

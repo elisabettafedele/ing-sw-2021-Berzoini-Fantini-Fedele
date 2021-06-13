@@ -6,13 +6,14 @@ import it.polimi.ingsw.messages.toClient.MessageToClient;
 
 import java.util.List;
 
-public class ChooseWhiteMarbleConversionRequest implements MessageToClient {
+public class ChooseWhiteMarbleConversionRequest extends MessageToClient {
 
     private List<Resource> conversions;
     private int numberOfWhiteMarbles;
 
 
     public ChooseWhiteMarbleConversionRequest(List<Resource> conversions, int numberOfWhiteMarbles){
+        super(true);
         this.conversions = conversions;
         this.numberOfWhiteMarbles = numberOfWhiteMarbles;
     }

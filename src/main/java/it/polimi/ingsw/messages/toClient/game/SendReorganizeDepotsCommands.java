@@ -6,13 +6,14 @@ import it.polimi.ingsw.messages.toClient.MessageToClient;
 
 import java.util.List;
 
-public class SendReorganizeDepotsCommands implements MessageToClient {
+public class SendReorganizeDepotsCommands extends MessageToClient {
     private List<String> availableDepots;
     private boolean first;
     private boolean failure;
     private List<Resource> availableLeaderResources;
 
     public SendReorganizeDepotsCommands(List<String> availableDepots, boolean first, boolean failure, List<Resource> availableLeaderResources) {
+        super(true);
         this.availableDepots = availableDepots;
         this.first = first;
         this.failure = failure;

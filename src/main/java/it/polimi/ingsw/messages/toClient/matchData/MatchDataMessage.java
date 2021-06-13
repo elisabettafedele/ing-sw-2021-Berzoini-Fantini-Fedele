@@ -3,10 +3,11 @@ package it.polimi.ingsw.messages.toClient.matchData;
 import it.polimi.ingsw.common.VirtualView;
 import it.polimi.ingsw.messages.toClient.MessageToClient;
 
-public abstract class MatchDataMessage implements MessageToClient {
+public abstract class MatchDataMessage extends MessageToClient {
     private String nickname;
 
     public MatchDataMessage(String nickname){
+        super(false);
         this.nickname = nickname;
     }
 

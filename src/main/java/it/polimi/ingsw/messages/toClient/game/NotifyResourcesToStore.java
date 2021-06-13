@@ -6,10 +6,11 @@ import it.polimi.ingsw.messages.toClient.MessageToClient;
 
 import java.util.List;
 
-public class NotifyResourcesToStore implements MessageToClient {
+public class NotifyResourcesToStore extends MessageToClient {
     private List<Resource> resourcesToStore;
 
     public NotifyResourcesToStore(List<Resource> resourcesToStore) {
+        super(false);
         this.resourcesToStore = resourcesToStore;
     }
 

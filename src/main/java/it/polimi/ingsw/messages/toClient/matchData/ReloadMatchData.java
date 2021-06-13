@@ -3,10 +3,11 @@ package it.polimi.ingsw.messages.toClient.matchData;
 import it.polimi.ingsw.common.VirtualView;
 import it.polimi.ingsw.messages.toClient.MessageToClient;
 
-public class ReloadMatchData implements MessageToClient {
+public class ReloadMatchData extends MessageToClient {
     private final boolean start;
     private final boolean disconnection;
     public ReloadMatchData(boolean start, boolean disconnection) {
+        super(false);
         this.start = start;
         this.disconnection = disconnection;
     }

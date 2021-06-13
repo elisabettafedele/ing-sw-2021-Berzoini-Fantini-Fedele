@@ -3,10 +3,11 @@ package it.polimi.ingsw.messages.toClient.game;
 import it.polimi.ingsw.common.VirtualView;
 import it.polimi.ingsw.messages.toClient.MessageToClient;
 
-public class NotifyLorenzoAction implements MessageToClient {
+public class NotifyLorenzoAction extends MessageToClient {
     private int id;
 
     public NotifyLorenzoAction(int id){
+        super(false);
         this.id = id;
     }
 

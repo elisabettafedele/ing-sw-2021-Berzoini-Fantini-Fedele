@@ -6,7 +6,7 @@ import it.polimi.ingsw.messages.toClient.MessageToClient;
 
 import java.util.List;
 
-public class ChooseResourceTypeRequest implements MessageToClient {
+public class ChooseResourceTypeRequest extends MessageToClient {
 
     /**
      * Message used to ask the client which initial resource type(s) he desires
@@ -16,8 +16,10 @@ public class ChooseResourceTypeRequest implements MessageToClient {
 
 
     public ChooseResourceTypeRequest(List<Resource> resourceTypes, int quantity){
+        super(true);
         this.resourceTypes = resourceTypes;
         this.quantity = quantity;
+
     }
 
     @Override

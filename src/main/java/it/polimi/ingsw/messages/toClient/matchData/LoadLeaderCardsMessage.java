@@ -8,10 +8,11 @@ import it.polimi.ingsw.model.cards.LeaderCard;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LoadLeaderCardsMessage implements MessageToClient {
+public class LoadLeaderCardsMessage extends MessageToClient {
 
     private List<LightLeaderCard> leaderCards;
     public LoadLeaderCardsMessage (List<LightLeaderCard> leaderCards){
+        super(false);
         this.leaderCards = leaderCards;
     }
 
