@@ -242,8 +242,13 @@ public class MatchData {
         }
 
         if (message instanceof TurnMessage){
-            if (((TurnMessage) message).isStarted())
+            if (((TurnMessage) message).isStarted()) {
                 this.turnOwnerNickname = message.getNickname();
+                if(this.turnOwnerNickname.equals(getThisClientNickname()) && !currentViewNickname.equals(getThisClientNickname())){
+                    setCurrentViewNickname(getThisClientNickname());
+                    display();
+                }
+            }
         }
         if (message instanceof NotifyVictoryPoints){
             getLightClientByNickname(message.getNickname()).setVictoryPoints(((NotifyVictoryPoints) message).getVictoryPoints());
