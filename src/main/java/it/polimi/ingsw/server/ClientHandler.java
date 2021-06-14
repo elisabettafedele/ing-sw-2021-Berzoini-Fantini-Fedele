@@ -3,6 +3,7 @@ package it.polimi.ingsw.server;
 import it.polimi.ingsw.common.ClientHandlerInterface;
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.controller.actions.Action;
+import it.polimi.ingsw.controller.game_phases.PlayPhase;
 import it.polimi.ingsw.enumerations.ClientHandlerPhase;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.messages.*;
@@ -26,7 +27,7 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
     public static final int PING_PERIOD = 5000; //PING_PERIOD = TIMEOUT/2
     //The timer gives one minute to the user to send the response
     public static final int SO_TIMEOUT_PERIOD = 0;
-    public static final int TIMEOUT_FOR_RESPONSE = 15000;
+    public static final int TIMEOUT_FOR_RESPONSE = 120000;
 
     private final Socket socket;
 
@@ -97,16 +98,18 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
 
             clientHandlerPhase = ClientHandlerPhase.WAITING_GAME_MODE;
             sendMessageToClient(new GameModeRequest());
-            //startTimer();
 
             while(active){
                 try {
                     Object messageFromClient = is.readObject();
                     if(messageFromClient != null && !(messageFromClient == ConnectionMessage.PING)) {
-                        //stopTimer();
-                        //if (!gameStarted)
+                        stopTimer();
                         Server.SERVER_LOGGER.log(Level.INFO, "[" + (nickname != null ? nickname : socket.getInetAddress().getHostAddress()) + "]: " + messageFromClient);
+                        if(active && !(gameStarted && controller.getGamePhase() instanceof PlayPhase && !(((PlayPhase) controller.getGamePhase()).getTurnController().getCurrentPlayer().getNickname().equals(nickname))))
                             ((MessageToServer) messageFromClient).handleMessage(server, this);
+
+                        //if (gameStarted && controller.getGamePhase() instanceof PlayPhase && ((PlayPhase) controller.getGamePhase()).getTurnController().getCurrentPlayer().getNickname().equals(nickname))
+                           // ((MessageToServer) messageFromClient).handleMessage(server, this);
 
                         //else
                            // controller.getGameMessageManager().addMessage((MessageToServer) messageFromClient);
@@ -132,7 +135,6 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
         timer = new Thread(() -> {
             try{
                 Thread.sleep(TIMEOUT_FOR_RESPONSE);
-                Server.SERVER_LOGGER.log(Level.SEVERE, "Timer has expired, you have been disconnected.");
                 handleSocketDisconnection(true);
             } catch (InterruptedException e){ }
         });
@@ -154,7 +156,8 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
             os.writeObject(message);
             os.flush();
             os.reset();
-            //startTimer();
+            if (message instanceof MessageToClient &&((MessageToClient) message).hasTimer())
+                startTimer();
         } catch (IOException e) {
             handleSocketDisconnection(e instanceof SocketTimeoutException);
         }
@@ -169,11 +172,12 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
      */
     //If the timer is expired or the ping message cannot be sent due to disconnection of the client (it throws IO Exception) I tell the client that he has been disconnected
     private void handleSocketDisconnection(boolean timeout){
+        stopTimer();
         if (!active)
             return;
         //The connection is not active anymore
         this.active = false;
-        Server.SERVER_LOGGER.log(Level.SEVERE, "[" + (nickname != null ? nickname : socket.getInetAddress().getHostAddress())+ "]: " + "client disconnected");
+        Server.SERVER_LOGGER.log(Level.SEVERE, "[" + (nickname != null ? nickname : socket.getInetAddress().getHostAddress())+ "]: " + "client disconnected" + (timeout ? " because the timeout has expired" : ""));
         //If the game is started, the controller will handle his disconnection
         if (gameStarted){
             controller.handleClientDisconnection(nickname);
@@ -182,7 +186,10 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
             server.removeConnectionLobby(this);
         }
         try {
-            os.writeObject(ConnectionMessage.CONNECTION_CLOSED);
+            if (timeout)
+                os.writeObject(new TimeoutExpiredMessage());
+            else
+                os.writeObject(ConnectionMessage.CONNECTION_CLOSED);
             os.flush();
             os.reset();
         } catch (IOException e) { }

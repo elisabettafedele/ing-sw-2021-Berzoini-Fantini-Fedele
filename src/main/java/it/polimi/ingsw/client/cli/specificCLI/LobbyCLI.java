@@ -12,6 +12,7 @@ import it.polimi.ingsw.messages.toServer.lobby.NumberOfPlayersResponse;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 public class LobbyCLI {
     private static final String DEFAULT_ADDRESS = "127.0.0.1";
@@ -53,6 +54,11 @@ public class LobbyCLI {
 
 
     public static void displayNicknameRequest(Client client, boolean isRetry, boolean alreadyTaken) {
+        if (client.isNicknameValid() && client.getNickname().isPresent()){
+            client.sendMessageToServer(new NicknameResponse(client.getNickname().get()));
+            return;
+        }
+
         if (!isRetry)
             System.out.println("Insert your nickname");
         else if (!alreadyTaken)
@@ -63,18 +69,30 @@ public class LobbyCLI {
         String selection = InputParser.getLine();
         if (selection == null)
             return;
+        client.setNickname(selection);
         client.sendMessageToServer(new NicknameResponse(selection));
     }
 
     public static void displayGameModeRequest(Client client) {
+        if (client.getGameMode().isPresent()){
+            client.sendMessageToServer(new GameModeResponse(client.getGameMode().get()));
+            return;
+        }
         System.out.println(Colour.ANSI_BRIGHT_GREEN.getCode() + "\nConnection established!" + Colour.ANSI_RESET);
         System.out.println("\nInsert a game mode, multiplayer or solo mode: m | s");
+        GameMode gameMode = null;
         try {
-            client.sendMessageToServer(new GameModeResponse(getGameMode()));
-        } catch (IOException e) { }
+            gameMode = getGameMode(client);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (gameMode == null)
+            return;
+        client.setGameMode(gameMode);
+        client.sendMessageToServer(new GameModeResponse(gameMode));
     }
 
-    private static GameMode getGameMode() throws IOException {
+    private static GameMode getGameMode(Client client) throws IOException {
         while(true) {
             String gameModeString = InputParser.getLine();
             if (gameModeString == null)

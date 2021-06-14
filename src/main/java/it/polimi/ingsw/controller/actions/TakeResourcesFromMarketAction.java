@@ -64,6 +64,7 @@ public class TakeResourcesFromMarketAction implements Action {
     public void reset(Player currentPlayer) {
         this.player = currentPlayer;
         this.clientHandler = controller.getConnectionByNickname(currentPlayer.getNickname());
+        this.market = controller.getGame().getMarket();
         resourcesToStore=new LinkedList<>();
         marblesToConvert= new LinkedList<>();
         availableLeaderResources= new LinkedList<>();
