@@ -54,24 +54,38 @@ public class CLI implements View {
 
     @Override
     public void displayTimeoutExpiredMessage() {
-        System.out.println("Timeout expired");
-        //boolean reconnect = getBoolean("Timeout expired, do you want to reconnect? y | n");
-        client.closeSocket();
-        // if (reconnect)
-        // client.start();
+        System.out.println("Timeout expired, do you want to reconnect? y | n");
+        List<String> commands = new ArrayList<>();
+        commands.add("y");
+        commands.add("n");
+        String reconnectString = InputParser.getString("Invalid command. Please type y to be reconnected or n to leave the game", CLI.conditionOnString(commands));
+
+        if (reconnectString == null)
+            return;
+        if(reconnectString.equalsIgnoreCase("y")){
+            try {
+                client.killThreads();
+                client = new Client(client.getIPAddress(), client.getPort(), this, client.getGameMode(), client.isNicknameValid() ? client.getNickname() : Optional.empty());
+                client.start();
+            } catch (IOException e) {
+                displayUnreachableServer(true);
+            }
+        }
+        else{
+            System.out.println("\nThank you for playing Master Of Renaissance, see you next time!");
+        }
+
     }
 
     private void analyzeOutOfTurnMessage(String input) {
-        if (input != null){
+        if (input != null) {
             if (input.contains("-pb") && (MatchData.getInstance().getThisClientNickname().contains(input.substring(4)) || MatchData.getInstance().getOtherClientsNicknames().contains(input.substring(4)))) {
                 MatchData.getInstance().setCurrentViewNickname(input.substring(4));
                 displayStandardView();
-            }else if(input.contains("-pb")){
-                System.out.println("There is no player with this nickname, try again!");
+            } else if (input.contains("-pb")) {
+                System.out.println("Please insert a valid command (-pb nickname) or wait your turn. Remember that nicknames are case-sensitive");
             }
         }
-
-
     }
 
     private void outOfTurnInput(){
@@ -175,10 +189,7 @@ public class CLI implements View {
 
     @Override
     public void handleCloseConnection(boolean wasConnected) {
-        if (!wasConnected)
-            System.out.println(Colour.ANSI_BRIGHT_CYAN.getCode() + "The server is not reachable at the moment. Try again later." + Colour.ANSI_RESET);
-        else
-            System.out.println(Colour.ANSI_BRIGHT_GREEN.getCode() + "Connection closed" + Colour.ANSI_RESET);
+        displayUnreachableServer(wasConnected);
         if (inputObserverOutOfTurn != null && inputObserverOutOfTurn.isAlive())
             inputObserverOutOfTurn.interrupt();
     }
@@ -517,6 +528,10 @@ public class CLI implements View {
     @Override
     public void setIsReloading(boolean reloading){
         MatchData.getInstance().setReloading(reloading);
+    }
+
+    private void displayUnreachableServer(boolean wasConnected){
+        System.out.println(Colour.ANSI_BRIGHT_CYAN.getCode() + (wasConnected ? "The server is not reachable anymore" : "The server is unreachable at the moment") + ". Try again later." + Colour.ANSI_RESET);
     }
 
     // *********************************************************************  //

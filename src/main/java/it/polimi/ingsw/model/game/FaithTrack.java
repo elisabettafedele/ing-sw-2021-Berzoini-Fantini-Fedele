@@ -12,7 +12,7 @@ import java.util.*;
 public class FaithTrack {
     private transient Iterator<VaticanReportSection> vaticanReportSectionIterator;
     private final int length;
-    private LinkedHashMap< Integer , Integer > trackVictoryPoints;
+    private static LinkedHashMap< Integer , Integer > trackVictoryPoints;
     private VaticanReportSection currentSection;
     private List<VaticanReportSection> vaticanReportSectionList;
 
@@ -74,7 +74,7 @@ public class FaithTrack {
      * @return sum of all victory points a player is eligible to achieve if he's in {@link FaithTrack}'box playerPosition
      */
 
-    public int getVictoryPoints(int playerPosition) {
+    public static int getVictoryPoints(int playerPosition) {
         int victoryPoints = 0;
         for(Map.Entry<Integer,Integer> entry : trackVictoryPoints.entrySet()){
             if(entry.getKey()<playerPosition){

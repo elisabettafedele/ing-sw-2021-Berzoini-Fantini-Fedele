@@ -12,7 +12,6 @@ public class GameHistory {
      * Utility class used to handle the saving of a {@link it.polimi.ingsw.model.game.Game} in the server and to retrieve and old one
      */
 
-    public static boolean saveGames;
     public static final String PLAY_PHASE = "PLAY_PHASE";
     public static final String SETUP_PHASE = "SETUP_PHASE";
 
@@ -22,8 +21,6 @@ public class GameHistory {
      * @return a JsonObject corresponding to the game wanted if any exists, null if no game with that id is present in the json file
      */
     public synchronized static JsonObject retrieveGameFromControllerId(int id) {
-        if (!saveGames)
-            return null;
         JsonObject jsonObjectOfOldMatch = null;
         try (JsonReader jsonReader = new JsonReader(new FileReader("backupOfGames.json"))) {
             JsonArray jsonArray = new Gson().fromJson(jsonReader, JsonArray.class);
@@ -85,8 +82,6 @@ public class GameHistory {
      * @param controller the {@link PersistentControllerSetUpPhase} of the game to be saved
      */
     public static synchronized void saveSetupPhase(PersistentControllerSetUpPhase controller){
-        if (!saveGames)
-            return;
         try (Writer writer = new FileWriter("backupOfGames.json", false)) {
             Gson gson = JsonAdapter.getGsonBuilder();
             gson.toJson(createJsonArraySetUp(controller), writer);
@@ -100,8 +95,6 @@ public class GameHistory {
      * @param controller the {@link PersistentControllerPlayPhase} of the game to be saved
      */
     public synchronized static void saveGame(PersistentControllerPlayPhase controller){
-        if (!saveGames)
-            return;
         Gson gson = JsonAdapter.getGsonBuilder();
 
         try (Writer writer = new FileWriter("backupOfGames.json", false)) {
@@ -116,8 +109,6 @@ public class GameHistory {
      * @param controller the {@link PersistentControllerPlayPhaseSingle} of the game to be saved
      */
     public static synchronized void saveGame(PersistentControllerPlayPhaseSingle controller){
-        if (!saveGames)
-            return;
         try (Writer writer = new FileWriter("backupOfGames.json", false)) {
             Gson gson = JsonAdapter.getGsonBuilder();
             gson.toJson(createJsonArraySinglePlayer(controller), writer);
@@ -217,8 +208,6 @@ public class GameHistory {
      * @param controllerID the ID of the {@link it.polimi.ingsw.controller.Controller} of the game to remove
      */
     public static void removeOldGame(int controllerID){
-        if (!saveGames)
-            return;
         JsonArray jsonArray = getJsonArray(controllerID);
         try (Writer writer = new FileWriter("backupOfGames.json", false)) {
             Gson gson = JsonAdapter.getGsonBuilder();

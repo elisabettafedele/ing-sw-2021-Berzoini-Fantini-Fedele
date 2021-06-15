@@ -11,7 +11,6 @@ public class ServerMain {
     private static final int DEFAULT_PORT = 1234;
     private static final int MIN_PORT = 1024;
     private static final int MAX_PORT = 65535;
-    private static final String JSON_ARGUMENT= "-json";
     private static final String PORT_ARGUMENT = "-port";
     private static final String HELP_ARGUMENT = "-help";
 
@@ -28,7 +27,6 @@ public class ServerMain {
                 System.out.println(s);
                 return;
             }
-            GameHistory.saveGames = (arguments.contains(JSON_ARGUMENT));
             if (arguments.contains(PORT_ARGUMENT)){
                 String portString = "";
             try {

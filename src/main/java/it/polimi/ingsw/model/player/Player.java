@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.player;
 
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.model.cards.Card;
+import it.polimi.ingsw.model.game.FaithTrack;
 import it.polimi.ingsw.model.persistency.PersistentPlayer;
 import it.polimi.ingsw.model.cards.LeaderCard;
 import it.polimi.ingsw.observe.Observable;
@@ -106,6 +107,7 @@ public class Player extends Observable {
         victoryPoints += getPersonalBoard().getDevelopmentCards().stream().map(Card::getVictoryPoints).mapToInt(i -> i).sum();
         victoryPoints += getPersonalBoard().getLeaderCards().stream().filter(LeaderCard::isActive).map(Card::getVictoryPoints).mapToInt(i -> i).sum();
         victoryPoints += getPersonalBoard().countResourceNumber() / 5;
+        victoryPoints += FaithTrack.getVictoryPoints(personalBoard.getMarkerPosition());
         victoryPoints += this.victoryPoints;
         return victoryPoints;
     }
