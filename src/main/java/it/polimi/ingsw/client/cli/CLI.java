@@ -62,10 +62,15 @@ public class CLI implements View {
     }
 
     private void analyzeOutOfTurnMessage(String input) {
-        if (input != null && input.contains("-pb") && (MatchData.getInstance().getThisClientNickname().contains(input.substring(4)) || MatchData.getInstance().getOtherClientsNicknames().contains(input.substring(4)))) {
-            MatchData.getInstance().setCurrentViewNickname(input.substring(4));
-            displayStandardView();
+        if (input != null){
+            if (input.contains("-pb") && (MatchData.getInstance().getThisClientNickname().contains(input.substring(4)) || MatchData.getInstance().getOtherClientsNicknames().contains(input.substring(4)))) {
+                MatchData.getInstance().setCurrentViewNickname(input.substring(4));
+                displayStandardView();
+            }else if(input.contains("-pb")){
+                System.out.println("There is no player with this nickname, try again!");
+            }
         }
+
 
     }
 

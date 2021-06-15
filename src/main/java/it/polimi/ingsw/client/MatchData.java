@@ -252,6 +252,7 @@ public class MatchData {
         }
         if (message instanceof NotifyVictoryPoints){
             getLightClientByNickname(message.getNickname()).setVictoryPoints(((NotifyVictoryPoints) message).getVictoryPoints());
+            display();
         }
 
     }

@@ -190,7 +190,7 @@ public class GraphicalFaithTrack extends GraphicalElement{
      * @param y the y coordinate of the square
      */
     private void paintSquares(int number, int x, int y) {
-        if(number == 8 || number == 15 || number == 24)
+        if(number == 8 || number == 16 || number == 24)
             drawPopeSpaces(x, y);
         if(number == 3 || number == 12 || number == 15)
             drawVictoryPoints(number, x, y, false);

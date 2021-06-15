@@ -36,6 +36,8 @@ public class App
         for(Resource r : Resource.realValues()){
             System.out.println(r.toString());
         }
+
+        //Audio.play_song("start");
     }
 
     public static void clrscr(){
