@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client.cli;
 
+import it.polimi.ingsw.Audio;
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.client.View;
@@ -28,6 +29,8 @@ public class CLI implements View {
     private Client client;
     private Thread inputObserverOutOfTurn;
 
+    private Audio audio;
+
     private AtomicBoolean myTurn = new AtomicBoolean(false);
 
     public static void main(String[] args) {
@@ -40,6 +43,7 @@ public class CLI implements View {
         boolean firstTry = true;
         GraphicalLogo.printLogo();
         MatchData.getInstance().setView(this);
+        audio = new Audio("medieval-music.wav");
         while (error) {
             client = LobbyCLI.askConnectionParameters(this, firstTry);
             try {
@@ -83,6 +87,13 @@ public class CLI implements View {
                 displayStandardView();
             } else if (input.contains("-pb")) {
                 System.out.println("Please insert a valid command (-pb nickname) or wait your turn. Remember that nicknames are case-sensitive");
+            }else if (input.contains("-music")){
+                if(input.contains("start"))
+                    audio.resumeSound();
+                else if(input.contains("stop"))
+                    audio.stopSound();
+                else
+                    System.out.println("Remember to use <-music start> or <music -stop> to start/stop the music!");
             }
         }
     }
@@ -100,6 +111,8 @@ public class CLI implements View {
     public void displayMessage(String message) {
         System.out.println(message);
     }
+
+
 
     // *********************************************************************  //
     //                           END GAME  & FA                               //
@@ -223,7 +236,9 @@ public class CLI implements View {
         LobbyCLI.displayPlayersReadyToStartMessage(nicknames);
     }
 
-
+    public void startMusic(){
+        this.audio.playSound();
+    }
 
     // *********************************************************************  //
     //                             SETUP CLI                                  //
