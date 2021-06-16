@@ -28,6 +28,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -35,6 +37,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 import java.util.stream.Collectors;
 
 public class Server implements ServerInterface {
@@ -53,9 +56,10 @@ public class Server implements ServerInterface {
     private ReentrantLock lockLobby = new ReentrantLock(true);
     private ReentrantLock lockGames = new ReentrantLock(true);
     public static final Logger SERVER_LOGGER = Logger.getLogger("Server logger");
+    private boolean saveLog;
 
 
-    public Server(int port) {
+    public Server(int port, boolean saveLog) {
         this.port = port;
         this.executor = Executors.newCachedThreadPool();
         this.clientsInLobby = new LinkedList<>();
@@ -63,6 +67,7 @@ public class Server implements ServerInterface {
         this.clientsDisconnectedGameFinished = new HashMap<>();
         this.activeGames = new LinkedList<>();
         this.takenNicknames = new HashSet<>();
+        this.saveLog = saveLog;
     }
 
     /**
@@ -70,6 +75,9 @@ public class Server implements ServerInterface {
      */
     public void startServer() {
         //First, I try to start the server, through its server socket. If the port is already in use an exception will be thrown
+        if (saveLog)
+            initLogger();
+
         try {
             serverSocket = new ServerSocket(port);
         } catch (IOException e) {
@@ -91,6 +99,18 @@ public class Server implements ServerInterface {
             }
         } catch (IOException e) {
             SERVER_LOGGER.log(Level.SEVERE, "An exception caused the server to stop working.");
+        }
+    }
+
+    private void initLogger() {
+        Date date = GregorianCalendar.getInstance().getTime();
+        DateFormat dateFormat = new SimpleDateFormat("dd-MM_HH.mm.ss");
+        try {
+            FileHandler fh = new FileHandler("server-" + dateFormat.format(date) + ".log");
+            fh.setFormatter(new SimpleFormatter());
+            SERVER_LOGGER.addHandler(fh);
+        } catch (IOException e) {
+            SERVER_LOGGER.severe(e.getMessage());
         }
     }
 

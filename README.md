@@ -35,14 +35,14 @@
     ```
   This command can be followed by these arguments:
   - **-port**: followed by the desired port number between MIN_PORT and MAX_PORT as argument;
-  - **-json**: just temporary;
+  - **-log**: to save the log in a file;
   - **-help**: to get help.
 
 - The Client can be run with the following command:
     ```shell
     > java -jar MasterOfReinassanceClient.jar
     ```
-    - This command sets the Client on Graphical User Interface(GUI) mode, but it can be followed by **-cli** if the Command Line Interface(CLI) is preferred.
+    - This command sets the Client on Graphical User Interface (GUI) mode, but it can be followed by **-cli** if the Command Line Interface (CLI) is preferred.
     - The Server's IP and port to connect to can be specified during the execution.
     
 

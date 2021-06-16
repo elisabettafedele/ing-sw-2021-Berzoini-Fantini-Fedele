@@ -2,17 +2,16 @@ package it.polimi.ingsw.server;
 
 import it.polimi.ingsw.model.persistency.GameHistory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class ServerMain {
     private static final int DEFAULT_PORT = 1234;
     private static final int MIN_PORT = 1024;
     private static final int MAX_PORT = 65535;
     private static final String PORT_ARGUMENT = "-port";
+    private static final String LOG_ARGUMENT = "-log";
     private static final String HELP_ARGUMENT = "-help";
+    private static boolean saveLog = false;
 
 
     public static void main(String[] args){
@@ -23,10 +22,15 @@ public class ServerMain {
                 String s = "This is the Server for Master Of Renaissance table game, with no input the server will start on port " + DEFAULT_PORT + "\n\n" +
                         "Here is a list of all the available commands:\n\n" +
                         "-port: followed by the desired port number that must be between " + MIN_PORT + " and " + MAX_PORT + "\n" +
+                        "-log: to save the log in a file" +
                         "-help: to get help\n";
                 System.out.println(s);
                 return;
             }
+
+            if (arguments.contains(LOG_ARGUMENT))
+                saveLog = true;
+
             if (arguments.contains(PORT_ARGUMENT)){
                 String portString = "";
             try {
@@ -52,7 +56,7 @@ public class ServerMain {
             }
         }
         }
-        Server server = new Server(port);
+        Server server = new Server(port, saveLog);
         server.startServer();
     }
 }
