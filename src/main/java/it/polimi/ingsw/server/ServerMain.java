@@ -1,7 +1,5 @@
 package it.polimi.ingsw.server;
 
-import it.polimi.ingsw.model.persistency.GameHistory;
-
 import java.util.*;
 
 public class ServerMain {

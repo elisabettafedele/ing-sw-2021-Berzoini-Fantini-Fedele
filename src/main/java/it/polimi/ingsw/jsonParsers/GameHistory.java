@@ -1,8 +1,11 @@
-package it.polimi.ingsw.model.persistency;
+package it.polimi.ingsw.jsonParsers;
 
 import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
 import it.polimi.ingsw.jsonParsers.JsonAdapter;
+import it.polimi.ingsw.model.persistency.PersistentControllerPlayPhase;
+import it.polimi.ingsw.model.persistency.PersistentControllerPlayPhaseSingle;
+import it.polimi.ingsw.model.persistency.PersistentControllerSetUpPhase;
 
 import java.io.*;
 import java.util.*;

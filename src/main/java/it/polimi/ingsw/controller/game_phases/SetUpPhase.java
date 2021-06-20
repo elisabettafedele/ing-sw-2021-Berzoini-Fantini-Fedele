@@ -8,7 +8,7 @@ import it.polimi.ingsw.messages.toClient.game.ChooseStorageTypeRequest;
 import it.polimi.ingsw.messages.toClient.game.NotifyResourcesToStore;
 import it.polimi.ingsw.messages.toClient.matchData.*;
 import it.polimi.ingsw.model.cards.*;
-import it.polimi.ingsw.model.persistency.GameHistory;
+import it.polimi.ingsw.jsonParsers.GameHistory;
 import it.polimi.ingsw.model.persistency.PersistentControllerSetUpPhase;
 import it.polimi.ingsw.model.persistency.PersistentGame;
 import it.polimi.ingsw.server.ClientHandler;

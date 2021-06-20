@@ -1,4 +1,4 @@
-package it.polimi.ingsw.model.persistency;
+package it.polimi.ingsw.jsonParsers;
 
 
 import it.polimi.ingsw.client.PopesTileState;
@@ -6,10 +6,15 @@ import it.polimi.ingsw.controller.actions.SoloActionToken;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
+import it.polimi.ingsw.jsonParsers.GameHistory;
 import it.polimi.ingsw.jsonParsers.SoloActionTokenParser;
 import it.polimi.ingsw.model.game.DevelopmentCardGrid;
 import it.polimi.ingsw.model.game.Market;
 import it.polimi.ingsw.model.game.VaticanReportSection;
+import it.polimi.ingsw.model.persistency.PersistentControllerPlayPhaseSingle;
+import it.polimi.ingsw.model.persistency.PersistentControllerSetUpPhase;
+import it.polimi.ingsw.model.persistency.PersistentGame;
+import it.polimi.ingsw.model.persistency.PersistentPlayer;
 import junit.framework.TestCase;
 import org.junit.BeforeClass;
 import org.junit.Test;

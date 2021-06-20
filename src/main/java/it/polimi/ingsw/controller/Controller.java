@@ -11,7 +11,7 @@ import it.polimi.ingsw.messages.toClient.NotifyClientDisconnection;
 import it.polimi.ingsw.messages.toClient.WelcomeBackMessage;
 import it.polimi.ingsw.messages.toClient.matchData.*;
 import it.polimi.ingsw.model.cards.Card;
-import it.polimi.ingsw.model.persistency.GameHistory;
+import it.polimi.ingsw.jsonParsers.GameHistory;
 import it.polimi.ingsw.model.persistency.PersistentControllerPlayPhase;
 import it.polimi.ingsw.model.persistency.PersistentControllerPlayPhaseSingle;
 import it.polimi.ingsw.model.persistency.PersistentControllerSetUpPhase;

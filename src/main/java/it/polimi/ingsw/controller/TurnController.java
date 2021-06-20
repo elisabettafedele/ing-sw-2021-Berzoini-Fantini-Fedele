@@ -40,6 +40,11 @@ public class TurnController {
         return controller;
     }
 
+    /**
+     * Standard class constructor
+     * @param controller the controller of the related {@link it.polimi.ingsw.model.game.Game}
+     * @param currentPlayer the turn owner
+     */
     public TurnController(Controller controller,Player currentPlayer) {
         this.currentPlayer=currentPlayer;
         this.clientHandler= controller.getConnectionByNickname(currentPlayer.getNickname());
@@ -57,11 +62,21 @@ public class TurnController {
         executableActions.put(ActionType.TAKE_RESOURCE_FROM_MARKET,true);
     }
 
+    /**
+     * Class constructor used to retrieve an old match and to restart from the old turn
+     * @param controller the {@link Controller} of the {@link it.polimi.ingsw.model.game.Game}
+     * @param currentPlayer the {@link Player} who is goinf to start the turn
+     * @param endTrigger true if the {@link it.polimi.ingsw.model.game.Game} to retrieve was end triggered
+     */
     public TurnController(Controller controller, Player currentPlayer, boolean endTrigger){
         this(controller, currentPlayer);
         this.endTrigger = endTrigger;
     }
 
+    /**
+     * Method to start a turn
+     * @param currentPlayer the turn owner {@link Player}
+     */
     public void start(Player currentPlayer){
         this.currentPlayer = currentPlayer;
         if (!currentPlayer.isActive()) {
@@ -74,6 +89,9 @@ public class TurnController {
         }
     }
 
+    /**
+     * Method to set the next executable actions
+     */
     public void setNextAction(){
         checkFaithTrack();
         checkExecutableActions();
@@ -87,11 +105,18 @@ public class TurnController {
             clientHandler.sendMessageToClient(new ChooseActionRequest(executableActions, standardActionDone));
     }
 
+    /**
+     * Method to execute an {@link Action} chosen by the current player
+     * @param actionChosen the number of the action chosen
+     */
     public void doAction(int actionChosen){
         possibleActions.get(actionChosen).execute();
 
     }
 
+    /**
+     * Method to reset the turn controller between one turn and the next one
+     */
     private void reset(){
         numberOfLeaderActionsDone=0;
         standardActionDone=false;
@@ -103,6 +128,9 @@ public class TurnController {
 
     }
 
+    /**
+     * Method to update the list of the executable action, accordin to the status of the current player
+     */
     public void checkExecutableActions(){
         for(ActionType actionType: executableActions.keySet()){
             executableActions.replace(actionType,true);
@@ -127,6 +155,9 @@ public class TurnController {
         return currentPlayer;
     }
 
+    /**
+     * Method to check whether the game is end triggered (someone has arrived at the end of the {@link it.polimi.ingsw.model.game.FaithTrack} or if a {@link VaticanReportSection} has been activeted
+     */
     public void checkFaithTrack(){
         boolean isVaticanReport=false;
         if (!isInterruptible) {
@@ -204,6 +235,9 @@ public class TurnController {
 
     }
 
+    /**
+     * Method to build a list of the next possible actions
+     */
     private void buildActions(){
         //the order is important, don't change it, it's the same as in the enum
         possibleActions.add(new TakeResourcesFromMarketAction(this));
@@ -213,6 +247,10 @@ public class TurnController {
         possibleActions.add(new LeaderCardAction(this, false));
     }
 
+    /**
+     * Method to handle the resources remove
+     * @param resourcesToRemove a {@link HashMap} containing the resources to remove and their quantity
+     */
     public void removeResources(Map<Resource, Integer> resourcesToRemove){
         this.resourcesToRemove = resourcesToRemove;
         handleRemoveResources();
@@ -336,9 +374,5 @@ public class TurnController {
 
     public boolean isStandardActionDone() {
         return standardActionDone;
-    }
-
-    public List<Action> getPossibleActions() {
-        return possibleActions;
     }
 }

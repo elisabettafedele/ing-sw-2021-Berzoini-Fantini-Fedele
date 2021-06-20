@@ -7,7 +7,7 @@ import it.polimi.ingsw.messages.toClient.StartMusicMessage;
 import it.polimi.ingsw.messages.toClient.TextMessage;
 import it.polimi.ingsw.messages.toClient.matchData.TurnMessage;
 import it.polimi.ingsw.messages.toClient.matchData.UpdateMarkerPosition;
-import it.polimi.ingsw.model.persistency.GameHistory;
+import it.polimi.ingsw.jsonParsers.GameHistory;
 import it.polimi.ingsw.model.persistency.PersistentControllerPlayPhase;
 import it.polimi.ingsw.model.persistency.PersistentGame;
 import it.polimi.ingsw.model.player.Player;
