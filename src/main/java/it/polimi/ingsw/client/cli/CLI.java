@@ -149,6 +149,8 @@ public class CLI implements View {
         if (readyForAnotherGame)
             System.out.println("\nYou can now start another game!");
         else {
+            System.out.println("\nThank you for playing Master Of Renaissance, see you next time!");
+            System.out.close();
             client.closeSocket();
             //TODO askReconnect();
         }
@@ -160,6 +162,8 @@ public class CLI implements View {
             System.out.println("You lost against Lorenzo il Magnifico!");
         else
             System.out.println("You won with " + victoryPoints + " victory points!! \nCongratulations");
+        System.out.println("\nThank you for playing Master Of Renaissance, see you next time!");
+        System.out.close();
         client.closeSocket();
         //TODO askReconnect();
     }
