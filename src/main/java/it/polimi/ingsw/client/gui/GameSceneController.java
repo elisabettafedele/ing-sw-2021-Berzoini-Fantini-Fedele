@@ -14,6 +14,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -30,6 +31,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -1480,6 +1482,10 @@ public class GameSceneController {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if(leaderORdevelopment){
+                    deactivateGlowingAndSelectEventHandler(leftLeaderCard,false);
+                    deactivateGlowingAndSelectEventHandler(rightLeaderCard,false);
+                }
+                else{
                     for(Integer devCardToBuyId : matchData.getDevelopmentCardGrid()){
                         if(allCardsIDs.contains(devCardToBuyId)){
                             LightDevelopmentCard lightDevelopmentCard= matchData.getDevelopmentCardByID(devCardToBuyId);
@@ -1487,10 +1493,6 @@ public class GameSceneController {
                             int col = FlagColor.valueOf(lightDevelopmentCard.getFlagColor()).getValue();
                             deactivateGlowingAndSelectEventHandler((ImageView) GameSceneController.this.developmentCardGrid.getChildren().get(col+ GameSceneController.this.developmentCardGrid.getColumnCount()*row),false); }
                     }
-                }
-                else{
-                    deactivateGlowingAndSelectEventHandler(leftLeaderCard,false);
-                    deactivateGlowingAndSelectEventHandler(rightLeaderCard,false);
                 }
                 client.sendMessageToServer(new SelectCardResponse(cardId));
             }
@@ -1995,6 +1997,49 @@ public class GameSceneController {
                         System.exit(0);
                     }
                 });
+            }
+        });
+    }
+
+    public void handleTimeoutExpired() {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                importantMessagesVbox.setManaged(true);
+                importantMessagesVbox.setVisible(true);
+                ((Label)importantMessagesVbox.getChildren().get(0)).setText("Timeout expired, do you want to reconnect?");
+                importantMessagesVbox.getChildren().get(1).setVisible(true);
+                HBox hbox= new HBox();
+                hbox.setAlignment(Pos.CENTER);
+                hbox.setSpacing(10.0);
+                importantMessagesVbox.getChildren().remove(1);
+                Button noButton = new Button("No");
+                noButton.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        client.closeSocket();
+                        Platform.exit();
+                        System.exit(0);
+                    }
+                });
+                Button yesButton = new Button("Yes");
+                yesButton.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        try {
+                            client.killThreads();
+                            client = new Client(client.getIPAddress(), client.getPort(), gui, client.getGameMode(), client.isNicknameValid() ? client.getNickname() : Optional.empty());
+                            gui.setClient(client);
+                            client.start();
+                        } catch (IOException e) {
+
+                        }
+                    }
+                });
+                hbox.getChildren().add(noButton);
+                hbox.getChildren().add(yesButton);
+                importantMessagesVbox.getChildren().add(hbox);
+
             }
         });
     }

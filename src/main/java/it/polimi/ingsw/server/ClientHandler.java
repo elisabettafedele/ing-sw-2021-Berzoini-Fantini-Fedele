@@ -27,7 +27,7 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
     public static final int PING_PERIOD = 5000; //PING_PERIOD = TIMEOUT/2
     //The timer gives one minute to the user to send the response
     public static final int SO_TIMEOUT_PERIOD = 0;
-    public static final int TIMEOUT_FOR_RESPONSE = 120000;
+    public static final int TIMEOUT_FOR_RESPONSE = 30000;
 
     private final Socket socket;
 

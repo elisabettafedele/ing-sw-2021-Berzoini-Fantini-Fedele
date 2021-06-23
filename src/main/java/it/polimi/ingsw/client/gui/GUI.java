@@ -143,8 +143,15 @@ public class GUI extends Application implements View {
 
     @Override
     public void displayTimeoutExpiredMessage() {
-        System.out.println("Timeout expired");
-        client.closeSocket();
+        if(setupSceneController!=null){
+            System.out.println("Timeout expired");
+            client.closeSocket();
+            Platform.exit();
+            System.exit(0);
+        }
+        else{
+            gameSceneController.handleTimeoutExpired();
+        }
     }
 
     @Override
