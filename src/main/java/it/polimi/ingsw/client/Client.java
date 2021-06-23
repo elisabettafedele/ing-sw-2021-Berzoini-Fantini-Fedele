@@ -161,12 +161,12 @@ public class Client implements ClientInterface {
                 closeSocket();
                 return;
             }
-            System.out.println(message.toString());
+            //System.out.println(message.toString());
             if (message instanceof ChooseLeaderCardsRequest || message instanceof NumberOfPlayersRequest)
                 gameCanceled = false;
             if (message instanceof WaitingInTheLobbyMessage || message instanceof SendPlayerNicknamesMessage || message instanceof NumberOfPlayersRequest || message instanceof WelcomeBackMessage)
                 validNickname = true;
-            //System.out.println(message.toString());
+            System.out.println(message.toString());
             ((MessageToClient) message).handleMessage(view);
         }
     }

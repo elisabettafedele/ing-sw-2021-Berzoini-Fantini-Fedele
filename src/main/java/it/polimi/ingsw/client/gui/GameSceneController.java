@@ -138,7 +138,7 @@ public class GameSceneController {
     List<Node> selectedProductions;
     String currentPlayer;
 
-    boolean connectionClosedByClient = true;
+    boolean connectionClosedByClient = false;
     boolean isYourTurn;
     // *********************************************************************  //
     //                        INITIALIZING FUNCTIONS                          //
@@ -1504,12 +1504,18 @@ public class GameSceneController {
             @Override
             public void run() {
                 List<Node> nodeList= new ArrayList<>();
-                if(firstSlotAvailable)nodeList.add(firstSlot);
-                if(secondSlotAvailable)nodeList.add(secondSlot);
-                if(thirdSlotAvailable)nodeList.add(thirdSlot);
-                glowNode(activateProductionPane.getChildren().get(1),colorToGlow);
-                glowNode(activateProductionPane.getChildren().get(2),colorToGlow);
-                glowNode(activateProductionPane.getChildren().get(3),colorToGlow);
+                if(firstSlotAvailable){
+                    nodeList.add(firstSlot);
+                    glowNode(activateProductionPane.getChildren().get(1),colorToGlow);
+                }
+                if(secondSlotAvailable){
+                    nodeList.add(secondSlot);
+                    glowNode(activateProductionPane.getChildren().get(2),colorToGlow);
+                }
+                if(thirdSlotAvailable){
+                    nodeList.add(thirdSlot);
+                    glowNode(activateProductionPane.getChildren().get(3),colorToGlow);
+                }
                 for(Node node : nodeList){
                     node.setOnMouseEntered(new EventHandler<MouseEvent>() {
                         @Override
@@ -1986,7 +1992,7 @@ public class GameSceneController {
                     if (!wasConnected)
                         ((Label)importantMessagesVbox.getChildren().get(0)).setText("The server is not reachable at the moment. Try again later.");
                     else
-                        ((Label)importantMessagesVbox.getChildren().get(0)).setText("Connection closed");
+                        ((Label)importantMessagesVbox.getChildren().get(0)).setText("Server disconnected. Connection closed.");
                 }
                 importantMessagesVbox.getChildren().get(1).setVisible(true);
                 ((Button)importantMessagesVbox.getChildren().get(1)).setText("Quit");
