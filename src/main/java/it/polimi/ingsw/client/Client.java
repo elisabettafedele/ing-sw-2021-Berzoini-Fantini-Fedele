@@ -228,6 +228,19 @@ public class Client implements ClientInterface {
         packetReceiver.interrupt();
         pinger.interrupt();
         serverObserver.interrupt();
+        try {
+            is.close();
+        } catch (IOException e) {
+        }
+        try {
+            os.close();
+        } catch (IOException e) {
+        }
+        try {
+            socket.close();
+        } catch (IOException e) {
+        }
+
     }
 
     public void setNickname(String nickname){
