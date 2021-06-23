@@ -55,6 +55,10 @@ public class CLI implements View {
         }
     }
 
+    /**
+     * Method to handle the expire of the timeout.
+     * Asks to the client whether he wants to be reconnected.
+     */
     @Override
     public void displayTimeoutExpiredMessage() {
         System.out.println("Timeout expired, do you want to reconnect? y | n");
@@ -76,6 +80,8 @@ public class CLI implements View {
         }
         else{
             System.out.println("\nThank you for playing Master Of Renaissance, see you next time!");
+            System.out.close();
+            client.closeSocket();
         }
 
     }
