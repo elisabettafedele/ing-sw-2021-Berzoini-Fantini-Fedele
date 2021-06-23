@@ -264,11 +264,6 @@ public class GUI extends Application implements View {
         if(setupSceneController!=null)setupSceneController.displayPlayersReadyToStartMessage(p);
     }
 
-    @Override
-    public void startMusic() {
-        //TODO
-    }
-
 
     // *********************************************************************  //
     //                             SETUP GUI                                  //

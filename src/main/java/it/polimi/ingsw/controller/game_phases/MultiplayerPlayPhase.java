@@ -3,7 +3,6 @@ package it.polimi.ingsw.controller.game_phases;
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.controller.TurnController;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
-import it.polimi.ingsw.messages.toClient.StartMusicMessage;
 import it.polimi.ingsw.messages.toClient.TextMessage;
 import it.polimi.ingsw.messages.toClient.matchData.NotifyVictoryPoints;
 import it.polimi.ingsw.messages.toClient.matchData.TurnMessage;
@@ -100,9 +99,7 @@ public class MultiplayerPlayPhase extends PlayPhase {
 
     @Override
     public void executePhase(Controller controller) {
-        controller.sendMessageToAll(new TextMessage("\nFrom now on, when you are not the turn owner, you can use the command -pb to move to another player's view \n(EG. -pb betti shows you the view of the player named \"betti\")\n" +
-                "Also, you can stop and start the music with the command -music stop/start! \n"));
-        controller.sendMessageToAll(new StartMusicMessage());
+        controller.sendMessageToAll(new TextMessage("\nFrom now on, when you are not the turn owner, you can use the command -pb to move to another player's view \n(EG. -pb betti shows you the view of the player named \"betti\")\n"));
         while(!getController().getPlayers().get(turnIndex).isActive())
             pickNextPlayer();
         setPlayer(controller.getPlayers().get(turnIndex));

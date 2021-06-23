@@ -18,7 +18,6 @@ public interface VirtualView {
     void displayNumberOfPlayersRequest();
     void displayWaitingInTheLobbyMessage();
     void displayPlayersReadyToStartMessage(List<String> nicknames);
-    void startMusic();
     //CONNECTION
     void displayTimeoutExpiredMessage();
     //ACTIONS
