@@ -13,7 +13,7 @@ public enum TokenDescriptors {
     TOKEN_68(68, "Lorenzo has discarded two yellow development cards\n"),
     TOKEN_69(69, "Lorenzo has made two steps on the faith track\n"),
     TOKEN_70(70, "Lorenzo has made two steps on the faith track\n"),
-    TOKEN_71(71, "Lorenzo has made one step on the faith track\n" +
+    TOKEN_71(71, "Lorenzo has made one step on the faith track " +
             "and has shuffled the solo action token stack\n");
 
     private int value;

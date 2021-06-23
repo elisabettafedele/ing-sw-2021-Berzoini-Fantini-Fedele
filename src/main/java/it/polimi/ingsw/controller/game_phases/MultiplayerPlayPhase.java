@@ -5,9 +5,11 @@ import it.polimi.ingsw.controller.TurnController;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.messages.toClient.StartMusicMessage;
 import it.polimi.ingsw.messages.toClient.TextMessage;
+import it.polimi.ingsw.messages.toClient.matchData.NotifyVictoryPoints;
 import it.polimi.ingsw.messages.toClient.matchData.TurnMessage;
 import it.polimi.ingsw.messages.toClient.matchData.UpdateMarkerPosition;
 import it.polimi.ingsw.jsonParsers.GameHistory;
+import it.polimi.ingsw.model.game.FaithTrack;
 import it.polimi.ingsw.model.persistency.PersistentControllerPlayPhase;
 import it.polimi.ingsw.model.persistency.PersistentGame;
 import it.polimi.ingsw.model.player.Player;
@@ -77,6 +79,8 @@ public class MultiplayerPlayPhase extends PlayPhase {
                 try {
                     player.getPersonalBoard().moveMarker(1);
                     getController().sendMessageToAll(new UpdateMarkerPosition(player.getNickname(), player.getPersonalBoard().getMarkerPosition()));
+                    if (FaithTrack.changesVictoryPoints(player.getPersonalBoard().getMarkerPosition()))
+                        getController().sendMessageToAll(new NotifyVictoryPoints(player.getNickname(), player.countPoints()));
                 } catch (InvalidArgumentException ignored) { } //never thrown, the argument is "1", so it will never be negative
             }
         }

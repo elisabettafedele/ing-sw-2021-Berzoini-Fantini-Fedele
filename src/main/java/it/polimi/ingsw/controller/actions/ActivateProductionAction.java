@@ -5,6 +5,7 @@ import it.polimi.ingsw.messages.toClient.matchData.UpdateMarkerPosition;
 import it.polimi.ingsw.messages.toClient.matchData.NotifyVictoryPoints;
 import it.polimi.ingsw.messages.toServer.NotifyEndRemoveResources;
 import it.polimi.ingsw.messages.toClient.matchData.UpdateDepotsStatus;
+import it.polimi.ingsw.model.game.FaithTrack;
 import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.server.Server;
 import it.polimi.ingsw.controller.TurnController;
@@ -230,6 +231,8 @@ public class ActivateProductionAction implements Action{
                     personalBoard.moveMarker(faithPoints);
                     turnController.checkFaithTrack();
                     turnController.getController().sendMessageToAll(new UpdateMarkerPosition(player.getNickname(), personalBoard.getMarkerPosition()));
+                    if (FaithTrack.changesVictoryPoints(player.getPersonalBoard().getMarkerPosition()))
+                        turnController.getController().sendMessageToAll(new NotifyVictoryPoints(player.getNickname(), player.countPoints()));
                 } catch (InvalidArgumentException e) {
                     e.printStackTrace();
                 }
