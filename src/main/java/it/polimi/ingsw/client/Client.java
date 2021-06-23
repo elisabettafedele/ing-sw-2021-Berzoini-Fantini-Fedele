@@ -96,19 +96,7 @@ public class Client implements ClientInterface {
             }
         });
     }
-//TODO
-/*
-    public void reconnect() throws IOException {
-        socket = new Socket();
-        this.incomingPackets = new LinkedBlockingQueue<>();
-        socket.connect(new InetSocketAddress(IPAddress, port), SOCKET_TIMEOUT);
-        os = new ObjectOutputStream(socket.getOutputStream());
-        is = new ObjectInputStream(socket.getInputStream());
-        connected.set(true);
-        packetReceiver.start();
-        serverObserver.start();
-    }
-*/
+
     public void start() throws IOException {
         socket = new Socket();
         this.incomingPackets = new LinkedBlockingQueue<>();

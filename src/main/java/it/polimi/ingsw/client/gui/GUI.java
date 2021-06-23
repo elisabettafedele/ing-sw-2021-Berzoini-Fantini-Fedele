@@ -14,6 +14,8 @@ import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.enumerations.ResourceStorageType;
 import it.polimi.ingsw.messages.toClient.matchData.TurnMessage;
 import it.polimi.ingsw.messages.toClient.matchData.MatchDataMessage;
+import it.polimi.ingsw.messages.toServer.lobby.GameModeResponse;
+import it.polimi.ingsw.messages.toServer.lobby.NicknameResponse;
 import it.polimi.ingsw.model.cards.Value;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -186,6 +188,10 @@ public class GUI extends Application implements View {
 
     @Override
     public void displayGameModeRequest() {
+        if (client.getGameMode().isPresent()){
+            client.sendMessageToServer(new GameModeResponse(client.getGameMode().get()));
+            return;
+        }
         if(setupSceneController!=null)setupSceneController.selectGameMode();
         else{
             resetControllers();
@@ -202,6 +208,10 @@ public class GUI extends Application implements View {
 
     @Override
     public void displayNicknameRequest(boolean isRetry, boolean alreadyTaken) {
+        if (client.isNicknameValid() && client.getNickname().isPresent()){
+            client.sendMessageToServer(new NicknameResponse(client.getNickname().get()));
+            return;
+        }
         if(setupSceneController!=null) setupSceneController.displayNicknameRequest(isRetry,alreadyTaken);
         else{
             resetControllers();

@@ -123,6 +123,7 @@ public class SetupSceneController {
 
     @FXML
     public void handleSendNicknameButton(ActionEvent actionEvent) {
+        client.setNickname(nicknameField.getText());
         client.sendMessageToServer(new NicknameResponse(nicknameField.getText()));
     }
 
@@ -164,10 +165,12 @@ public class SetupSceneController {
     }
     @FXML
     public void handleSingleplayerButton(ActionEvent actionEvent) {
+        client.setGameMode(GameMode.SINGLE_PLAYER);
         client.sendMessageToServer(new GameModeResponse(GameMode.SINGLE_PLAYER));
     }
     @FXML
     public void handleMultiplayerButton(ActionEvent actionEvent) {
+        client.setGameMode(GameMode.MULTI_PLAYER);
         client.sendMessageToServer(new GameModeResponse(GameMode.MULTI_PLAYER));
     }
 
