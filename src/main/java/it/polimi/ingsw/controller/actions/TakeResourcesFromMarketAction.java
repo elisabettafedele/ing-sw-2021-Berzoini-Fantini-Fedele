@@ -7,6 +7,7 @@ import it.polimi.ingsw.messages.toClient.matchData.UpdateMarkerPosition;
 import it.polimi.ingsw.messages.toClient.matchData.UpdateMarketView;
 import it.polimi.ingsw.messages.toClient.matchData.UpdateDepotsStatus;
 import it.polimi.ingsw.messages.toServer.game.*;
+import it.polimi.ingsw.model.game.FaithTrack;
 import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.controller.*;
 import it.polimi.ingsw.enumerations.*;
@@ -22,6 +23,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Class to handle the request of a {@link Player} to take some {@link Resource} from {@link Market}
+ */
 public class TakeResourcesFromMarketAction implements Action {
 
     private Player player;
@@ -164,6 +168,9 @@ public class TakeResourcesFromMarketAction implements Action {
                 try {
                     player.getPersonalBoard().moveMarker(1);
                     controller.sendMessageToAll(new UpdateMarkerPosition(player.getNickname(), player.getPersonalBoard().getMarkerPosition()));
+                    if (FaithTrack.changesVictoryPoints(player.getPersonalBoard().getMarkerPosition()))
+                        turnController.getController().sendMessageToAll(new NotifyVictoryPoints(player.getNickname(), player.countPoints()));
+                    turnController.checkFaithTrack();
                 } catch (InvalidArgumentException ignored) { } //I move the marker of a not negative quantity
             } else if (marble != Marble.WHITE)
                 resourcesToStore.add(Resource.valueOf(marble.getValue()));

@@ -104,4 +104,13 @@ public class FaithTrack {
             this.currentSection = vaticanReportSectionIterator.next();
         }
     }
+
+    /**
+     * Method to check whether the victory points have changed after one move
+     * @param position the position of then{@link it.polimi.ingsw.model.player.Player} in the {@link FaithTrack}
+     * @return true if the position is among the positions that make victory points change
+     */
+    public static boolean changesVictoryPoints(int position){
+        return trackVictoryPoints.containsKey(position);
+    }
 }

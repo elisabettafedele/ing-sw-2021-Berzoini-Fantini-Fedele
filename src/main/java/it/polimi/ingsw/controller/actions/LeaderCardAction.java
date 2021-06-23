@@ -2,7 +2,9 @@ package it.polimi.ingsw.controller.actions;
 
 import it.polimi.ingsw.enumerations.ActionType;
 import it.polimi.ingsw.messages.toClient.matchData.NotifyLeaderAction;
+import it.polimi.ingsw.messages.toClient.matchData.NotifyVictoryPoints;
 import it.polimi.ingsw.messages.toClient.matchData.UpdateMarkerPosition;
+import it.polimi.ingsw.model.game.FaithTrack;
 import it.polimi.ingsw.server.ClientHandler;
 import it.polimi.ingsw.controller.TurnController;
 import it.polimi.ingsw.enumerations.EffectType;
@@ -72,6 +74,8 @@ public class LeaderCardAction implements Action{
             try {
                 player.getPersonalBoard().moveMarker(1);
                 turnController.getController().sendMessageToAll(new UpdateMarkerPosition(player.getNickname(), player.getPersonalBoard().getMarkerPosition()));
+                if (FaithTrack.changesVictoryPoints(player.getPersonalBoard().getMarkerPosition()))
+                    turnController.getController().sendMessageToAll(new NotifyVictoryPoints(player.getNickname(), player.countPoints()));
                 turnController.checkFaithTrack();
             } catch (InvalidArgumentException ignored) {
                 //moveMarker's parameter is a constant so the exception won't be launched
