@@ -39,7 +39,7 @@ public class PersonalBoard implements Serializable {
         }
         //TODO REMOVE, FOR DEBUGGING ONLY
         //for(LeaderCard lc : leaderCards){
-        //    lc.activate();
+        //   lc.activate();
         //}
         //TODO
         strongbox = new StrongboxDepot[numberOfStrongboxDepots];
