@@ -8,6 +8,7 @@ import it.polimi.ingsw.client.utilities.UtilityProduction;
 import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.common.LightLeaderCard;
 import it.polimi.ingsw.enumerations.*;
+import it.polimi.ingsw.messages.toClient.matchData.TurnMessage;
 import it.polimi.ingsw.messages.toServer.game.*;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -192,6 +193,7 @@ public class GameSceneController {
             public void handle(ActionEvent actionEvent) {
                 deactivateAllActionsGlowing();
                 endTurnButton.setVisible(false);
+                isYourTurn=false;
                 client.sendMessageToServer(new EndTurnRequest());
             }
         });
@@ -268,6 +270,9 @@ public class GameSceneController {
 
     public void setCurrentPlayer(String nickname) {
         currentPlayer=nickname;
+        if(!(currentPlayer.equals(players.get(0)))){
+            isYourTurn=false;
+        }
     }
     // *********************************************************************  //
     //                           UTILITY FUNCTIONS                            //
@@ -388,6 +393,7 @@ public class GameSceneController {
                 if(players.size()>1){
                     if(currentPlayer.equals(players.get(0)))mainLabelMessage.setText("It's your turn!");
                     else mainLabelMessage.setText("It's " + currentPlayer + "'s turn");
+                    if(currentPlayer.isEmpty()) mainLabelMessage.setText("Wait the other players");
                 }
                 else{
                     mainLabelNames.setText(mainLabelNames.getText() + "Lorenzo\n");
@@ -693,17 +699,22 @@ public class GameSceneController {
         nodeToDeactivate.setOnMouseEntered(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                //createTooltip(nodeToDeactivate,null);
+                //Overwrites any possible tooltip, removing them, then removes this one too, leaving the node with no tooltips.
+                Tooltip tooltip= new Tooltip("Overwriting Tooltip");
+                Tooltip.install(nodeToDeactivate, tooltip);
+                Tooltip.uninstall(nodeToDeactivate, tooltip);
             }
         });
         nodeToDeactivate.setOnMouseExited(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
+                mouseEvent.consume();
             }
         });
         nodeToDeactivate.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
+                mouseEvent.consume();
             }
         });
         nodeToDeactivate.setEffect(null);
@@ -1436,8 +1447,8 @@ public class GameSceneController {
                     int counter=0;
                     for(Integer lcId: matchData.getLightClientByNickname(players.get(0)).getOwnedLeaderCards()){
                         if(cardIDs.contains(lcId)){
-                            if(counter==0) selectAndGlowCard(leftLeaderCard,lcId);
-                            if(counter==1) selectAndGlowCard(rightLeaderCard,lcId);
+                            if(counter==0) selectAndGlowCard(leftLeaderCard,lcId,leaderORdevelopment,cardIDs);
+                            if(counter==1) selectAndGlowCard(rightLeaderCard,lcId,leaderORdevelopment,cardIDs);
                         }
                         counter++;
                     }
@@ -1448,7 +1459,7 @@ public class GameSceneController {
                             LightDevelopmentCard lightDevelopmentCard= matchData.getDevelopmentCardByID(devCardToBuyId);
                             int row = (Level.valueOf(lightDevelopmentCard.getFlagLevel()).getValue() * - 1) + 2;
                             int col = FlagColor.valueOf(lightDevelopmentCard.getFlagColor()).getValue();
-                            selectAndGlowCard((ImageView) GameSceneController.this.developmentCardGrid.getChildren().get(col+ GameSceneController.this.developmentCardGrid.getColumnCount()*row),devCardToBuyId);
+                            selectAndGlowCard((ImageView) GameSceneController.this.developmentCardGrid.getChildren().get(col+ GameSceneController.this.developmentCardGrid.getColumnCount()*row),devCardToBuyId, leaderORdevelopment,cardIDs);
                         }
                     }
                 }
@@ -1457,7 +1468,7 @@ public class GameSceneController {
 
     }
 
-    private void selectAndGlowCard(Node node, Integer cardId) {
+    private void selectAndGlowCard(Node node, Integer cardId, Boolean leaderORdevelopment, List<Integer> allCardsIDs) {
         glowNode(node,colorToGlow);
         node.setOnMouseEntered(new EventHandler<MouseEvent>() {
             @Override
@@ -1468,7 +1479,19 @@ public class GameSceneController {
         node.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                deactivateGlowingAndSelectEventHandler(node,false);
+                if(leaderORdevelopment){
+                    for(Integer devCardToBuyId : matchData.getDevelopmentCardGrid()){
+                        if(allCardsIDs.contains(devCardToBuyId)){
+                            LightDevelopmentCard lightDevelopmentCard= matchData.getDevelopmentCardByID(devCardToBuyId);
+                            int row = (Level.valueOf(lightDevelopmentCard.getFlagLevel()).getValue() * - 1) + 2;
+                            int col = FlagColor.valueOf(lightDevelopmentCard.getFlagColor()).getValue();
+                            deactivateGlowingAndSelectEventHandler((ImageView) GameSceneController.this.developmentCardGrid.getChildren().get(col+ GameSceneController.this.developmentCardGrid.getColumnCount()*row),false); }
+                    }
+                }
+                else{
+                    deactivateGlowingAndSelectEventHandler(leftLeaderCard,false);
+                    deactivateGlowingAndSelectEventHandler(rightLeaderCard,false);
+                }
                 client.sendMessageToServer(new SelectCardResponse(cardId));
             }
         });
