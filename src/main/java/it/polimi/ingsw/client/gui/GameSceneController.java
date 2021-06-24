@@ -710,13 +710,13 @@ public class GameSceneController {
         nodeToDeactivate.setOnMouseExited(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                mouseEvent.consume();
+
             }
         });
         nodeToDeactivate.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                mouseEvent.consume();
+
             }
         });
         nodeToDeactivate.setEffect(null);
@@ -1038,6 +1038,8 @@ public class GameSceneController {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+                popupVbox.setPrefHeight(350);
+                popupVbox.setPrefWidth(650);
                 popupVbox.setVisible(true);
                 //set Reorganize button invisible
                 reorganizeButton.setVisible(false);
@@ -1178,6 +1180,8 @@ public class GameSceneController {
                     confirmSelectionButton.setDisable(true);
                     label.setText("Waiting the other players, the game will start \nas soon as they all be ready...");
                     popupVbox.setVisible(false);
+                    popupVbox.setPrefHeight(189);
+                    popupVbox.setPrefWidth(341);
                 }
                 if(selectedLeaderCards.size()==0&&selectedResources.size()>0){
                     client.sendMessageToServer(new ChooseResourceTypeResponse(selectedResources));
@@ -2013,9 +2017,9 @@ public class GameSceneController {
             public void run() {
                 importantMessagesVbox.setManaged(true);
                 importantMessagesVbox.setVisible(true);
-                ((Label)importantMessagesVbox.getChildren().get(0)).setText("Timeout expired, do you want to reconnect?");
+                ((Label) importantMessagesVbox.getChildren().get(0)).setText("Timeout expired, do you want to reconnect?");
                 importantMessagesVbox.getChildren().get(1).setVisible(true);
-                HBox hbox= new HBox();
+                HBox hbox = new HBox();
                 hbox.setAlignment(Pos.CENTER);
                 hbox.setSpacing(10.0);
                 importantMessagesVbox.getChildren().remove(1);
@@ -2045,9 +2049,7 @@ public class GameSceneController {
                 hbox.getChildren().add(noButton);
                 hbox.getChildren().add(yesButton);
                 importantMessagesVbox.getChildren().add(hbox);
-
             }
         });
     }
-    //TODO leaderDepot non funziona benissimo
 }
