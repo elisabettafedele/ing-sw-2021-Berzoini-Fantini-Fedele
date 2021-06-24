@@ -5,13 +5,10 @@
 */
 .root {
 }
-@font-face {
-    src: url("/font/civitype.ttf");
-    font-family: Civitype FG;
-}
+
 Label, .label, Text, .text, Button, .button, TextField, .text-field, GridPane, .gridPane, Tooltip, .tooltip {
     -fx-font-family:"Courier New" ;
-    -fx-font-size: 10px ;
+    -fx-font-size: 12px ;
     -fx-text-fill: white;
     -fx-text-alignment: center;
     -fx-alignment: center;
