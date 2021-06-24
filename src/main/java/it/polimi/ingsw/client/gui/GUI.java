@@ -22,6 +22,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -45,6 +46,7 @@ public class GUI extends Application implements View {
     public void start(Stage stage) throws Exception {
         isUpdateActive=true;
         this.stage = stage;
+        stage.getIcons().add(new Image(GUI.class.getResource("/img/icon.png").toString()));
         stage.setOnCloseRequest((WindowEvent t) -> {
             Platform.exit();
             System.exit(0);
@@ -73,7 +75,7 @@ public class GUI extends Application implements View {
 
     public void instantiateGameScene(){
         createMainScene("/FXML/GameScene.fxml", () -> {
-            stage.setTitle("Maestri del Rinascimento");
+            stage.setTitle("Masters of Renaissance");
             stage.setResizable(false);
             stage.show();
             gameSceneController = fxmlLoader.getController();
@@ -84,7 +86,7 @@ public class GUI extends Application implements View {
 
     private void instantiateSetupScene(){
         createMainScene("/FXML/SetupScene.fxml", () -> {
-            stage.setTitle("Maestri del Rinascimento");
+            stage.setTitle("Masters of Renaissance");
             stage.setResizable(false);
             stage.show();
             setupSceneController = fxmlLoader.getController();
