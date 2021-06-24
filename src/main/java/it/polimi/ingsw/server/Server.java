@@ -16,7 +16,7 @@ import it.polimi.ingsw.messages.toClient.WelcomeBackMessage;
 import it.polimi.ingsw.messages.toClient.game.GameOverMessage;
 import it.polimi.ingsw.messages.toClient.lobby.NicknameRequest;
 import it.polimi.ingsw.messages.toClient.lobby.NumberOfPlayersRequest;
-import it.polimi.ingsw.messages.toClient.lobby.SendPlayerNicknamesMessage;
+import it.polimi.ingsw.messages.toClient.lobby.SendPlayersNicknamesMessage;
 import it.polimi.ingsw.messages.toClient.lobby.WaitingInTheLobbyMessage;
 import it.polimi.ingsw.messages.toClient.matchData.LoadDevelopmentCardsMessage;
 import it.polimi.ingsw.messages.toClient.matchData.LoadLeaderCardsMessage;
@@ -190,7 +190,7 @@ public class Server implements ServerInterface {
             clientsDisconnected.get(clientHandler.getNickname()).addConnection(clientHandler);
             clientHandler.setController(clientsDisconnected.get(clientHandler.getNickname()));
             clientsDisconnected.get(clientHandler.getNickname()).getPlayerByNickname(clientHandler.getNickname()).setActive(true);
-            clientHandler.sendMessageToClient(new SendPlayerNicknamesMessage(clientHandler.getNickname(), clientsDisconnected.get(clientHandler.getNickname()).getNicknames().stream().filter(x -> !x.equals(clientHandler.getNickname())).collect(Collectors.toList())));
+            clientHandler.sendMessageToClient(new SendPlayersNicknamesMessage(clientHandler.getNickname(), clientsDisconnected.get(clientHandler.getNickname()).getNicknames().stream().filter(x -> !x.equals(clientHandler.getNickname())).collect(Collectors.toList())));
             clientHandler.sendMessageToClient(new LoadDevelopmentCardsMessage(LightCardsParser.getLightDevelopmentCards(DevelopmentCardParser.parseCards())));
             clientHandler.sendMessageToClient(new LoadLeaderCardsMessage(LightCardsParser.getLightLeaderCards(LeaderCardParser.parseCards())));
             if (clientsDisconnected.get(clientHandler.getNickname()).getGamePhase() instanceof SetUpPhase){
@@ -268,7 +268,7 @@ public class Server implements ServerInterface {
                 clientsInLobby.remove(0);
             }
             for (String nickname : playersInGame) {
-                controller.getConnectionByNickname(nickname).sendMessageToClient(new SendPlayerNicknamesMessage(nickname, playersInGame.stream().filter(x -> !(x.equals(nickname))).collect(Collectors.toList())));
+                controller.getConnectionByNickname(nickname).sendMessageToClient(new SendPlayersNicknamesMessage(nickname, playersInGame.stream().filter(x -> !(x.equals(nickname))).collect(Collectors.toList())));
             }
 
             controller.setControllerID(playersInGame.stream().sorted().reduce("", String::concat).hashCode());
@@ -309,7 +309,7 @@ public class Server implements ServerInterface {
             lockGames.unlock();
         }
         assert controller != null;
-        connection.sendMessageToClient(new SendPlayerNicknamesMessage(connection.getNickname(), new ArrayList<String>()));
+        connection.sendMessageToClient(new SendPlayersNicknamesMessage(connection.getNickname(), new ArrayList<String>()));
         controller.start();
     }
 

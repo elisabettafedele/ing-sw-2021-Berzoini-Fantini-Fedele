@@ -1,7 +1,5 @@
 package it.polimi.ingsw.client;
 
-import it.polimi.ingsw.client.cli.CLI;
-import it.polimi.ingsw.client.cli.graphical.Colour;
 import it.polimi.ingsw.common.ClientInterface;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.messages.ConnectionMessage;
@@ -11,13 +9,12 @@ import it.polimi.ingsw.messages.toClient.TimeoutExpiredMessage;
 import it.polimi.ingsw.messages.toClient.WelcomeBackMessage;
 import it.polimi.ingsw.messages.toClient.game.ChooseLeaderCardsRequest;
 import it.polimi.ingsw.messages.toClient.lobby.NumberOfPlayersRequest;
-import it.polimi.ingsw.messages.toClient.lobby.SendPlayerNicknamesMessage;
+import it.polimi.ingsw.messages.toClient.lobby.SendPlayersNicknamesMessage;
 import it.polimi.ingsw.messages.toClient.lobby.WaitingInTheLobbyMessage;
 
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -164,7 +161,7 @@ public class Client implements ClientInterface {
             //System.out.println(message.toString());
             if (message instanceof ChooseLeaderCardsRequest || message instanceof NumberOfPlayersRequest)
                 gameCanceled = false;
-            if (message instanceof WaitingInTheLobbyMessage || message instanceof SendPlayerNicknamesMessage || message instanceof NumberOfPlayersRequest || message instanceof WelcomeBackMessage)
+            if (message instanceof WaitingInTheLobbyMessage || message instanceof SendPlayersNicknamesMessage || message instanceof NumberOfPlayersRequest || message instanceof WelcomeBackMessage)
                 validNickname = true;
             System.out.println(message.toString());
             ((MessageToClient) message).handleMessage(view);

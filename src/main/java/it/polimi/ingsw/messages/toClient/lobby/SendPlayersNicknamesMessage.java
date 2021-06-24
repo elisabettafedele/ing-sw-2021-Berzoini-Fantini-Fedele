@@ -5,12 +5,12 @@ import it.polimi.ingsw.messages.toClient.MessageToClient;
 
 import java.util.List;
 
-public class SendPlayerNicknamesMessage extends MessageToClient {
+public class SendPlayersNicknamesMessage extends MessageToClient {
 
     String playerNickname;
     List<String> otherPlayersNicknames;
 
-    public SendPlayerNicknamesMessage(String playerNickname, List<String> otherPlayersNicknames) {
+    public SendPlayersNicknamesMessage(String playerNickname, List<String> otherPlayersNicknames) {
         super(false);
         this.playerNickname = playerNickname;
         this.otherPlayersNicknames = otherPlayersNicknames;
