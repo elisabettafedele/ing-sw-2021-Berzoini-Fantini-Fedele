@@ -824,7 +824,7 @@ public class GameSceneController {
                 reorganizeButton.setDisable(!canReorganize);
 
                 popupVbox.setVisible(true);
-                ((Label) popupVbox.getChildren().get(0)).setText("Drag the resource into one of the glowing depots, if any");
+                ((Label) popupVbox.getChildren().get(0)).setText("Drag the resource into one of \nthe glowing depots, if any");
                 HBox resourcesHBox=(HBox) popupVbox.getChildren().get(1);
                 highlightAndDrag(resourcesHBox.getChildren().get(0),resource.toString(), interactableDepots);
                 discardButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -1046,7 +1046,7 @@ public class GameSceneController {
                 reorganizeButton.setManaged(false);
                 //turn DiscardButton into ConfirmSelectionButton
                 Button confirmSelectionButton=discardButton;
-                confirmSelectionButton.setText("Confirm selection");
+                confirmSelectionButton.setText("Confirm");
                 confirmSelectionButton.setDisable(true);
                 confirmSelectionButton.setVisible(true);
 
@@ -1245,7 +1245,7 @@ public class GameSceneController {
                 Button confirmSelectionButton= discardButton;
                 confirmSelectionButton.setDisable(true);
                 confirmSelectionButton.setVisible(true);
-                confirmSelectionButton.setText("Confirm selection");
+                confirmSelectionButton.setText("Confirm");
                 boolean[] selectedResourcesBooleans=new boolean[resources.size()*numberOfMarbles];
                 GridPane gridResources= new GridPane();
                 HBox selectionHBox=((HBox)popupVbox.getChildren().get(1));
