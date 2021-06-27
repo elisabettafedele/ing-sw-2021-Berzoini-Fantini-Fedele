@@ -108,6 +108,7 @@ public class MatchData {
      */
     public void setReloading(boolean reloading) {
         isReloading = reloading;
+        display();
     }
 
     /**
