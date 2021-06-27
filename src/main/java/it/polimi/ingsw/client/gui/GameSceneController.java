@@ -1906,12 +1906,12 @@ public class GameSceneController {
                     int max=0;
                     for (String name : results.keySet()) {
                         endMessage.setText(endMessage.getText() + (results.keySet().size() > 1 ? (i++ + ". ") : "") + name + ": " + results.get(name) + " victory points\n" );
+                        if(max==results.get(name)){
+                            winners.add(name);
+                        }
                         if(max<results.get(name)){
                             max=results.get(name);
                             winners.clear();
-                            winners.add(name);
-                        }
-                        if(max==results.get(name)){
                             winners.add(name);
                         }
                     }
