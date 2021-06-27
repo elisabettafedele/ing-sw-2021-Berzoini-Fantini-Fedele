@@ -94,7 +94,7 @@ public class LeaderCardAction implements Action{
     }
 
     /**
-     *
+     * Method to check if a {@link LeaderCard} is activable or not
      * @param lc the {@link LeaderCard} that needs to be checked if it's activable
      * @return true if activable, false if lc's activation cost is not satisfied
      */

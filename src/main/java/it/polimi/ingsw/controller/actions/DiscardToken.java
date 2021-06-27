@@ -5,6 +5,9 @@ import it.polimi.ingsw.enumerations.FlagColor;
 
 import java.util.Objects;
 
+/**
+ * Class to represents the discard token in single player matches
+ */
 public class DiscardToken extends SoloActionToken{
 
     private int numOfCardRemoved;

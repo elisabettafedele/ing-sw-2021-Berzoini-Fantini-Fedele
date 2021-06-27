@@ -5,6 +5,9 @@ import it.polimi.ingsw.messages.toClient.matchData.UpdateMarkerPosition;
 
 import java.util.Objects;
 
+/**
+ * Class to represent the movement of the black cross in single player matches
+ */
 public class BlackCrossMoveToken extends SoloActionToken{
 
     private int numOfMoves;
