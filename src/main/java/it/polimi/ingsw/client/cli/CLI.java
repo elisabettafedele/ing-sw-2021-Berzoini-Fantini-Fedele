@@ -138,12 +138,12 @@ public class CLI implements View {
             int max =0;
             for (String name : results.keySet()) {
                 System.out.println((results.keySet().size() > 1 ? (i++ + ". ") : "") + name + ": " + results.get(name) + " victory points");
+                if(max==results.get(name)){
+                    winners.add(name);
+                }
                 if(max<results.get(name)){
                     max=results.get(name);
                     winners.clear();
-                    winners.add(name);
-                }
-                if(max==results.get(name)){
                     winners.add(name);
                 }
             }

@@ -144,7 +144,7 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
     public void stopTimer(){
         if (timer != null && timer.isAlive()){
             timer.interrupt();
-            timer = null;
+            //timer = null;
         }
     }
 
