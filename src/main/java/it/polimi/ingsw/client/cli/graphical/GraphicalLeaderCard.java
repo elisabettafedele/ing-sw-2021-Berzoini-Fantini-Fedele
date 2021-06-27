@@ -67,6 +67,9 @@ public class GraphicalLeaderCard extends GraphicalCard{
             drawExtraDepotEffect();
     }
 
+    /**
+     * Draw the representation of the leader depots
+     */
     private void drawExtraDepotEffect() {
         int center = width /2;
         int begin = center - 4;
@@ -85,6 +88,11 @@ public class GraphicalLeaderCard extends GraphicalCard{
         drawResourceSlots(r, c);
     }
 
+    /**
+     * Draw the slot of leader depots
+     * @param r the type of resource to be stored
+     * @param c the colour of the depots
+     */
     private void drawResourceSlots(Resource r, Colour c) {
         int center = width /2;
         Map<Integer, Integer> leaderDepots = MatchData.getInstance().getLightClientByNickname(this.nickname).getLeaderDepots();
@@ -105,6 +113,9 @@ public class GraphicalLeaderCard extends GraphicalCard{
         colours[height -2][center+1] = c;
     }
 
+    /**
+     * Draw the graphical representation of the conversion of the white marble
+     */
     private void drawConversionEffect() {
         int center = width /2;
         int begin = center - 5;
@@ -124,6 +135,9 @@ public class GraphicalLeaderCard extends GraphicalCard{
         colours[height -2][center+2] = c;
     }
 
+    /**
+     * Draw the representation of the discount effect of the leader cards
+     */
     private void drawDiscountEffect() {
         int center = width /2;
         int begin = center - 4;
@@ -153,6 +167,9 @@ public class GraphicalLeaderCard extends GraphicalCard{
         }
     }
 
+    /**
+     * Draw the activation cost in terms of flag
+     */
     private void drawFlagCost() {
         List<String> cost = lightCard.getCost();
 

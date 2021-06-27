@@ -18,6 +18,12 @@ public class LobbyCLI {
     private static final String DEFAULT_ADDRESS = "127.0.0.1";
     private static final int DEFAULT_PORT = 1234;
 
+    /**
+     * Method to aks to which IP address and port the client wants to connect to
+     * @param cli the view used by the client
+     * @param firstTryConnection true if this method it's called for the first time
+     * @return a new {@link Client} instance
+     */
     public static Client askConnectionParameters(CLI cli, boolean firstTryConnection){
         int port;
         String IPAddress;

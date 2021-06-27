@@ -13,7 +13,6 @@ public class LightClient {
     private int faithTrackPosition;
     private Map<Integer, Boolean> ownedLeaderCards; //<ID, active>
     //Slot number is the key, the id is the value...if the slot number is not present, it is empty
-    //TODO Message
     private int[] victoryPointsDevelopmentCardSlots;
     private String nickname;
 
@@ -44,35 +43,34 @@ public class LightClient {
         this.leaderDepots = new HashMap<>();
     }
 
+    /**
+     * Method to add a leader card to a player
+     * @param ID the ID of the card
+     * @param active true if the card is active
+     */
     public void addLeaderCard(Integer ID, boolean active) {
         ownedLeaderCards.put(ID, active);
     }
 
+    /**
+     * Method to remove a player's leader card
+     * @param ID the ID of the card
+     */
     public void removeLeaderCard(Integer ID) {
         ownedLeaderCards.remove(ID);
     }
-
-    public int getFaithTrackPosition() {
-        return faithTrackPosition;
-    }
-
-    public PopesTileState[] getPopesTileStates() {
-        return popesTileStates;
-    }
-    public String getNickname() {
-        return nickname;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
 
     public void addDevelopmentCard(int id, int slot, int victoryPoints){
         this.developmentCardSlots[slot].push(id);
         this.victoryPoints += victoryPoints;
     }
 
+    /**
+     * Method to update the warehouse, the strongbox and leader depots client-side
+     * @param warehouseDepots
+     * @param strongboxDepots
+     * @param leaderDepots
+     */
     public void updateDepotStatus(List<Resource>[] warehouseDepots, int[] strongboxDepots, Map<Integer, Integer> leaderDepots) {
         this.warehouse = warehouseDepots;
         this.strongbox = strongboxDepots;
@@ -108,7 +106,6 @@ public class LightClient {
         this.popesTileStates[number] = taken ? PopesTileState.TAKEN : PopesTileState.NOT_TAKEN;
     }
 
-    //TODO: victoryPointsMessage
     public void setVictoryPoints(int victoryPoints) {
         this.victoryPoints = victoryPoints;
     }
@@ -143,5 +140,19 @@ public class LightClient {
         this.victoryPointsDevelopmentCardSlots = victoryPointsDevelopmentCardSlots;
     }
 
+    public int getFaithTrackPosition() {
+        return faithTrackPosition;
+    }
+
+    public PopesTileState[] getPopesTileStates() {
+        return popesTileStates;
+    }
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
 
 }

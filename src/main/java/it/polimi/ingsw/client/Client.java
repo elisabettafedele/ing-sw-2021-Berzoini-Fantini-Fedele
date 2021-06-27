@@ -72,6 +72,13 @@ public class Client implements ClientInterface {
             }
         });
     }
+
+    /**
+     * Constructor to build the threads and the objects needed to start the game
+     * @param IPAddress the IP of the server
+     * @param port the port of the server
+     * @param view the instance of a {@link it.polimi.ingsw.client.cli.CLI} or a {@link it.polimi.ingsw.client.gui.GUI}
+     */
     public Client(String IPAddress, int port, View view) {
         this.nickname = Optional.empty();
         this.gameMode = Optional.empty();
@@ -94,6 +101,7 @@ public class Client implements ClientInterface {
         });
     }
 
+
     public void start() throws IOException {
         socket = new Socket();
         this.incomingPackets = new LinkedBlockingQueue<>();
@@ -108,6 +116,10 @@ public class Client implements ClientInterface {
 
     }
 
+    /**
+     * Method to receive messages from the server and add them to a queue of messages.
+     * Method used also to manage disconnection and ping messages
+     */
     public void waitForMessages(){
         try {
             while(connected.get()){
@@ -149,6 +161,9 @@ public class Client implements ClientInterface {
         }
     }
 
+    /**
+     * Manage the messages stored in the queue by Client.waitForMessages()
+     */
     public void manageIncomingPackets(){
         while (connected.get()){
             Object message;
@@ -158,15 +173,16 @@ public class Client implements ClientInterface {
                 closeSocket();
                 return;
             }
-            //System.out.println(message.toString());
+
             if (message instanceof ChooseLeaderCardsRequest || message instanceof NumberOfPlayersRequest)
                 gameCanceled = false;
             if (message instanceof WaitingInTheLobbyMessage || message instanceof SendPlayersNicknamesMessage || message instanceof NumberOfPlayersRequest || message instanceof WelcomeBackMessage)
                 validNickname = true;
-            System.out.println(message.toString());
+
             ((MessageToClient) message).handleMessage(view);
         }
     }
+
 
     public void closeSocket() {
         if (connectionClosed)

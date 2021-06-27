@@ -36,6 +36,9 @@ public class CLI implements View {
         cli.init();
     }
 
+    /**
+     * Private method to initialize the {@link Client} and start the game
+     */
     private void init(){
         boolean error = true;
         boolean firstTry = true;
@@ -83,6 +86,10 @@ public class CLI implements View {
 
     }
 
+    /**
+     * Method to analyze messages not related to the advancement of the game
+     * @param input the message to analyze
+     */
     private void analyzeOutOfTurnMessage(String input) {
         if (input != null) {
             if (input.contains("-pb") && (MatchData.getInstance().getThisClientNickname().contains(input.substring(4)) || MatchData.getInstance().getOtherClientsNicknames().contains(input.substring(4)))) {
@@ -94,6 +101,9 @@ public class CLI implements View {
         }
     }
 
+    /**
+     * Method to read the messages not related to the advancement of the game when it's not the turn of the client
+     */
     private void outOfTurnInput(){
         while (!myTurn.get() && client.isConnected()) {
             String line = InputParser.getLine();
