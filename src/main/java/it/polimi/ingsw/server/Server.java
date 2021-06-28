@@ -38,6 +38,9 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import java.util.stream.Collectors;
 
+/**
+ * Class used to manage new connecting clients, the start of new matches and the end of other matches
+ */
 public class Server implements ServerInterface {
     //Server's port
     private int port;

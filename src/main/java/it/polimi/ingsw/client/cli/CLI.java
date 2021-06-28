@@ -23,6 +23,9 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 
+/**
+ * Class to manage the command line interface
+ */
 public class CLI implements View {
 
     private Client client;
@@ -486,6 +489,10 @@ public class CLI implements View {
             update((TurnMessage) message);
     }
 
+    /**
+     * Method to manage the messages from server and start/interrupt the inputObserverOutOfTurn thread
+     * @param message the {@link it.polimi.ingsw.messages.toClient.MessageToClient} instance
+     */
     public void update(TurnMessage message){
         MatchData.getInstance().update(message);
         if (MatchData.getInstance().getThisClientNickname().equals(message.getNickname())) {
