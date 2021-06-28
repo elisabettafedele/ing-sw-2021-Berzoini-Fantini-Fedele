@@ -110,12 +110,6 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
                         Server.SERVER_LOGGER.log(Level.INFO, "[" + (nickname != null ? nickname : socket.getInetAddress().getHostAddress()) + "]: " + messageFromClient);
                         if(active && !(gameStarted && controller.getGamePhase() instanceof PlayPhase && !(((PlayPhase) controller.getGamePhase()).getTurnController().getCurrentPlayer().getNickname().equals(nickname))))
                             ((MessageToServer) messageFromClient).handleMessage(server, this);
-
-                        //if (gameStarted && controller.getGamePhase() instanceof PlayPhase && ((PlayPhase) controller.getGamePhase()).getTurnController().getCurrentPlayer().getNickname().equals(nickname))
-                           // ((MessageToServer) messageFromClient).handleMessage(server, this);
-
-                        //else
-                           // controller.getGameMessageManager().addMessage((MessageToServer) messageFromClient);
                     }
 
                 } catch (ClassNotFoundException ignored) {

@@ -133,6 +133,7 @@ public class Server implements ServerInterface {
 
         if (takenNicknames.contains(connection.getNickname())){
             //If there is an old single player game to finish
+            //TODO: controllare che non ci sia una partita single player in corso con lo stesso nickname
             if (connection.getGameMode() == GameMode.SINGLE_PLAYER && GameHistory.retrieveGameFromControllerId(connection.getNickname().hashCode()) != null){
                 startNewGame(connection);
                 return;
