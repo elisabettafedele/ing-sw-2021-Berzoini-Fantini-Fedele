@@ -4,6 +4,9 @@ import it.polimi.ingsw.client.cli.CLI;
 import it.polimi.ingsw.client.gui.GUI;
 import javafx.application.Application;
 
+/**
+ * The class used to start the game client-side. It is used for both the {@link CLI} and the {@link GUI}
+ */
 public class ClientMain {
 
     private static final String CLI_ARGUMENT = "-cli";

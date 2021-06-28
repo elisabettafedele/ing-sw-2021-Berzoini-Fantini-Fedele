@@ -23,6 +23,9 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 
+/**
+ * Class to manage the command line interface
+ */
 public class CLI implements View {
 
     private Client client;
@@ -377,7 +380,11 @@ public class CLI implements View {
     }
 
     private void chooseLeaderCardProductionPower(Map<Resource, Integer> availableResources, int id) {
-        //TODO: merge this duplicates lines that are also in createBasicProduction
+        UtilityProduction.manageLeaderProductionPower(chooseResourceToProduce(), id);
+    }
+
+    //TODO: method to eliminate duplicate code, to be tested
+    private Resource chooseResourceToProduce() {
         List<Resource> realValues = Resource.realValues();
         System.out.println("Choose the resource you want to produce");
         for(int k = 0; k < realValues.size(); k++){
@@ -387,8 +394,7 @@ public class CLI implements View {
         Integer selection = InputParser.getInt(
                 "Error: the given number is not present in the list. Provide a valid number",
                 CLI.conditionOnIntegerRange(1, realValues.size()));
-
-        UtilityProduction.manageLeaderProductionPower(realValues.get(selection - 1), id);
+        return realValues.get(selection - 1);
     }
 
     private void createBasicProduction(Map<Resource, Integer> availableResources){
@@ -427,19 +433,7 @@ public class CLI implements View {
                 }
             }
 
-            //displaying the resources that can be produced
-            List<Resource> realValues = Resource.realValues();
-            System.out.println("Choose the resource you want to produce");
-            for(int k = 0; k < realValues.size(); k++){
-                System.out.printf("%d. " + realValues.get(k) +"\n", k+1);
-            }
-            //Selecting the desired resource
-            Integer selection = InputParser.getInt(
-                    "Error: the given number is not present in the list. Provide a valid number",
-                    CLI.conditionOnIntegerRange(1, realValues.size()));
-            if (selection == null)
-                return;
-            chosenResources.add(realValues.get(selection - 1));
+            chosenResources.add(chooseResourceToProduce());
             UtilityProduction.manageBasicProductionPower(chosenResources);
         }
 
@@ -495,6 +489,10 @@ public class CLI implements View {
             update((TurnMessage) message);
     }
 
+    /**
+     * Method to manage the messages from server and start/interrupt the inputObserverOutOfTurn thread
+     * @param message the {@link it.polimi.ingsw.messages.toClient.MessageToClient} instance
+     */
     public void update(TurnMessage message){
         MatchData.getInstance().update(message);
         if (MatchData.getInstance().getThisClientNickname().equals(message.getNickname())) {

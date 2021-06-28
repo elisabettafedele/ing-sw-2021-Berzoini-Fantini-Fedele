@@ -15,6 +15,7 @@ public class FaithTrack {
     private static LinkedHashMap< Integer , Integer > trackVictoryPoints;
     private VaticanReportSection currentSection;
     private List<VaticanReportSection> vaticanReportSectionList;
+    private boolean finished;
 
     /**
      * Constructs the FaithTrack and automatically assigns to currentSection the first next element of the vaticanReportSectionIterator
@@ -39,6 +40,7 @@ public class FaithTrack {
         trackVictoryPoints.put(18,12);
         trackVictoryPoints.put(21,16);
         trackVictoryPoints.put(24,20);
+        finished = false;
     }
 
 
@@ -49,7 +51,10 @@ public class FaithTrack {
      * @return
      */
     public boolean isVaticanReport(int playerPosition){
-        return currentSection.getEnd() <= playerPosition;
+        boolean isVaticanReport = currentSection.getEnd() <= playerPosition && !finished;
+        if (playerPosition == length)
+            finished = true;
+        return isVaticanReport;
     }
 
     /**
@@ -59,7 +64,7 @@ public class FaithTrack {
     public VaticanReportSection getCurrentSection(boolean goNext) {
         VaticanReportSection returnedSection=currentSection;
         if(goNext && vaticanReportSectionIterator.hasNext()){
-            currentSection= vaticanReportSectionIterator.next();
+            currentSection = vaticanReportSectionIterator.next();
         }
         return returnedSection;
     }
@@ -112,5 +117,12 @@ public class FaithTrack {
      */
     public static boolean changesVictoryPoints(int position){
         return trackVictoryPoints.containsKey(position);
+    }
+
+    /**
+     * @return true is there are no more vatican report section to activate
+     */
+    public boolean isFinished() {
+        return finished;
     }
 }

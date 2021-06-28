@@ -23,6 +23,9 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.logging.Level;
 
+/**
+ * Class to manage a single Client connected to the server
+ */
 public class ClientHandler implements Runnable, ClientHandlerInterface {
     public static final int PING_PERIOD = 5000; //PING_PERIOD = TIMEOUT/2
     //The timer gives one minute to the user to send the response
@@ -107,12 +110,6 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
                         Server.SERVER_LOGGER.log(Level.INFO, "[" + (nickname != null ? nickname : socket.getInetAddress().getHostAddress()) + "]: " + messageFromClient);
                         if(active && !(gameStarted && controller.getGamePhase() instanceof PlayPhase && !(((PlayPhase) controller.getGamePhase()).getTurnController().getCurrentPlayer().getNickname().equals(nickname))))
                             ((MessageToServer) messageFromClient).handleMessage(server, this);
-
-                        //if (gameStarted && controller.getGamePhase() instanceof PlayPhase && ((PlayPhase) controller.getGamePhase()).getTurnController().getCurrentPlayer().getNickname().equals(nickname))
-                           // ((MessageToServer) messageFromClient).handleMessage(server, this);
-
-                        //else
-                           // controller.getGameMessageManager().addMessage((MessageToServer) messageFromClient);
                     }
 
                 } catch (ClassNotFoundException ignored) {

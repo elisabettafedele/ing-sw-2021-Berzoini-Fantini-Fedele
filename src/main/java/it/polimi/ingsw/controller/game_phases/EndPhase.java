@@ -17,35 +17,11 @@ public abstract class EndPhase implements GamePhase {
     @Override
     public void executePhase(Controller controller) {
         this.controller = controller;
-        countVictoryPoints();
         notifyResults();
     }
 
     public void handleMessage(MessageToServer message, ClientHandler clientHandler){
         //ignored
-    }
-
-    /**
-     * Method to calculate the victory points of each player
-     */
-    private void countVictoryPoints(){
-        for (Player player : controller.getPlayers()){
-            try {
-                //Development Cards
-                player.addVictoryPoints(player.getPersonalBoard().getDevelopmentCards().stream().map(Card::getVictoryPoints).mapToInt(i -> i).sum());
-
-                //FaithTrack
-                player.addVictoryPoints(controller.getGame().getFaithTrack().getVictoryPoints(player.getPersonalBoard().getMarkerPosition()));
-
-                //Leader Cards
-                player.addVictoryPoints(player.getPersonalBoard().getLeaderCards().stream().filter(LeaderCard::isActive).map(Card::getVictoryPoints).mapToInt(i -> i).sum());
-
-                //Resources
-                player.addVictoryPoints(player.getPersonalBoard().countResourceNumber() / 5);
-            } catch (InvalidArgumentException e){
-                e.printStackTrace();
-            }
-        }
     }
 
     public abstract void notifyResults();

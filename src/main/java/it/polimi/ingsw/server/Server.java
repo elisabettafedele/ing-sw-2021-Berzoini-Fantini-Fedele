@@ -38,6 +38,9 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import java.util.stream.Collectors;
 
+/**
+ * Class used to manage new connecting clients, the start of new matches and the end of other matches
+ */
 public class Server implements ServerInterface {
     //Server's port
     private int port;
@@ -130,6 +133,7 @@ public class Server implements ServerInterface {
 
         if (takenNicknames.contains(connection.getNickname())){
             //If there is an old single player game to finish
+            //TODO: controllare che non ci sia una partita single player in corso con lo stesso nickname
             if (connection.getGameMode() == GameMode.SINGLE_PLAYER && GameHistory.retrieveGameFromControllerId(connection.getNickname().hashCode()) != null){
                 startNewGame(connection);
                 return;

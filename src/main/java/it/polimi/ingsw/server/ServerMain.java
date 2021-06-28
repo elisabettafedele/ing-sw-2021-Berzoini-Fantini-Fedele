@@ -2,6 +2,9 @@ package it.polimi.ingsw.server;
 
 import java.util.*;
 
+/**
+ * Class used to start the server on a given port
+ */
 public class ServerMain {
     private static final int DEFAULT_PORT = 1234;
     private static final int MIN_PORT = 1024;
