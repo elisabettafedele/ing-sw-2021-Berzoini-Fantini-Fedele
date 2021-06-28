@@ -493,7 +493,6 @@ public class CLI implements View {
         MatchData.getInstance().update(message);
         if (message instanceof TurnMessage)
             update((TurnMessage) message);
-        //TODO update of views
     }
 
     public void update(TurnMessage message){
