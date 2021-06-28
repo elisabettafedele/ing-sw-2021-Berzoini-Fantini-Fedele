@@ -33,7 +33,6 @@ public class SetUpCLI {
     }
 
     public static void displayChooseResourceTypeRequest(Client client, List<Resource> resourceTypes, int quantity){
-        //TODO show choose resource type view
         List<String> resourcesToString = resourceTypes.stream().map(Enum::name).collect(Collectors.toList());
         System.out.printf("You have to choose %d resource type. \nAvailable resource types are:\n", quantity);
         UtilityPrinter.printNumericList(resourcesToString);

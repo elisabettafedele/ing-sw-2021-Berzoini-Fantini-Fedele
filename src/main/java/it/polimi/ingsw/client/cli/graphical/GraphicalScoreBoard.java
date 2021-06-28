@@ -12,7 +12,7 @@ import java.util.List;
 public class GraphicalScoreBoard extends GraphicalElement{
 
     public GraphicalScoreBoard() {
-        super(29, 11); //TODO: width to 29
+        super(29, 11);
         reset();
     }
 
