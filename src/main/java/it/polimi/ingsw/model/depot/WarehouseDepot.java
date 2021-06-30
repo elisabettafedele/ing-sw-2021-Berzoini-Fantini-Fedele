@@ -5,8 +5,6 @@ import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.exceptions.InvalidDepotException;
 
-import java.io.Serializable;
-
 /**
  * This class represents a single Warehouse Depot. It has a limited capacity, reported in maxResourceQuantity
  */

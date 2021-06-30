@@ -2,7 +2,6 @@ package it.polimi.ingsw.model.game;
 
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 
-import java.io.Serializable;
 import java.util.*;
 
 /**

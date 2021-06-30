@@ -1,11 +1,7 @@
 package it.polimi.ingsw.client.cli.graphical;
 
 import it.polimi.ingsw.common.LightCard;
-import it.polimi.ingsw.common.LightDevelopmentCard;
 import it.polimi.ingsw.enumerations.Level;
-import it.polimi.ingsw.enumerations.Resource;
-
-import java.util.List;
 
 /**
  * Class to represents a development Card

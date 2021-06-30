@@ -1,8 +1,7 @@
 package it.polimi.ingsw.jsonParsers;
 
-import com.google.gson.*;
-import com.google.gson.stream.JsonReader;
-import it.polimi.ingsw.model.persistency.PersistentGame;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public class JsonAdapter {
     private static final Gson gsonBuilder = new GsonBuilder().serializeNulls().enableComplexMapKeySerialization().create();

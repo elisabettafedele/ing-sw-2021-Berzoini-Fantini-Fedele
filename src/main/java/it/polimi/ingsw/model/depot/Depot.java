@@ -2,11 +2,7 @@ package it.polimi.ingsw.model.depot;
 
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.exceptions.InsufficientQuantityException;
-import it.polimi.ingsw.exceptions.InsufficientSpaceException;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
-import it.polimi.ingsw.exceptions.InvalidDepotException;
-
-import java.io.Serializable;
 
 /**
  * Abstract class extended by all the possible kind of depots in the game, that are: WarehouseDepot, StrongboxDepot and LeaderDepot

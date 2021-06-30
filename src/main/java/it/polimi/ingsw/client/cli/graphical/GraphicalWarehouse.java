@@ -3,7 +3,6 @@ package it.polimi.ingsw.client.cli.graphical;
 import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.enumerations.Resource;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

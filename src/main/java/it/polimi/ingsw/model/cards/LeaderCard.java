@@ -2,9 +2,6 @@ package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 
-import java.io.Serializable;
-import java.util.Objects;
-
 /**
  * The class represents the Leader Cards of the game
  */

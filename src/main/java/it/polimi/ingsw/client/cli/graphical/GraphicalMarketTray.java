@@ -2,7 +2,6 @@ package it.polimi.ingsw.client.cli.graphical;
 
 import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.enumerations.Marble;
-import javafx.css.Match;
 
 /**
  * Class to represents the market in the CLI

@@ -5,8 +5,6 @@ import it.polimi.ingsw.exceptions.InsufficientSpaceException;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.InvalidDepotException;
 
-import java.io.Serializable;
-
 /**
  * This class represents an extra depot contained in a Leader Card. It has a limited capacity of maximum 2 resources of a set type.
  */

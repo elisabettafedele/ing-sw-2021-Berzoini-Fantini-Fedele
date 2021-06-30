@@ -6,7 +6,6 @@ import it.polimi.ingsw.jsonParsers.DevelopmentCardParser;
 import it.polimi.ingsw.model.cards.*;
 import it.polimi.ingsw.model.depot.LeaderDepot;
 import it.polimi.ingsw.jsonParsers.LeaderCardParser;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 

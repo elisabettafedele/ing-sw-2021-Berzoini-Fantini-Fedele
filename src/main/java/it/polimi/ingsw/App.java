@@ -1,9 +1,6 @@
 package it.polimi.ingsw;
 
-import it.polimi.ingsw.enumerations.Resource;
-
 import java.io.IOException;
-import java.util.*;
 
 
 /**

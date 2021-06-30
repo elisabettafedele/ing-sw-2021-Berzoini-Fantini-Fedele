@@ -1,11 +1,8 @@
 package it.polimi.ingsw.model.depot;
 
 import it.polimi.ingsw.enumerations.Resource;
-import it.polimi.ingsw.exceptions.InsufficientSpaceException;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.InvalidDepotException;
-
-import java.io.Serializable;
 
 public class StrongboxDepot extends Depot {
     public StrongboxDepot(Resource res) {
