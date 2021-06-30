@@ -219,8 +219,6 @@ public class PersonalBoard implements Serializable {
             return available;
         }
         //This point should never be reached
-        //TODO remove the next line, is just a temporary check
-        System.out.println("ERROR");
         return false;
     }
 

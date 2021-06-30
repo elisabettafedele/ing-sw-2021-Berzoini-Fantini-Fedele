@@ -97,7 +97,6 @@ public class ActivateProductionAction implements Action{
                 activationCost = leaderCard.getEffect().getProductionEffect().getProductionPower().get(0).getResourceValue();
             } catch (ValueNotPresentException | DifferentEffectTypeException e) {
                 e.printStackTrace();
-                //TODO: manage better
                 Server.SERVER_LOGGER.log(Level.WARNING, "The Leader card " + leaderCard.toString() + "" +
                         "has no Production Effect. Removing from the list of cards present in the action");
                 leaderCardIterator.remove();
