@@ -19,6 +19,10 @@ public class MultiplayerPlayPhase extends PlayPhase {
 
     private int turnIndex;
 
+    /**
+     * Standard class constructor
+     * @param controller the controller related to the game
+     */
     public MultiplayerPlayPhase(Controller controller){
         setController(controller);
         this.turnIndex = 0;
@@ -26,6 +30,12 @@ public class MultiplayerPlayPhase extends PlayPhase {
         setLastTurnGameCopy(new PersistentGame(getController().getGame()));
     }
 
+    /**
+     * Class constructor to restart a saved game
+     * @param controller the controller of the game
+     * @param lastPlayerNickname the nickname of the last player that has finished his turn
+     * @param endTrigger true only if the game was end triggered before being interrupted
+     */
     public MultiplayerPlayPhase(Controller controller, String lastPlayerNickname, boolean endTrigger){
         setController(controller);
         this.turnIndex = controller.getPlayers().stream().map(Player::getNickname).collect(Collectors.toList()).indexOf(lastPlayerNickname);
@@ -33,19 +43,24 @@ public class MultiplayerPlayPhase extends PlayPhase {
         setTurnController(new TurnController(controller, controller.getPlayers().get(turnIndex), endTrigger));
     }
 
+    /**
+     * Method to restart the game from the right turn, when the game is retrieved the json file
+     */
     @Override
     public void restartLastTurn(){
         getController().sendMessageToAll(new TurnMessage(getController().getPlayers().get(turnIndex).getNickname(), true));
         getTurnController().start(getController().getPlayers().get(turnIndex));
     }
 
+    /**
+     * Method to start a new turn
+     */
     @Override
     public void nextTurn() {
         pickNextPlayer();
         while(!getController().getPlayers().get(turnIndex).isActive() && getTurnController().getController().getClientHandlers().size() > 0)
             pickNextPlayer();
         if (getTurnController().getController().getClientHandlers().size() == 0){
-            //TODO handle better
             return;
         }
         if (getTurnController().isEndTriggered() && getTurnController().getController().getPlayers().get(turnIndex).hasInkwell())
@@ -96,7 +111,11 @@ public class MultiplayerPlayPhase extends PlayPhase {
         //When the endTrigger variable becomes true and the game is multiplayer, I do not have to do anything. I just wait until the round is finished -> it is checked by pickNextPlayer().
     }
 
-
+    /**
+     * Method to execute the play phase.
+     * It start the turn of the first player
+     * @param controller the controller of the game
+     */
     @Override
     public void executePhase(Controller controller) {
         controller.sendMessageToAll(new TextMessage("\nFrom now on, when you are not the turn owner, you can use the command -pb to move to another player's view \n(EG. -pb betti shows you the view of the player named \"betti\")\n"));

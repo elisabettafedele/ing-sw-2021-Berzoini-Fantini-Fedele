@@ -20,10 +20,19 @@ public abstract class EndPhase implements GamePhase {
         notifyResults();
     }
 
+    /**
+     * Every message in the end phase is ignored, it should not be received
+     * @param message the message to hanlde
+     * @param clientHandler the {@link ClientHandler} related to the client that has sent the message
+     */
     public void handleMessage(MessageToServer message, ClientHandler clientHandler){
         //ignored
     }
 
+    /**
+     * Abstract method to notify results to the players.
+     * It is handled in a different way depending on the game mode chosen (single player or multiplayer)
+     */
     public abstract void notifyResults();
 
     public Controller getController(){

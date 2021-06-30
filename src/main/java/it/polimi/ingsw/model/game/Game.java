@@ -25,11 +25,9 @@ public class Game {
     private FaithTrack faithTrack;
 
 
-    /** //TODO
-     * Class constructor
-     * @param gameMode
-     * @throws InvalidArgumentException
-     * @throws UnsupportedEncodingException
+    /**
+     * Standard class constructor of game. It sets the game mode
+     * @param gameMode the game mode chosen. It can be either multiplayer or single player
      */
     public Game(GameMode gameMode) {
         this.developmentCardGrid = new DevelopmentCardGrid();
@@ -39,6 +37,10 @@ public class Game {
         this.faithTrack = new FaithTrack();
     }
 
+    /**
+     * Class constructor to retrieve an old game
+     * @param game the old game to retrieve
+     */
     public Game(PersistentGame game){
         developmentCardGrid = new DevelopmentCardGrid(game.getDevelopmentCardGrid());
         Marble[][] marketTrayCopy = new Marble[3][4];

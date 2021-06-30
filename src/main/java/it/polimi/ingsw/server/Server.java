@@ -103,6 +103,9 @@ public class Server implements ServerInterface {
         }
     }
 
+    /**
+     * Method used to initialise the logger file
+     */
     private void initLogger() {
         Date date = GregorianCalendar.getInstance().getTime();
         DateFormat dateFormat = new SimpleDateFormat("dd-MM_HH.mm.ss");
@@ -133,8 +136,7 @@ public class Server implements ServerInterface {
 
         if (takenNicknames.contains(connection.getNickname())){
             //If there is an old single player game to finish
-            //TODO: controllare che non ci sia una partita single player in corso con lo stesso nickname
-            if (connection.getGameMode() == GameMode.SINGLE_PLAYER && GameHistory.retrieveGameFromControllerId(connection.getNickname().hashCode()) != null){
+            if (connection.getGameMode() == GameMode.SINGLE_PLAYER && GameHistory.retrieveGameFromControllerId(connection.getNickname().hashCode()) != null && activeGames.stream().map(Controller::getControllerID).noneMatch(x -> x == connection.getNickname().hashCode())){
                 startNewGame(connection);
                 return;
             }
@@ -425,6 +427,10 @@ public class Server implements ServerInterface {
         activeGames.remove(controller);
     }
 
+    /**
+     * Method to add a client handler to the clientInLobby's list
+     * @param clientHandler the client handler to add
+     */
     public void addClientHandler(ClientHandler clientHandler){
         lockLobby.lock();
         clientsInLobby.add(clientHandler);
