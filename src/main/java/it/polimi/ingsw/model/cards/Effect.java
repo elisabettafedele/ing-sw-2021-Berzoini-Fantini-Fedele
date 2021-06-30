@@ -10,7 +10,7 @@ import it.polimi.ingsw.model.game.Market;
 import java.io.Serializable;
 import java.util.Objects;
 
-//import it.polimi.ingsw.model.game.DevelopmentCardGrid;
+
 
 /**
  * The class can represents all the possible special ability of {@link LeaderCard}
