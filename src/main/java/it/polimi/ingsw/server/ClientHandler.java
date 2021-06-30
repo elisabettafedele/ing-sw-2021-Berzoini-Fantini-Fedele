@@ -71,7 +71,8 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
     /**
      * Class constructor. It enables a ping message that check the client's connection until it become inactive
      * NB the client becomes inactive when the internalSend throws an IOException
-     * @param socket
+     * @param socket the socket related to the client
+     * @param server the server used for the connection
      */
     public ClientHandler(Socket socket, Server server){
         this.socket = socket;
@@ -91,6 +92,9 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
         });
     }
 
+    /**
+     * Method used to start receiving messages in the client handler
+     */
     public void run(){
         try {
             os = new ObjectOutputStream(socket.getOutputStream());
@@ -127,6 +131,9 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
         }
     }
 
+    /**
+     * Method used to start the timer
+     */
     @Override
     public void startTimer(){
         timer = new Thread(() -> {
@@ -138,6 +145,9 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
         timer.start();
     }
 
+    /**
+     * Method used to stop the timer
+     */
     public void stopTimer(){
         if (timer != null && timer.isAlive()){
             timer.interrupt();
@@ -145,6 +155,10 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
         }
     }
 
+    /**
+     * Method used to send a message to the client
+     * @param message the message to be sent
+     */
     @Override
     public void sendMessageToClient(Serializable message) {
         try {
@@ -160,6 +174,11 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
         }
     }
 
+    /**
+     * Method to check whether a message should be printed in the server's log
+     * @param message the message to check
+     * @return true only if the message must be printed
+     */
     private boolean printable(Serializable message){
         return !(message instanceof MatchDataMessage) && message != ConnectionMessage.PING && !(message instanceof LoadLeaderCardsMessage) && !(message instanceof LoadDevelopmentCardsMessage) && !(message instanceof TextMessage);
     }
