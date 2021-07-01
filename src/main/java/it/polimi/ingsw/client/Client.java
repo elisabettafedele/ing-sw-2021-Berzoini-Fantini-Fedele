@@ -25,7 +25,6 @@ public class Client implements ClientInterface {
     private Optional<GameMode> gameMode;
     private boolean validNickname = false;
 
-    private final int SOCKET_TIMEOUT = 100000;
     public static final int PING_PERIOD = 5000; //PING_PERIOD = TIMEOUT/2
 
     private View view;
@@ -106,7 +105,7 @@ public class Client implements ClientInterface {
         socket = new Socket();
         this.incomingPackets = new LinkedBlockingQueue<>();
 
-        socket.connect(new InetSocketAddress(IPAddress, port), SOCKET_TIMEOUT);
+        socket.connect(new InetSocketAddress(IPAddress, port));
         os = new ObjectOutputStream(socket.getOutputStream());
         is = new ObjectInputStream(socket.getInputStream());
         connected.set(true);

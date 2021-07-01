@@ -15,9 +15,6 @@ import it.polimi.ingsw.messages.toClient.matchData.LoadDevelopmentCardsMessage;
 import it.polimi.ingsw.messages.toClient.matchData.LoadLeaderCardsMessage;
 import it.polimi.ingsw.messages.toClient.matchData.MatchDataMessage;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
-import it.polimi.ingsw.model.player.Player;
-
-
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
@@ -28,14 +25,10 @@ import java.util.logging.Level;
  */
 public class ClientHandler implements Runnable, ClientHandlerInterface {
     public static final int PING_PERIOD = 5000; //PING_PERIOD = TIMEOUT/2
-    //The timer gives one minute to the user to send the response
-    public static final int SO_TIMEOUT_PERIOD = 0;
+    //The timer gives four minute to the user to send the response
     public static final int TIMEOUT_FOR_RESPONSE = 240000;
 
     private final Socket socket;
-
-    private final String IPAddress;
-    private final int port;
     //For the game I will use an object stream, but to the debug the server it is easier to use just a simple reader and writer
     private ObjectOutputStream os;
     private ObjectInputStream is;
@@ -66,8 +59,6 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
 
     private ClientHandlerPhase clientHandlerPhase;
 
-    private Player player;
-
     /**
      * Class constructor. It enables a ping message that check the client's connection until it become inactive
      * NB the client becomes inactive when the internalSend throws an IOException
@@ -76,8 +67,6 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
      */
     public ClientHandler(Socket socket, Server server){
         this.socket = socket;
-        this.IPAddress = socket.getInetAddress().getHostAddress();
-        this.port = socket.getPort();
         this.server = server;
         this.validNickname = false;
         this.pinger = new Thread(() -> {
@@ -100,7 +89,6 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
             os = new ObjectOutputStream(socket.getOutputStream());
             is = new ObjectInputStream(socket.getInputStream());
             active = true;
-            socket.setSoTimeout(SO_TIMEOUT_PERIOD);
             pinger.start();
 
             clientHandlerPhase = ClientHandlerPhase.WAITING_GAME_MODE;
