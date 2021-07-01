@@ -476,8 +476,8 @@
    "victoryPoints":12,
    "flagLevel": "THREE",
    "flagColor": "YELLOW",
-   "cost":[["RESOURCE","SHIELD", 4],["RESOURCE","COIN", 4]],
-   "productionCost":[["RESOURCE","STONE", 1]],
+   "cost":[["RESOURCE","STONE", 4],["RESOURCE","SERVANT", 4]],
+   "productionCost":[["RESOURCE","SHIELD", 1]],
    "productionOutput":[["RESOURCE", "STONE", 1], ["RESOURCE", "SERVANT", 3]]
   }
  ]
