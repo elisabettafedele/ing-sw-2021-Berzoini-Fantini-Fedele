@@ -19,7 +19,6 @@ import it.polimi.ingsw.messages.toServer.game.SelectStorageResponse;
 import it.polimi.ingsw.model.cards.*;
 import it.polimi.ingsw.model.player.PersonalBoard;
 import it.polimi.ingsw.model.player.Player;
-
 import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;

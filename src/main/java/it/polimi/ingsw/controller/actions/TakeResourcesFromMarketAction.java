@@ -17,7 +17,6 @@ import it.polimi.ingsw.model.cards.Effect;
 import it.polimi.ingsw.model.cards.LeaderCard;
 import it.polimi.ingsw.model.game.Market;
 import it.polimi.ingsw.model.player.Player;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;

@@ -39,8 +39,8 @@ public class SetUpPhase implements GamePhase {
 
     /**
      * Constructor of the SetUpPhase used when a game is reloaded from the json file
-     * @param resourcesToStoreByNickname
-     * @param controller
+     * @param resourcesToStoreByNickname the list of the initial resources that each player has to store
+     * @param controller the {@link Controller} of the game
      */
     public SetUpPhase(Map<String, List<Resource>> resourcesToStoreByNickname, Controller controller){
         this.resourcesToStoreByNickname = resourcesToStoreByNickname;
@@ -90,7 +90,11 @@ public class SetUpPhase implements GamePhase {
         }
     }
 
-
+    /**
+     * Method to handle the messages received during the set up phase
+     * @param message the message to be handled
+     * @param clientHandler the client handler of the client who has sent the message
+     */
     public void handleMessage(MessageToServer message, ClientHandler clientHandler) {
         if (!clientHandler.isGameStarted())
             return;
@@ -235,6 +239,10 @@ public class SetUpPhase implements GamePhase {
         controller.setGamePhase(controller.getGame().getGameMode() == GameMode.MULTI_PLAYER ? new MultiplayerPlayPhase(controller) : new SinglePlayerPlayPhase(controller));
     }
 
+    /**
+     * Method to handle the disconnection of a client during the setup phase.
+     * If he has already finished the set up the game goes on, otherwise it is cancelled because a game cannot start before that all the players have finished the setup
+     */
     public void endPhaseManagerDisconnection(){
         if (!(controller.getGamePhase() instanceof SetUpPhase))
             return;

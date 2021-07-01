@@ -21,6 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Class to handle the Buy Development Card Action
+ */
 public class BuyDevelopmentCardAction implements Action{
     private ClientHandler clientHandler;
     private Player currentPlayer;

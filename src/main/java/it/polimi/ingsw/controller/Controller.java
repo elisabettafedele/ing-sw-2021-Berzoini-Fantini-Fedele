@@ -119,6 +119,7 @@ public class Controller {
      * @param nickname the nickname of the disconnected client
      */
     private void handleMultiplayerDisconnectionSetUpPhase(String nickname){
+        getPlayerByNickname(nickname).setActive(false);
         getClientHandlers().stream().filter(x -> !x.getNickname().equals(nickname)).collect(Collectors.toList()).forEach(x -> x.sendMessageToClient(new NotifyClientDisconnection(nickname, true, false)));
         server.removeConnectionGame(getConnectionByNickname(nickname));
         if (gamePhase instanceof SetUpPhase)
