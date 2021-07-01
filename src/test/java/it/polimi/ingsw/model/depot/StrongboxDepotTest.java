@@ -5,7 +5,6 @@ import it.polimi.ingsw.exceptions.InsufficientQuantityException;
 import it.polimi.ingsw.exceptions.InsufficientSpaceException;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.InvalidDepotException;
-import it.polimi.ingsw.model.depot.Depot;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

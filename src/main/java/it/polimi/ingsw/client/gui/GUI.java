@@ -3,7 +3,6 @@ package it.polimi.ingsw.client.gui;
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.client.View;
-import it.polimi.ingsw.client.cli.graphical.Colour;
 import it.polimi.ingsw.client.utilities.UtilityProduction;
 import it.polimi.ingsw.common.FunctionInterface;
 import it.polimi.ingsw.common.LightDevelopmentCard;
@@ -32,6 +31,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Class to manage the graphical user interface
+ */
 public class GUI extends Application implements View {
 
     private Stage stage;
@@ -145,6 +147,10 @@ public class GUI extends Application implements View {
         if(gameSceneController != null) gameSceneController.handleCloseConnection(wasConnected);
     }
 
+    /**
+     * Method to handle the expire of the timeout.
+     * Asks to the client whether he wants to be reconnected.
+     */
     @Override
     public void displayTimeoutExpiredMessage() {
         if(setupSceneController!=null){
@@ -426,6 +432,10 @@ public class GUI extends Application implements View {
     //                             MATCHDATA UPDATE                           //
     // *********************************************************************  //
 
+
+    /**
+     * Method to manage the MatchData messages from server, updating its content
+     */
     @Override
     public void update(MatchDataMessage message) {
         Platform.runLater(new Runnable() {

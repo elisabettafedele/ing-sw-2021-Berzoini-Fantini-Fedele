@@ -3,7 +3,6 @@ package it.polimi.ingsw.model.cards;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 /**
  * Abstract {@link Card} is the generic representation of all the game's cards. It includes all the attributes that every card has.

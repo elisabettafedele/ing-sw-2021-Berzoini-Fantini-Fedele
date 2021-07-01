@@ -9,9 +9,6 @@ import it.polimi.ingsw.messages.toServer.game.ChooseActionResponse;
 import it.polimi.ingsw.messages.toServer.game.EndTurnRequest;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
 import it.polimi.ingsw.model.player.Player;
-import it.polimi.ingsw.server.Server;
-
-import java.util.logging.Level;
 
 public abstract class PlayPhase implements GamePhase{
     private Controller controller;

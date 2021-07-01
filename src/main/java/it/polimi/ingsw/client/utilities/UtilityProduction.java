@@ -8,7 +8,6 @@ import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.exceptions.InvalidArgumentException;
 import it.polimi.ingsw.exceptions.ValueNotPresentException;
 import it.polimi.ingsw.messages.toServer.game.ChooseProductionPowersResponse;
-import it.polimi.ingsw.model.cards.Production;
 import it.polimi.ingsw.model.cards.Value;
 
 import java.util.ArrayList;

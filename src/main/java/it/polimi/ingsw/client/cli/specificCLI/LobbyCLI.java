@@ -3,8 +3,8 @@ package it.polimi.ingsw.client.cli.specificCLI;
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.cli.CLI;
 import it.polimi.ingsw.client.cli.graphical.Colour;
-import it.polimi.ingsw.client.utilities.Utils;
 import it.polimi.ingsw.client.utilities.InputParser;
+import it.polimi.ingsw.client.utilities.Utils;
 import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.messages.toServer.lobby.GameModeResponse;
 import it.polimi.ingsw.messages.toServer.lobby.NicknameResponse;
@@ -12,7 +12,6 @@ import it.polimi.ingsw.messages.toServer.lobby.NumberOfPlayersResponse;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 public class LobbyCLI {
     private static final String DEFAULT_ADDRESS = "127.0.0.1";

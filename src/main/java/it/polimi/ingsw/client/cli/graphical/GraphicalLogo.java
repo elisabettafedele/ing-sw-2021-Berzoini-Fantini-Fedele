@@ -1,8 +1,5 @@
 package it.polimi.ingsw.client.cli.graphical;
 
-import java.awt.*;
-import java.util.ArrayList;
-
 public class GraphicalLogo {
     public static void printLogo(){
         //Just a try, it is not nice, but I am not ready to delete it

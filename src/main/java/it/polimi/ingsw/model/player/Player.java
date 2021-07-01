@@ -5,12 +5,10 @@ import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game.FaithTrack;
 import it.polimi.ingsw.model.persistency.PersistentPlayer;
 import it.polimi.ingsw.model.cards.LeaderCard;
-import it.polimi.ingsw.observe.Observable;
 
-import java.io.Serializable;
 import java.util.List;
 
-public class Player extends Observable {
+public class Player {
     private String nickname;
     private PersonalBoard personalBoard;
     private int victoryPoints;

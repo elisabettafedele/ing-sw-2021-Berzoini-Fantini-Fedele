@@ -4,9 +4,6 @@ import it.polimi.ingsw.common.ClientHandlerInterface;
 import it.polimi.ingsw.common.ServerInterface;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
-import it.polimi.ingsw.server.Server;
-
-import java.util.logging.Level;
 
 public class DiscardResourceRequest implements MessageToServer {
     Resource resource;

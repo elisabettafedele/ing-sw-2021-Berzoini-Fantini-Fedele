@@ -3,7 +3,6 @@ package it.polimi.ingsw.client.cli.graphical;
 
 import it.polimi.ingsw.client.MatchData;
 import it.polimi.ingsw.common.LightCard;
-import it.polimi.ingsw.common.LightLeaderCard;
 import it.polimi.ingsw.enumerations.Level;
 import it.polimi.ingsw.enumerations.Resource;
 
