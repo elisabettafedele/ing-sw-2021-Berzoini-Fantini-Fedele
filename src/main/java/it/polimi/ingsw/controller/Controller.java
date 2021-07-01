@@ -287,7 +287,7 @@ public class Controller {
                 connection.sendMessageToClient(new ReloadPopesFavorTiles(gamePlayer.getNickname(), gamePlayer.getPersonalBoard().getPopesTileStates()));
 
                 //6. Victory points
-                connection.sendMessageToClient(new NotifyVictoryPoints(connection.getNickname(), getPlayerByNickname(connection.getNickname()).countPoints()));
+                connection.sendMessageToClient(new NotifyVictoryPoints(gamePlayer.getNickname(), getPlayerByNickname(gamePlayer.getNickname()).countPoints()));
 
         }
         connection.sendMessageToClient(new ReloadMatchData(false, disconnection));
