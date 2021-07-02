@@ -3,6 +3,9 @@ package it.polimi.ingsw.common;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * Class to build light version of {@link it.polimi.ingsw.model.cards.Card} to send through messages to the client/server
+ */
 public abstract class LightCard implements Serializable {
     private List<String> cost;
     private int victoryPoints;

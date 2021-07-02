@@ -77,6 +77,10 @@ public class LightClient {
         this.leaderDepots = leaderDepots;
     }
 
+    /**
+     * Update the marker position of the client
+     * @param position the new marker position on the {@link it.polimi.ingsw.model.game.FaithTrack}
+     */
     public void updateMarkerPosition(int position){
         faithTrackPosition = position;
     }
@@ -109,6 +113,7 @@ public class LightClient {
     public void setVictoryPoints(int victoryPoints) {
         this.victoryPoints = victoryPoints;
     }
+
     public Stack<Integer>[] getDevelopmentCardSlots() {
         return developmentCardSlots;
     }
@@ -116,6 +121,7 @@ public class LightClient {
     public Map<Integer, Integer> getLeaderDepots() {
         return leaderDepots;
     }
+
     public int getVictoryPoints() {
         return victoryPoints;
     }
@@ -147,6 +153,7 @@ public class LightClient {
     public PopesTileState[] getPopesTileStates() {
         return popesTileStates;
     }
+
     public String getNickname() {
         return nickname;
     }

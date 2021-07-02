@@ -2,6 +2,9 @@ package it.polimi.ingsw.controller.game_phases;
 
 import it.polimi.ingsw.messages.toClient.game.NotifyPointsSinglePlayer;
 
+/**
+ * Class to manage the end game in single player mode
+ */
 public class SinglePlayerEndPhase extends EndPhase {
     @Override
     public void notifyResults() {

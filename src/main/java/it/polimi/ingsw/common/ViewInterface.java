@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public interface VirtualView {
+public interface ViewInterface {
     //LOBBY
     void displayGameModeRequest();
     void displayNicknameRequest(boolean isRetry, boolean alreadyTaken);

@@ -24,6 +24,9 @@ import it.polimi.ingsw.model.game.VaticanReportSection;
 
 import java.util.*;
 
+/**
+ * The controller to manage a single turn
+ */
 public class TurnController {
     private ClientHandler clientHandler;
     private int numberOfLeaderActionsDone=0;

@@ -20,6 +20,9 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * Class to manage the connection of the client with the server
+ */
 public class Client implements ClientInterface {
     private Optional<String> nickname;
     private Optional<GameMode> gameMode;
@@ -49,6 +52,8 @@ public class Client implements ClientInterface {
     private boolean connectionClosed = false;
 
     private boolean gameCanceled = false;
+
+    //TODO
     public Client(String IPAddress, int port, View view, Optional<GameMode> gameMode, Optional<String> nickname){
         this.gameMode = gameMode;
         this.nickname = nickname;
@@ -180,7 +185,9 @@ public class Client implements ClientInterface {
         }
     }
 
-
+    /**
+     * Method to close the socket
+     */
     public void closeSocket() {
         if (connectionClosed)
             return;
@@ -221,6 +228,9 @@ public class Client implements ClientInterface {
         return port;
     }
 
+    /**
+     * Method to kill all the running threads
+     */
     public void killThreads(){
         packetReceiver.interrupt();
         pinger.interrupt();

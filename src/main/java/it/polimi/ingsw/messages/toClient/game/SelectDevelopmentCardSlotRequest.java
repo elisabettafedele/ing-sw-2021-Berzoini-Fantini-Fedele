@@ -1,6 +1,6 @@
 package it.polimi.ingsw.messages.toClient.game;
 
-import it.polimi.ingsw.common.VirtualView;
+import it.polimi.ingsw.common.ViewInterface;
 import it.polimi.ingsw.messages.toClient.MessageToClient;
 
 public class SelectDevelopmentCardSlotRequest extends MessageToClient {
@@ -15,7 +15,7 @@ public class SelectDevelopmentCardSlotRequest extends MessageToClient {
         this.thirdSlotAvailable=thirdSlotAvailable;
     }
     @Override
-    public void handleMessage(VirtualView view) {
+    public void handleMessage(ViewInterface view) {
         view.displaySelectDevelopmentCardSlotRequest(firstSlotAvailable,secondSlotAvailable,thirdSlotAvailable);
     }
 

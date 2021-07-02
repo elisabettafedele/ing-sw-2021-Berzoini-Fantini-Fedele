@@ -30,6 +30,9 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+/**
+ * The controller to manage game phases, actions, and model modification
+ */
 public class Controller {
     private Game game;
     private GamePhase gamePhase;

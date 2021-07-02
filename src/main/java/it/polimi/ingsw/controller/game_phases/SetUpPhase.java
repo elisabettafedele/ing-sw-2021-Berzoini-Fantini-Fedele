@@ -23,6 +23,9 @@ import it.polimi.ingsw.jsonParsers.LeaderCardParser;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Class to manage the setup phase before strating the game
+ */
 public class SetUpPhase implements GamePhase {
     Controller controller;
     Map<String, Integer> initialResourceByNickname;

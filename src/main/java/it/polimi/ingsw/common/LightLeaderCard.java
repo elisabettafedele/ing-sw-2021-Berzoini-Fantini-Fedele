@@ -2,6 +2,9 @@ package it.polimi.ingsw.common;
 
 import java.util.List;
 
+/**
+ * Light representation of a {@link it.polimi.ingsw.model.cards.LeaderCard}
+ */
 public class LightLeaderCard extends LightCard{
 
     private String costType;

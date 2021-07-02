@@ -1,6 +1,6 @@
 package it.polimi.ingsw.messages.toClient;
 
-import it.polimi.ingsw.common.VirtualView;
+import it.polimi.ingsw.common.ViewInterface;
 
 public class NotifyClientDisconnection extends MessageToClient{
     private String nickname;
@@ -16,7 +16,7 @@ public class NotifyClientDisconnection extends MessageToClient{
     }
 
     @Override
-    public void handleMessage(VirtualView view) {
+    public void handleMessage(ViewInterface view) {
         view.displayDisconnection(nickname, setUp, gameCancelled);
     }
 
