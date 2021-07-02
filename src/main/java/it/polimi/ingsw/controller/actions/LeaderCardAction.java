@@ -22,6 +22,9 @@ import it.polimi.ingsw.model.player.Player;
 
 import java.util.*;
 
+/**
+ * Class to manage the discard/activation of a {@link LeaderCard}
+ */
 public class LeaderCardAction implements Action{
     private Player player;
     private ClientHandler clientHandler;

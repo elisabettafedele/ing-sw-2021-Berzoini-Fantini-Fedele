@@ -80,13 +80,9 @@ public class BuyDevelopmentCardAction implements Action{
 
 
     /**
-     *Private method to check if the player has enough resources to buy a card
-     * @param card
-     * @return
-     * @throws ValueNotPresentException
-     * @throws InactiveCardException
-     * @throws InvalidArgumentException
-     * @throws DifferentEffectTypeException
+     * Private method to check if the player has enough resources to buy a card
+     * @param card the {@link DevelopmentCard} to be checked
+     * @return true if the player has enough resources to buy the card
      */
     private boolean enoughResourcesAvailable(DevelopmentCard card)  {
         //First, I get the players possessions

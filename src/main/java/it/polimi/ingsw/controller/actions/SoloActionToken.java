@@ -18,14 +18,6 @@ public abstract class SoloActionToken {
         this.pathImageBack = pathImageBack;
     }
 
-    public String getPathImageFront() {
-        return pathImageFront;
-    }
-
-    public String getPathImageBack() {
-        return pathImageBack;
-    }
-
     /**
      * Executes the action of Lorenzo il Magnifico when playing in single player game mode
      * @param singlePlayerPlayPhase
