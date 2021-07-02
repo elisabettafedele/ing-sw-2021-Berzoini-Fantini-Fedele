@@ -5,7 +5,6 @@ import it.polimi.ingsw.common.ServerInterface;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
 
-//TODO: JavaDoc
 public class ChooseStorageTypeResponse implements MessageToServer {
     private Resource resource;
     private String storageType;

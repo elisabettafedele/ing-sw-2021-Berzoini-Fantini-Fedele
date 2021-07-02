@@ -67,22 +67,19 @@ public abstract class PlayPhase implements GamePhase{
             getTurnController().endTurn();
     }
 
-    //TODO: JavaDoc
+
     public abstract void handleEndTriggered();
 
-    //TODO: JavaDoc
     public void saveGameCopy(Game game){
         lastTurnGameCopy = new PersistentGame(game);
     }
-    //TODO: JavaDoc
+
     public void reloadGameCopy(boolean disconnection){
         controller.sendMatchData(controller.getGame(), disconnection);
     }
 
-    //TODO: JavaDoc
     public abstract void saveGame();
 
-    //TODO: JavaDoc
     public abstract void restartLastTurn();
 
     public String toString(){

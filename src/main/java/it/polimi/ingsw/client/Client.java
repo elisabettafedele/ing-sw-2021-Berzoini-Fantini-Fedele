@@ -53,30 +53,6 @@ public class Client implements ClientInterface {
 
     private boolean gameCanceled = false;
 
-    //TODO: JavaDoc
-    public Client(String IPAddress, int port, View view, Optional<GameMode> gameMode, Optional<String> nickname){
-        this.gameMode = gameMode;
-        this.nickname = nickname;
-        this.validNickname = nickname.isPresent();
-        this.IPAddress = IPAddress;
-        this.port = port;
-        this.view = view;
-        this.packetReceiver = new Thread(this::manageIncomingPackets);
-        this.serverObserver = new Thread(this::waitForMessages);
-
-        this.pinger = new Thread(() -> {
-            while (connected.get()){
-                try{
-                    Thread.sleep(PING_PERIOD);
-                    sendMessageToServer(ConnectionMessage.PING);
-                }catch (InterruptedException e){
-                    closeSocket();
-                    break;
-                }
-            }
-        });
-    }
-
     /**
      * Constructor to build the threads and the objects needed to start the game
      * @param IPAddress the IP of the server
@@ -105,6 +81,28 @@ public class Client implements ClientInterface {
         });
     }
 
+    public Client(String IPAddress, int port, View view, Optional<GameMode> gameMode, Optional<String> nickname){
+        this.gameMode = gameMode;
+        this.nickname = nickname;
+        this.validNickname = nickname.isPresent();
+        this.IPAddress = IPAddress;
+        this.port = port;
+        this.view = view;
+        this.packetReceiver = new Thread(this::manageIncomingPackets);
+        this.serverObserver = new Thread(this::waitForMessages);
+
+        this.pinger = new Thread(() -> {
+            while (connected.get()){
+                try{
+                    Thread.sleep(PING_PERIOD);
+                    sendMessageToServer(ConnectionMessage.PING);
+                }catch (InterruptedException e){
+                    closeSocket();
+                    break;
+                }
+            }
+        });
+    }
 
     public void start() throws IOException {
         socket = new Socket();

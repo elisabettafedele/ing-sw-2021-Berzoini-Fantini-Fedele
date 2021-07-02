@@ -61,10 +61,10 @@ public interface ViewInterface {
      */
     void displayMarbleInsertionPositionRequest();
 
-    //TODO: marbles parameter
+
     /**
      * Method to ask which converison effect to use
-     * @param marbles TODO
+     * @param marbles possible marble conversions
      * @param numberOfMarbles the quantity of marbles to be converted
      */
     void displayChooseWhiteMarbleConversionRequest(List<Resource> marbles, int numberOfMarbles);
