@@ -15,8 +15,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Class to manage the setup phase of the game
+ */
 public class SetUpCLI {
 
+    /**
+     * Method to display the request of the selection of the initial leader cards
+     * @param client {@link Client} with the connection to the server
+     * @param leaderCardsIDs the IDs of the selectables {@link it.polimi.ingsw.model.cards.LeaderCard}
+     */
     public static void displayChooseLeaderCardsRequest(Client client, List<Integer> leaderCardsIDs){
         Screen.getInstance().displayCardSelection(leaderCardsIDs, null);
         System.out.println("Choose two Leader Cards to keep");
@@ -32,6 +40,12 @@ public class SetUpCLI {
         client.sendMessageToServer(new ChooseLeaderCardsResponse(leaderCardsIDs));
     }
 
+    /**
+     * Method to ask which intial resources the player wants to take
+     * @param client {@link Client} with the connection to the server
+     * @param resourceTypes the type of {@link Resource} the player can select
+     * @param quantity the amount of resources to ask
+     */
     public static void displayChooseResourceTypeRequest(Client client, List<Resource> resourceTypes, int quantity){
         List<String> resourcesToString = resourceTypes.stream().map(Enum::name).collect(Collectors.toList());
         System.out.printf("You have to choose %d resource type. \nAvailable resource types are:\n", quantity);

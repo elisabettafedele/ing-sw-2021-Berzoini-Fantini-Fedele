@@ -13,6 +13,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Class to manage the {@link it.polimi.ingsw.controller.actions.TakeResourcesFromMarketAction} cli-side
+ */
 public class TakeResourcesFromMarketCLI {
 
     /**

@@ -9,8 +9,18 @@ import it.polimi.ingsw.messages.toServer.game.SelectDevelopmentCardSlotResponse;
 
 import java.util.List;
 
+/**
+ * Class to manage all the {@link CLI} methods related to {@link it.polimi.ingsw.model.cards.Card}
+ */
 public class CardsCLI {
 
+    /**
+     * Method to display the request the slot number where the player wants to put the card
+     * @param client {@link Client} with the connection to the server
+     * @param firstSlotAvailable true if the first slot is available
+     * @param secondSlotAvailable true if the second slot is available
+     * @param thirdSlotAvailable true if the third slot is available
+     */
     public static void displaySelectDevelopmentCardSlotRequest(Client client, boolean firstSlotAvailable, boolean secondSlotAvailable, boolean thirdSlotAvailable) {
         Integer selection = -1;
         System.out.println("Select a development card slot");

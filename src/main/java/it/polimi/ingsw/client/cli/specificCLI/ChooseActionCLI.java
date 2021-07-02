@@ -13,8 +13,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Class to manage the selection of the action to perform during the turn
+ */
 public class ChooseActionCLI {
 
+    /**
+     * Method to ask the next action to the player
+     * @param client {@link Client} with the connection to the server
+     * @param executableActions the action that can be executed in the turn
+     * @param standardActionDone true if the standard action has already been completed
+     */
     public static void displayChooseActionRequest(Client client, Map<ActionType, Boolean> executableActions, boolean standardActionDone) {
         List<String> availableActions = executableActions.keySet().stream().filter(executableActions::get).map(Enum::name).collect(Collectors.toList());
         List<String> textCommands = new ArrayList<>();

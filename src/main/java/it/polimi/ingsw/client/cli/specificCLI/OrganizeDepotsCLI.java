@@ -16,8 +16,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Class to manage all the interactions with depots
+ */
 public class OrganizeDepotsCLI {
 
+    /**
+     * Method to ask in which depot the player wants to put a resource
+     * @param client {@link Client} with the connection to the server
+     * @param resource the {@link Resource} to store
+     * @param availableDepots a List with all the available depots for that resource
+     * @param canDiscard true if it is possible to discard the resource
+     * @param canReorganize true if a reorganization of depots it's possible
+     */
     public static void displayChooseStorageTypeRequest(Client client, Resource resource, List<String> availableDepots, boolean canDiscard, boolean canReorganize) {
         if (availableDepots.isEmpty())
             System.out.println("There are no available depots for " + resource);
@@ -51,6 +62,14 @@ public class OrganizeDepotsCLI {
             client.sendMessageToServer(new ChooseStorageTypeResponse(resource, choiceString, canDiscard, canReorganize));
     }
 
+    /**
+     * Method to ask the player from which depot wants to take a specific resource
+     * @param client {@link Client} with the connection to the server
+     * @param resource the {@link Resource} to be taken
+     * @param isInWarehouse true if the {@link Resource} is present in the {@link it.polimi.ingsw.model.player.Warehouse}
+     * @param isInStrongbox true if the {@link Resource} is present in a {@link it.polimi.ingsw.model.depot.StrongboxDepot}
+     * @param isInLeaderDepot true if the {@link Resource} is present in a {@link it.polimi.ingsw.model.depot.LeaderDepot}
+     */
     public static void displaySelectStorageRequest(Client client, Resource resource, boolean isInWarehouse, boolean isInStrongbox, boolean isInLeaderDepot) {
         if (isInLeaderDepot ^ isInStrongbox ^ isInWarehouse){
             if (isInWarehouse)
@@ -92,7 +111,14 @@ public class OrganizeDepotsCLI {
         }
     }
 
-
+    /**
+     * Method to manage the reorganization of depots
+     * @param client {@link Client} with the connection to the server
+     * @param depots the depots in which the reorganization is possible
+     * @param first true if it is the first time the reorganization has been asked
+     * @param failure true if the given reorganization is not doable
+     * @param availableLeaderResources the resources present in the leader cards, if any
+     */
     public static void displayReorganizeDepotsRequest(Client client, List<String> depots, boolean first, boolean failure, List<Resource> availableLeaderResources) {
         if (first)
             System.out.print("You can now reorganize your depots with the command" + Command.SWAP.command + " or " + Command.MOVE.command + "\n- " + Command.SWAP + ": realizes a swap of two depots of the warehouse which contain different resource types\n- " + Command.MOVE + ": move a certain number of resources from one depot to another (be careful because the leader depots have a fixed resource type)\nIf you have finished type " + Command.END_REORGANIZE_DEPOTS.command + "\n");

@@ -13,6 +13,9 @@ import it.polimi.ingsw.messages.toServer.lobby.NumberOfPlayersResponse;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Class to manage the interaction with the player before the beginning of the match
+ */
 public class LobbyCLI {
     private static final String DEFAULT_ADDRESS = "127.0.0.1";
     private static final int DEFAULT_PORT = 1234;
@@ -57,7 +60,12 @@ public class LobbyCLI {
         return new Client(IPAddress, port, cli);
     }
 
-
+    /**
+     * Asks the nickname to the player
+     * @param client {@link Client} with the connection to the server
+     * @param isRetry true if it is not the first time that the nickname is asked
+     * @param alreadyTaken true if the previous nickname was not valid because equals to someone else's nickname
+     */
     public static void displayNicknameRequest(Client client, boolean isRetry, boolean alreadyTaken) {
         if (client.isNicknameValid() && client.getNickname().isPresent()){
             client.sendMessageToServer(new NicknameResponse(client.getNickname().get()));
@@ -78,6 +86,10 @@ public class LobbyCLI {
         client.sendMessageToServer(new NicknameResponse(selection));
     }
 
+    /**
+     * Method to ask the connection parameters (IP and port) to the player
+     * @param client {@link Client} with the connection to the server
+     */
     public static void displayGameModeRequest(Client client) {
         if (client.getGameMode().isPresent()){
             client.sendMessageToServer(new GameModeResponse(client.getGameMode().get()));
@@ -97,6 +109,12 @@ public class LobbyCLI {
         client.sendMessageToServer(new GameModeResponse(gameMode));
     }
 
+    /**
+     * Get the gamemode chosen by the client
+     * @param client {@link Client} with the connection to the server
+     * @return a {@link GameMode} (single or multi player
+     * @throws IOException if the chosen gamemode is null
+     */
     private static GameMode getGameMode(Client client) throws IOException {
         while(true) {
             String gameModeString = InputParser.getLine();
@@ -112,6 +130,10 @@ public class LobbyCLI {
         }
     }
 
+    /**
+     * Method to ask the number of player for the next game
+     * @param client {@link Client} with the connection to the server
+     */
     public static void displayNumberOfPlayersRequest(Client client){
         System.out.println("Insert desired number of players: 2, 3 or 4");
         Integer choice = InputParser.getInt("Invalid number of players: please insert an integer number between 2 and 4", CLI.conditionOnIntegerRange(2, 4));
