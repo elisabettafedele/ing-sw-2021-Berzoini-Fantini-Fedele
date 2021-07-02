@@ -18,6 +18,9 @@ import it.polimi.ingsw.jsonParsers.SoloActionTokenParser;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Class to manage the play phase in single player matches
+ */
 public class SinglePlayerPlayPhase extends PlayPhase {
     private int blackCrossPosition;
     private Queue<SoloActionToken> tokens;

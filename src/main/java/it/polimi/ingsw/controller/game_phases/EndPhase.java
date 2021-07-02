@@ -4,10 +4,11 @@ import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
 import it.polimi.ingsw.server.ClientHandler;
 
+/**
+ * Abstract class to manage the end phase
+ */
 public abstract class EndPhase implements GamePhase {
-    /**
-     * Abstract class to manage the end phase
-     */
+
     private Controller controller;
 
     @Override

@@ -15,6 +15,9 @@ import it.polimi.ingsw.model.player.Player;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Class to manage the playPhase in multiplayer matches
+ */
 public class MultiplayerPlayPhase extends PlayPhase {
 
     private int turnIndex;

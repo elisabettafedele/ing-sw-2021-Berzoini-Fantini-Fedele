@@ -10,6 +10,9 @@ import it.polimi.ingsw.messages.toServer.game.EndTurnRequest;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
 import it.polimi.ingsw.model.player.Player;
 
+/**
+ * Abstract class with the common feature of the playphase
+ */
 public abstract class PlayPhase implements GamePhase{
     private Controller controller;
     private TurnController turnController;
@@ -50,6 +53,10 @@ public abstract class PlayPhase implements GamePhase{
 
     public abstract void nextTurn();
 
+    /**
+     * Method to handle the discard of a {@link it.polimi.ingsw.enumerations.Resource} by a player
+     * @param nickname the nickname of the player that has discarded a resource
+     */
     public abstract void handleResourceDiscard(String nickname);
 
     public void handleMessage(MessageToServer message, ClientHandler clientHandler) {
@@ -60,18 +67,21 @@ public abstract class PlayPhase implements GamePhase{
             getTurnController().endTurn();
     }
 
+    //TODO
     public abstract void handleEndTriggered();
 
+    //TODO
     public void saveGameCopy(Game game){
         lastTurnGameCopy = new PersistentGame(game);
     }
-
+    //TODO
     public void reloadGameCopy(boolean disconnection){
         controller.sendMatchData(controller.getGame(), disconnection);
     }
 
+    //TODO
     public abstract void saveGame();
-
+    //TODO
     public abstract void restartLastTurn();
 
     public String toString(){

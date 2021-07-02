@@ -5,6 +5,9 @@ import it.polimi.ingsw.model.player.Player;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Class to manage the end of a game in multiplayer matches
+ */
 public class MultiplayerEndPhase extends EndPhase {
 
     /**
