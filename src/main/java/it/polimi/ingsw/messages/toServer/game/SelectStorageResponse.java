@@ -6,6 +6,9 @@ import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.enumerations.ResourceStorageType;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
 
+/**
+ * Message to notify the server where the player wants to store a specific resource
+ */
 public class SelectStorageResponse implements MessageToServer {
     ResourceStorageType resourceStorageType;
     Resource resource;

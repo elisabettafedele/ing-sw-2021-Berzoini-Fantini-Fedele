@@ -6,6 +6,9 @@ import it.polimi.ingsw.messages.toClient.MessageToClient;
 
 import java.util.List;
 
+/**
+ * Message to manage the reorganization of the depots
+ */
 public class SendReorganizeDepotsCommands extends MessageToClient {
     private List<String> availableDepots;
     private boolean first;

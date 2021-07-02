@@ -4,6 +4,9 @@ import it.polimi.ingsw.common.ViewInterface;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.messages.toClient.MessageToClient;
 
+/**
+ * Message to ask from which storage getting a resource
+ */
 public class SelectStorageRequest extends MessageToClient {
 Resource resource;
 boolean isInWarehouse;

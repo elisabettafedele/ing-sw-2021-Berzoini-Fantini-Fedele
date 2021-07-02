@@ -6,6 +6,9 @@ import it.polimi.ingsw.messages.toClient.MessageToClient;
 
 import java.util.List;
 
+/**
+ * Message to load all the leader cards client-side
+ */
 public class LoadLeaderCardsMessage extends MessageToClient {
 
     private List<LightLeaderCard> leaderCards;

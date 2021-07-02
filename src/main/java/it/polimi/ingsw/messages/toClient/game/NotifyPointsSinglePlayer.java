@@ -3,6 +3,9 @@ package it.polimi.ingsw.messages.toClient.game;
 import it.polimi.ingsw.common.ViewInterface;
 import it.polimi.ingsw.messages.toClient.MessageToClient;
 
+/**
+ * Message to send the points made during a single player match
+ */
 public class NotifyPointsSinglePlayer extends MessageToClient {
     private int victoryPoints;
 

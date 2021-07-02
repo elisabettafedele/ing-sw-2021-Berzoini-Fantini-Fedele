@@ -6,6 +6,9 @@ import it.polimi.ingsw.messages.toClient.MessageToClient;
 
 import java.util.List;
 
+/**
+ * Message to ask in which depot the player wants to store the resource
+ */
 public class ChooseStorageTypeRequest extends MessageToClient {
     private Resource resource;
     private List<String> availableDepots;

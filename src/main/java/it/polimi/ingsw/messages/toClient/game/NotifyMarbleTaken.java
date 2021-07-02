@@ -6,6 +6,9 @@ import it.polimi.ingsw.messages.toClient.MessageToClient;
 
 import java.util.List;
 
+/**
+ * Message to communicate the marble taken from the market
+ */
 public class NotifyMarbleTaken extends MessageToClient {
     private List<Marble> marbleTaken;
     private boolean needToChooseConversion;

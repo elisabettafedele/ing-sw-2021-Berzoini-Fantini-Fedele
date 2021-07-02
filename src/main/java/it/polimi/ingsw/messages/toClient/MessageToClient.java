@@ -4,6 +4,9 @@ import it.polimi.ingsw.common.ViewInterface;
 
 import java.io.Serializable;
 
+/**
+ * General features of a message from the server to the client
+ */
 public abstract class MessageToClient implements Serializable {
     private boolean timer;
 

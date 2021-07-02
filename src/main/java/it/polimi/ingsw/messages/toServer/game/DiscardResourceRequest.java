@@ -5,6 +5,9 @@ import it.polimi.ingsw.common.ServerInterface;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
 
+/**
+ * Message to notify the discard of a resource
+ */
 public class DiscardResourceRequest implements MessageToServer {
     Resource resource;
 

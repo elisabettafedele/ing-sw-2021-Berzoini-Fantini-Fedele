@@ -5,6 +5,9 @@ import it.polimi.ingsw.messages.toClient.MessageToClient;
 
 import java.util.Map;
 
+/**
+ * Message to communicate the end of the game
+ */
 public class GameOverMessage extends MessageToClient {
     private Map<String, Integer> results;
     private boolean readyForAnotherGame;

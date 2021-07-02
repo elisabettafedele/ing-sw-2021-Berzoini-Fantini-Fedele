@@ -4,6 +4,9 @@ import it.polimi.ingsw.common.ClientHandlerInterface;
 import it.polimi.ingsw.common.ServerInterface;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
 
+/**
+ * Message to notify the chosen position of the slide marble in the market
+ */
 public class MarbleInsertionPositionResponse implements MessageToServer {
     private int insertionPosition;
 

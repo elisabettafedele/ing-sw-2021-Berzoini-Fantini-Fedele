@@ -7,6 +7,9 @@ import it.polimi.ingsw.server.Server;
 
 import java.util.logging.Level;
 
+/**
+ * Message to ask the server to perform a swap between depots
+ */
 public class SwapWarehouseDepotsRequest implements MessageToServer {
     private String originDepot;
     private String destinationDepot;

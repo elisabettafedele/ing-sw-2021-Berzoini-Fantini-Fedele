@@ -9,6 +9,9 @@ import it.polimi.ingsw.enumerations.Resource;
 import java.util.List;
 import java.util.logging.Level;
 
+/**
+ * Message to notify the server the type of the initial resource chosen
+ */
 public class ChooseResourceTypeResponse implements MessageToServer {
 
     private List<Resource> resources;

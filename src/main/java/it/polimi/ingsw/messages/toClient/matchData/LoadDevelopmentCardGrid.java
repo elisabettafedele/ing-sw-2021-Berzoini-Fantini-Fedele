@@ -2,6 +2,9 @@ package it.polimi.ingsw.messages.toClient.matchData;
 
 import java.util.List;
 
+/**
+ * Message to load developmentcardgrid information client-side
+ */
 public class LoadDevelopmentCardGrid extends MatchDataMessage {
     private List<Integer> availableCardsIds;
 

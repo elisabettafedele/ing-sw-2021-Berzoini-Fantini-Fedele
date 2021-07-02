@@ -1,5 +1,8 @@
 package it.polimi.ingsw.messages.toClient.matchData;
 
+/**
+ * Message to notify the current turn owner
+ */
 public class TurnMessage extends MatchDataMessage {
     private boolean started;
 

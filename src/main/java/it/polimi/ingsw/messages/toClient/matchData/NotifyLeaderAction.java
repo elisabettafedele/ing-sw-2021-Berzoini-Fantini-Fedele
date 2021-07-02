@@ -1,5 +1,8 @@
 package it.polimi.ingsw.messages.toClient.matchData;
 
+/**
+ * Message to notify a leader action
+ */
 public class NotifyLeaderAction extends MatchDataMessage{
     private int id;
     private boolean discard;

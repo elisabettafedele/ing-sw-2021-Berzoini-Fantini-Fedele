@@ -2,6 +2,9 @@ package it.polimi.ingsw.messages.toClient.matchData;
 
 import it.polimi.ingsw.enumerations.Marble;
 
+/**
+ * Message to update the status of the market
+ */
 public class UpdateMarketView extends MatchDataMessage {
     private Marble[][] marbles;
     private Marble sideMarble;

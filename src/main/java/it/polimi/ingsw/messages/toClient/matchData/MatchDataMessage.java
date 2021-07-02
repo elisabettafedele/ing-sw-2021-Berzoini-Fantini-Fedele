@@ -3,6 +3,9 @@ package it.polimi.ingsw.messages.toClient.matchData;
 import it.polimi.ingsw.common.ViewInterface;
 import it.polimi.ingsw.messages.toClient.MessageToClient;
 
+/**
+ * COmmon features to messages sent to update {@link it.polimi.ingsw.client.MatchData}
+ */
 public abstract class MatchDataMessage extends MessageToClient {
     private String nickname;
 

@@ -3,6 +3,9 @@ package it.polimi.ingsw.messages.toClient.game;
 import it.polimi.ingsw.common.ViewInterface;
 import it.polimi.ingsw.messages.toClient.MessageToClient;
 
+/**
+ * Message to notify that Lorenzo has performed his action
+ */
 public class NotifyLorenzoAction extends MessageToClient {
     private int id;
 

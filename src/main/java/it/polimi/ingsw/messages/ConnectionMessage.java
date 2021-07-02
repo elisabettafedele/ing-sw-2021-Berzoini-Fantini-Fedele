@@ -1,5 +1,8 @@
 package it.polimi.ingsw.messages;
 
+/**
+ * Enum to list some messages
+ */
 public enum ConnectionMessage {
     PING ("Ping"),
     TIMER_EXPIRED ("Timer has expired"),

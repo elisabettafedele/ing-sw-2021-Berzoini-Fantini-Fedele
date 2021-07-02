@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
+/**
+ * Message to notify the server which productions have been selected
+ */
 public class ChooseProductionPowersResponse implements MessageToServer {
 
     List<Integer> productionPowersSelected;

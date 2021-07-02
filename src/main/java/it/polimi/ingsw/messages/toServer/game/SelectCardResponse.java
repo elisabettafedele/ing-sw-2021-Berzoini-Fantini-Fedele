@@ -4,6 +4,9 @@ import it.polimi.ingsw.common.ClientHandlerInterface;
 import it.polimi.ingsw.common.ServerInterface;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
 
+/**
+ * Message to notify the server the selection of a card
+ */
 public class SelectCardResponse implements MessageToServer {
     Integer selectedCard;
     public SelectCardResponse(Integer selectedCard){

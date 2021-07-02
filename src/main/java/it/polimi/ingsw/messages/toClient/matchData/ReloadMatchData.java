@@ -3,6 +3,9 @@ package it.polimi.ingsw.messages.toClient.matchData;
 import it.polimi.ingsw.common.ViewInterface;
 import it.polimi.ingsw.messages.toClient.MessageToClient;
 
+/**
+ * Message to notify the beginning/end of the incoming reload messages
+ */
 public class ReloadMatchData extends MessageToClient {
     private final boolean start;
     private final boolean disconnection;

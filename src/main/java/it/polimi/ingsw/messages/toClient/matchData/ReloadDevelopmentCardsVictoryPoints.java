@@ -1,5 +1,8 @@
 package it.polimi.ingsw.messages.toClient.matchData;
 
+/**
+ * Message to load the victory points of the slots of development cards
+ */
 public class ReloadDevelopmentCardsVictoryPoints extends  MatchDataMessage{
     private int[] developmentCardsVictoryPoints;
 

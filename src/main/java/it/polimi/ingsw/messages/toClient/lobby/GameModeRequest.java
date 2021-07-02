@@ -3,6 +3,9 @@ package it.polimi.ingsw.messages.toClient.lobby;
 import it.polimi.ingsw.common.ViewInterface;
 import it.polimi.ingsw.messages.toClient.MessageToClient;
 
+/**
+ * Message to ask the game mode
+ */
 public class GameModeRequest extends MessageToClient {
 
     public GameModeRequest() {

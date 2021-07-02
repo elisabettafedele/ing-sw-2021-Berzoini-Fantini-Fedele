@@ -5,6 +5,9 @@ import it.polimi.ingsw.messages.toClient.MessageToClient;
 
 import java.util.List;
 
+/**
+ * Message to notify all the player nickname of the game
+ */
 public class SendPlayersNicknamesMessage extends MessageToClient {
 
     String playerNickname;

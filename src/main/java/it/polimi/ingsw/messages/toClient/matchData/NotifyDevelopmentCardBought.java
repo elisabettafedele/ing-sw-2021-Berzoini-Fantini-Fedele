@@ -1,5 +1,8 @@
 package it.polimi.ingsw.messages.toClient.matchData;
 
+/**
+ * Message to notify the purchase of a {@link it.polimi.ingsw.model.cards.DevelopmentCard}
+ */
 public class NotifyDevelopmentCardBought extends MatchDataMessage{
     private final int cardBought;
     private final int newCardOnGrid;

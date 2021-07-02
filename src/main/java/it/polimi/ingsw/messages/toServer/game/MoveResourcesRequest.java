@@ -8,6 +8,9 @@ import it.polimi.ingsw.server.Server;
 
 import java.util.logging.Level;
 
+/**
+ * Message to notify the depots used to perform the move of resources
+ */
 public class MoveResourcesRequest implements MessageToServer {
     private String originDepot;
     private String destinationDepot;

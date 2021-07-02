@@ -9,6 +9,9 @@ import it.polimi.ingsw.messages.toServer.MessageToServer;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Message to notify the server which white marble conversion effect has been chosen
+ */
 public class ChooseWhiteMarbleConversionResponse implements MessageToServer {
     private List<Resource> resources;
     public ChooseWhiteMarbleConversionResponse(List<Resource> resources){

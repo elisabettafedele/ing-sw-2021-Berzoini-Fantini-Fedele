@@ -6,6 +6,9 @@ import it.polimi.ingsw.messages.toClient.MessageToClient;
 
 import java.util.List;
 
+/**
+ * Message to ask which marble conversion the player wants to use
+ */
 public class ChooseWhiteMarbleConversionRequest extends MessageToClient {
 
     private List<Resource> conversions;

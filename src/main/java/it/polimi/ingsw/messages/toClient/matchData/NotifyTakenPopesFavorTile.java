@@ -1,5 +1,8 @@
 package it.polimi.ingsw.messages.toClient.matchData;
 
+/**
+ * Message to notify an update on the popes tile status
+ */
 public class NotifyTakenPopesFavorTile extends MatchDataMessage{
     private int number;
     private boolean taken;

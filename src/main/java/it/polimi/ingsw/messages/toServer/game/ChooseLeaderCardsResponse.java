@@ -6,6 +6,9 @@ import it.polimi.ingsw.messages.toServer.MessageToServer;
 
 import java.util.List;
 
+/**
+ * Message to notify the server with the leader card chosen during the setupphase
+ */
 public class ChooseLeaderCardsResponse implements MessageToServer {
 
     private List<Integer> discardedLeaderCards;

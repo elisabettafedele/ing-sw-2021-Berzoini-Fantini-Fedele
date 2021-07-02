@@ -6,6 +6,9 @@ import it.polimi.ingsw.messages.toClient.MessageToClient;
 
 import java.util.List;
 
+/**
+ * Message to notify the resources to be stored
+ */
 public class NotifyResourcesToStore extends MessageToClient {
     private List<Resource> resourcesToStore;
 

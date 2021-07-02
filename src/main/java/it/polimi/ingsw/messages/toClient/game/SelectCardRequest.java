@@ -5,6 +5,9 @@ import it.polimi.ingsw.messages.toClient.MessageToClient;
 
 import java.util.List;
 
+/**
+ * Message to ask the selection of a card
+ */
 public class SelectCardRequest extends MessageToClient {
     List<Integer> CardsIDs;
     boolean leaderORdevelopment;

@@ -1,5 +1,8 @@
 package it.polimi.ingsw.messages.toClient.matchData;
 
+/**
+ * Message to update the marker position
+ */
 public class UpdateMarkerPosition extends MatchDataMessage {
     private int markerPosition;
 

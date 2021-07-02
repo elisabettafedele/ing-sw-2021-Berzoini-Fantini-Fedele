@@ -6,6 +6,9 @@ import it.polimi.ingsw.messages.toClient.MessageToClient;
 
 import java.util.List;
 
+/**
+ * Message to load all the development cards client-side
+ */
 public class LoadDevelopmentCardsMessage extends MessageToClient {
 
     private List<LightDevelopmentCard> lightDevCards;

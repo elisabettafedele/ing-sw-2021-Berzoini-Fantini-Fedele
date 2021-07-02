@@ -7,6 +7,9 @@ import it.polimi.ingsw.enumerations.GameMode;
 import it.polimi.ingsw.messages.toClient.lobby.NicknameRequest;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
 
+/**
+ * Message with the chosen game mode by the client
+ */
 public class GameModeResponse implements MessageToServer {
     private final GameMode gameMode;
 

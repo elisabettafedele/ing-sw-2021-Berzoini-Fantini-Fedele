@@ -3,6 +3,9 @@ package it.polimi.ingsw.messages.toClient.game;
 import it.polimi.ingsw.common.ViewInterface;
 import it.polimi.ingsw.messages.toClient.MessageToClient;
 
+/**
+ * Message to ask in which slot the player wants to store the card
+ */
 public class SelectDevelopmentCardSlotRequest extends MessageToClient {
 
     private boolean firstSlotAvailable;

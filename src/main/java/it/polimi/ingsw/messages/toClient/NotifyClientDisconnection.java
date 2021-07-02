@@ -2,6 +2,9 @@ package it.polimi.ingsw.messages.toClient;
 
 import it.polimi.ingsw.common.ViewInterface;
 
+/**
+ * Message to notify the disconnection of a player
+ */
 public class NotifyClientDisconnection extends MessageToClient{
     private String nickname;
     private boolean setUp;

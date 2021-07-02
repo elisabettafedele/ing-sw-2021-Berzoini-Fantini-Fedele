@@ -4,6 +4,9 @@ import it.polimi.ingsw.common.ClientHandlerInterface;
 import it.polimi.ingsw.common.ServerInterface;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
 
+/**
+ * Message to notify the end of the turn
+ */
 public class EndTurnRequest implements MessageToServer {
     @Override
     public void handleMessage(ServerInterface server, ClientHandlerInterface clientHandler) {

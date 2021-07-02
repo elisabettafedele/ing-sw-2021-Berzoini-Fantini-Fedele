@@ -1,5 +1,8 @@
 package it.polimi.ingsw.messages.toClient.matchData;
 
+/**
+ * Message to update the victory points
+ */
 public class NotifyVictoryPoints extends MatchDataMessage{
 
     private int victoryPoints;
