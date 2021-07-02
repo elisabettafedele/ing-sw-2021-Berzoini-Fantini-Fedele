@@ -16,6 +16,9 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class to parse cards information from a json file
+ */
 public class DevelopmentCardParser {
 
     private DevelopmentCardParser(){

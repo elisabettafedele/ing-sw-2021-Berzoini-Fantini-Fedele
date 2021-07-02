@@ -12,8 +12,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Utility class to convert {@link Card} in {@link it.polimi.ingsw.common.LightCard}
+ */
 public class LightCardsParser {
 
+    /**
+     * Converts {@link LeaderCard} in {@link LightLeaderCard}
+     * @param cards the cards to be converted
+     * @return the light version of cards
+     */
     public static List<LightLeaderCard> getLightLeaderCards(List<LeaderCard> cards){
         List<LightLeaderCard> lightCards = new ArrayList<>();
         for(LeaderCard lc : cards){
@@ -102,6 +110,11 @@ public class LightCardsParser {
         }
     }
 
+    /**
+     * Converts {@link DevelopmentCard} in {@link LightDevelopmentCard}
+     * @param cards the cards to be converted
+     * @return the light version of cards
+     */
     public static List<LightDevelopmentCard> getLightDevelopmentCards(List<DevelopmentCard> cards){
         List<LightDevelopmentCard> lightCards = new ArrayList<>();
         for(DevelopmentCard dc : cards){

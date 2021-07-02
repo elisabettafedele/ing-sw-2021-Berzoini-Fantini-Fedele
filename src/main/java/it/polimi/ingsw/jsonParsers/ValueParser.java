@@ -13,6 +13,9 @@ import it.polimi.ingsw.model.cards.Value;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Class to parse the {@link Value} from a json file
+ */
 public class ValueParser {
 
     private ValueParser(){

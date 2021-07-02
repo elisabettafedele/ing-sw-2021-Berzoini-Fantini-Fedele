@@ -10,10 +10,11 @@ import it.polimi.ingsw.model.persistency.PersistentControllerSetUpPhase;
 import java.io.*;
 import java.util.*;
 
+/**
+ * Utility class used to handle the saving of a {@link it.polimi.ingsw.model.game.Game} in the server and to retrieve and old one
+ */
+
 public class GameHistory {
-    /**
-     * Utility class used to handle the saving of a {@link it.polimi.ingsw.model.game.Game} in the server and to retrieve and old one
-     */
 
     public static final String PLAY_PHASE = "PLAY_PHASE";
     public static final String SETUP_PHASE = "SETUP_PHASE";
