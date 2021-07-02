@@ -20,6 +20,9 @@ public class GraphicalFaithTrack extends GraphicalElement{
         reset();
     }
 
+    /**
+     * Method to draw all the elements of the faithtrack
+     */
     public void drawFaithTrack(){
         reset();
         int xStep = height/3 - 1;

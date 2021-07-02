@@ -72,23 +72,12 @@ public class Screen extends GraphicalElement{
      */
     public void displayStandardView(){
         nickname = MatchData.getInstance().getCurrentViewNickname();
-        //clearConsole();
         System.out.println("\033[H\033[2J");
         System.out.println("\033[H\033[3J");
         System.out.flush();
         reset();
         drawAllElements();
         display();
-    }
-
-    private void clearConsole()
-    {
-        try {
-            if (System.getProperty("os.name").contains("Windows"))
-                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-            else
-                Runtime.getRuntime().exec("clear");
-        } catch (IOException | InterruptedException ex) {}
     }
 
     /**
@@ -108,6 +97,9 @@ public class Screen extends GraphicalElement{
 
     }
 
+    /**
+     * Method to draws the infos on the right side of the screen
+     */
     private void drawSideInformations() {
         int currentViewNicknameYAnchor = scoreBoardYAnchor + longestNickname + 11;
         String s1 = "You are viewing the personal";
@@ -322,6 +314,12 @@ public class Screen extends GraphicalElement{
         displayASection(x_start, x_end, y_start, y_end);
     }
 
+    /**
+     * Method to build the graphical representation of the basic production power
+     * @param y_anchor the j-coordinate to start drawing from
+     * @param x_anchor the i-coordinate to start drawing from
+     * @param basicProduction the eventual resources of a chosen basic production
+     */
     private void drawBasicProduction(int y_anchor, int x_anchor, List<Value> basicProduction) {
         String a = "BASIC  ID:0";
         String b = "PRODUCTION";

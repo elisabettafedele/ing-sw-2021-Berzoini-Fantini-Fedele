@@ -1,7 +1,7 @@
 package it.polimi.ingsw.client.cli.graphical;
 
 /**
- * This class represents the basic information that each element of the CLI has
+ * This class represents the basic information that each element of the {@link it.polimi.ingsw.client.cli.CLI} has
  */
 public abstract class GraphicalElement {
     int width;

@@ -3,6 +3,9 @@ package it.polimi.ingsw.client.cli.graphical;
 import it.polimi.ingsw.enumerations.Marble;
 import it.polimi.ingsw.enumerations.Resource;
 
+/**
+ * Enumeration to assign a color to a symbol in the {@link it.polimi.ingsw.client.cli.CLI}
+ */
 public enum Colour {
     ANSI_BLACK("\u001B[30m"),
     ANSI_RED  ("\u001B[31m"),
@@ -35,6 +38,11 @@ public enum Colour {
         return code;
     }
 
+    /**
+     * Given a {@link Marble} return the corresponding color code
+     * @param marble the {@link Marble} to convert to a color
+     * @return a String representing the color code
+     */
     public static String getMarbleColour(Marble marble){
         if (marble == Marble.YELLOW)
             return ANSI_BRIGHT_YELLOW.code;
@@ -50,6 +58,11 @@ public enum Colour {
             return ANSI_BRIGHT_WHITE.code;
     }
 
+    /**
+     * Given a {@link Marble} return the corresponding color
+     * @param marble the {@link Marble} to convert to a color
+     * @return a {@link Colour}
+     */
     public static Colour getColourByMarble(Marble marble){
         if (marble == Marble.YELLOW)
             return ANSI_BRIGHT_YELLOW;
@@ -65,6 +78,11 @@ public enum Colour {
             return ANSI_BRIGHT_WHITE;
     }
 
+    /**
+     * Given a {@link Resource} return the corresponding color
+     * @param resource the {@link Resource} to convert to a color
+     * @return a {@link Colour}
+     */
     public static Colour getColourByResource(Resource resource){
         if (resource == Resource.COIN)
             return ANSI_BRIGHT_YELLOW;
@@ -76,6 +94,11 @@ public enum Colour {
             return ANSI_BRIGHT_PURPLE;
     }
 
+    /**
+     * Given a {@link Resource} return the corresponding color code
+     * @param resource the {@link Resource} to convert to a color
+     * @return a String representing the color code
+     */
     public static String getResourceColour(Resource resource){
         if (resource == Resource.COIN)
             return ANSI_BRIGHT_YELLOW.code;

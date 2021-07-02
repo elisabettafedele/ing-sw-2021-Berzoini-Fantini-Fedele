@@ -18,6 +18,9 @@ public class GraphicalWarehouse extends GraphicalElement{
         reset();
     }
 
+    /**
+     * Draw all the elements of the warehouse
+     */
     public void drawWarehouse(){
         reset();
         drawDepots();

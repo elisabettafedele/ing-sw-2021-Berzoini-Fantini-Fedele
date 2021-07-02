@@ -1,23 +1,10 @@
 package it.polimi.ingsw.client.cli.graphical;
 
+/**
+ * Class and static method to print the logo at the beginning of the game
+ */
 public class GraphicalLogo {
     public static void printLogo(){
-        //Just a try, it is not nice, but I am not ready to delete it
-        /*
-        char[][] logo = new char[6][168];
-        ArrayList<String> stringLogo = new ArrayList<>();
-        stringLogo.add("███╗   ███╗ █████╗ ███████╗████████╗███████╗██████╗      ██████╗ ███████╗    ██████╗ ███████╗███╗   ██╗ █████╗ ██╗███████╗███████╗ █████╗ ███╗   ██╗ ██████╗███████╗    ");
-        stringLogo.add("████╗ ████║██╔══██╗██╔════╝╚══██╔══╝██╔════╝██╔══██╗    ██╔═══██╗██╔════╝    ██╔══██╗██╔════╝████╗  ██║██╔══██╗██║██╔════╝██╔════╝██╔══██╗████╗  ██║██╔════╝██╔════╝     ");
-        stringLogo.add("██╔████╔██║███████║███████╗   ██║   █████╗  ██████╔╝    ██║   ██║█████╗      ██████╔╝█████╗  ██╔██╗ ██║███████║██║███████╗███████╗███████║██╔██╗ ██║██║     █████╗       ");
-        stringLogo.add("██║╚██╔╝██║██╔══██║╚════██║   ██║   ██╔══╝  ██╔══██╗    ██║   ██║██╔══╝      ██╔══██╗██╔══╝  ██║╚██╗██║██╔══██║██║╚════██║╚════██║██╔══██║██║╚██╗██║██║     ██╔══╝       ");
-        stringLogo.add("██║ ╚═╝ ██║██║  ██║███████║   ██║   ███████╗██║  ██║    ╚██████╔╝██║         ██║  ██║███████╗██║ ╚████║██║  ██║██║███████║███████║██║  ██║██║ ╚████║╚██████╗███████╗     ");
-        stringLogo.add("╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝     ╚═════╝ ╚═╝         ╚═╝  ╚═╝╚══════╝╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝╚══════╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝╚══════╝     ");
-        for (int i = 0; i < logo.length; i++){
-            for (int j = 0; j < logo[i].length; j++) {
-                System.out.print((stringLogo.get(i).charAt(j) == ' ' ? BackColour.ANSI_BG_CYAN.getCode() : (BackColour.ANSI_BG_BLUE.getCode() + Colour.ANSI_BLUE.getCode())) + stringLogo.get(i).charAt(j) + Colour.ANSI_RESET);
-            }
-            System.out.print("\n");
-        }*/
         System.out.println("\033[H\033[2J");
         System.out.println("\033[H\033[3J");
         System.out.println(Colour.ANSI_BLUE.getCode() + "███╗   ███╗ █████╗ ███████╗████████╗███████╗██████╗      ██████╗ ███████╗    ██████╗ ███████╗███╗   ██╗ █████╗ ██╗███████╗███████╗ █████╗ ███╗   ██╗ ██████╗███████╗    \n" +

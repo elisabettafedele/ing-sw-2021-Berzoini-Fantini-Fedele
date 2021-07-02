@@ -16,6 +16,9 @@ public class GraphicalStrongbox extends GraphicalElement{
         reset();
     }
 
+    /**
+     * Draw all the elements of the strongbox
+     */
     public void drawStrongbox(){
         drawEdges(this.height, this.width);
         drawSeparators();

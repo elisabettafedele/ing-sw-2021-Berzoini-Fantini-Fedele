@@ -13,6 +13,9 @@ public class GraphicalMarketTray extends GraphicalElement{
         reset();
     }
 
+    /**
+     * Method to draw all the elements of the Market
+     */
     public void drawMarketTray(){
         reset();
         Marble[][] marketTray = MatchData.getInstance().getMarketTray();
