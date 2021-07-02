@@ -1,6 +1,6 @@
 package it.polimi.ingsw.messages.toClient;
 
-import it.polimi.ingsw.common.VirtualView;
+import it.polimi.ingsw.common.ViewInterface;
 
 public class WelcomeBackMessage extends MessageToClient{
     private String nickname;
@@ -14,7 +14,7 @@ public class WelcomeBackMessage extends MessageToClient{
     }
 
     @Override
-    public void handleMessage(VirtualView view) {
+    public void handleMessage(ViewInterface view) {
         view.displayWelcomeBackMessage(nickname, gameFinished);
     }
 

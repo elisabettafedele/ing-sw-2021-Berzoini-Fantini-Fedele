@@ -1,6 +1,6 @@
 package it.polimi.ingsw.messages.toClient.game;
 
-import it.polimi.ingsw.common.VirtualView;
+import it.polimi.ingsw.common.ViewInterface;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.messages.toClient.MessageToClient;
 
@@ -15,7 +15,7 @@ public class NotifyResourcesToStore extends MessageToClient {
     }
 
     @Override
-    public void handleMessage(VirtualView view) {
+    public void handleMessage(ViewInterface view) {
         view.displayResourcesToStore(resourcesToStore);
     }
 

@@ -1,6 +1,6 @@
 package it.polimi.ingsw.messages.toClient.game;
 
-import it.polimi.ingsw.common.VirtualView;
+import it.polimi.ingsw.common.ViewInterface;
 import it.polimi.ingsw.enumerations.Marble;
 import it.polimi.ingsw.messages.toClient.MessageToClient;
 
@@ -17,7 +17,7 @@ public class NotifyMarbleTaken extends MessageToClient {
     }
 
     @Override
-    public void handleMessage(VirtualView view) {
+    public void handleMessage(ViewInterface view) {
         view.displayMarblesTaken(marbleTaken, needToChooseConversion);
     }
 

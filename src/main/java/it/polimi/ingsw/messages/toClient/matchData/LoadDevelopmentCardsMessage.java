@@ -1,7 +1,7 @@
 package it.polimi.ingsw.messages.toClient.matchData;
 
 import it.polimi.ingsw.common.LightDevelopmentCard;
-import it.polimi.ingsw.common.VirtualView;
+import it.polimi.ingsw.common.ViewInterface;
 import it.polimi.ingsw.messages.toClient.MessageToClient;
 
 import java.util.List;
@@ -16,7 +16,7 @@ public class LoadDevelopmentCardsMessage extends MessageToClient {
     }
 
     @Override
-    public void handleMessage(VirtualView view) {
+    public void handleMessage(ViewInterface view) {
         view.loadDevelopmentCards(lightDevCards);
     }
 }

@@ -2,6 +2,9 @@ package it.polimi.ingsw.common;
 
 import java.util.List;
 
+/**
+ * Light representation of a {@link it.polimi.ingsw.model.cards.DevelopmentCard}
+ */
 public class LightDevelopmentCard extends LightCard{
 
     private String flagColor;

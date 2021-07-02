@@ -1,6 +1,6 @@
 package it.polimi.ingsw.messages.toClient.game;
 
-import it.polimi.ingsw.common.VirtualView;
+import it.polimi.ingsw.common.ViewInterface;
 import it.polimi.ingsw.messages.toClient.MessageToClient;
 
 import java.util.List;
@@ -19,7 +19,7 @@ public class ChooseLeaderCardsRequest extends MessageToClient {
     }
 
     @Override
-    public void handleMessage(VirtualView view) {
+    public void handleMessage(ViewInterface view) {
         view.displayChooseLeaderCardsRequest(leaderCardsIDs);
     }
 

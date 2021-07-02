@@ -1,6 +1,6 @@
 package it.polimi.ingsw.messages.toClient;
 
-import it.polimi.ingsw.common.VirtualView;
+import it.polimi.ingsw.common.ViewInterface;
 
 public class TimeoutExpiredMessage extends MessageToClient{
 
@@ -9,7 +9,7 @@ public class TimeoutExpiredMessage extends MessageToClient{
     }
 
     @Override
-    public void handleMessage(VirtualView view) {
+    public void handleMessage(ViewInterface view) {
         view.displayTimeoutExpiredMessage();
     }
 }

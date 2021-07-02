@@ -7,6 +7,9 @@ import it.polimi.ingsw.enumerations.GameMode;
 
 import java.io.Serializable;
 
+/**
+ * Interface for {@link it.polimi.ingsw.server.ClientHandler}
+ */
 public interface ClientHandlerInterface {
     /**
      * Method used to send message to the client, through an object stream

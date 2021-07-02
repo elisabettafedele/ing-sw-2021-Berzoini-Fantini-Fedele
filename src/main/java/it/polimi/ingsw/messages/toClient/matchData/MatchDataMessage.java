@@ -1,6 +1,6 @@
 package it.polimi.ingsw.messages.toClient.matchData;
 
-import it.polimi.ingsw.common.VirtualView;
+import it.polimi.ingsw.common.ViewInterface;
 import it.polimi.ingsw.messages.toClient.MessageToClient;
 
 public abstract class MatchDataMessage extends MessageToClient {
@@ -12,7 +12,7 @@ public abstract class MatchDataMessage extends MessageToClient {
     }
 
     @Override
-    public void handleMessage(VirtualView view) {
+    public void handleMessage(ViewInterface view) {
         view.update(this);
     }
 

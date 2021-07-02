@@ -1,6 +1,6 @@
 package it.polimi.ingsw.messages.toClient;
 
-import it.polimi.ingsw.common.VirtualView;
+import it.polimi.ingsw.common.ViewInterface;
 
 public class TextMessage extends MessageToClient{
     private String message;
@@ -11,7 +11,7 @@ public class TextMessage extends MessageToClient{
     }
 
     @Override
-    public void handleMessage(VirtualView view) {
+    public void handleMessage(ViewInterface view) {
         view.displayMessage(message);
     }
 }
