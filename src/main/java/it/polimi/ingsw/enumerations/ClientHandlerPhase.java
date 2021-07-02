@@ -1,5 +1,8 @@
 package it.polimi.ingsw.enumerations;
 
+/**
+ * All the status in which a client can find himself
+ */
 public enum ClientHandlerPhase {
     WAITING_GAME_MODE,
     WAITING_NICKNAME,

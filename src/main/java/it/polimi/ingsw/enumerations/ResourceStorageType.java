@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Enumeration to list all the possible depots present in the game
+ */
 public enum ResourceStorageType {
     WAREHOUSE_FIRST_DEPOT(0), WAREHOUSE_SECOND_DEPOT(1), WAREHOUSE_THIRD_DEPOT(2), WAREHOUSE(3), STRONGBOX(4), LEADER_DEPOT(5);
     private int value;
@@ -30,11 +33,5 @@ public enum ResourceStorageType {
         for (int i = 0; i < 3; i++)
             depots.add(valueOf(i).name());
         return depots;
-    }
-
-    public static int getIndexByString(String depot){
-        if (ResourceStorageType.valueOf(depot).getValue() < 3)
-            return ResourceStorageType.valueOf(depot).getValue();
-        return LEADER_DEPOT.getValue();
     }
 }
