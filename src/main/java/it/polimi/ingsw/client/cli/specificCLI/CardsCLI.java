@@ -35,7 +35,7 @@ public class CardsCLI {
         }
         boolean done=false;
         while(!done){
-            selection = InputParser.getInt("Error: write a number.");
+            selection = InputParser.getInt();
             if (selection == null)
                 return;
             if(selection>=0&&selection<3){

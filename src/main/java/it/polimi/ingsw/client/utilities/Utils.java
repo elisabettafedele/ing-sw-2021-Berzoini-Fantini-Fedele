@@ -3,6 +3,9 @@ package it.polimi.ingsw.client.utilities;
 import java.util.List;
 import java.util.regex.Pattern;
 
+/**
+ * Class with some useful methods used among the program
+ */
 public class Utils {
     private static final String zeroTo255 = "([01]?[0-9]{1,2}|2[0-4][0-9]|25[0-5])";
     private static final String IP_REGEXP = "^(" + zeroTo255 + "\\." + zeroTo255 + "\\." + zeroTo255 + "\\." + zeroTo255 + ")$";
@@ -15,6 +18,8 @@ public class Utils {
     public static boolean portIsValid(int port){
         return port >= 1024 && port <= 65535;
     }
+
+    //TODO
     public static boolean isACorrectReorganizeDepotCommand(String command, List<String> availableDepots){
         String commands [] = command.split(" ");
         String name = commands[0];

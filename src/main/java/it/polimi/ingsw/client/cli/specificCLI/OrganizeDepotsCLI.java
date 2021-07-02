@@ -4,7 +4,7 @@ import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.cli.CLI;
 import it.polimi.ingsw.client.cli.graphical.Colour;
 import it.polimi.ingsw.client.cli.graphical.Screen;
-import it.polimi.ingsw.client.utilities.Command;
+import it.polimi.ingsw.client.utilities.ReorganizeDepotsCommand;
 import it.polimi.ingsw.client.utilities.InputParser;
 import it.polimi.ingsw.client.utilities.UtilityPrinter;
 import it.polimi.ingsw.enumerations.Resource;
@@ -42,9 +42,9 @@ public class OrganizeDepotsCLI {
         List<String> textCommands = new ArrayList<>();
         if (canDiscard) {
             System.out.println("Type d to discard the resource" + (canReorganize ? " or r to reorganize your depots: d | r" : ": d"));
-            textCommands.add(Command.DISCARD.command);
+            textCommands.add(ReorganizeDepotsCommand.DISCARD.command);
             if (canReorganize)
-                textCommands.add(Command.REORGANIZE.command);
+                textCommands.add(ReorganizeDepotsCommand.REORGANIZE.command);
         }
         String choiceString = null;
         try {
@@ -54,9 +54,9 @@ public class OrganizeDepotsCLI {
         }
         if (choiceString == null)
             return;
-        if (choiceString.equals(Command.DISCARD.command))
+        if (choiceString.equals(ReorganizeDepotsCommand.DISCARD.command))
             client.sendMessageToServer(new DiscardResourceRequest(resource));
-        else if (choiceString.equals(Command.REORGANIZE.command))
+        else if (choiceString.equals(ReorganizeDepotsCommand.REORGANIZE.command))
             client.sendMessageToServer(new ReorganizeDepotRequest());
         else
             client.sendMessageToServer(new ChooseStorageTypeResponse(resource, choiceString, canDiscard, canReorganize));
@@ -92,7 +92,7 @@ public class OrganizeDepotsCLI {
                 System.out.println("3. LEADER DEPOT");
             }
             System.out.println("Where would you like to remove it? Select the relative number:");
-            Integer selection = InputParser.getInt("Error: write a number.");
+            Integer selection = InputParser.getInt();
             if (selection == null)
                 return;
             if (selection == 1 && isInWarehouse) {
@@ -121,20 +121,20 @@ public class OrganizeDepotsCLI {
      */
     public static void displayReorganizeDepotsRequest(Client client, List<String> depots, boolean first, boolean failure, List<Resource> availableLeaderResources) {
         if (first)
-            System.out.print("You can now reorganize your depots with the command" + Command.SWAP.command + " or " + Command.MOVE.command + "\n- " + Command.SWAP + ": realizes a swap of two depots of the warehouse which contain different resource types\n- " + Command.MOVE + ": move a certain number of resources from one depot to another (be careful because the leader depots have a fixed resource type)\nIf you have finished type " + Command.END_REORGANIZE_DEPOTS.command + "\n");
+            System.out.print("You can now reorganize your depots with the command" + ReorganizeDepotsCommand.SWAP.command + " or " + ReorganizeDepotsCommand.MOVE.command + "\n- " + ReorganizeDepotsCommand.SWAP + ": realizes a swap of two depots of the warehouse which contain different resource types\n- " + ReorganizeDepotsCommand.MOVE + ": move a certain number of resources from one depot to another (be careful because the leader depots have a fixed resource type)\nIf you have finished type " + ReorganizeDepotsCommand.END_REORGANIZE_DEPOTS.command + "\n");
         if (failure)
             System.out.println("Invalid reorganization: check the capacity and the type of the depots before reorganizing.");
-        List<String> possibleCommands = Command.getReorganizeDepotsCommands();
+        List<String> possibleCommands = ReorganizeDepotsCommand.getReorganizeDepotsCommands();
         possibleCommands.addAll(depots);
         Resource resource = Resource.ANY;
-        System.out.println("Do you want to swap or move your resources? Type " + Command.END_REORGANIZE_DEPOTS.command + " if you want to end the reorganization of your depots");
-        System.out.println(Command.SWAP.command + " | " + Command.MOVE.command + " | " + Command.END_REORGANIZE_DEPOTS.command);
+        System.out.println("Do you want to swap or move your resources? Type " + ReorganizeDepotsCommand.END_REORGANIZE_DEPOTS.command + " if you want to end the reorganization of your depots");
+        System.out.println(ReorganizeDepotsCommand.SWAP.command + " | " + ReorganizeDepotsCommand.MOVE.command + " | " + ReorganizeDepotsCommand.END_REORGANIZE_DEPOTS.command);
         String commandType = InputParser.getString("Please insert a valid command", CLI.conditionOnString(possibleCommands));
-        if (commandType.equals(Command.END_REORGANIZE_DEPOTS.command)) {
+        if (commandType.equals(ReorganizeDepotsCommand.END_REORGANIZE_DEPOTS.command)) {
             client.sendMessageToServer(new NotifyEndDepotsReorganization());
             return;
         }
-        System.out.println("Select the " + (commandType.equals(Command.SWAP.command) ? "first" : "origin") + " depot:");
+        System.out.println("Select the " + (commandType.equals(ReorganizeDepotsCommand.SWAP.command) ? "first" : "origin") + " depot:");
         UtilityPrinter.printNumericList(depots);
         String originDepot = null;
         try {
@@ -142,7 +142,7 @@ public class OrganizeDepotsCLI {
         } catch (IOException e) {
             return;
         }
-        System.out.println("Select the " + (commandType.equals(Command.SWAP.command) ? "second" : "destination") + " depot:");
+        System.out.println("Select the " + (commandType.equals(ReorganizeDepotsCommand.SWAP.command) ? "second" : "destination") + " depot:");
         UtilityPrinter.printNumericList(depots);
         String destinationDepot = null;
         try {
@@ -150,7 +150,7 @@ public class OrganizeDepotsCLI {
         } catch (IOException e) {
             return;
         }
-        if (commandType.equals(Command.SWAP.command))
+        if (commandType.equals(ReorganizeDepotsCommand.SWAP.command))
             client.sendMessageToServer(new SwapWarehouseDepotsRequest(originDepot, destinationDepot));
         else {
             System.out.print("Select the quantity of the resources you want to move: ");

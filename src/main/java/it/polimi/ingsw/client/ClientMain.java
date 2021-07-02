@@ -18,7 +18,7 @@ public class ClientMain {
         else{
             if(CLI_ARGUMENT.equals(args[0])) CLI.main(args);
             else if(HELP_ARGUMENT.equals(args[0])) System.out.println("Insert " + CLI_ARGUMENT + " to start the game in command line interface mode, otherwise don't insert anything to start the GUI.");
-            else System.out.println("Command not found, insert " + HELP_ARGUMENT + " to see the available graphical interface options.");
+            else System.out.println("ReorganizeDepotsCommand not found, insert " + HELP_ARGUMENT + " to see the available graphical interface options.");
             }
     }
 

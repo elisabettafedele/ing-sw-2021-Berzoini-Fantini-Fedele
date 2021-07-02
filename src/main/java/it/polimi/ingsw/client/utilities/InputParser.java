@@ -8,113 +8,19 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.function.Predicate;
 
+/**
+ * Class to manage the input given by the user when using the {@link CLI}
+ */
 public class InputParser {
     private static BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     private static boolean read = false;
 
-    /*
-    public static String getLine() {
-        in = new Scanner(System.in);
-        while (!in.hasNextLine()){}
-        String input = in.nextLine();
-        in.close();
-        return input;
-    }
-
-    public static String getString(String errorMessage, Predicate<String> condition){
-        String line;
-        in = new Scanner(System.in);
-        do{
-            line = in.nextLine();
-            if (condition.test(line)) {
-                in.close();
-                return line;
-            }
-            else
-                System.out.println(errorMessage);
-        } while (true);
-
-    }
-
-    public static Integer getInt(String errorMessage){
-        in = new Scanner(System.in);
-        Integer num = null;
-        while (!in.hasNextInt()) {
-            System.out.println(errorMessage);
-            in.next();
-        }
-        num = in.nextInt();
-        in.close();
-        return num;
-    }
-
-    public static void flush(){
-        String input;
-        try{
-            input = in.nextLine();
-            if (input.equals(""))
-                return;
-            while (in.hasNext() && !in.nextLine().equals("")){}
-            in.next();
-        } catch (NoSuchElementException e){
-            return;
-        }
-    }
-
-    public static int getInt(String errorMessage, Predicate<Integer> condition){
-        int num;
-        in = new Scanner(System.in);
-        boolean failure = false;
-        do {
-            if (failure)
-                System.out.println(errorMessage);
-            while (!in.hasNextInt()) {
-                System.out.println("Please insert an integer value");
-                in.next();
-            }
-            num = in.nextInt();
-            failure = true;
-        } while (!condition.test(num));
-        in.close();
-        return num;
-    }
-
-    public static String getCommandFromList(List<String> commands){
-        return commands.get(getInt("Please insert a valid command", CLI.conditionOnIntegerRange(1, commands.size()))-1);
-    }
-
-    public static String getCommandFromList(List<String> textCommands, List<String> intCommands){
-        return getCommand(CLI.conditionOnIntegerRange(1, intCommands.size()), textCommands, intCommands, "Please insert a valid command");
-    }
-
-    public static String getCommand(Predicate integerPredicate, List<String> textCommands, List<String> intCommands, String errorMessage){
-        if (textCommands.isEmpty())
-            return getCommandFromList(intCommands);
-        while (true) {
-            String command = getLine();
-            if (textCommands.contains(command))
-                return command;
-            try {
-                if (integerPredicate.test(Integer.parseInt(command)))
-                    return intCommands.get(Integer.parseInt(command) - 1);
-                else
-                    System.out.println(errorMessage);
-            } catch (NumberFormatException e){ System.out.println(errorMessage);}
-            //finally {
-            //   System.out.println(errorMessage);
-            //}
-        }
-    }
-
-
-
-
-
-
-*/
-
     private static final BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
 
+    /**
+     * Method to read a line
+     * @return the line read from the InputParser
+     */
     public static String getLine(){
         String line;
 
@@ -136,6 +42,12 @@ public class InputParser {
         return line;
     }
 
+    /**
+     * Get a line from the terminal with a condition to be respected
+     * @param errorMessage the message to display if the string does not correspond
+     * @param condition the conditions to respect when inserting a line in the terminal
+     * @return the string read from the InputParser
+     */
     public static String getString(String errorMessage, Predicate<String> condition){
         String line;
         do{
@@ -147,7 +59,11 @@ public class InputParser {
         } while (true);
     }
 
-    public static Integer getInt(String errorMessage){
+    /**
+     * Method to read an int from the terminal
+     * @return the Integer selected
+     */
+    public static Integer getInt(){
         String numString;
         Integer num = null;
         boolean done = false;
@@ -176,6 +92,12 @@ public class InputParser {
         return num;
     }
 
+    /**
+     * Method to get an int by a given condition
+     * @param errorMessage the message to display if the condition is not respected
+     * @param condition the condition to be respected when inserting an integer
+     * @return the integer read form the InputParser
+     */
     public static Integer getInt(String errorMessage, Predicate<Integer> condition){
         String numString;
         Integer num = null;
@@ -211,6 +133,7 @@ public class InputParser {
         return num;
     }
 
+    //TODO
     public static String getCommandFromList(List<String> commands) throws IOException {
         Integer selection = getInt("Please insert a valid command", CLI.conditionOnIntegerRange(1, commands.size()));
         if (selection == null){
@@ -219,10 +142,12 @@ public class InputParser {
         return commands.get(selection-1);
     }
 
+    //TODO
     public static String getCommandFromList(List<String> textCommands, List<String> intCommands) throws IOException {
         return getCommand(CLI.conditionOnIntegerRange(1, intCommands.size()), textCommands, intCommands, "Please insert a valid command");
     }
 
+    //TODO
     public static String getCommand(Predicate integerPredicate, List<String> textCommands, List<String> intCommands, String errorMessage) throws IOException {
         if (textCommands.isEmpty())
             return getCommandFromList(intCommands);
