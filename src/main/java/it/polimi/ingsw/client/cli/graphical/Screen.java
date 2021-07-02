@@ -378,7 +378,13 @@ public class Screen extends GraphicalElement{
 
     }
 
-
+    /**
+     * Method to display only a section of the screen
+     * @param x_start the i-start of the section
+     * @param x_end the i-end of the section
+     * @param y_start the j-start of the section
+     * @param y_end the j-end of the section
+     */
     private void displayASection(int x_start, int x_end, int y_start, int y_end) {
         for(int i = x_start; i < x_end; i++){
             for(int j = y_start; j < y_end; j++){
