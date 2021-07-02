@@ -28,7 +28,7 @@
 
 ## Setup
 
-- In the [Deliverables](Deliverables) folder there are two multi-platform jar files, one to set the Server up and the other one to start the Client.
+- In the [Deliverables](Deliverables) folder there are two multi-platform jar files, one to set the Server up, and the other one to start the Client.
 - The Server can be run with the following command, as default it runs on port 1234:
     ```shell
     > java -jar MasterOfReinassanceServer.jar

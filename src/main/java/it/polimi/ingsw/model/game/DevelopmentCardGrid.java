@@ -23,8 +23,6 @@ public class DevelopmentCardGrid {
 
     /**
      * Class constructor. Generates, randomly, the 12 decks of 4 cards according to their {@link Flag}
-     * @throws UnsupportedEncodingException
-     * @throws InvalidArgumentException
      */
     public DevelopmentCardGrid(){
         cardGrid = new Stack[LEVEL][COLOR];

@@ -78,7 +78,7 @@ public class ActivateProductionAction implements Action{
                 activationCost = developmentCard.getProduction().getProductionPower().get(0).getResourceValue();
             } catch (ValueNotPresentException e) {
                 e.printStackTrace();
-                Server.SERVER_LOGGER.log(Level.WARNING, "The Development card " + developmentCard.toString() + "" +
+                Server.SERVER_LOGGER.log(Level.WARNING, "The Development card " + developmentCard.getID() + "" +
                         "has no Production Effect. Removing from the list of cards present in the action");
                developmentCardIterator.remove();
             }
@@ -96,7 +96,7 @@ public class ActivateProductionAction implements Action{
                 activationCost = leaderCard.getEffect().getProductionEffect().getProductionPower().get(0).getResourceValue();
             } catch (ValueNotPresentException | DifferentEffectTypeException e) {
                 e.printStackTrace();
-                Server.SERVER_LOGGER.log(Level.WARNING, "The Leader card " + leaderCard.toString() + "" +
+                Server.SERVER_LOGGER.log(Level.WARNING, "The Leader card " + leaderCard.getID() + "" +
                         "has no Production Effect. Removing from the list of cards present in the action");
                 leaderCardIterator.remove();
             }
@@ -142,7 +142,7 @@ public class ActivateProductionAction implements Action{
                     availableProductionPowers.put(developmentCard.getID(), developmentCard.getProduction().getProductionPower());
             } catch (ValueNotPresentException e) {
                 e.printStackTrace();
-                Server.SERVER_LOGGER.log(Level.WARNING, "The Development card " + developmentCard.toString() + "" +
+                Server.SERVER_LOGGER.log(Level.WARNING, "The Development card " + developmentCard.getID() + "" +
                         "has no Production Effect. Removing from the list of cards present in the action");
                 developmentCardIterator.remove();
             }
@@ -159,7 +159,7 @@ public class ActivateProductionAction implements Action{
                     availableProductionPowers.put(leaderCard.getID(), leaderCard.getEffect().getProductionEffect().getProductionPower());
             } catch (ValueNotPresentException | DifferentEffectTypeException e) {
                 e.printStackTrace();
-                Server.SERVER_LOGGER.log(Level.WARNING, "The Leader card " + leaderCard.toString() + "" +
+                Server.SERVER_LOGGER.log(Level.WARNING, "The Leader card " + leaderCard.getID() + "" +
                         "has no Production Effect. Removing from the list of cards present in the action");
                 leaderCardIterator.remove();
             }
@@ -274,7 +274,7 @@ public class ActivateProductionAction implements Action{
     /**
      * Add the production produced or used for the productions to a Map.
      * @param value the input or the output of a production power.
-     * @param resourceToManage the map where the input or ouput of a production power has to be added.
+     * @param resourceToManage the map where the input or output of a production power has to be added.
      * @return the number of faith points produced, if any.
      */
     private int manageCost(Value value, Map<Resource, Integer> resourceToManage) {

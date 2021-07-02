@@ -24,7 +24,7 @@ public class Value implements Serializable {
      * @param flagValue the {@link Flag} of the activation cost
      * @param resourceValue the type and quantity of the {@link Resource}
      * @param faithValue the quantity of Faith Points
-     * @throws InvalidArgumentException
+     * @throws InvalidArgumentException if a negative faith value is inserted
      */
     public Value(Map<Flag, Integer> flagValue, Map<Resource, Integer> resourceValue, int faithValue) throws InvalidArgumentException {
         if (faithValue < 0 ){

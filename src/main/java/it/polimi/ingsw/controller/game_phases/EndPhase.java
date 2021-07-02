@@ -18,7 +18,7 @@ public abstract class EndPhase implements GamePhase {
 
     /**
      * Every message in the end phase is ignored, it should not be received
-     * @param message the message to hanlde
+     * @param message the message to handle
      * @param clientHandler the {@link ClientHandler} related to the client that has sent the message
      */
     public void handleMessage(MessageToServer message, ClientHandler clientHandler){

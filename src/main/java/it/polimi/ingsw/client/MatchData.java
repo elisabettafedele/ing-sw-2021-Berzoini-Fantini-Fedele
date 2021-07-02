@@ -143,7 +143,7 @@ public class MatchData {
     /**
      * Return a {@link LightDevelopmentCard} given an ID
      * @param ID the ID that identifies the Card
-     * @return the {@link LightDevelopmentCard} corresponfing of a given ID, null if the ID is not correct
+     * @return the {@link LightDevelopmentCard} corresponding of a given ID, null if the ID is not correct
      */
     public LightDevelopmentCard getDevelopmentCardByID(Integer ID){
         for (LightDevelopmentCard ldc : lightDevelopmentCards){
@@ -157,7 +157,7 @@ public class MatchData {
     /**
      * Return a {@link LightLeaderCard} given an ID
      * @param ID the ID that identifies the Card
-     * @return the {@link LightLeaderCard} corresponfing of a given ID, null if the ID is not correct
+     * @return the {@link LightLeaderCard} corresponding of a given ID, null if the ID is not correct
      */
     public LightLeaderCard getLeaderCardByID(int ID){
         for (LightLeaderCard lc : lightLeaderCards){

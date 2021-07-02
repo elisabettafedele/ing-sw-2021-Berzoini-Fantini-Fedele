@@ -143,8 +143,6 @@ public class Client implements ClientInterface {
         } catch (IOException | ClassNotFoundException e){
             pinger.interrupt();
             packetReceiver.interrupt();
-        } finally {
-            //closeSocket();
         }
     }
 

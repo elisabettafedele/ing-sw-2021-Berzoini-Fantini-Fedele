@@ -99,13 +99,13 @@ public class LeaderCardParser {
      * @throws InvalidArgumentException
      */
     private static Effect effectParser(EffectType effectType, JsonObject card) throws InvalidArgumentException {
-        if (effectType.equals(effectType.DISCOUNT))
+        if (effectType.equals(EffectType.DISCOUNT))
             return new Effect(Resource.valueOf(card.get("resource").getAsString()));
-        if (effectType.equals(effectType.EXTRA_DEPOT))
+        if (effectType.equals(EffectType.EXTRA_DEPOT))
             return new Effect(new ExtraDepot(new LeaderDepot(Resource.valueOf(card.get("resource").getAsString()))));
-        if (effectType.equals(effectType.WHITE_MARBLE))
+        if (effectType.equals(EffectType.WHITE_MARBLE))
             return new Effect(Marble.valueOf(card.get("marble").getAsString()));
-        if (effectType.equals(effectType.PRODUCTION))
+        if (effectType.equals(EffectType.PRODUCTION))
             return new Effect(new Production(ValueParser.parseValue(card.get("productionCost").getAsJsonArray()), ValueParser.parseValue(card.get("productionOutput").getAsJsonArray())));
         throw new InvalidArgumentException ();
     }

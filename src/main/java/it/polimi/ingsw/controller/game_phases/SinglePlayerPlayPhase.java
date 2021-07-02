@@ -44,7 +44,7 @@ public class SinglePlayerPlayPhase extends PlayPhase {
      * @param lastPlayer it represents the last player that has performed a valid turn. It can be LORENZO or the nickname of the single player
      * @param isEndTriggered true if the game was end triggered before the disconnection
      * @param blackCrossPosition the position of the black cross
-     * @param tokens
+     * @param tokens the queue of tokens
      */
     public SinglePlayerPlayPhase(Controller controller, String lastPlayer, boolean isEndTriggered, int blackCrossPosition, List<Integer> tokens){
         setController(controller);

@@ -67,7 +67,7 @@ public abstract class Card implements Serializable {
 
 
     /**
-     * @return true if the card has already beeen used
+     * @return true if the card has already been used
      */
     public boolean getUsed(){
         return used;

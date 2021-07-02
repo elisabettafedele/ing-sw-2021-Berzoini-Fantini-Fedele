@@ -110,6 +110,6 @@ public class WarehouseDepot extends Depot {
 
 
     public String toString(int depotNumber){
-        return "Depot " + Integer.toString(depotNumber) + ": resource=" + this.getResourceType() + ", quantity=" + this.getResourceQuantity();
+        return "Depot " + depotNumber + ": resource=" + this.getResourceType() + ", quantity=" + this.getResourceQuantity();
     }
 }

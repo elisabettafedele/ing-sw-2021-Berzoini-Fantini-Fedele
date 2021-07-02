@@ -41,7 +41,7 @@ public class LobbyCLI {
                 System.out.println("Invalid IP address: enter x.x.x.x where x is called an octet and must be a decimal value between 0 and 255. Enter d for default configuration: ");
             IPAddress = InputParser.getLine();
             firstTry = false;
-            if (IPAddress.toLowerCase().equals("d")){
+            if (IPAddress.equalsIgnoreCase("d")){
                 IPAddress = DEFAULT_ADDRESS;
                 port = DEFAULT_PORT;
                 return new Client(IPAddress, port, cli);

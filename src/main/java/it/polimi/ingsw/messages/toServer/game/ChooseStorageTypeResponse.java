@@ -4,10 +4,6 @@ import it.polimi.ingsw.common.ClientHandlerInterface;
 import it.polimi.ingsw.common.ServerInterface;
 import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.messages.toServer.MessageToServer;
-import it.polimi.ingsw.server.Server;
-
-import javax.swing.*;
-import java.util.logging.Level;
 
 public class ChooseStorageTypeResponse implements MessageToServer {
     private Resource resource;

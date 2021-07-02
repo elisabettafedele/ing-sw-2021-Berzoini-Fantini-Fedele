@@ -95,7 +95,7 @@ public class UtilityProduction {
 
     /**
      * Add the production power selected to a list
-     * @param selection the ID of the production power selcted
+     * @param selection the ID of the production power selected
      */
     public static void addProductionPower(Integer selection) {
         actualChosenProduction = availableProductionPowers.get(selection);
@@ -131,7 +131,7 @@ public class UtilityProduction {
 
     /**
      * Add the production power selected to a list
-     * @param selection the ID of the production power selcted
+     * @param selection the ID of the production power selected
      */
     public static void addProdPowerToList(int selection){
         selectedProductions.put(selection, actualChosenProduction);

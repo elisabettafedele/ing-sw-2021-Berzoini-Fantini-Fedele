@@ -15,8 +15,6 @@ public class ReloadMatchData extends MessageToClient {
     @Override
     public void handleMessage(VirtualView view) {
         view.setIsReloading(start);
-        //if (!start)
-        //    view.displayStandardView();
     }
 
     public String toString(){
