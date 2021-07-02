@@ -20,7 +20,6 @@ public class NumberOfPlayersResponse implements MessageToServer {
     public void handleMessage(ServerInterface server, ClientHandlerInterface clientHandler) {
         if (clientHandler.getClientHandlerPhase() == ClientHandlerPhase.WAITING_NUMBER_OF_PLAYERS) {
             clientHandler.sendMessageToClient(new WaitingInTheLobbyMessage());
-            //TODO message matchmaking
             clientHandler.setClientHandlerPhase(ClientHandlerPhase.WAITING_IN_THE_LOBBY);
             clientHandler.setNumberOfPlayersForNextGame(numberOfPlayers);
         }
