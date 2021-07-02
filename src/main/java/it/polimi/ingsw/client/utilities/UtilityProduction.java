@@ -153,7 +153,7 @@ public class UtilityProduction {
             e.printStackTrace();
         }
         for(Map.Entry<Resource, Integer> entry : resourceToBeRemoved.entrySet()){
-            availableResources.put(entry.getKey(), availableResources.get(entry.getKey()) - entry.getValue()); //TODO: there was -1 instead of entry.getValue()
+            availableResources.put(entry.getKey(), availableResources.get(entry.getKey()) - entry.getValue());
         }
         if(view instanceof CLI) ((CLI) view).displayCurrentSelectedProductions(selectedProductions.keySet(),selectedProductions.get(0));
         view.chooseNextProductionAction();
@@ -164,7 +164,7 @@ public class UtilityProduction {
      */
     public static void confirmChoices() {
         List<Integer> productionPowersSelected= new ArrayList<>(selectedProductions.keySet());
-        //TODO: new
+
         List<Integer> leaderProductionPower = productionPowersSelected.stream().filter(x -> x >= 61).collect(Collectors.toList());
         ChooseProductionPowersResponse cppr;
 

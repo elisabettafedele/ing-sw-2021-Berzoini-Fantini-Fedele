@@ -53,7 +53,7 @@ public class Client implements ClientInterface {
 
     private boolean gameCanceled = false;
 
-    //TODO
+    //TODO: JavaDoc
     public Client(String IPAddress, int port, View view, Optional<GameMode> gameMode, Optional<String> nickname){
         this.gameMode = gameMode;
         this.nickname = nickname;

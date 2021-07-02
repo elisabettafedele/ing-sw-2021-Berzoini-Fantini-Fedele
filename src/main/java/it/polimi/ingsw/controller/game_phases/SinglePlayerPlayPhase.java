@@ -121,10 +121,9 @@ public class SinglePlayerPlayPhase extends PlayPhase {
     }
 
     /**
-     * //TODO  Raffa finire
-     * Method to get the right card to remove (the one with the lowest level)
-     * @param availableCards
-     * @return
+     * Method to get the card with the lower level between a list of card with the same colour
+     * @param availableCards the card to analyze
+     * @return the {@link DevelopmentCard} with the lowest level between the given ones
      */
     private DevelopmentCard getLowerCard(List<DevelopmentCard> availableCards) {
         DevelopmentCard lowerDevelopmentCard = availableCards.get(0);
