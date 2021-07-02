@@ -71,7 +71,9 @@ public class SetupSceneController {
     private TextField nicknameField;
 
 
-
+    /**
+     * Initializes scene's viewed Vbox and all controller's inner variables
+     */
     @FXML
     public void initialize() {
         TextFormatter<Integer> textFormatter = new TextFormatter<>(integerFilter);
@@ -101,6 +103,10 @@ public class SetupSceneController {
         this.client=client;
     }
 
+    /**
+     * Event handler that instantiates Client
+     * @param actionEvent pressed button event
+     */
     @FXML
     public void handleConnectButton(ActionEvent actionEvent) {
         Platform.runLater(new Runnable() {
@@ -119,18 +125,31 @@ public class SetupSceneController {
 
     }
 
+    /**
+     * Event handler that sends nickname to Server
+     * @param actionEvent pressed button event
+     */
     @FXML
     public void handleSendNicknameButton(ActionEvent actionEvent) {
         client.setNickname(nicknameField.getText());
         client.sendMessageToServer(new NicknameResponse(nicknameField.getText()));
     }
 
+    /**
+     * Event handler that checks for ip to be correct
+     * @param keyEvent changed textField event
+     */
     @FXML
     public void ipChanged(KeyEvent keyEvent) {
         boolean hasInsertedValidIp = Utils.IPAddressIsValid(ipTextField.getText());
         validationMap.put(ipTextField, hasInsertedValidIp);
         validateConnectFields();
     }
+
+    /**
+     * Event handler that checks for port to be correct
+     * @param keyEvent changed textField event
+     */
     @FXML
     public void portChanged(KeyEvent keyEvent) {
         boolean hasInsertedValidPort=false;
@@ -141,6 +160,10 @@ public class SetupSceneController {
         validationMap.put(portTextField, hasInsertedValidPort);
         validateConnectFields();
     }
+
+    /**
+     * Checks if both port and ip are correct and enables Connect button if check is successful
+     */
     private void validateConnectFields() {
         if (validationMap.values().stream().filter(valid -> valid.equals(Boolean.FALSE)).findFirst().orElse(true)) {
             connectButton.setDisable(false);
@@ -148,6 +171,10 @@ public class SetupSceneController {
             connectButton.setDisable(true);
         }
     }
+
+    /**
+     * Displays Game Mode selection's Vbox
+     */
     public void selectGameMode(){
         Platform.runLater( new Runnable() {
             @Override
@@ -161,17 +188,32 @@ public class SetupSceneController {
         });
 
     }
+
+    /**
+     * Event handler that sends to Server selected game mode (single player)
+     * @param actionEvent pressed button event
+     */
     @FXML
     public void handleSingleplayerButton(ActionEvent actionEvent) {
         client.setGameMode(GameMode.SINGLE_PLAYER);
         client.sendMessageToServer(new GameModeResponse(GameMode.SINGLE_PLAYER));
     }
+
+    /**
+     * Event handler that sends to Server selected game mode (multi player)
+     * @param actionEvent pressed button event
+     */
     @FXML
     public void handleMultiplayerButton(ActionEvent actionEvent) {
         client.setGameMode(GameMode.MULTI_PLAYER);
         client.sendMessageToServer(new GameModeResponse(GameMode.MULTI_PLAYER));
     }
 
+    /**
+     * Displays Nickname request's Vbox
+     * @param isRetry if user already put an incorrect nickname
+     * @param alreadyTaken if user already put an already used nickname
+     */
     public void displayNicknameRequest(Boolean isRetry, Boolean alreadyTaken){
         Platform.runLater(new Runnable() {
             @Override
@@ -191,6 +233,10 @@ public class SetupSceneController {
             }
         });
     }
+
+    /**
+     * Displays Number of players request's Vbox
+     */
     public void displayNumberOfPlayersRequest(){
         Platform.runLater(new Runnable() {
             @Override
@@ -206,18 +252,20 @@ public class SetupSceneController {
             }
         });
     }
+
+    /**
+     * Sends to server chosen number of players
+     * @param actionEvent button pressed event
+     */
     @FXML
     public void onNumOfPlayersChoiceBoxChosenButton(ActionEvent actionEvent) {
         String value =(String) numOfPlayersChoiceBox.getValue();
         client.sendMessageToServer(new NumberOfPlayersResponse(Integer.parseInt(value)));
     }
 
-
-    @FXML
-    public void nicknameChanged(KeyEvent keyEvent) {
-        //TODO se si decide che serve
-    }
-
+    /**
+     * Displays Waiting in the lobby's Vbox
+     */
     public void displayWaitingInTheLobbyMessage(){
         Platform.runLater(new Runnable() {
             @Override
@@ -232,6 +280,9 @@ public class SetupSceneController {
         });
     }
 
+    /**
+     * Displays Waiting in the lobby's Vbox, changing main message to ready players' message
+     */
     public void displayPlayersReadyToStartMessage(List<String> players) {
         Platform.runLater(new Runnable() {
             @Override
@@ -261,6 +312,10 @@ public class SetupSceneController {
         });
     }
 
+    /**
+     * Displays a message warning the user that server is disconnected
+     * @param wasConnected true if player was connected to server
+     */
     public void handleCloseConnection(boolean wasConnected) {
         Platform.runLater(new Runnable() {
             @Override

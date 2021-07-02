@@ -140,6 +140,10 @@ public class GameSceneController {
     // *********************************************************************  //
     //                        INITIALIZING FUNCTIONS                          //
     // *********************************************************************  //
+
+    /**
+     * Initializes all controller's variables, buttons' default event handlers, choices hashmaps and
+     */
     @FXML
     public void initialize() {
         selectedResources=new ArrayList<>();
@@ -277,6 +281,12 @@ public class GameSceneController {
     //                           UTILITY FUNCTIONS                            //
     // *********************************************************************  //
 
+    /**
+     * Installs a Tooltip on given node, meaning that when user hovers his mouse on it
+     * the given message is displayed
+     * @param node node to install the tooltip on
+     * @param message message to be displayed
+     */
     private void createTooltip(Node node, String message){
         Tooltip tooltip = new Tooltip(message);
         tooltip.setShowDelay(Duration.seconds(1));
@@ -284,6 +294,11 @@ public class GameSceneController {
         Tooltip.install(node,tooltip);
     }
 
+    /**
+     * Applies a glowing effect on given node
+     * @param nodeToGlow node that will glow
+     * @param color glowing color
+     */
     private void glowNode(Node nodeToGlow,Color color){
         DropShadow borderGlow = new DropShadow();
         int depth = 40;
@@ -292,14 +307,23 @@ public class GameSceneController {
         borderGlow.setOffsetY(0f);
         nodeToGlow.setEffect(borderGlow);
     }
+
+    /**
+     * Turns given node colors to a more grey scale of colors (lower brightness), giving it a 'disabled appearance'
+     * @param nodeToGrey node to be greyed
+     */
     private void greyNode(Node nodeToGrey){
         ColorAdjust colorAdjust=new ColorAdjust();
         colorAdjust.setBrightness(0.4);
         nodeToGrey.setEffect(colorAdjust);
     }
 
-
-
+    /**
+     * Sets the current viewed player to the next on players list, then
+     * updates all view's component to display his personal boards and all
+     * other player's info, basically seeing what he's seeing. It also disable action
+     * selection if it's your turn but you're not viewing your personal board
+     */
     @FXML
     public void onNextPlayerButtonPressed(){
         Platform.runLater(new Runnable() {
@@ -317,6 +341,12 @@ public class GameSceneController {
         });
     }
 
+    /**
+     * Sets the current viewed player to the previous on players list, then
+     * updates all view's component to display his personal boards and all
+     * other player's info, basically seeing what he's seeing. It also disable action
+     * selection if it's your turn but you're not viewing your personal board
+     */
     @FXML
     public void onPreviousPlayerButtonPressed(){
         Platform.runLater(new Runnable() {
@@ -333,6 +363,10 @@ public class GameSceneController {
             }
         });
     }
+
+    /**
+     * disables the ability to look at other players' personal boards while you're performing an action
+     */
     public void disableNextPreviousButtons() {
         greyNode(nextPlayerButton);
         nextPlayerButton.setDisable(true);
@@ -340,6 +374,9 @@ public class GameSceneController {
         previousPlayerButton.setDisable(true);
     }
 
+    /**
+     * enables the ability to look at other players' personal boards
+     */
     public void enableNextPreviousButtons() {
         nextPlayerButton.setEffect(null);
         nextPlayerButton.setDisable(false);
@@ -351,6 +388,10 @@ public class GameSceneController {
     //                        UPDATING VIEW FUNCTIONS                         //
     // *********************************************************************  //
 
+    /**
+     * It calls all minor updating view functions, reading {@link MatchData} for possible changes and updating
+     * the whole view
+     */
     public void updateView() {
         Platform.runLater(new Runnable() {
             @Override
@@ -376,6 +417,10 @@ public class GameSceneController {
 
     }
 
+    /**
+     * based on {@link MatchData} info, it displays players' names, faith track positions and earned victory points,
+     * as well as which player is playing the turn.
+     */
     public void updateMainLabel() {
         Platform.runLater(new Runnable() {
             @Override
@@ -402,6 +447,10 @@ public class GameSceneController {
         });
     }
 
+    /**
+     * based on {@link MatchData} info, it displays the correct development cards owned by the player corresponding to currentPlayerIndex
+     * (the player whose personal board and other info are being displayed, may it be you or another player)
+     */
     private void updateDevelopmentCardsSlots() {
         basicProduction.setVisible(true);
         firstSlot.getChildren().forEach(node -> node.setVisible(false));
@@ -434,6 +483,10 @@ public class GameSceneController {
         }
     }
 
+    /**
+     * based on {@link MatchData} info, it displays the redCross on the correct position in the FaithTrack of the player corresponding to currentPlayerIndex
+     * (the player whose personal board and other info are being displayed, may it be you or another player). It also shows all taken/missed Pope's Tiles.
+     */
     private void updateFaithTrack() {
         int playerPos=matchData.getLightClientByNickname(players.get(currentPlayerIndex)).getFaithTrackPosition();
         if(playerPos>24){
@@ -471,6 +524,10 @@ public class GameSceneController {
         }
     }
 
+    /**
+     * based on {@link MatchData} info, it displays the resources in warehouse and in strongbox of the player corresponding to currentPlayerIndex
+     * (the player whose personal board and other info are being displayed, may it be you or another player)
+     */
     private void updateWarehouseAndStrongboxView() {
         int[] strongbox=matchData.getLightClientByNickname(players.get(currentPlayerIndex)).getStrongbox();
         List<Resource>[] warehouse =matchData.getLightClientByNickname(players.get(currentPlayerIndex)).getWarehouse();
@@ -491,6 +548,11 @@ public class GameSceneController {
         }
     }
 
+    /**
+     * based on {@link MatchData} info, it displays the Leader Cards of the player if user is looking at his own personal
+     * board,with grey LeaderCards for those Loader Cards which are still disabled. If user is looking at someone else's
+     * personal board, only activated Leader Cards are shown, while others are turned on their back.
+     */
     private void updateLeaderCardsView() {
         List<LightLeaderCard> leaderCards =new ArrayList<>();
         for(Integer lcID :matchData.getLightClientByNickname(players.get(currentPlayerIndex)).getOwnedLeaderCards()){
@@ -575,6 +637,9 @@ public class GameSceneController {
         }
     }
 
+    /**
+     * based on {@link MatchData} info, it displays Market's current marbles' layout
+     */
     private void updateMarketView() {
         if(matchData.getMarketTray()!=null){
             for(int row=0;row< 3 ;row++ ){
@@ -586,6 +651,9 @@ public class GameSceneController {
         }
     }
 
+    /**
+     * based on {@link MatchData} info, it displays DevelopmentCardGrid's current cards' layout
+     */
     private void updateDevelopmentCardGridView() {
         List<LightDevelopmentCard> developmentCardGrid =new ArrayList<>();
         List<Integer> gridCardsIDs = matchData.getDevelopmentCardGrid();
@@ -608,6 +676,12 @@ public class GameSceneController {
     //                   TURN (SELECT ACTION) FUNCTIONS                       //
     // *********************************************************************  //
 
+    /**
+     * It enables next and previous buttons (to see other players Personal Boards), and makes clickable parts of the interface
+     * corresponding to doable actions,  glowing them when you hover your mouse cursor over them.
+     * @param executableActions Map of action types and booleans, equals to true if player can do that action, false otherwise
+     * @param standardActionDone true if player has already done a standard action and can only discard/activate his leader cards or end his turn
+     */
     public void displayChooseActionRequest(Map<ActionType, Boolean> executableActions, boolean standardActionDone) {
         Platform.runLater(new Runnable() {
             @Override
@@ -624,6 +698,11 @@ public class GameSceneController {
         });
     }
 
+    /**
+     * updates all view's glowing objects and connect relative event handlers only on elements (nodes) that should
+     * be clicked (selectable actions). If it is not player's turn or he's viewing another player's personal board,
+     * all nodes event handlers and glowing are deactivated
+     */
     private void updateGlowingObjects() {
         deactivateAllActionsGlowing();
         if(currentPlayerIndex==0&&isYourTurn){
@@ -674,6 +753,9 @@ public class GameSceneController {
         }
     }
 
+    /**
+     * deactivates glowing and event handler from all nodes
+     */
     private void deactivateAllActionsGlowing(){
         deactivateGlowingAndSelectEventHandler(developmentCardGrid,false);
         if(currentPlayerIndex==0){
@@ -694,6 +776,11 @@ public class GameSceneController {
         deactivateGlowingAndSelectEventHandler(marketGrid,false);
     }
 
+    /**
+     * Deactivates selected node's event handlers and glowing effect
+     * @param nodeToDeactivate node to deactivate
+     * @param backToGreyLeaderCard true if node is a leaderCard that is not active and should get back to grey effect.
+     */
     private void deactivateGlowingAndSelectEventHandler(Node nodeToDeactivate, boolean backToGreyLeaderCard){
         nodeToDeactivate.setOnMouseEntered(new EventHandler<MouseEvent>() {
             @Override
@@ -723,7 +810,13 @@ public class GameSceneController {
     }
 
 
-
+    /**
+     * activates selected node's event handlers and glowing effect. Node glows when mouse cursor is on it, and shows a tooltip
+     * of the action performed if clicked. This means the node becomes also clickable
+     * @param nodeToActivate node to activate
+     * @param backToGreyLeaderCard true if node is a leaderCard that is not active and should get back to grey effect when mouse cursor moves out of node
+     * @param actionType type of the action chosen if node is clicked
+     */
     private void activateGlowingAndSelectEventHandler(Node nodeToActivate, boolean backToGreyLeaderCard, ActionType actionType){
         nodeToActivate.setOnMouseEntered(new EventHandler<MouseEvent>() {
             @Override
@@ -777,6 +870,10 @@ public class GameSceneController {
         });
     }
 
+    /**
+     * Sends to server the selected action
+     * @param selectedAction action selected as string
+     */
     private void selectAction(String selectedAction) {
         disableNextPreviousButtons();
         client.sendMessageToServer(new ChooseActionResponse(ActionType.valueOf(selectedAction).getValue()));
@@ -786,6 +883,12 @@ public class GameSceneController {
     // *********************************************************************  //
     //                             RESOURCE INSERTION                         //
     // *********************************************************************  //
+
+    /**
+     * Displays the panel containing the resources the user needs to chose where to store.
+     * It also displays buttons to choose to discard the resource or reorganize the warehouse
+     * @param resources list of resources the user needs to chose where to store
+     */
     public void displayNotifyResourcesToStore(List<Resource> resources) {
         Platform.runLater(new Runnable() {
             @Override
@@ -808,6 +911,14 @@ public class GameSceneController {
         });
     }
 
+    /**
+     * Displays, resource per resource, the depots where the resource can be put. It also glows and assigns event handlers
+     * to depots and the resource to handle the resource dragged into the depot.
+     * @param resource resource to store in depots
+     * @param interactableDepots depots where you can put  the resource in (if you can put it in it, value is true, false otherwise)
+     * @param canDiscard true if resource can be discarded
+     * @param canReorganize true if reorganization possibility should be given to player
+     */
     public void displayChooseStorageTypeRequest(Resource resource, HashMap<ResourceStorageType, Boolean> interactableDepots, boolean canDiscard, boolean canReorganize) {
         Platform.runLater(new Runnable() {
             @Override
@@ -847,6 +958,12 @@ public class GameSceneController {
         });
     }
 
+    /**
+     * Glow depots and resource and connects event handlers to all resource and depots nodes.
+     * @param resourceToDrag resource to be dragged
+     * @param resourceAsString resource as string
+     * @param interactableDepots depots where you can drag the resource
+     */
     private void highlightAndDrag(Node resourceToDrag, String resourceAsString, HashMap<ResourceStorageType, Boolean> interactableDepots) {
         glowNode(resourceToDrag,colorToGlow);
         makeDraggable(resourceToDrag, resourceAsString);
@@ -888,6 +1005,9 @@ public class GameSceneController {
         }
     }
 
+    /**
+     * deactivates all event handlers on depots, activated during resource insertion
+     */
     private void resetStorageInsertion() {
         for(ResourceStorageType resourceStorageType : storageNameToNodeMap.keySet()){
             if(resourceStorageType.equals(ResourceStorageType.LEADER_DEPOT)){
@@ -907,6 +1027,11 @@ public class GameSceneController {
         }
     }
 
+    /**
+     * Connects event handlers to given resource's node, making it draggable
+     * @param resourceToDrag resource to be dragged
+     * @param resourceAsString resource as string
+     */
     private void makeDraggable(Node resourceToDrag, String resourceAsString) {
         resourceToDrag.setOnDragDetected(new EventHandler<MouseEvent>() {
             public void handle(MouseEvent event) {
@@ -925,6 +1050,11 @@ public class GameSceneController {
         });
     }
 
+    /**
+     * Makes selected node accepting dragged resources. When the user passes with the resource over it,
+     * a visual prompt is given to make the user understand he can leave the mouse button. Resource will then be accepted
+     * @param nodeDraggableOver node to be draggable over
+     */
     private void activateDraggableOver(Node nodeDraggableOver) {
         nodeDraggableOver.setOnDragOver(new EventHandler<DragEvent>() {
             @Override
@@ -989,6 +1119,10 @@ public class GameSceneController {
         });
     }
 
+    /**
+     * deactivates event handlers, disabling the possibility to drag resources over it
+     * @param nodeDraggableOver node to deactivate
+     */
     private void deactivateDraggableOver(Node nodeDraggableOver) {
         nodeDraggableOver.setOnDragOver(new EventHandler<DragEvent>() {
             @Override
@@ -1012,6 +1146,11 @@ public class GameSceneController {
         });
     }
 
+    /**
+     * sends to Server the resource to add and in what  depots it has to be added
+     * @param nodeDraggableOver the depot in which to put the resource
+     * @param resourceToAddAsString resource to be added to the depot
+     */
     private void addResource(Node nodeDraggableOver, String resourceToAddAsString) {
         String storageSelected= new String();
         for(ResourceStorageType rst: storageNameToNodeMap.keySet()){
@@ -1031,6 +1170,12 @@ public class GameSceneController {
     //                        INITIAL GAME FUNCTIONS                          //
     // *********************************************************************  //
 
+    /**
+     * Displays the four leader cards of which the user should choose only two, then click on the confirm button.
+     * It displays the panel and connect the click event handler to the button
+     * @param leaderCards  leader Cards to be chosen
+     * @param client client
+     */
     public void displayLeaderCardsRequest(List<Integer> leaderCards, Client client) {
         Platform.runLater(new Runnable() {
             @Override
@@ -1066,6 +1211,12 @@ public class GameSceneController {
         });
     }
 
+    /**
+     * Instantiates all ImageView for each Card to be viewed
+     * @param leaderCards cards to be built
+     * @param confirmSelectionButton button on which connect event handler to confirm  cards choice
+     * @return HashMap of leader cards id and relative ImageVIew
+     */
     private HashMap<Integer, ImageView> buildCards(List<Integer> leaderCards, Button confirmSelectionButton) {
         HashMap<Integer,ImageView> leaderCardsMap=new HashMap<>();
         leaderCards.forEach(lc->{
@@ -1096,6 +1247,10 @@ public class GameSceneController {
         return leaderCardsMap;
     }
 
+    /**
+     * Displays a panel with a confirmation button and a matrix of resource from which the user should choose the given quantity
+     * @param quantity how many resources the user should choose
+     */
     public void displayChooseResourceTypeRequest( int quantity) {
         Platform.runLater(new Runnable() {
             @Override
@@ -1123,6 +1278,14 @@ public class GameSceneController {
         });
     }
 
+    /**
+     * Instantiates all ImageView for each resource to be chosen
+     * @param quantity quantity of resources to be chosen
+     * @param selectedResourcesBooleans list of booleans used inside event handlers to see if resource has been chosen or not
+     * @param confirmSelectionButton button used to confirm selection
+     * @param resourcesToAdd resources to be put inside choices matrix
+     * @return List of resources ImageViews
+     */
     private List<ImageView> buildResources(int quantity, boolean[] selectedResourcesBooleans, Button confirmSelectionButton , List<Resource> resourcesToAdd) {
         if(resourcesToAdd==null){
             resourcesToAdd= Resource.realValues();
@@ -1163,7 +1326,15 @@ public class GameSceneController {
         return resourcesImages;
     }
 
-
+    /**
+     * Function that handles the click of previously chosen as Confirm Button, used when the users needs to choose more than one
+     * leader card or resource. It collapses the choice panel if button is clicked. The button is clickable only if the right amount of
+     * items has been chosen. When clicked, it sends the selection to the server.
+     * @param confirmSelectionButton button to be used as confirmation button of the selection
+     * @param selectionHBox HBox containing elements (ImageViews) to be selected
+     * @param label label on which show text messages
+     * @param leaderCards chosen leader cards ( empty list if it's a resources selection)
+     */
     private void handleConfirmSelectionButton(Button confirmSelectionButton, HBox selectionHBox, Label label, List<Integer> leaderCards){
         Platform.runLater(new Runnable() {
             @Override
@@ -1198,6 +1369,9 @@ public class GameSceneController {
     //                          ACTIONS FUNCTIONS                             //
     // *********************************************************************  //
 
+    /**
+     * It glows markets arrows and makes them clickable, to choose where to put the marble from the slide
+     */
     public void displayMarbleInsertionPositionRequest() {
         Platform.runLater(new Runnable() {
             @Override
@@ -1231,6 +1405,12 @@ public class GameSceneController {
         });
     }
 
+    /**
+     * It displays a pane containing a matrix of resources that player should choose cause he has two white marble
+     * conversion leader cards.
+     * @param resources resources to choose from
+     * @param numberOfMarbles how many resources to choose (number of white marbles taken from market)
+     */
     public void displayChooseWhiteMarbleConversionRequest(List<Resource> resources, int numberOfMarbles) {
         Platform.runLater(new Runnable() {
             @Override
@@ -1280,6 +1460,13 @@ public class GameSceneController {
     }
 
 
+    /**
+     * Displays a panel to choose what type of reorganization the user wants to do (swap or move) and a button to end the
+     * reorganization
+     * @param depots depots that can be reorganized
+     * @param failure true if reorganization was illegal
+     * @param availableLeaderResource resources from leader cards depots
+     */
     public void displayReorganizeDepotsRequest(List<String> depots, boolean failure, List<Resource> availableLeaderResource) {
         Platform.runLater(new Runnable() {
             @Override
@@ -1321,6 +1508,13 @@ public class GameSceneController {
 
     }
 
+    /**
+     * Handles the choice of the from and to depot for the resource swapping/moving
+     * @param moveORswap true if it's a move reorganization,false if swap
+     * @param depots depots that can be reorganized
+     * @param availableLeaderResource resources from leader cards depots
+     * @param firstChoice true if it's the first choice ( user is choosing from where to move resources)
+     */
     private void sourceAndTargetDepotsSelection(boolean moveORswap, List<String> depots, List<Resource> availableLeaderResource, boolean firstChoice) {
         if(!firstChoice){
             if(moveORswap){
@@ -1353,6 +1547,15 @@ public class GameSceneController {
         }
     }
 
+    /**
+     * connects event handlers to given Node to make it selectable for the reorganization
+     * @param depotNode Node of the depot
+     * @param moveORswap true if it's a move reorganization,false if swap
+     * @param depots depots that can be reorganized
+     * @param availableLeaderResource resources from leader cards depots
+     * @param firstChoice true if it's the first choice ( user is choosing from where to move resources)
+     * @param leader true if the depot is a leader depot
+     */
     private void depotChoiceGlowAndClick(Node depotNode, boolean moveORswap, List<String> depots, List<Resource> availableLeaderResource, boolean firstChoice, boolean leader) {
         glowNode(depotNode,colorToGlow);
         depotNode.setOnMouseEntered(new EventHandler<MouseEvent>() {
@@ -1442,6 +1645,11 @@ public class GameSceneController {
         });
     }
 
+    /**
+     * GLows and makes clickable given cards
+     * @param cardIDs card ids
+     * @param leaderORdevelopment true if it is a selection of leader cards, false if it is of development cards
+     */
     public void displaySelectCardRequest(List<Integer> cardIDs, boolean leaderORdevelopment) {
         Platform.runLater(new Runnable() {
             @Override
@@ -1471,6 +1679,13 @@ public class GameSceneController {
 
     }
 
+    /**
+     * Sends to server the id of the selected cards and deactivates glowing and event handlers of all other cards
+     * @param node node of the Card  selected
+     * @param cardId id of the selected card
+     * @param leaderORdevelopment true if it is a selection of leader cards, false if it is of development cards
+     * @param allCardsIDs Ids of all the cards that could have been selected
+     */
     private void selectAndGlowCard(Node node, Integer cardId, Boolean leaderORdevelopment, List<Integer> allCardsIDs) {
         glowNode(node,colorToGlow);
         node.setOnMouseEntered(new EventHandler<MouseEvent>() {
@@ -1500,6 +1715,12 @@ public class GameSceneController {
         });
     }
 
+    /**
+     * Makes personal board's production's slots selectable( adds glowing and click event handlers)
+     * @param firstSlotAvailable true if first slot is available to be selected
+     * @param secondSlotAvailable true if second slot is available to be selected
+     * @param thirdSlotAvailable true if third slot is available to be selected
+     */
     public void displaySelectDevelopmentCardSlotRequest(boolean firstSlotAvailable, boolean secondSlotAvailable, boolean thirdSlotAvailable) {
         Platform.runLater(new Runnable() {
             @Override
@@ -1543,6 +1764,14 @@ public class GameSceneController {
         });
     }
 
+    /**
+     * Displays a panel indicating the resource to be removed and glows (and assigns event handlers) all depots from which
+     * the user can choose to remove the resource
+     * @param resource resource to be removed
+     * @param isInWarehouse true if the resource can be removed from warehouse
+     * @param isInStrongbox true if the resource can be removed from strongbox
+     * @param isInLeaderDepot true if the resource can be removed from leader card's depots
+     */
     public void displaySelectStorageRequest(Resource resource, boolean isInWarehouse, boolean isInStrongbox, boolean isInLeaderDepot) {
         Platform.runLater(new Runnable() {
             @Override
@@ -1616,6 +1845,12 @@ public class GameSceneController {
         });
     }
 
+    /**
+     * GLows and connects event handlers to all production cards selectable
+     * @param iDs IDs of the selectable cards
+     * @param availableResources resources available for basic production
+     * @param addORremove true if the player has to choose which production to do,false if the player has to choose which production to undo
+     */
     public void displayChooseProduction(List<Integer> iDs, Map<Resource, Integer> availableResources, boolean addORremove) {
         Platform.runLater(new Runnable() {
             @Override
@@ -1710,6 +1945,11 @@ public class GameSceneController {
         });
     }
 
+    /**
+     * Displays a panel for the user to choose the personalized output resource of his leader card production
+     * @param availableResources Resources available to be producted
+     * @param id id of the leader card
+     */
     private void chooseLeaderCardProductionPower(Map<Resource, Integer> availableResources, Integer id) {
         Platform.runLater(new Runnable() {
             @Override
@@ -1758,6 +1998,10 @@ public class GameSceneController {
         });
     }
 
+    /**
+     * Displays a panel for the user to choose the personalized input and output resources of his basic production
+     * @param availableResources Resources available to be taken and producted
+     */
     private void createBasicProduction(Map<Resource, Integer> availableResources){
         HBox resourcesHBox = (HBox) productionVbox.getChildren().get(1);
         resourcesHBox.setVisible(true);
@@ -1829,6 +2073,10 @@ public class GameSceneController {
     }
 
 
+    /**
+     * Shows a message if no cards are selectable
+     * @param iDs IDs of the development cards selectable
+     */
     public void displayProductionCardYouCanSelect(List<Integer> iDs) {
         Platform.runLater(new Runnable() {
             @Override
@@ -1846,6 +2094,9 @@ public class GameSceneController {
 
     }
 
+    /**
+     * Displays a panel with buttons to choose if adding another production, remove one or confirming current chosen productions
+     */
     public void chooseNextProductionAction() {
         Platform.runLater(new Runnable() {
             @Override
@@ -1866,6 +2117,10 @@ public class GameSceneController {
     // *********************************************************************  //
 
 
+    /**
+     * Displays a panel showing Lorenzo's used token
+     * @param id id of lorenzo's action's token
+     */
     public void displayLorenzoAction(int id) {
         Platform.runLater(new Runnable() {
             @Override
@@ -1880,6 +2135,11 @@ public class GameSceneController {
     //                                END GAME                                //
     // *********************************************************************  //
 
+    /**
+     * Displays a panel containing End Game results (names, points, winner/winners)
+     * @param results Map of usernames->victory points
+     * @param readyForAnotherGame true if the user can choose to start another game
+     */
     public void displayResults(Map<String, Integer> results, boolean readyForAnotherGame) {
         Platform.runLater(new Runnable() {
             @Override
@@ -1927,6 +2187,11 @@ public class GameSceneController {
         });
     }
 
+    /**
+     * Displays a panel containing End Game results for single player ( if you won/lost against Lorenzo Il Magnifico and
+     * how many point's he has made)
+     * @param victoryPoints player victory points
+     */
     public void displayResults(int  victoryPoints) {
         Platform.runLater(new Runnable() {
             @Override
@@ -1952,6 +2217,11 @@ public class GameSceneController {
     //                      RESILIENCE TO DISCONNECTIONS                      //
     // *********************************************************************  //
 
+    /**
+     * Displays a panel containing a welcome back message for user who got disconnected
+     * @param nickname user nickname
+     * @param gameFinished true if game finished while user was disconnected
+     */
     public void displayWelcomeBackMessage(String nickname, boolean gameFinished) {
         Platform.runLater(new Runnable() {
             @Override
@@ -1965,6 +2235,12 @@ public class GameSceneController {
         });
     }
 
+    /**
+     * Displays a panel  message notifying that a user got disconnected
+     * @param nickname user disconnected nickname
+     * @param setUp true if game was in setup phase
+     * @param gameCancelled true if game has been cancelled
+     */
     public void displayDisconnection(String nickname, boolean setUp, boolean gameCancelled) {
         Platform.runLater(new Runnable() {
             @Override
@@ -1983,6 +2259,10 @@ public class GameSceneController {
 
     }
 
+    /**
+     * Displays a panel  message notifying that server got disconnected. Contains a quit button to close the game
+     * @param wasConnected true if the client was connected to server when server disconnected
+     */
     public void handleCloseConnection(boolean wasConnected) {
         Platform.runLater(new Runnable() {
             @Override
@@ -2008,6 +2288,10 @@ public class GameSceneController {
         });
     }
 
+    /**
+     *  Displays a panel  message notifying that you have got disconnected for inactivity.Buttons is showed to choose if you
+     *  want to reconnect (yes/no)
+     */
     public void handleTimeoutExpired() {
         Platform.runLater(new Runnable() {
             @Override

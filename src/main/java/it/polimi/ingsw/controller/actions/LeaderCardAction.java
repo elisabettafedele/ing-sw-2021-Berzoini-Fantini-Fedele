@@ -32,6 +32,11 @@ public class LeaderCardAction implements Action{
     List<Integer> leaderCardsIDs =null;
     TurnController turnController;
 
+    /**
+     * Instantiates the action's class.
+     * @param turnController the TurnController handling this action
+     * @param activateORdiscard true if it's you want to discard the leaderCard, false if you want to activate it.
+     */
     public LeaderCardAction(TurnController turnController, boolean activateORdiscard){
         this.player = turnController.getCurrentPlayer();
         this.turnController=turnController;
@@ -39,6 +44,10 @@ public class LeaderCardAction implements Action{
         this.activateORdiscard=activateORdiscard;
     }
 
+    /**
+     * resets class variables replacing them with current player info
+     * @param currentPlayer the player whose turn it is
+     */
     @Override
     public void reset(Player currentPlayer) {
         this.player = currentPlayer;
@@ -46,12 +55,20 @@ public class LeaderCardAction implements Action{
         leaderCardsIDs=new ArrayList<>();
     }
 
+    /**
+     * executes the action
+     */
     @Override
     public void execute() {
         clientHandler.setCurrentAction(this);
         clientHandler.sendMessageToClient(new SelectCardRequest(leaderCardsIDs,true));
     }
 
+    /**
+     * checks if the action is executable by the current player in TurnController. It also creates a lost of
+     * the cards on which it is executable inside the class, ready to be used by execute method
+     * @return true if the action is executable, false otherwise
+     */
     @Override
     public boolean isExecutable() {
         leaderCardsIDs=new ArrayList<>();
@@ -70,6 +87,11 @@ public class LeaderCardAction implements Action{
         return !leaderCardsIDs.isEmpty();
     }
 
+
+    /**
+     * handles all answers messages coming from the Client doing the action. It actualizes the user's choices, discarding or activating the leader card chosen
+     * @param message the message with the choices made by the client
+     */
     @Override
     public void handleMessage(MessageToServer message) {
         if(!activateORdiscard){

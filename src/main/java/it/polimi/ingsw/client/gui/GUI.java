@@ -58,6 +58,11 @@ public class GUI extends Application implements View {
         askConnectionParameters();
     }
 
+    /**
+     * It creates the scene in FXML file. It doesnt show it unless specified inside functionInterface's code.
+     * @param pathOfFxmlFile FXML file path of the scene to be created
+     * @param functionInterface the function to be called at the end of scene creation and assignation to stage.
+     */
     private void createMainScene(String pathOfFxmlFile, FunctionInterface functionInterface) {
         Platform.runLater(() -> {
             fxmlLoader = new FXMLLoader();
@@ -75,6 +80,9 @@ public class GUI extends Application implements View {
         });
     }
 
+    /**
+     * It creates and shows the Setup Scene as well as instantiating it's Setup Scene Controller
+     */
     public void instantiateGameScene(){
         createMainScene("/FXML/GameScene.fxml", () -> {
             stage.setTitle("Masters of Renaissance");
@@ -86,6 +94,9 @@ public class GUI extends Application implements View {
         });
     }
 
+    /**
+     * It creates and shows the Game Scene as well as instantiating it's Game Scene Controller
+     */
     private void instantiateSetupScene(){
         createMainScene("/FXML/SetupScene.fxml", () -> {
             stage.setTitle("Masters of Renaissance");
@@ -96,15 +107,25 @@ public class GUI extends Application implements View {
         });
     }
 
+    /**
+     * Sets the client to use to send responses and answers to the server.
+     * @param client client instance
+     */
     public void setClient(Client client) {
         this.client = client;
     }
 
+    /**
+     * Resets all controller and prepares the Setup Scene instantiation, containing ip and port parameters' choice selection
+     */
     private void askConnectionParameters(){
         resetControllers();
         instantiateSetupScene();
     }
 
+    /**
+     * resets scene controllers instances
+     */
     private void resetControllers() {
         setupSceneController = null;
         gameSceneController=null;
@@ -300,6 +321,10 @@ public class GUI extends Application implements View {
         });
     }
 
+    /**
+     *
+     * @param lightDevelopmentCards the development cards to load
+     */
     public void loadDevelopmentCards(List<LightDevelopmentCard> lightDevelopmentCards) {
         MatchData.getInstance().setAllDevelopmentCards(lightDevelopmentCards);
     }

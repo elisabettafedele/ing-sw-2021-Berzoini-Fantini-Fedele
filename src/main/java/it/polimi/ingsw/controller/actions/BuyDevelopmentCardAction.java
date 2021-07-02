@@ -117,6 +117,11 @@ public class BuyDevelopmentCardAction implements Action{
         return !buyableCardsIDs.isEmpty();
     }
 
+    /**
+     * handles all answers messages coming from the Client doing the action. It actualizes the user's choices, buying the card selected, inserting it in his personal board's selected
+     * slot and taking the resources to pay it from the indicated depots.
+     * @param message the message with the choices made by the client
+     */
     @Override
     public void handleMessage(MessageToServer message) {
         if(message instanceof SelectCardResponse) {

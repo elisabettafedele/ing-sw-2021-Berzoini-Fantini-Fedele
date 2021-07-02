@@ -251,7 +251,7 @@ public interface ViewInterface {
     /**
      * Method to inform a disconnection
      * @param nickname the nickname of the player
-     * @param setUp //TODO
+     * @param setUp //true if disconnection was in setup phase, false otherwise
      * @param gameCancelled true if the game has been cancelled
      */
     void displayDisconnection(String nickname, boolean setUp, boolean gameCancelled);
@@ -263,7 +263,7 @@ public interface ViewInterface {
      */
     void displayWelcomeBackMessage(String nickname, boolean gameFinished);
 
-    //TODO
+
     void handleCloseConnection(boolean wasConnected);
 
 
