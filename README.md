@@ -2,7 +2,7 @@
 
 
 - ###  Raffaele Berzoini  ([@RaffaeleBerzoini](https://github.com/RaffaeleBerzoini)) <br> raffaele.berzoini@mail.polimi.it
-- ###  Elia Fantini ([@EliaFantini](https://github.com/EliaFantini)) <br> elia.fantini@mail.polimi.it
+- ###  Elia Fantini ([@EliaFantini](https://github.com/EliaFantini)) <br> elia1.fantini@mail.polimi.it
 - ###  Elisabetta Fedele ([@elisabettafedele](https://github.com/elisabettafedele)) <br> elisabetta.fedele@mail.polimi.it
 
 | Functionality | State |
@@ -34,7 +34,7 @@
     > java -jar MasterOfReinassanceServer.jar
     ```
   This command can be followed by these arguments:
-  - **-port**: followed by the desired port number between MIN_PORT and MAX_PORT as argument;
+  - **-port**: followed by the desired port number between MIN_PORT (1024) and MAX_PORT (65535) as argument;
   - **-log**: to save the log in a file;
   - **-help**: to get help.
 
