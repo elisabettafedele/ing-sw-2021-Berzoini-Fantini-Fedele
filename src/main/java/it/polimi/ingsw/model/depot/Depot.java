@@ -57,7 +57,7 @@ public abstract class Depot {
     }
 
     public String toString(){
-        return "Depot: resource=" + this.getResourceType() + ", quantity=" + Integer.toString(this.getResourceQuantity());
+        return "Depot: resource=" + this.getResourceType() + ", quantity=" + this.getResourceQuantity();
     }
 
 }

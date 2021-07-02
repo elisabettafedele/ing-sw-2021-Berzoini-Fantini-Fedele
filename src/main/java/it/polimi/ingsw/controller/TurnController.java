@@ -68,7 +68,7 @@ public class TurnController {
     /**
      * Class constructor used to retrieve an old match and to restart from the old turn
      * @param controller the {@link Controller} of the {@link it.polimi.ingsw.model.game.Game}
-     * @param currentPlayer the {@link Player} who is goinf to start the turn
+     * @param currentPlayer the {@link Player} who is going to start the turn
      * @param endTrigger true if the {@link it.polimi.ingsw.model.game.Game} to retrieve was end triggered
      */
     public TurnController(Controller controller, Player currentPlayer, boolean endTrigger){
@@ -132,7 +132,7 @@ public class TurnController {
     }
 
     /**
-     * Method to update the list of the executable action, accordin to the status of the current player
+     * Method to update the list of the executable action, according to the status of the current player
      */
     public void checkExecutableActions(){
         for(ActionType actionType: executableActions.keySet()){
@@ -159,7 +159,7 @@ public class TurnController {
     }
 
     /**
-     * Method to check whether the game is end triggered (someone has arrived at the end of the {@link it.polimi.ingsw.model.game.FaithTrack} or if a {@link VaticanReportSection} has been activeted
+     * Method to check whether the game is end triggered (someone has arrived at the end of the {@link it.polimi.ingsw.model.game.FaithTrack} or if a {@link VaticanReportSection} has been activated
      */
     public void checkFaithTrack(){
         boolean isVaticanReport=false;

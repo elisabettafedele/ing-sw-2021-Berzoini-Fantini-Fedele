@@ -11,7 +11,7 @@ public enum ReorganizeDepotsCommand {
 
     public final String command;
 
-    private ReorganizeDepotsCommand(String command){
+    ReorganizeDepotsCommand(String command){
         this.command = command;
     }
 

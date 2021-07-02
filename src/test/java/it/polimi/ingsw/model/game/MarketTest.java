@@ -34,12 +34,12 @@ public class MarketTest {
         }
         marbles = market.insertMarbleFromTheSlide(3);
         numOfMarbles[marbles.get(0).getValue()]++;
-        assertTrue(numOfMarbles[0] == 2);
-        assertTrue(numOfMarbles[1] == 2);
-        assertTrue(numOfMarbles[2] == 2);
-        assertTrue(numOfMarbles[3] == 2);
-        assertTrue(numOfMarbles[4] == 1);
-        assertTrue(numOfMarbles[5] == 4);
+        assertEquals(2, numOfMarbles[0]);
+        assertEquals(2, numOfMarbles[1]);
+        assertEquals(2, numOfMarbles[2]);
+        assertEquals(2, numOfMarbles[3]);
+        assertEquals(1, numOfMarbles[4]);
+        assertEquals(4, numOfMarbles[5]);
 
     }
 

@@ -20,7 +20,7 @@ public class VaticanReportSection implements Serializable {
      * @param start the number of the box on the {@link FaithTrack} where the {@link VaticanReportSection} starts;
      * @param end the number of the box on the {@link FaithTrack} where the {@link VaticanReportSection} ends;
      * @param popesFavorPoints the number of victory points to be added to all eligible {@link Player} during {@link VaticanReportSection} activation;
-     * @throws InvalidArgumentException
+     * @throws InvalidArgumentException if impossible parameters are inserted
      */
     public VaticanReportSection(int start, int end, int popesFavorPoints) throws InvalidArgumentException {
         if(start<0||end<0||end<start||popesFavorPoints<0){

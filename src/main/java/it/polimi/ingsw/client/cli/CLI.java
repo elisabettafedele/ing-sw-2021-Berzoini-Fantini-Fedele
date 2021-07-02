@@ -159,7 +159,6 @@ public class CLI implements View {
             System.out.println("\nThank you for playing Master Of Renaissance, see you next time!");
             System.out.close();
             client.closeSocket();
-            //TODO askReconnect();
         }
     }
 
@@ -172,31 +171,8 @@ public class CLI implements View {
         System.out.println("\nThank you for playing Master Of Renaissance, see you next time!");
         System.out.close();
         client.closeSocket();
-        //TODO askReconnect();
     }
-/*
-    public void askReconnect(){
-        System.out.println("Do you want to play another game? y | n");
-        while(true) {
-            String wantToReconnect = InputParser.getLine();
-            if (wantToReconnect == null)
-                return;
-            if (wantToReconnect.equals("y")) {
-                try {
-                    client.reconnect();
-                } catch (IOException e) {
-                    System.out.println(Colour.ANSI_BRIGHT_RED.getCode() + "We are sorry to inform you that the server is not available anymore\nTry again later" + Colour.ANSI_RESET);
-                }
-            }
-            else if (wantToReconnect.equals("n"))
-                return;
-            else {
-                System.out.println("Invalid choice: type y to start a new game or n to exit");
-            }
-        }
-    }
-*/
-    @Override
+@Override
     public void displayDisconnection(String nickname, boolean setUp, boolean gameCancelled) {
         System.out.println(Colour.ANSI_BRIGHT_GREEN.getCode() + "We are sorry to inform you that " + nickname + " has left the game." );
         System.out.println("The game" + (gameCancelled? " has been cancelled." : " will go on skipping the turns of that player.") + Colour.ANSI_RESET);
@@ -381,7 +357,6 @@ public class CLI implements View {
         UtilityProduction.manageLeaderProductionPower(chooseResourceToProduce(), id);
     }
 
-    //TODO: method to eliminate duplicate code, to be tested
     private Resource chooseResourceToProduce() {
         List<Resource> realValues = Resource.realValues();
         System.out.println("Choose the resource you want to produce");

@@ -28,7 +28,7 @@ public class Warehouse implements Serializable {
      * depots[2] can contain maximum three resources
      * and each depot contains the same {@link Resource}, that cannot be placed in two different depots
      *
-     * @throws InvalidArgumentException
+     * @throws InvalidArgumentException if a warehouse depot with negative max resource quantity is constructed
      */
     public Warehouse() throws InvalidArgumentException {
         depots = new WarehouseDepot[numberOfDepots];
@@ -115,7 +115,7 @@ public class Warehouse implements Serializable {
      *
      * @param row identifies the specific depot of the warehouse to consider
      * @return the number of resources contained in the depot
-     * @throws InvalidArgumentException
+     * @throws InvalidArgumentException if the row is negative or outside the range
      */
     public int getResourceQuantityOfDepot(int row) throws InvalidArgumentException {
         if (row < 0 || row >= numberOfDepots)
@@ -211,7 +211,10 @@ public class Warehouse implements Serializable {
         return (depots[one].getResourceQuantity() <= depots[other].getMaxResourceQuantity()) && (depots[other].getResourceQuantity() <= depots[one].getMaxResourceQuantity());
     }
 
-    //TODO to check
+    /**
+     * Method to get the warehouse depots status
+     * @return an array of the resources contained in each depot
+     */
     public List<Resource>[] getWarehouseDepotsStatus() {
         List<Resource>[] depots = new ArrayList[3];
         for (int i = 0; i < 3; i++)
@@ -225,6 +228,10 @@ public class Warehouse implements Serializable {
         return depots;
     }
 
+    /**
+     * Method to remove all the resources of certain type contained in the warehouse
+     * @param resource the resource type to be removed
+     */
     public void removeAll(Resource resource){
         int index = getRowIndexFromResource(resource);
         if (index == -1)

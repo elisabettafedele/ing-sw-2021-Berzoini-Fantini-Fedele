@@ -171,7 +171,7 @@ public class GameHistoryTest extends TestCase {
     public void testRetrieveAnOldGame(){
         if (GameHistory.retrieveGameFromControllerId(0) != null){
             if (GameHistory.isSetUpPhase(0))
-                assertTrue(GameHistory.retrieveSetUpController(0) != null);
+                assertNotNull(GameHistory.retrieveSetUpController(0));
         }
     }
 

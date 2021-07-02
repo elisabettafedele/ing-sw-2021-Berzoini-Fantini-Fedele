@@ -8,7 +8,6 @@ import it.polimi.ingsw.enumerations.Resource;
 import it.polimi.ingsw.exceptions.ValueNotPresentException;
 import it.polimi.ingsw.model.cards.Value;
 
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -403,8 +402,6 @@ public class Screen extends GraphicalElement{
         gw.drawWarehouse();
         drawElement(gw.getHeight(), gw.getWidth(), gw.getColours(), gw.getSymbols(), gw.getBackGroundColours(),
                 height-gw.getHeight()-1, 0);
-        //drawDepotsNumbers(gw.getHeight(), gw.getWidth());
-        //displayASection(height-gw.getHeight()-2, height, 0, width);
     }
 
     /**

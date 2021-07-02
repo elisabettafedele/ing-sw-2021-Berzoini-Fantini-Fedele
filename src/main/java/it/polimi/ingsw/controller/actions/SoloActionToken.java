@@ -20,7 +20,7 @@ public abstract class SoloActionToken {
 
     /**
      * Executes the action of Lorenzo il Magnifico when playing in single player game mode
-     * @param singlePlayerPlayPhase
+     * @param singlePlayerPlayPhase the play phase related to the game
      */
     public abstract void useActionToken(SinglePlayerPlayPhase singlePlayerPlayPhase);
 

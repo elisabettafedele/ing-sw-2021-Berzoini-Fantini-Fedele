@@ -37,11 +37,6 @@ public class PersonalBoard implements Serializable {
         if(leaderCards==null || leaderCards.size()!=numberOfInitialLeaderCards){
             throw new InvalidArgumentException();
         }
-        //TODO REMOVE, FOR DEBUGGING ONLY
-        //for(LeaderCard lc : leaderCards){
-        //   lc.activate();
-        //}
-        //TODO
         strongbox = new StrongboxDepot[numberOfStrongboxDepots];
         strongbox[0]= new StrongboxDepot(Resource.COIN);
         strongbox[1]= new StrongboxDepot(Resource.STONE);
@@ -307,9 +302,6 @@ public class PersonalBoard implements Serializable {
 
     /**
      * @return The HashMap returned contains four couples of <Resource,Integer>, one for each {@link Resource} and in the same enumeration's order. The Integer value of each couple is a sum of all the resources of that type in strongbox,warehouse and extra depots (if present).
-     * @throws InactiveCardException
-     * @throws DifferentEffectTypeException
-     * @throws InvalidArgumentException
      */
 
     public Map<Resource,Integer> countResources() {
@@ -417,7 +409,7 @@ public class PersonalBoard implements Serializable {
 
     /**
      * Method use to get the available effects of a certain {@link EffectType}
-     * @param effectType
+     * @param effectType the effect type desired
      * @return an empty list if no effect of this type is available or a list of effects if at least one is available
      */
     public List<Effect> getAvailableEffects(EffectType effectType){

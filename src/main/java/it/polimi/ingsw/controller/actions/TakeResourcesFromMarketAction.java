@@ -50,7 +50,7 @@ public class TakeResourcesFromMarketAction implements Action {
     }
 
     /**
-     * Method overriden. It checks whether the action is executable.
+     * Method overridden. It checks whether the action is executable.
      * Since the player is always able to take resources from market it always returns true.
      * @return
      */
@@ -232,11 +232,11 @@ public class TakeResourcesFromMarketAction implements Action {
     }
 
     /**
-     * Method used to handle the move of a certain quanity of resource from a depot to another
-     * @param originString
-     * @param destinationString
+     * Method used to handle the move of a certain quantity of resource from a depot to another
+     * @param originString the string corresponding to the origin depot
+     * @param destinationString the string corresponding to the destination depot
      * @param resource must be specified only if the client has more than one leader depot and decides to select LEADER as origin or destination, otherwise it is ANY
-     * @param quantity
+     * @param quantity the quantity od resources to be moved
      */
     private void handleMoveRequest(String originString, String destinationString, Resource resource, int quantity){
         ResourceStorageType origin = ResourceStorageType.valueOf(originString);

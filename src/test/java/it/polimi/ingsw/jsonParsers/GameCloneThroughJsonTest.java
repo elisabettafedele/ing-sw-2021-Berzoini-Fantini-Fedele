@@ -10,7 +10,7 @@ import java.io.UnsupportedEncodingException;
 
 public class GameCloneThroughJsonTest extends TestCase {
     @Test
-    public void testCopy() throws InvalidArgumentException, UnsupportedEncodingException {
+    public void testCopy() {
         Game game = new Game (GameMode.MULTI_PLAYER);
         Game gameClone = GameCloneThroughJson.clone(game);
         assertEquals(gameClone.getDevelopmentCardGrid().getAvailableCards().get(0), game.getDevelopmentCardGrid().getAvailableCards().get(0));

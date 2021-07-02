@@ -632,7 +632,7 @@ public class GameSceneController {
                 leaderCards.add(matchData.getLeaderCardByID(lcID));
             }
             for(ActionType actionType : executableActions.keySet()){
-                if(executableActions.get(actionType)==true){
+                if(executableActions.get(actionType)){
                     switch (actionType){
                         case TAKE_RESOURCE_FROM_MARKET:
                             activateGlowingAndSelectEventHandler(marketGrid,false,actionType);
@@ -1204,7 +1204,7 @@ public class GameSceneController {
             public void run() {
                 List<Node> arrows=new ArrayList<>();
                 ((Pane)((Pane) marketGrid.getParent()).getChildren().get(1)).getChildren().stream().forEach(node->arrows.add(node));
-                ((Pane)((Pane) marketGrid.getParent()).getChildren().get(2)).getChildren().stream().forEach(node->arrows.add(node));;
+                ((Pane)((Pane) marketGrid.getParent()).getChildren().get(2)).getChildren().stream().forEach(node->arrows.add(node));
                 for(Node arrow : arrows){
                     glowNode(arrow,colorToGlow);
                     arrow.setOnMouseClicked(new EventHandler<MouseEvent>() {

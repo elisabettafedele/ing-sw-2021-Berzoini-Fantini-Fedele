@@ -1,7 +1,6 @@
 package it.polimi.ingsw.client.utilities;
 
 import it.polimi.ingsw.client.cli.CLI;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,8 +11,6 @@ import java.util.function.Predicate;
  * Class to manage the input given by the user when using the {@link CLI}
  */
 public class InputParser {
-    private static BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-    private static boolean read = false;
 
     private static final BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
 
@@ -133,7 +130,12 @@ public class InputParser {
         return num;
     }
 
-    //TODO
+    /**
+     * Method to let the player choose a command of the list using an integer
+     * @param commands the list of the available commands
+     * @return the string corresponding to the command chosen
+     * @throws IOException when the connection with the server is closed
+     */
     public static String getCommandFromList(List<String> commands) throws IOException {
         Integer selection = getInt("Please insert a valid command", CLI.conditionOnIntegerRange(1, commands.size()));
         if (selection == null){
@@ -142,12 +144,26 @@ public class InputParser {
         return commands.get(selection-1);
     }
 
-    //TODO
+    /**
+     * Method to get a command that can be either a number of the list or a text command
+     * @param textCommands list of available text commands
+     * @param intCommands list of the available commands of the list
+     * @return the string corresponding to the command chosen
+     * @throws IOException when the connection with the server is closed
+     */
     public static String getCommandFromList(List<String> textCommands, List<String> intCommands) throws IOException {
         return getCommand(CLI.conditionOnIntegerRange(1, intCommands.size()), textCommands, intCommands, "Please insert a valid command");
     }
 
-    //TODO
+    /**
+     * Method to get a command from client
+     * @param integerPredicate the predicate that checks the range of integer commands
+     * @param textCommands list of available text commands
+     * @param intCommands list of the available commands of the list
+     * @param errorMessage messsage to be printed in case the client insert a wrong command
+     * @return the string corresponding to the command chosen
+     * @throws IOException when the connection with the server is closed
+     */
     public static String getCommand(Predicate integerPredicate, List<String> textCommands, List<String> intCommands, String errorMessage) throws IOException {
         if (textCommands.isEmpty())
             return getCommandFromList(intCommands);
