@@ -85,7 +85,7 @@ public class Controller {
         getPlayerByNickname(nickname).setActive(false);
         if (getPlayers().stream().filter(Player::isActive).count() == 1 || (gamePhase instanceof SetUpPhase && getConnectionByNickname(nickname).getClientHandlerPhase() != ClientHandlerPhase.SET_UP_FINISHED)){
             clientHandlers.remove(getConnectionByNickname(nickname));
-            forceEndMultiplayerGame();
+            forceEndMultiplayerGame(nickname);
         } else {
             server.removeConnectionGame(getConnectionByNickname(nickname));
             if (gamePhase instanceof SetUpPhase)
@@ -99,11 +99,11 @@ public class Controller {
     /**
      * Method to force the end of a {@link Game}
      */
-    private void forceEndMultiplayerGame(){
+    private void forceEndMultiplayerGame(String nickname){
         for (Player player : getPlayers()) {
             //For each player that is still active I notify the end of the game and I reinsert him in the lobby room
             if (player.isActive()) {
-                getConnectionByNickname(player.getNickname()).sendMessageToClient(new NotifyClientDisconnection(player.getNickname(), gamePhase instanceof SetUpPhase, true));
+                getConnectionByNickname(player.getNickname()).sendMessageToClient(new NotifyClientDisconnection(nickname, gamePhase instanceof SetUpPhase, true));
                 getConnectionByNickname(player.getNickname()).setGameStarted(false);
                 getConnectionByNickname(player.getNickname()).setController(null);
                 getConnectionByNickname(player.getNickname()).setClientHandlerPhase(ClientHandlerPhase.WAITING_IN_THE_LOBBY);

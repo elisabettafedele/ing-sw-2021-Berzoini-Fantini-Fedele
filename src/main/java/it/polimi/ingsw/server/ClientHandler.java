@@ -148,7 +148,7 @@ public class ClientHandler implements Runnable, ClientHandlerInterface {
      * @param message the message to be sent
      */
     @Override
-    public void sendMessageToClient(Serializable message) {
+    public synchronized void sendMessageToClient(Serializable message) {
         try {
             if (printable(message))
                 Server.SERVER_LOGGER.log(Level.INFO, "[" + (nickname != null ? nickname : socket.getInetAddress().getHostAddress()) + "]: " + message.toString());
